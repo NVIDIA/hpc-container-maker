@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# pylint: disable=invalid-name
+
+from __future__ import unicode_literals
+from __future__ import print_function
+
+import argparse
+import logging
+
+import hpccm
+
+class KeyValue(argparse.Action): # pylint: disable=too-few-public-methods
+    """Extend argparse to handle key value pair options"""
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        """Initializing custom action, i.e., call the base class init"""
+        super(KeyValue, self).__init__(option_strings, dest, nargs, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        """Process key value pair arguments"""
+        d = {}
+        for kv in values:
+            key, value = kv.split('=')
+            d[key] = value
+        setattr(namespace, self.dest, d)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='HPC Container Maker')
+    parser.add_argument('--format', type=str, default='docker',
+                        choices=[i.name.lower() for i in hpccm.container_type],
+                        help='select container format')
+    parser.add_argument('--single-stage', action='store_true', default=False,
+                        help='only process the first stage of a multi-stage ' +
+                        'recipe')
+    parser.add_argument('--recipe', default='recipes/hpcbase-gnu.py',
+                        help='generate a Dockerfile for the RECIPE file ' +
+                        '(default: recipes/hpcbase-gnu.py)')
+    parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
+                        nargs='+', help='specify user parameters')
+    args = parser.parse_args()
+
+    # configure logger
+    logging.basicConfig(format='%(levelname)s: %(message)s')
+
+    recipe = hpccm.recipe(args.recipe,
+                          ctype=hpccm.container_type[args.format.upper()],
+                          single_stage=args.single_stage,
+                          userarg=args.userarg)
+    print(recipe)

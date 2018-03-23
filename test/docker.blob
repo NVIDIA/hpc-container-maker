@@ -1,0 +1,2 @@
+COPY foo bar
+RUN bar

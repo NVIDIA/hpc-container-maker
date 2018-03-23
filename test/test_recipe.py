@@ -1,0 +1,169 @@
+# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# pylint: disable=invalid-name, too-few-public-methods
+
+"""Test cases for the recipe module"""
+
+from __future__ import unicode_literals
+from __future__ import print_function
+
+import logging # pylint: disable=unused-import
+import os
+import unittest
+
+from hpccm.common import container_type
+from hpccm.recipe import recipe
+
+class Test_recipe(unittest.TestCase):
+    def setUp(self):
+        """Disable logging output messages"""
+        logging.disable(logging.ERROR)
+
+    def test_no_arguments(self):
+        """No arguments"""
+
+        with self.assertRaises(TypeError):
+            r = recipe()
+
+    def test_bad_recipe(self):
+        """Basic example"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, 'bad_recipe.py')
+        with self.assertRaises(SystemExit):
+            r = recipe(rf)
+
+    def test_basic_example(self):
+        """Basic example"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'basic.py')
+        r = recipe(rf)
+        self.assertEqual(r.strip(),
+r'''FROM ubuntu:16.04 AS stage0
+
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    def test_basic_example_singularity(self):
+        """ctype option"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'basic.py')
+        r = recipe(rf, ctype=container_type.SINGULARITY)
+        self.assertEqual(r.strip(),
+r'''BootStrap: docker
+From: ubuntu:16.04
+
+%post
+    apt-get update -y
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran
+    rm -rf /var/lib/apt/lists/*''')
+
+    def test_multistage_example_singlestage(self):
+        """Single_stage option"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
+        r = recipe(rf, single_stage=True)
+        self.assertEqual(r.strip(),
+r'''FROM nvidia/cuda:9.0-devel AS devel
+
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*
+
+# FFTW version 3.3.7
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
+    tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
+    cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
+ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    def test_multistage_example_singularity(self):
+        """Multi-stage recipe with Singularity container type"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
+        r = recipe(rf, ctype=container_type.SINGULARITY)
+        self.assertEqual(r.strip(),
+r'''BootStrap: docker
+From: nvidia/cuda:9.0-devel
+
+%post
+    apt-get update -y
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran
+    rm -rf /var/lib/apt/lists/*
+
+# FFTW version 3.3.7
+%post
+    apt-get update -y
+    apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget
+    rm -rf /var/lib/apt/lists/*
+%post
+    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
+    tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z
+    cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
+    make -j4
+    make -j4 install
+    rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
+%environment
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    def test_userarg_example(self):
+        """userarg option"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'userargs.py')
+        r = recipe(rf, userarg={'cuda': '9.0', 'ompi': '2.1.2'})
+        self.assertEqual(r.strip(),
+r'''FROM nvidia/cuda:9.0-devel AS stage0
+
+# OpenMPI version 2.1.2
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        file \
+        hwloc \
+        openssh-client \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
+    tar -x -f /tmp/openmpi-2.1.2.tar.bz2 -C /tmp -j && \
+    cd /tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/openmpi-2.1.2.tar.bz2 /tmp/openmpi-2.1.2
+ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/openmpi/bin:$PATH''')
