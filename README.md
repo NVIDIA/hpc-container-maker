@@ -17,8 +17,7 @@ non-native format may not seem worthwhile.  For small, simple
 containers, this is probably true.  However, for larger, more complex
 containers, there are 3 good reasons to use Container Maker recipes.
 
- 1. [Container implementation abstraction](#container-implementation
-   abstraction)
+ 1. [Container implementation abstraction](#container-implementation-abstraction)
 
  2. [Availability of a full programming language](#availability-of-a-full-programming-language)
 
