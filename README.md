@@ -17,14 +17,12 @@ non-native format may not seem worthwhile.  For small, simple
 containers, this is probably true.  However, for larger, more complex
 containers, there are 3 good reasons to use Container Maker recipes.
 
- 1. [Container implementation abstraction](#Container implementation
+ 1. [Container implementation abstraction](#container-implementation
    abstraction)
 
- 2. [Availability of a full programming language](#Availability of a
-   full programming language)
+ 2. [Availability of a full programming language](#availability-of-a-full-programming-language)
 
- 3. [Higher level abstraction](#Higher level abstraction), i.e.,
-   building blocks
+ 3. [Higher level abstraction](#higher-level-abstraction), i.e., building blocks
 
 Recipes also address the combinatorial explosion problem as the number
 of components and versions increase.
