@@ -17,14 +17,11 @@ non-native format may not seem worthwhile.  For small, simple
 containers, this is probably true.  However, for larger, more complex
 containers, there are 3 good reasons to use Container Maker recipes.
 
-1. [Container implementation abstraction](#Container implementation
-   abstraction)
+ 1. [Container implementation abstraction](#container-implementation-abstraction)
 
-2. [Availability of a full programming language](#Availability of a
-   full programming language)
+ 2. [Availability of a full programming language](#availability-of-a-full-programming-language)
 
-3. [Higher level abstraction](#Higher level abstraction), i.e.,
-   building blocks
+ 3. [Higher level abstraction](#higher-level-abstraction), i.e., building blocks
 
 Recipes also address the combinatorial explosion problem as the number
 of components and versions increase.
@@ -178,14 +175,14 @@ components, are included for the [GNU](recipes/hpcbase-gnu.py) and
 
 The workflow for this scenario follows.
 
-1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile`.
+ 1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile`.
 
-2. Add the HPC application specific build steps to the Dockerfile from
+ 2. Add the HPC application specific build steps to the Dockerfile from
    step 1.
 
-3. Build the Docker container, e.g., `docker build -t myapp -f Dockerfile .`.
+ 3. Build the Docker container, e.g., `docker build -t myapp -f Dockerfile .`.
 
-4. Run the Docker container, e.g., `nvidia-docker run --rm -ti myapp`.
+ 4. Run the Docker container, e.g., `nvidia-docker run --rm -ti myapp`.
 
 A variant of this scenario is to use the base recipe to generate a
 base image containing the required core components.  The resulting
@@ -194,16 +191,16 @@ file.
 
 The workflow for this scenario variant follows.
 
-1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile.base`.
+ 1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile.base`.
 
-2. Generate a Docker image, e.g., `docker build -t base -f Dockerfile.base .`.
+ 2. Generate a Docker image, e.g., `docker build -t base -f Dockerfile.base .`.
 
-3. Create a Dockerfile that references the base image from step 2 and
+ 3. Create a Dockerfile that references the base image from step 2 and
    contains the HPC application specific build steps.
 
-4. Build the Docker container, e.g., `docker build -t myapp -f Dockerfile .`.
+ 4. Build the Docker container, e.g., `docker build -t myapp -f Dockerfile .`.
 
-5. Run the Docker container, e.g., `nvidia-docker run --rm -ti myapp`.
+ 5. Run the Docker container, e.g., `nvidia-docker run --rm -ti myapp`.
 
 ### Full container specification
 
@@ -216,11 +213,11 @@ build context and may not build without them.
 
 A sample workflow for this scenario follows.
 
-1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/chroma.py > Dockerfile`
+ 1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/chroma.py > Dockerfile`
 
-2. Generate a Docker image, e.g., `docker build -t chroma -f Dockerfile .`.
+ 2. Generate a Docker image, e.g., `docker build -t chroma -f Dockerfile .`.
 
-3. Run the Docker container, e.g., `nvidia-docker run --rm -ti chroma`.
+ 3. Run the Docker container, e.g., `nvidia-docker run --rm -ti chroma`.
 
 ## Creating Singularity Images
 
@@ -232,18 +229,18 @@ used, the Docker-based workflow must be used.
 
 ### Docker-based workflow
 
-1. Generate a Dockerfile from the recipe.  E.g., `hpccm.py --recipe recipes/examples/basic.py > Dockerfile`
+ 1. Generate a Dockerfile from the recipe.  E.g., `hpccm.py --recipe recipes/examples/basic.py > Dockerfile`
 
-2. Build the Docker container. E.g., `docker build -t basic -f Dockerfile .`
+ 2. Build the Docker container. E.g., `docker build -t basic -f Dockerfile .`
 
-3. Convert the container to a Singularity image.  E.g.,
+ 3. Convert the container to a Singularity image.  E.g.,
 `docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity basic`
 
 ### Singularity native workflow
 
-1. Generate a Singularity recipe file.  E.g., `hpccm.py --recipe recipes/examples/basic.py --format singularity > Singularity`
+ 1. Generate a Singularity recipe file.  E.g., `hpccm.py --recipe recipes/examples/basic.py --format singularity > Singularity`
 
-2. Build the Singularity container. E.g., `sudo singularity build basic.simg Singularity`
+ 2. Build the Singularity container. E.g., `sudo singularity build basic.simg Singularity`
 
 ## Usage
 
