@@ -91,7 +91,7 @@ if precision not in VALID_PRECISION:
 
 ...
 
-Stage0 += shell(commands=['make –f Makefile.linux.{}'.format(precision), ...])
+Stage0 += shell(commands=['make -f Makefile.linux.{}'.format(precision), ...])
 
 ...
 ```
