@@ -24,7 +24,7 @@ import unittest
 
 from hpccm.git import git
 
-class Test_wget(unittest.TestCase):
+class Test_git(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
@@ -35,7 +35,7 @@ class Test_wget(unittest.TestCase):
         self.assertEqual(g.clone_step(), '')
 
     def test_basic(self):
-        """Basic wget"""
+        """Basic git"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git'),
                          'mkdir -p /tmp && git -C /tmp clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git')
