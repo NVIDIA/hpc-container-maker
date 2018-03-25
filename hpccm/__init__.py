@@ -28,6 +28,7 @@ from .comment import comment
 from .copy import copy
 from .environment import environment
 from .fftw import fftw
+from .git import git
 from .hdf5 import hdf5
 from .label import label
 from .mlnx_ofed import mlnx_ofed
