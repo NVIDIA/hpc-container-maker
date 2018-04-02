@@ -49,4 +49,4 @@ class git(object):
 
         # Ensure the path exists
         return 'mkdir -p {0} && git -C {0} clone {1} {2} {3}'.format(
-            path, opt_string, repository, directory)
+            path, opt_string, repository, directory).strip()

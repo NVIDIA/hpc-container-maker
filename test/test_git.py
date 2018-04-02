@@ -47,12 +47,19 @@ class Test_git(unittest.TestCase):
                                       branch='master'),
                          'mkdir -p /tmp && git -C /tmp clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git')
 
-    def test_directory(self):
-        """git with non-default base directory"""
+    def test_path(self):
+        """git with non-default base path"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
-                                      directory='/scratch'),
+                                      path='/scratch'),
                          'mkdir -p /scratch && git -C /scratch clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git')
+
+    def test_directory(self):
+        """git with non-default directory to clone into"""
+        g = git()
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      directory='hpccm'),
+                         'mkdir -p /tmp && git -C /tmp clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpccm')
 
     def test_opts(self):
         """git with non-default command line options"""
