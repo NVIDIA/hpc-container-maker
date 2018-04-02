@@ -31,7 +31,8 @@ class git(object):
 
         self.git_opts = kwargs.get('opts', ['--depth=1'])
 
-    def clone_step(self, branch=None, directory='/tmp', repository=None):
+    def clone_step(self, branch=None, directory='', path='/tmp',
+                   repository=None):
         """Documentation TBD"""
 
         if not repository:
@@ -46,6 +47,6 @@ class git(object):
 
         opt_string = ' '.join(opts)
 
-        # Ensure the directory exists
-        return 'mkdir -p {1} && git -C {1} clone {0} {2}'.format(
-            opt_string, directory, repository)
+        # Ensure the path exists
+        return 'mkdir -p {0} && git -C {0} clone {1} {2} {3}'.format(
+            path, opt_string, repository, directory)
