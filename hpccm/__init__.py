@@ -37,6 +37,7 @@ from .openmpi import openmpi
 from .pgi import pgi
 from .raw import raw
 from .recipe import recipe
+from .sed import sed
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
