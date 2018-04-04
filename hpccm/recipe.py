@@ -37,6 +37,7 @@ from .git import git                 # pylint: disable=unused-import
 from .hdf5 import hdf5               # pylint: disable=unused-import
 from .label import label             # pylint: disable=unused-import
 from .mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
+from .mvapich2 import mvapich2       # pylint: disable=unused-import
 from .ofed import ofed               # pylint: disable=unused-import
 from .openmpi import openmpi         # pylint: disable=unused-import
 from .pgi import pgi                 # pylint: disable=unused-import

@@ -170,12 +170,15 @@ added by-hand to the Dockerfile or Singularity recipe file which is
 used to generate the container image.
 
 HPC base recipe files, containing commonly-required core HPC
-components, are included for the [GNU](recipes/hpcbase-gnu.py) and
-[PGI](recipes/hpcbase-pgi.py) compilers.
+components, are included for the [GNU compiler with
+OpenMPI](recipes/hpcbase-gnu-openmpi.py), the [GNU compiler with
+MVAPICH2](recipes/hpcbase-gnu-mvapich2.py), the [PGI compiler with
+OpenMPI](recipes/hpcbase-pgi-openmpi.py), and the [PGI compiler with
+MVAPICH2](recipes/hpcbase-pgi-mvapich2.py).
 
 The workflow for this scenario follows.
 
- 1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile`.
+ 1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu-openmpi.py > Dockerfile`.
 
  2. Add the HPC application specific build steps to the Dockerfile from
    step 1.
@@ -191,7 +194,7 @@ file.
 
 The workflow for this scenario variant follows.
 
- 1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile.base`.
+ 1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu-openmpi.py > Dockerfile.base`.
 
  2. Generate a Docker image, e.g., `docker build -t base -f Dockerfile.base .`.
 
