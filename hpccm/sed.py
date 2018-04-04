@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""sed template"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -23,17 +23,17 @@ import logging # pylint: disable=unused-import
 import shlex
 
 class sed(object):
-    """Documentation TBD"""
+    """sed template"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize sed template"""
 
         #super(sed, self).__init__()
 
         self.sed_opts = kwargs.get('opts', [])
 
     def sed_step(self, file=None, in_place=True, patterns=[]):
-        """Documentation TBD"""
+        """Generate sed command line string"""
 
         if not file:
             logging.error('file is not defined')
