@@ -31,6 +31,7 @@ from .fftw import fftw
 from .hdf5 import hdf5
 from .label import label
 from .mlnx_ofed import mlnx_ofed
+from .mvapich2 import mvapich2
 from .ofed import ofed
 from .openmpi import openmpi
 from .pgi import pgi
