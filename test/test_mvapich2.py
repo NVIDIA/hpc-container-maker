@@ -47,7 +47,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
     cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --with-cuda=/usr/local/cuda && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/openmpi-2.3b
+    rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/mvapich2-2.3b
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
