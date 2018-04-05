@@ -41,7 +41,7 @@ class mvapich2(ConfigureMake, tar, wget):
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
-        #super(openmpi, self).__init__(**kwargs)
+        #super(mvapich2, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
@@ -134,7 +134,7 @@ class mvapich2(ConfigureMake, tar, wget):
             self.__commands.append(self.cleanup_step(
                 items=[os.path.join(self.__wd, tarball),
                        os.path.join(self.__wd,
-                                    'openmpi-{}'.format(self.version))]))
+                                    'mvapich2-{}'.format(self.version))]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
