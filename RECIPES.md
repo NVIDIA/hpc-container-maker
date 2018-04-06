@@ -556,6 +556,8 @@ Templates are not automatically included in the recipe namespace.  The
 
 - `ConfigureMake`: Configure and make packages from source
 
+- `git`: Clone git repositories
+
 - `tar`: Work with tarball files
 
 - `toolchain`: Development toolchain environment
