@@ -46,9 +46,9 @@ if __name__ == "__main__":
     parser.add_argument('--single-stage', action='store_true', default=False,
                         help='only process the first stage of a multi-stage ' +
                         'recipe')
-    parser.add_argument('--recipe', default='recipes/hpcbase-gnu.py',
+    parser.add_argument('--recipe', default='recipes/hpcbase-gnu-openmpi.py',
                         help='generate a Dockerfile for the RECIPE file ' +
-                        '(default: recipes/hpcbase-gnu.py)')
+                        '(default: recipes/hpcbase-gnu-openmpi.py)')
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
                         nargs='+', help='specify user parameters')
     args = parser.parse_args()
