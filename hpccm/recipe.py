@@ -45,8 +45,8 @@ from .raw import raw                 # pylint: disable=unused-import
 from .shell import shell             # pylint: disable=unused-import
 from .workdir import workdir         # pylint: disable=unused-import
 
-def recipe(recipe_file, ctype=container_type.DOCKER, single_stage=False,
-           userarg=None):
+def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
+           single_stage=False, userarg=None):
     """Recipe builder"""
 
     # Make user arguments available
@@ -64,8 +64,11 @@ def recipe(recipe_file, ctype=container_type.DOCKER, single_stage=False,
             # pylint: disable=exec-used
             exec(compile(f.read(), recipe_file, 'exec'))
     except Exception as e:
-        logging.error(e)
-        exit(1)
+        if raise_exceptions:
+            raise e from e
+        else:
+            logging.error(e)
+            exit(1)
 
     # Only process the first stage of a recipe
     if single_stage:
