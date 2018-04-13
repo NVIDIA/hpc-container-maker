@@ -558,6 +558,8 @@ Templates are not automatically included in the recipe namespace.  The
 
 - `git`: Clone git repositories
 
+- `sed`: Modify files
+
 - `tar`: Work with tarball files
 
 - `toolchain`: Development toolchain environment
