@@ -35,6 +35,14 @@ class ConfigureMake(object):
         self.parallel = kwargs.get('parallel', 4)
         self.prefix = kwargs.get('prefix', '/usr/local')
 
+        # Some components complain if some compiler variables are
+        # enabled, e.g., MVAPICH2 with F90, so provide a way for the
+        # caller to disable any of the compiler variables.
+        self.toolchain_control = kwargs.get('toolchain_control',
+                                            {'CC': True, 'CXX': True,
+                                             'F77': True, 'F90': True,
+                                             'FC': True})
+
     def build_step(self):
         """Documentation TBD"""
         return 'make -j{0:d}'.format(self.parallel)
@@ -52,19 +60,19 @@ class ConfigureMake(object):
 
         prefix = []
         if toolchain:
-            if toolchain.CC:
+            if toolchain.CC and self.toolchain_control.get('CC'):
                 prefix.append('CC={}'.format(toolchain.CC))
 
-            if toolchain.CXX:
+            if toolchain.CXX and self.toolchain_control.get('CXX'):
                 prefix.append('CXX={}'.format(toolchain.CXX))
 
-            if toolchain.F77:
+            if toolchain.F77 and self.toolchain_control.get('F77'):
                 prefix.append('F77={}'.format(toolchain.F77))
 
-            if toolchain.F90:
+            if toolchain.F90 and self.toolchain_control.get('F90'):
                 prefix.append('F90={}'.format(toolchain.F90))
 
-            if toolchain.FC:
+            if toolchain.FC and self.toolchain_control.get('FC'):
                 prefix.append('FC={}'.format(toolchain.FC))
 
         configure_prefix = ' '.join(prefix)
