@@ -38,21 +38,36 @@ class Test_git(unittest.TestCase):
         """Basic git"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git'),
-                         'mkdir -p /tmp && git -C /tmp clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git')
+                         'mkdir -p /tmp && git -C /tmp clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
 
     def test_branch(self):
         """git with specified branch"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
                                       branch='master'),
-                         'mkdir -p /tmp && git -C /tmp clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git')
+                         'mkdir -p /tmp && git -C /tmp clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
+
+    def test_commit(self):
+        """git with specified commit"""
+        g = git()
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c'),
+                         'mkdir -p /tmp && git -C /tmp clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && git -C /tmp/hpc-container-maker checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c')
+
+    def test_branch_and_commit(self):
+        """git with both specified branch and specified commit"""
+        g = git()
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      branch='master',
+                                      commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c'),
+                         'mkdir -p /tmp && git -C /tmp clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && git -C /tmp/hpc-container-maker checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c')
 
     def test_path(self):
         """git with non-default base path"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
                                       path='/scratch'),
-                         'mkdir -p /scratch && git -C /scratch clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git')
+                         'mkdir -p /scratch && git -C /scratch clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
 
     def test_directory(self):
         """git with non-default directory to clone into"""
@@ -65,4 +80,4 @@ class Test_git(unittest.TestCase):
         """git with non-default command line options"""
         g = git(opts=['--single-branch'])
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git'),
-                         'mkdir -p /tmp && git -C /tmp clone --single-branch https://github.com/NVIDIA/hpc-container-maker.git')
+                         'mkdir -p /tmp && git -C /tmp clone --single-branch https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
