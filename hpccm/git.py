@@ -41,6 +41,10 @@ class git(object):
             logging.warning('No git repository specified')
             return ''
 
+        if branch and commit: # pragma: no cover
+            logging.warning('Both branch and commit specified, ' +
+                            'ignoring branch and using commit...')
+
         if not directory:
             # Use the final entry in the repository as the directory,
             # stripping off any '.git'.  This is the default git
