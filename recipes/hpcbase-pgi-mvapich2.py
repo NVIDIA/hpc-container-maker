@@ -12,6 +12,14 @@ Contents:
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 
+# The PGI End-User License Agreement (https://www.pgroup.com/doc/LICENSE)
+# must be accepted.
+pgi_eula=False
+if USERARG.get('pgi_eula_accept', False):
+  pgi_eula=True
+else:
+  raise RuntimeError('PGI EULA not accepted. To accept, use "--userarg pgi_eula_accept=yes"\nSee PGI EULA at https://www.pgroup.com/doc/LICENSE')
+
 ######
 # Devel stage
 ######
@@ -24,7 +32,7 @@ Stage0 += baseimage(image='nvidia/cuda:9.0-devel', _as='devel')
 Stage0 += apt_get(ospackages=['python', 'python3'])
 
 # PGI compilers
-pgi = pgi(version='17.10')
+pgi = pgi(eula=pgi_eula, version='17.10')
 Stage0 += pgi
 
 # Setup the toolchain.  Use the PGI compiler toolchain as the basis.

@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import re
 import os
 
 from enum import Enum
@@ -33,11 +34,6 @@ from .tar import tar
 from .toolchain import toolchain
 from .wget import wget
 
-class pgi_edition(Enum):
-    """Documentation TBD"""
-    COMMUNITY = 1
-    PROFESSIONAL = 2
-
 class pgi(tar, wget):
     """Documentation TBD"""
 
@@ -50,34 +46,32 @@ class pgi(tar, wget):
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
-        self.edition = pgi_edition.COMMUNITY
+        self.__basepath = '/opt/pgi/linux86-64/'
+        self.__commands = [] # Filled in by __setup()
+
+        # By setting this value to True, you agree to the PGI End-User
+        # License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
+        self.__eula = kwargs.get('eula', False)
+
+        self.__ospackages = kwargs.get('ospackages', ['libnuma1'])
+        self.__referer = 'http://www.pgroup.com/products/community.htm'
+        self.__tarball = kwargs.get('tarball', '')
+        self.__url = 'http://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
+
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
         # This will need to be updated to 2018 once the community
         # version is updated.
-        self.version = kwargs.get('version', '17.10')
+        self.__version = kwargs.get('version', '17.10')
+        self.__wd = '/tmp/pgi' # working directory
 
-        self.__commands = [] # Filled in by __setup()
-        basepath = '/opt/pgi/linux86-64/{}'.format(self.version)
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(basepath, 'bin')),
-            'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(basepath, 'lib'))}
-        self.__ospackages = kwargs.get('ospackages', ['wget'])
-        self.__referer = 'http://www.pgroup.com/products/community.htm'
-        self.__url = 'http://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
-
-        self.toolchain = toolchain(
-            CC=os.path.join(basepath, 'bin', 'pgcc'),
-            CXX=os.path.join(basepath, 'bin', 'pgc++'),
-            F77=os.path.join(basepath, 'bin', 'pgfortran'),
-            F90=os.path.join(basepath, 'bin', 'pgfortran'),
-            FC=os.path.join(basepath, 'bin', 'pgfortran'))
+        self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
+                                   F90='pgfortran', FC='pgfortran')
 
     def cleanup_step(self, items=None):
         """Documentation TBD"""
 
-        if not items:
+        if not items: # pragma: no cover
             logging.warning('items are not defined')
             return ''
 
@@ -86,51 +80,97 @@ class pgi(tar, wget):
     def __setup(self):
         """Documentation TBD"""
 
-        # The URL would normally result in a downloaded file with the
-        # name 'downloader.php?file=pgi-community-linux-x64'.  Also,
-        # the version downloaded cannot be controlled, it will always
-        # be the 'latest'.  Use a synthetic tarball filename.
-        tarball = 'pgi-community-linux-x64-latest.tar.gz'
+        if self.__tarball:
+            # Use tarball from local build context
+            tarball = self.__tarball
 
-        # Use /tmp/pgi as the working directory
-        wd = '/tmp/pgi'
+            # Figure out the version from the tarball name
+            match = re.match(r'pgilinux-\d+-(?P<year>\d\d)(?P<month>\d\d)',
+                             tarball)
+            if match.groupdict()['year'] and match.groupdict()['month']:
+                self.__version = '{0}.{1}'.format(match.groupdict()['year'],
+                                                  match.groupdict()['month'])
+        else:
+            # The URL would normally result in a downloaded file with
+            # the name 'downloader.php?file=pgi-community-linux-x64'.
+            # Also, the version downloaded cannot be controlled, it
+            # will always be the 'latest'.  Use a synthetic tarball
+            # filename.
+            tarball = 'pgi-community-linux-x64-latest.tar.gz'
 
-        self.__commands.append(self.download_step(
-            url=self.__url, outfile=os.path.join(wd, tarball),
-            referer=self.__referer, directory=wd))
+            self.__commands.append(self.download_step(
+                url=self.__url, outfile=os.path.join(self.__wd, tarball),
+                referer=self.__referer, directory=self.__wd))
+
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(wd, tarball), directory=wd))
-        self.__commands.append('cd {} && PGI_SILENT=true PGI_ACCEPT_EULA=accept ./install'.format(wd))
+            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+
+        if self.__eula:
+            self.__commands.append('cd {} && PGI_SILENT=true PGI_ACCEPT_EULA=accept ./install'.format(self.__wd))
+        else:
+            # This will fail when building the container
+            logging.warning('PGI EULA was not accepted')
+            self.__commands.append('cd {} && PGI_ACCEPT_EULA=decline ./install'.format(self.__wd))
+
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(wd, tarball), wd]))
+            items=[os.path.join(self.__wd, tarball), self.__wd]))
 
     def runtime(self, _from='0'):
         """Documentation TBD"""
-        basepath = '/opt/pgi/linux86-64/{}'.format(self.version)
-
         instructions = []
         instructions.append(comment('PGI compiler'))
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        if self.__ospackages:
+            instructions.append(apt_get(ospackages=self.__ospackages))
         instructions.append(copy(_from=_from,
-                                 src=os.path.join(basepath, 'REDIST', '*.so'),
-                                 dest=os.path.join(basepath, 'lib', '')))
+                                 src=os.path.join(self.__basepath,
+                                                  self.__version, 'REDIST',
+                                                  '*.so'),
+                                 dest=os.path.join(self.__basepath,
+                                                   self.__version, 'lib', '')))
+        instructions.append(shell(
+            commands=['ln -s {0} {1}'.format(os.path.join(self.__basepath,
+                                                          self.__version,
+                                                          'lib',
+                                                          'libpgnuma.so'),
+                                             os.path.join(self.__basepath,
+                                                          self.__version,
+                                                          'lib',
+                                                          'libnuma.so'))]))
         instructions.append(environment(
             variables={'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(basepath, 'lib'))}))
+                os.path.join(self.__basepath, self.__version, 'lib'))}))
         return instructions
 
     def toString(self, ctype):
         """Documentation TBD"""
 
         self.__setup()
+        ospackages = list(self.__ospackages)
 
         instructions = []
         instructions.append(comment(
-            'PGI compiler version {}'.format(self.version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
+            'PGI compiler version {}'.format(self.__version)).toString(ctype))
+        if self.__tarball:
+            # Use tarball from local build context
+            instructions.append(
+                copy(src=self.__tarball,
+                     dest=os.path.join(self.__wd,
+                                       self.__tarball)).toString(ctype))
+        else:
+            # Downloading, so need wget
+            ospackages.append('wget')
+
+        if ospackages:
+            instructions.append(apt_get(
+                ospackages=ospackages).toString(ctype))
+
         instructions.append(shell(commands=self.__commands).toString(ctype))
         instructions.append(environment(
-            variables=self.__environment_variables).toString(ctype))
+            variables={'PATH': '{}:$PATH'.format(os.path.join(self.__basepath,
+                                                              self.__version,
+                                                              'bin')),
+                       'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
+                           os.path.join(self.__basepath, self.__version,
+                                        'lib'))}).toString(ctype))
 
         return '\n'.join(instructions)
