@@ -12,13 +12,13 @@ Contents:
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 
-# The PGI End-User License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
+# The PGI End-User License Agreement (https://www.pgroup.com/doc/LICENSE)
 # must be accepted.
 pgi_eula=False
 if USERARG.get('pgi_eula_accept', False):
   pgi_eula=True
 else:
-  raise RuntimeError('PGI EULA not accepted. To accept, use "--userarg pgi_eula_accept=yes"')
+  raise RuntimeError('PGI EULA not accepted. To accept, use "--userarg pgi_eula_accept=yes"\nSee PGI EULA at https://www.pgroup.com/doc/LICENSE')
 
 ######
 # Devel stage
