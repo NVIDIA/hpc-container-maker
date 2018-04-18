@@ -21,7 +21,7 @@ Stage0.baseimage('nvidia/cuda:9.0-devel')
 ospackages = ['make', 'wget']
 Stage0 += apt_get(ospackages=ospackages)
 
-p = pgi(version='17.10')
+p = pgi(eula=True, version='17.10')
 Stage0 += p
 
 # Use the PGI toolchain to build OpenMPI                                
@@ -265,7 +265,7 @@ fftw(directory='sources/fftw-3.3.7')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 fftw(toolchain=p.toolchain)
 ```
 
@@ -334,7 +334,7 @@ hdf5(directory='sources/hdf5-1.10.1')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 hdf5(toolchain=p.toolchain)
 ```
 
@@ -564,7 +564,7 @@ openmpi(directory='sources/openmpi-3.0.0')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 openmpi(toolchain=p.toolchain)
 ```
 
@@ -585,6 +585,10 @@ Stage1 += ompi.runtime()
 The `pgi` building block downloads and installs the PGI compiler.
 Currently, the only option is to install the latest community edition.
 
+You must agree to the [PGI End-User License
+Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
+building block.
+
 As a side effect, this building block modifies `PATH` and
 `LD_LIBRARY_PATH` to include the PGI compiler.
 
@@ -593,12 +597,26 @@ The tool can be passed to other operations that want to build using
 the PGI compilers.
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 
 operation(..., toolchain=p.toolchain, ...)
 ```
 
 Parameters:
+
+- `eula`: By setting this value to `True`, you agree to the [PGI
+  End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
+  The default value is `False`.
+
+- `ospackages`: List of OS packages to install prior to installing the
+  PGI compiler.  The default values are `libnuma1`, and `wget` (if
+  downloading the PGI compiler rather than using a tarball in the
+  local build context).
+
+- `tarball`: Path to the PGI compiler tarball relative to the local
+  build context.  The default value is empty.  If this is defined, the
+  tarball in the local build context will be used rather than
+  downloading the tarball from the web.
 
 - `version`: The version of the PGI compiler to use.  Note this value
   is currently only used when setting the environment and does not
@@ -613,14 +631,18 @@ Methods:
 Examples:
 
 ```python
-pgi(version='2017')
+pgi(eula=True, version='2017')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 Stage0 += p
 ...
 Stage1 += p.runtime()
+```
+
+```python
+pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
 ```
 
 ## Templates
