@@ -16,7 +16,7 @@ gromacs_version = USERARG.get('GROMACS_VERSION', '2018')
 
 Stage0 += comment(__doc__.strip(), reformat=False)
 Stage0.name = 'devel'
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', AS=Stage0.name)
+Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
 
 Stage0 += apt_get(ospackages=['ca-certificates', 'cmake', 'git', 'python'])
 
