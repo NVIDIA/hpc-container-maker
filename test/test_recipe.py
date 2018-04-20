@@ -38,11 +38,18 @@ class Test_recipe(unittest.TestCase):
             r = recipe()
 
     def test_bad_recipe(self):
-        """Basic example"""
+        """Bad (invalid) recipe file"""
         path = os.path.dirname(__file__)
         rf = os.path.join(path, 'bad_recipe.py')
         with self.assertRaises(SystemExit):
             r = recipe(rf)
+
+    def test_raise_exceptions(self):
+        """Bad (invalid) recipe file with raise exceptions enabled"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, 'bad_recipe.py')
+        with self.assertRaises(SyntaxError):
+            r = recipe(rf, raise_exceptions=True)
 
     def test_basic_example(self):
         """Basic example"""

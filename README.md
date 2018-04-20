@@ -170,12 +170,15 @@ added by-hand to the Dockerfile or Singularity recipe file which is
 used to generate the container image.
 
 HPC base recipe files, containing commonly-required core HPC
-components, are included for the [GNU](recipes/hpcbase-gnu.py) and
-[PGI](recipes/hpcbase-pgi.py) compilers.
+components, are included for the [GNU compiler with
+OpenMPI](recipes/hpcbase-gnu-openmpi.py), the [GNU compiler with
+MVAPICH2](recipes/hpcbase-gnu-mvapich2.py), the [PGI compiler with
+OpenMPI](recipes/hpcbase-pgi-openmpi.py), and the [PGI compiler with
+MVAPICH2](recipes/hpcbase-pgi-mvapich2.py).
 
 The workflow for this scenario follows.
 
- 1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile`.
+ 1. Generate a preliminary Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu-openmpi.py > Dockerfile`.
 
  2. Add the HPC application specific build steps to the Dockerfile from
    step 1.
@@ -191,7 +194,7 @@ file.
 
 The workflow for this scenario variant follows.
 
- 1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu.py > Dockerfile.base`.
+ 1. Generate a base image Dockerfile, e.g., `hpccm.py --recipe recipes/hpcbase-gnu-openmpi.py > Dockerfile.base`.
 
  2. Generate a Docker image, e.g., `docker build -t base -f Dockerfile.base .`.
 
@@ -213,11 +216,11 @@ build context and may not build without them.
 
 A sample workflow for this scenario follows.
 
- 1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/chroma.py > Dockerfile`
+ 1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/gromacs/gromacs.py > Dockerfile`
 
- 2. Generate a Docker image, e.g., `docker build -t chroma -f Dockerfile .`.
+ 2. Generate a Docker image, e.g., `docker build -t gromacs -f Dockerfile .`.
 
- 3. Run the Docker container, e.g., `nvidia-docker run --rm -ti chroma`.
+ 3. Run the Docker container, e.g., `nvidia-docker run --rm -ti gromacs`.
 
 ## Creating Singularity Images
 
@@ -250,6 +253,9 @@ used, the Docker-based workflow must be used.
   `docker` and `singularity`; `docker` is the default.
 
 - `--help`: print usage information and exit.
+
+- `--print-exceptions`: rather the print a concise error message,
+  print out the entire stack trace if an error occurs.
 
 - `--single-stage`: process only the first stage of a multi-stage
   recipe.

@@ -21,7 +21,7 @@ Stage0.baseimage('nvidia/cuda:9.0-devel')
 ospackages = ['make', 'wget']
 Stage0 += apt_get(ospackages=ospackages)
 
-p = pgi(version='17.10')
+p = pgi(eula=True, version='17.10')
 Stage0 += p
 
 # Use the PGI toolchain to build OpenMPI                                
@@ -265,7 +265,7 @@ fftw(directory='sources/fftw-3.3.7')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 fftw(toolchain=p.toolchain)
 ```
 
@@ -334,7 +334,7 @@ hdf5(directory='sources/hdf5-1.10.1')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 hdf5(toolchain=p.toolchain)
 ```
 
@@ -386,6 +386,84 @@ mofed = mlnx_ofed()
 Stage0 += mofed
 ...
 Stage1 += mofed.runtime()
+```
+
+### mvapich2
+
+The `mvapich2` building block configures, builds, and installs the
+[MVAPICH2](http://mvapich.cse.ohio-state.edu) component.  Depending on
+the parameters, the source will be downloaded from the web (default)
+or copied from a source directory in the local build context.
+
+An InfiniBand building block ([OFED](#ofed) or [Mellanox
+OFED](#mlnx_ofed)) should be installed prior to this building block.
+
+As a side effect, this building block modifies `PATH` and
+`LD_LIBRARY_PATH` to include the MVAPICH2 build.
+
+Parameters:
+
+- `check`: Boolean flag to specify whether the `make check` step
+  should be performed.  The default is False.
+
+- `configure_opts`: List of options to pass to `configure`.  The
+  default values are `--disable-mcast`.
+
+- `cuda`: Boolean flag to control whether a CUDA aware build is
+  performed.  If True, adds `--with-cuda` to the list of `configure`
+  options, otherwise adds `--without-cuda`.  If the toolchain
+  specifies `CUDA_HOME`, then that path is used.  The default value is
+  True.
+
+- `directory`: Path to the unpackaged source directory relative to the
+  local build context.  The default value is empty.  If this is
+  defined, the source in the local build context will be used rather
+  than downloading the source from the web.
+
+- `ospackages`: List of OS packages to install prior to configuring
+  and building.  The default values are `byacc`, `file`,
+  `openssh-client`, and `wget`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/mvapich2`.
+
+- `toolchain`: The toolchain object.  This should be used if
+  non-default compilers or other toolchain options are needed.  The
+  default is empty.
+
+- `version`: The version of MVAPICH2 source to download.  This value
+  is ignored if `directory` is set.  The default value is `2.3b`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+mvapich2(cuda=False, prefix='/opt/mvapich2/2.3a', version='2.3a')
+```
+
+```python
+mvapich2(directory='sources/mvapich2-2.3b')
+```
+
+```python
+p = pgi()
+mvapich2(toolchain=p.toolchain)
+```
+
+```python
+mvapich2(configure_opts=['--disable-fortran', '--disable-mcast'],
+         ospackages=['byacc','file','openssh-client','wget'])
+```
+
+```python
+mv2 = mvapich2()
+Stage0 += mv2
+...
+Stage1 += mv2.runtime()
 ```
 
 ### ofed
@@ -486,7 +564,7 @@ openmpi(directory='sources/openmpi-3.0.0')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 openmpi(toolchain=p.toolchain)
 ```
 
@@ -507,6 +585,10 @@ Stage1 += ompi.runtime()
 The `pgi` building block downloads and installs the PGI compiler.
 Currently, the only option is to install the latest community edition.
 
+You must agree to the [PGI End-User License
+Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
+building block.
+
 As a side effect, this building block modifies `PATH` and
 `LD_LIBRARY_PATH` to include the PGI compiler.
 
@@ -515,12 +597,26 @@ The tool can be passed to other operations that want to build using
 the PGI compilers.
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 
 operation(..., toolchain=p.toolchain, ...)
 ```
 
 Parameters:
+
+- `eula`: By setting this value to `True`, you agree to the [PGI
+  End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
+  The default value is `False`.
+
+- `ospackages`: List of OS packages to install prior to installing the
+  PGI compiler.  The default values are `libnuma1`, and `wget` (if
+  downloading the PGI compiler rather than using a tarball in the
+  local build context).
+
+- `tarball`: Path to the PGI compiler tarball relative to the local
+  build context.  The default value is empty.  If this is defined, the
+  tarball in the local build context will be used rather than
+  downloading the tarball from the web.
 
 - `version`: The version of the PGI compiler to use.  Note this value
   is currently only used when setting the environment and does not
@@ -535,14 +631,18 @@ Methods:
 Examples:
 
 ```python
-pgi(version='2017')
+pgi(eula=True, version='2017')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 Stage0 += p
 ...
 Stage1 += p.runtime()
+```
+
+```python
+pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
 ```
 
 ## Templates
