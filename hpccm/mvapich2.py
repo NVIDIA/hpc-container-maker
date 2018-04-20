@@ -94,11 +94,20 @@ class mvapich2(ConfigureMake, tar, wget):
 
         # CUDA
         if self.cuda:
+            cuda_home = "/usr/local/cuda"
             if self.__toolchain.CUDA_HOME:
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
-            else:
-                self.configure_opts.append('--with-cuda=/usr/local/cuda')
+                cuda_home = self.__toolchain.CUDA_HOME
+
+            self.configure_opts.append('--with-cuda={}'.format(cuda_home))
+
+            # One half of a workaround for using the MPI compiler
+            # wrappers during the build stage.  The driver will not be
+            # available, yet libmpi.so depends on libnvidia-ml.so.1.
+            # Need to use the stub libraries.  See
+            # https://github.com/NVIDIA/nvidia-docker/issues/374.
+            self.__commands.append('ln -s {} {}'.format(
+                os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so'),
+                os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so.1')))
         else:
             self.configure_opts.append('--without-cuda')
 
@@ -170,5 +179,22 @@ class mvapich2(ConfigureMake, tar, wget):
         instructions.append(shell(commands=self.__commands).toString(ctype))
         instructions.append(environment(
             variables=self.__environment_variables).toString(ctype))
+
+        # Second half of the workaround for the MPI compiler wrappers.
+        # Hijack the profiling hooks to inject the CUDA stub
+        # directory and stub driver.
+        if self.cuda:
+            cuda_home = '/usr/local/cuda'
+            if self.__toolchain.CUDA_HOME:
+                cuda_home = self.__toolchain.CUDA_HOME
+
+            postlib = '"-L{} -lnvidia-ml"'.format(
+                os.path.join(cuda_home, 'lib64', 'stubs'))
+            instructions.append(
+                comment('Hijack the profiling library hooks ' +
+                        'to inject the stub driver in the compiler ' +
+                        'wrappers').toString(ctype))
+            instructions.append(environment(variables={
+                'PROFILE_POSTLIB': postlib}).toString(ctype))
 
         return '\n'.join(instructions)

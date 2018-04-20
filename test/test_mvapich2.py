@@ -42,9 +42,34 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
+RUN ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
+    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
     tar -x -f /tmp/mvapich2-2.3b.tar.gz -C /tmp -z && \
     cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --with-cuda=/usr/local/cuda && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/mvapich2-2.3b
+ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/mvapich2/bin:$PATH
+# Hijack the profiling library hooks to inject the stub driver in the
+# compiler wrappers
+ENV PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
+
+    def test_nocuda(self):
+        """Disable CUDA"""
+        mv2 = mvapich2(cuda=False)
+        self.assertEqual(mv2.toString(container_type.DOCKER),
+r'''# MVAPICH2 version 2.3b
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        byacc \
+        file \
+        openssh-client \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
+    tar -x -f /tmp/mvapich2-2.3b.tar.gz -C /tmp -z && \
+    cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --without-cuda && \
     make -j4 && \
     make -j4 install && \
     rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/mvapich2-2.3b
@@ -63,12 +88,16 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 COPY mvapich2-2.3 /tmp/mvapich2-2.3
-RUN cd /tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --with-cuda=/usr/local/cuda && \
+RUN ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
+    cd /tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --with-cuda=/usr/local/cuda && \
     make -j4 && \
     make -j4 install && \
     rm -rf /tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
-    PATH=/usr/local/mvapich2/bin:$PATH''')
+    PATH=/usr/local/mvapich2/bin:$PATH
+# Hijack the profiling library hooks to inject the stub driver in the
+# compiler wrappers
+ENV PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
     def test_runtime(self):
         mv2 = mvapich2()
