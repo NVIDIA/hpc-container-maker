@@ -43,6 +43,9 @@ if __name__ == "__main__":
     parser.add_argument('--format', type=str, default='docker',
                         choices=[i.name.lower() for i in hpccm.container_type],
                         help='select container format')
+    parser.add_argument('--print-exceptions', action='store_true',
+                        default=False,
+                        help='print exceptions (stack traces)')
     parser.add_argument('--single-stage', action='store_true', default=False,
                         help='only process the first stage of a multi-stage ' +
                         'recipe')
@@ -58,6 +61,7 @@ if __name__ == "__main__":
 
     recipe = hpccm.recipe(args.recipe,
                           ctype=hpccm.container_type[args.format.upper()],
+                          raise_exceptions=args.print_exceptions,
                           single_stage=args.single_stage,
                           userarg=args.userarg)
     print(recipe)

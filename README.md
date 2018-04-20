@@ -254,6 +254,9 @@ used, the Docker-based workflow must be used.
 
 - `--help`: print usage information and exit.
 
+- `--print-exceptions`: rather the print a concise error message,
+  print out the entire stack trace if an error occurs.
+
 - `--single-stage`: process only the first stage of a multi-stage
   recipe.
 
