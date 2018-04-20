@@ -7,7 +7,7 @@ Contents:
   HDF5 version 1.10.1
   Mellanox OFED version 3.4-1.0.0.0
   MVAPICH2 version 2.3b
-  PGI compilers version 17.10
+  PGI compilers version 18.04
   Python 2 and 3 (upstream)
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
@@ -32,7 +32,7 @@ Stage0 += baseimage(image='nvidia/cuda:9.0-devel', _as='devel')
 Stage0 += apt_get(ospackages=['python', 'python3'])
 
 # PGI compilers
-pgi = pgi(eula=pgi_eula, version='17.10')
+pgi = pgi(eula=pgi_eula, version='18.04')
 Stage0 += pgi
 
 # Setup the toolchain.  Use the PGI compiler toolchain as the basis.
