@@ -216,11 +216,11 @@ build context and may not build without them.
 
 A sample workflow for this scenario follows.
 
- 1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/chroma.py > Dockerfile`
+ 1. Generate a Dockerfile, e.g., `hpccm.py --recipe recipes/gromacs/gromacs.py > Dockerfile`
 
- 2. Generate a Docker image, e.g., `docker build -t chroma -f Dockerfile .`.
+ 2. Generate a Docker image, e.g., `docker build -t gromacs -f Dockerfile .`.
 
- 3. Run the Docker container, e.g., `nvidia-docker run --rm -ti chroma`.
+ 3. Run the Docker container, e.g., `nvidia-docker run --rm -ti gromacs`.
 
 ## Creating Singularity Images
 
