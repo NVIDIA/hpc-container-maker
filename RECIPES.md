@@ -212,6 +212,37 @@ Example:
 apt_get(ospackages=['make', 'wget'])
 ```
 
+### cmake
+
+The `cmake` building block downloads and installs the
+[CMake](https://cmake.org) component.
+
+Parameters:
+
+- `eula`: By setting this value to `True`, you agree to the [CMake
+  End-User License
+  Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
+  The default value is `False`.
+
+- `ospackages`: List of OS packages to install prior to installing.
+  The default value is `wget`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local`.
+
+- `version`: The version of CMake to download.  The default value is
+  `3.11.1`.
+
+Examples:
+
+```python
+cmake(eula=True)
+```
+
+```python
+cmake(eula=True, version='3.10.3')
+```
+
 ### fftw
 
 The `fftw` building block down configures, builds, and installs the
