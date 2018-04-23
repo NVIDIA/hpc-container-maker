@@ -54,13 +54,13 @@ class pgi(tar, wget):
         self.__eula = kwargs.get('eula', False)
 
         self.__ospackages = kwargs.get('ospackages', ['libnuma1'])
-        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=nvidia_hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-hccrmr-37128'
+        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE'
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '18.04')
+        self.__version = kwargs.get('version', '18.4')
         self.__wd = '/tmp/pgi' # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
