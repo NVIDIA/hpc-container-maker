@@ -55,6 +55,6 @@ esac
 
 # run APEX
 cd $RUN_DIR
-echo "Launching APEX. Saving output to $RUN_DIR/$OUTPUT_FILE..."
+echo "Launching with APEX workload. Saving output to $RUN_DIR/$OUTPUT_FILE..."
 mpirun --allow-run-as-root -np $NGPUS su3_rhmd_hisq -geom $GEOM $INPUT_FILE $OUTPUT_FILE
-echo "APEX complete, results can be found at $RUN_DIR/$OUTPUT_FILE"
+echo "APEX workload complete, results can be found at $RUN_DIR/$OUTPUT_FILE"

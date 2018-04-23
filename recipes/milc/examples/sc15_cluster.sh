@@ -50,6 +50,6 @@ esac
 
 # run benchmark
 cd $RUN_DIR/small
-echo "Launching SC15 Cluster benchmark. Saving output to $RUN_DIR/$OUTPUT_FILE..."
+echo "Launching with SC15 student cluster competition benchmark. Saving output to $RUN_DIR/$OUTPUT_FILE..."
 mpirun --allow-run-as-root -np $NGPUS su3_rhmd_hisq -geom $GEOM $INPUT_FILE ../$OUTPUT_FILE
-echo "SC15 Cluster benchmark complete, results can be found at $RUN_DIR/$OUTPUT_FILE"
+echo "SC15 student cluster competition benchmark complete, results can be found at $RUN_DIR/$OUTPUT_FILE"
