@@ -214,10 +214,10 @@ apt_get(ospackages=['make', 'wget'])
 
 ### fftw
 
-The `fftw` building block down configures, builds, and installs the
-[FFTW](http://www.fftw.org) component.  Depending on the parameters,
-the source will be downloaded from the web (default) or copied from a
-source directory in the local build context.
+The `fftw` building block downloads, configures, builds, and installs
+the [FFTW](http://www.fftw.org) component.  Depending on the
+parameters, the source will be downloaded from the web (default) or
+copied from a source directory in the local build context.
 
 As a side effect, this building block modifies `LD_LIBRARY_PATH` to
 include the FFTW build.
@@ -283,8 +283,8 @@ Stage1 += f.runtime()
 
 ### hdf5
 
-The `hdf5` building block down configures, builds, and installs the
-[HDF5](http://www.hdfgroup.org) component.  Depending on the
+The `hdf5` building block downloads, configures, builds, and installs
+the [HDF5](http://www.hdfgroup.org) component.  Depending on the
 parameters, the source will be downloaded from the web (default) or
 copied from a source directory in the local build context.
 
