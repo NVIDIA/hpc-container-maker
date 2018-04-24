@@ -1,0 +1,79 @@
+    prompt 0
+    nx 36
+    ny 36
+    nz 36
+    nt 72
+    iseed 4563421
+    n_pseudo 5
+    load_rhmc_params rationals_m001m05m5.test1
+    beta 6.3
+    n_dyn_masses 3
+    dyn_mass .001 .05 .5
+    dyn_flavors 2 1 1
+    u0  0.890
+
+    warms 0
+    trajecs 0
+    traj_between_meas 40
+    microcanonical_time_step .05
+    steps_per_trajectory 20
+    cgresid_md_fa_gr 1 1 1
+    max_multicg_md_fa_gr  5  5  5
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1 1 1
+    max_multicg_md_fa_gr  5  5  5
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1 1 1
+    max_multicg_md_fa_gr  5  5  5
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1 1 1
+    max_multicg_md_fa_gr  5  5  5
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1 1 1
+    max_multicg_md_fa_gr  5  5  5
+    cgprec_md_fa_gr  2 2 2
+    prec_ff 2
+    number_of_pbp_masses 0
+    fresh
+    forget
+
+    warms 0
+    trajecs 2
+    traj_between_meas 2
+    microcanonical_time_step .0333
+    steps_per_trajectory 30
+    cgresid_md_fa_gr 1e-5 1e-5 1e-5
+    max_multicg_md_fa_gr  2500  2500  2500
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1e-7 1e-7 1e-7
+    max_multicg_md_fa_gr  2500  2500  2500
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1e-7 1e-7 1e-7
+    max_multicg_md_fa_gr  2500  2500  2500
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1e-7 1e-7 1e-7
+    max_multicg_md_fa_gr  2500  2500  2500
+    cgprec_md_fa_gr  2 2 2
+    cgresid_md_fa_gr 1e-7 1e-7 1e-7
+    max_multicg_md_fa_gr  2500  2500  2500
+    cgprec_md_fa_gr  2 2 2
+    prec_ff 2
+    number_of_pbp_masses 3
+    max_cg_prop 500
+    max_cg_prop_restarts 1
+    npbp_reps 1
+    prec_pbp 2
+    mass 0.01
+    naik_term_epsilon 0
+    error_for_propagator 1e-8
+    rel_error_for_propagator 0
+    mass 0.05
+    naik_term_epsilon 0
+    error_for_propagator 1e-8
+    rel_error_for_propagator 0
+    mass 0.5
+    naik_term_epsilon 0
+    error_for_propagator 1e-8
+    rel_error_for_propagator 0
+    reload_parallel 36x36x36x72.chklat
+    forget
