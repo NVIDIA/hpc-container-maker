@@ -29,6 +29,7 @@ from .Stage import Stage
 from .apt_get import apt_get         # pylint: disable=unused-import
 from .baseimage import baseimage     # pylint: disable=unused-import
 from .blob import blob               # pylint: disable=unused-import
+from .cmake import cmake             # pylint: disable=unused-import
 from .comment import comment         # pylint: disable=unused-import
 from .copy import copy               # pylint: disable=unused-import
 from .environment import environment # pylint: disable=unused-import

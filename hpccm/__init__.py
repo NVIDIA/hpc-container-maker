@@ -24,6 +24,7 @@ from .Stage import Stage
 from .apt_get import apt_get
 from .baseimage import baseimage
 from .blob import blob
+from .cmake import cmake
 from .comment import comment
 from .copy import copy
 from .environment import environment
