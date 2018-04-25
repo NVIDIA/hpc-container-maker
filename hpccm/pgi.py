@@ -54,7 +54,7 @@ class pgi(tar, wget):
         self.__eula = kwargs.get('eula', False)
 
         self.__ospackages = kwargs.get('ospackages', ['libnuma1'])
-        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE'
+        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 

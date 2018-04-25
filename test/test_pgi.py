@@ -40,7 +40,7 @@ RUN apt-get update -y && \
         libnuma1 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=decline ./install && \
     rm -rf /tmp/pgi/pgi-community-linux-x64-latest.tar.gz /tmp/pgi
@@ -57,7 +57,7 @@ RUN apt-get update -y && \
         libnuma1 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_SILENT=true PGI_ACCEPT_EULA=accept ./install && \
     rm -rf /tmp/pgi/pgi-community-linux-x64-latest.tar.gz /tmp/pgi
