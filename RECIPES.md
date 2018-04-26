@@ -15,13 +15,13 @@ specifying the `--format` command line option.
 
 ```python
 # OpenMPI 3.0.0, with InfiniBand and CUDA enabled, using the latest
-# PGI community edition compiler (17.10)
+# PGI community edition compiler (18.4)
 Stage0.baseimage('nvidia/cuda:9.0-devel')
 
 ospackages = ['make', 'wget']
 Stage0 += apt_get(ospackages=ospackages)
 
-p = pgi(eula=True, version='17.10')
+p = pgi(eula=True, version='18.4')
 Stage0 += p
 
 # Use the PGI toolchain to build OpenMPI                                
@@ -652,7 +652,7 @@ Parameters:
 - `version`: The version of the PGI compiler to use.  Note this value
   is currently only used when setting the environment and does not
   control the version of the compiler downloaded.  The default value
-  is `17.10`.
+  is `18.4`.
 
 Methods:
 
@@ -662,7 +662,7 @@ Methods:
 Examples:
 
 ```python
-pgi(eula=True, version='2017')
+pgi(eula=True, version='18.4')
 ```
 
 ```python
