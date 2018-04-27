@@ -312,6 +312,54 @@ Stage0 += f
 Stage1 += f.runtime()
 ```
 
+### gnu
+
+The `gnu` building block installs the GNU compilers from the upstream
+Linux distribution.
+
+As a side effect, a toolchain is created containing the GNU compilers.
+The tool can be passed to other operations that want to build using
+the GNU compilers.
+
+```python
+g = gnu()
+
+operation(..., toolchain=g.toolchain, ...)
+```
+
+Parameters:
+
+- `cc`: Boolean flag to specify whether to install `gcc`.  The default
+  is True.
+
+- `cxx`: Boolean flag to specify whether to install `g++`.  The
+  default is True.
+
+- `fortran`: Boolean flag to specify whether to install `gfortran`.
+  The default is True.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+gnu()
+```
+
+```python
+g = gnu()
+Stage0 += g
+...
+Stage1 += g.runtime()
+```
+
+```python
+gnu(fortran=False)
+```
+
 ### hdf5
 
 The `hdf5` building block downloads, configures, builds, and installs

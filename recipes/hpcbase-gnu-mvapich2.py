@@ -23,12 +23,13 @@ Stage0 += baseimage(image='nvidia/cuda:9.0-devel', _as='devel')
 # Python (use upstream)
 Stage0 += apt_get(ospackages=['python', 'python3'])
 
-# Compilers (use upstream)
-Stage0 += apt_get(ospackages=['gcc', 'g++', 'gfortran'])
+# GNU compilers
+gnu = gnu()
+Stage0 += gnu
 
-# Create a toolchain
-tc = hpccm.toolchain(CC='gcc', CXX='g++', F77='gfortran', F90='gfortran',
-                     FC='gfortran', CUDA_HOME='/usr/local/cuda')
+# Setup the toolchain.  Use the GNU compiler toolchain as the basis.
+tc = gnu.toolchain
+tc.CUDA_HOME = '/usr/local/cuda'
 
 # Mellanox OFED
 ofed = mlnx_ofed(version='3.4-1.0.0.0')
@@ -55,8 +56,8 @@ Stage1 += baseimage(image='nvidia/cuda:9.0-runtime')
 # Python (use upstream)
 Stage1 += apt_get(ospackages=['python', 'python3'])
 
-# Compiler runtime (use upstream)
-Stage1 += apt_get(ospackages=['libgfortran3', 'libgomp1'])
+# GNU compiler
+Stage1 += gnu.runtime()
 
 # Mellanox OFED
 Stage1 += ofed.runtime()
