@@ -38,7 +38,7 @@ class gnu(object):
         self.__cc = kwargs.get('cc', True)
         self.__cxx = kwargs.get('cxx', True)
         self.__fortran = kwargs.get('fortran', True)
-        
+
         self.__compiler_packages = [] # Filled in below
         self.__runtime_packages = ['libgomp1']
 

@@ -318,8 +318,8 @@ The `gnu` building block installs the GNU compilers from the upstream
 Linux distribution.
 
 As a side effect, a toolchain is created containing the GNU compilers.
-The tool can be passed to other operations that want to build using
-the GNU compilers.
+The toolchain can be passed to other operations that want to build
+using the GNU compilers.
 
 ```python
 g = gnu()
