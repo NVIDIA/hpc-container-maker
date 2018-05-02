@@ -38,6 +38,7 @@ from .mvapich2 import mvapich2
 from .ofed import ofed
 from .openmpi import openmpi
 from .pgi import pgi
+from .python import python
 from .raw import raw
 from .recipe import recipe
 from .sed import sed

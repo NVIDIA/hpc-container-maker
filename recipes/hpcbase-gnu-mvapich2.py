@@ -20,8 +20,9 @@ Stage0 += comment(__doc__, reformat=False)
 
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel', _as='devel')
 
-# Python (use upstream)
-Stage0 += apt_get(ospackages=['python', 'python3'])
+# Python
+python = python()
+Stage0 += python
 
 # GNU compilers
 gnu = gnu()
@@ -53,8 +54,8 @@ Stage0 += hdf5
 
 Stage1 += baseimage(image='nvidia/cuda:9.0-runtime')
 
-# Python (use upstream)
-Stage1 += apt_get(ospackages=['python', 'python3'])
+# Python
+Stage1 += python.runtime()
 
 # GNU compiler
 Stage1 += gnu.runtime()

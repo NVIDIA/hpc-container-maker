@@ -724,6 +724,41 @@ Stage1 += p.runtime()
 pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
 ```
 
+### python
+
+The `python` building block installs Python from the upstream Linux
+distribution.
+
+Parameters:
+
+- `python2`: Boolean flag to specify whether to install Python version
+  2.  The default is True.
+
+- `python3`: Boolean flag to specify whether to install Python version
+  3.  The default is True.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+python()
+```
+
+```python
+p = python()
+Stage0 += p
+...
+Stage1 += p.runtime()
+```
+
+```python
+python(python3=False)
+```
+
 ## Templates
 
 Templates are abstractions of common operations, such as downloading
