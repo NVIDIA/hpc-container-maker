@@ -35,6 +35,7 @@ from .copy import copy               # pylint: disable=unused-import
 from .environment import environment # pylint: disable=unused-import
 from .fftw import fftw               # pylint: disable=unused-import
 from .git import git                 # pylint: disable=unused-import
+from .gnu import gnu                 # pylint: disable=unused-import
 from .hdf5 import hdf5               # pylint: disable=unused-import
 from .label import label             # pylint: disable=unused-import
 from .mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
