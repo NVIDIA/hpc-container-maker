@@ -22,6 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 import re
+import subprocess
 
 class git(object):
     """Template for working with git repositories"""
@@ -33,8 +34,36 @@ class git(object):
 
         self.git_opts = kwargs.get('opts', ['--depth=1'])
 
+    def __verify(self, repository, branch=None, commit=None, fatal=False):
+        """Verify that the specific git reference exists in the remote
+           repository"""
+
+        if not branch and not commit: # pragma: no cover
+            # Should have already been caught before calling this function
+            logging.warning('Must specify one of branch or commit, '
+                            'skipping verification')
+            return
+
+        command = 'git ls-remote {0} | grep {1}'.format(repository, commit)
+        ref = commit
+        if branch:
+            command = 'git ls-remote --exit-code --heads {0} {1}'.format(repository, branch)
+            ref = branch
+
+        p = subprocess.Popen(command, shell=True, stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL)
+        o = p.communicate()
+
+        if p.returncode != 0:
+            if fatal:
+                raise RuntimeError('git ref "{}" does not exist'.format(ref))
+            else:
+                logging.warning('git ref "{}" does not exist'.format(ref))
+
+        return
+
     def clone_step(self, branch=None, commit=None, directory='', path='/tmp',
-                   repository=None):
+                   repository=None, verify=None):
         """Clone a git repository"""
 
         if not repository:
@@ -65,6 +94,14 @@ class git(object):
             # Likely need the full repository history, so remove
             # '--depth' if present
             opt_string = re.sub(r'--depth=\d+\s*', '', opt_string).strip()
+
+        # Verify the commit / branch is valid
+        if verify:
+            fatal = False
+            if verify == 'fatal':
+                fatal = True
+            self.__verify(repository, branch=branch, commit=commit,
+                          fatal=fatal)
 
         # Ensure the path exists
         clone = ['mkdir -p {0}'.format(path),
