@@ -15,7 +15,7 @@
 # pylint: disable=invalid-name, too-few-public-methods
 # pylint: disable=too-many-instance-attributes
 
-"""Documentation TBD"""
+"""OpenMPI building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -35,10 +35,10 @@ from .toolchain import toolchain
 from .wget import wget
 
 class openmpi(ConfigureMake, tar, wget):
-    """Documentation TBD"""
+    """OpenMPI building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
@@ -60,9 +60,9 @@ class openmpi(ConfigureMake, tar, wget):
                                      ['file', 'hwloc', 'openssh-client',
                                       'wget'])
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
-        # TODO: distinguish between the build toolchain (input) and the
-        # resulting OMPI toolchain (output), e.g., CC=mpicc
-        self.toolchain = kwargs.get('toolchain', toolchain())
+
+        # Input toolchain, i.e., what to use when building
+        self.__toolchain = kwargs.get('toolchain', toolchain())
         self.version = kwargs.get('version', '3.0.0')
 
         self.__commands = [] # Filled in by __setup()
@@ -72,17 +72,22 @@ class openmpi(ConfigureMake, tar, wget):
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
 
-    def cleanup_step(self, items=None):
-        """Documentation TBD"""
+        # Output toolchain
+        self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
+                                   F90='mpif90', FC='mpifort')
 
-        if not items:
+    def cleanup_step(self, items=None):
+        """Cleanup temporary files"""
+
+        if not items: # pragma: no cover
             logging.warning('items are not defined')
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
-        """Documentation TBD"""
+        """Construct the series of shell commands, i.e., fill in
+           self.__commands"""
 
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the tarball contains MAJOR.MINOR.REVISION, so pull
@@ -96,9 +101,9 @@ class openmpi(ConfigureMake, tar, wget):
 
         # CUDA
         if self.cuda:
-            if self.toolchain.CUDA_HOME:
+            if self.__toolchain.CUDA_HOME:
                 self.configure_opts.append(
-                    '--with-cuda={}'.format(self.toolchain.CUDA_HOME))
+                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
             else:
                 self.configure_opts.append('--with-cuda')
         else:
@@ -114,7 +119,7 @@ class openmpi(ConfigureMake, tar, wget):
             # Use source from local build context
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd, self.directory),
-                toolchain=self.toolchain))
+                toolchain=self.__toolchain))
         else:
             # Download source from web
             self.__commands.append(self.download_step(url=url,
@@ -124,7 +129,7 @@ class openmpi(ConfigureMake, tar, wget):
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
                                        'openmpi-{}'.format(self.version)),
-                toolchain=self.toolchain))
+                toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())
 
@@ -145,7 +150,7 @@ class openmpi(ConfigureMake, tar, wget):
                                     'openmpi-{}'.format(self.version))]))
 
     def runtime(self, _from='0'):
-        """Documentation TBD"""
+        """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('OpenMPI'))
         # TODO: move the definition of runtime ospackages
@@ -157,7 +162,7 @@ class openmpi(ConfigureMake, tar, wget):
         return instructions
 
     def toString(self, ctype):
-        """Documentation TBD"""
+        """Building block container specification"""
 
         self.__setup()
 

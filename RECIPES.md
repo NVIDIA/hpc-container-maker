@@ -480,6 +480,16 @@ OFED](#mlnx_ofed)) should be installed prior to this building block.
 As a side effect, this building block modifies `PATH` and
 `LD_LIBRARY_PATH` to include the MVAPICH2 build.
 
+As a side effect, a toolchain is created containing the MPI compiler
+wrappers.  The tool can be passed to other operations that want to
+build using the MPI compiler wrappers.
+
+```python
+mv2 = mvapich2()
+
+operation(..., toolchain=mv2.toolchain, ...)
+```
+
 Parameters:
 
 - `check`: Boolean flag to specify whether the `make check` step
@@ -586,6 +596,16 @@ copied from a source directory in the local build context.
 
 As a side effect, this building block modifies `PATH` and
 `LD_LIBRARY_PATH` to include the OpenMPI build.
+
+As a side effect, a toolchain is created containing the MPI compiler
+wrappers.  The tool can be passed to other operations that want to
+build using the MPI compiler wrappers.
+
+```python
+ompi = openmpi()
+
+operation(..., toolchain=ompi.toolchain, ...)
+```
 
 Parameters:
 

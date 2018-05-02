@@ -52,6 +52,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
     def test_directory(self):
+        """Directory in local build context"""
         mv2 = mvapich2(directory='mvapich2-2.3')
         self.assertEqual(mv2.toString(container_type.DOCKER),
 r'''# MVAPICH2
@@ -71,6 +72,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
     def test_runtime(self):
+        """Runtime"""
         mv2 = mvapich2()
         r = mv2.runtime()
         s = '\n'.join(x.toString(container_type.DOCKER) for x in r)

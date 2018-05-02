@@ -15,7 +15,7 @@
 # pylint: disable=invalid-name, too-few-public-methods
 # pylint: disable=too-many-instance-attributes
 
-"""Documentation TBD"""
+"""HDF5 building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -35,10 +35,10 @@ from .toolchain import toolchain
 from .wget import wget
 
 class hdf5(ConfigureMake, tar, wget):
-    """Documentation TBD"""
+    """HDF5 building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
@@ -69,16 +69,17 @@ class hdf5(ConfigureMake, tar, wget):
         self.__wd = '/tmp' # working directory
 
     def cleanup_step(self, items=None):
-        """Documentation TBD"""
+        """Cleanup temporary files"""
 
-        if not items:
+        if not items: # pragma: no cover
             logging.warning('items are not defined')
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
-        """Documentation TBD"""
+        """Construct the series of shell commands, i.e., fill in
+           self.__commands"""
 
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the tarball contains MAJOR.MINOR.REVISION, so pull
@@ -127,7 +128,7 @@ class hdf5(ConfigureMake, tar, wget):
                                     'hdf5-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Documentation TBD"""
+        """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('HDF5'))
         # TODO: move the definition of runtime ospackages
@@ -139,7 +140,7 @@ class hdf5(ConfigureMake, tar, wget):
         return instructions
 
     def toString(self, ctype):
-        """Documentation TBD"""
+        """Building block container specification"""
 
         self.__setup()
 

@@ -25,7 +25,7 @@ import unittest
 from hpccm.common import container_type
 from hpccm.cmake import cmake
 
-class Test_pgi(unittest.TestCase):
+class Test_cmake(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
