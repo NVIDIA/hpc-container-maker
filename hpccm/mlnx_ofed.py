@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Mellanox OFED building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -29,10 +29,10 @@ from .tar import tar
 from .wget import wget
 
 class mlnx_ofed(tar, wget):
-    """Documentation TBD"""
+    """Mellanox OFED building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
@@ -54,16 +54,17 @@ class mlnx_ofed(tar, wget):
         self.__wd = '/tmp'
 
     def __cleanup_step(self, items=None):
-        """Documentation TBD"""
+        """Cleanup temporary files"""
 
-        if not items:
+        if not items: # pragma: no cover
             logging.warning('items are not defined')
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
-        """Documentation TBD"""
+        """Construct the series of shell commands, i.e., fill in
+           self.__commands"""
 
         # Check to see if the setup has already been performed
         if self.__commands:
@@ -93,11 +94,11 @@ class mlnx_ofed(tar, wget):
                    os.path.join(self.__wd, prefix)]))
 
     def runtime(self, _from='0'):
-        """Documentation TBD"""
+        """Install the runtime from a full build in a previous stage"""
         return self
 
     def toString(self, ctype):
-        """Documentation TBD"""
+        """Building block container specification"""
 
         self.__setup()
 

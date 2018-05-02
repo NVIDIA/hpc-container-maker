@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""OFED building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -25,10 +25,10 @@ from .apt_get import apt_get
 from .comment import comment
 
 class ofed(object):
-    """Documentation TBD"""
+    """OFED building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
@@ -46,11 +46,11 @@ class ofed(object):
                                         'opensm', 'rdmacm-utils'])
 
     def runtime(self, _from='0'):
-        """Documentation TBD"""
+        """Install the runtime from a full build in a previous stage"""
         return self
 
     def toString(self, ctype):
-        """Documentation TBD"""
+        """Building block container specification"""
 
         instructions = []
         instructions.append(comment('OFED').toString(ctype))

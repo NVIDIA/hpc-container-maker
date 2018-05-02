@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""PGI building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -22,8 +22,6 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import re
 import os
-
-from enum import Enum
 
 from .apt_get import apt_get
 from .comment import comment
@@ -35,10 +33,10 @@ from .toolchain import toolchain
 from .wget import wget
 
 class pgi(tar, wget):
-    """Documentation TBD"""
+    """PGI building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
@@ -67,7 +65,7 @@ class pgi(tar, wget):
                                    F90='pgfortran', FC='pgfortran')
 
     def cleanup_step(self, items=None):
-        """Documentation TBD"""
+        """Cleanup temporary files"""
 
         if not items: # pragma: no cover
             logging.warning('items are not defined')
@@ -76,7 +74,8 @@ class pgi(tar, wget):
         return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
-        """Documentation TBD"""
+        """Construct the series of shell commands, i.e., fill in
+           self.__commands"""
 
         if self.__tarball:
             # Use tarball from local build context
@@ -114,7 +113,7 @@ class pgi(tar, wget):
             items=[os.path.join(self.__wd, tarball), self.__wd]))
 
     def runtime(self, _from='0'):
-        """Documentation TBD"""
+        """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('PGI compiler'))
         if self.__ospackages:
@@ -140,7 +139,7 @@ class pgi(tar, wget):
         return instructions
 
     def toString(self, ctype):
-        """Documentation TBD"""
+        """Building block container specification"""
 
         self.__setup()
         ospackages = list(self.__ospackages)
