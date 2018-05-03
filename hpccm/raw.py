@@ -14,33 +14,34 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Raw primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 
 class raw(object):
-    """Documentation TBD"""
+    """Raw primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Raw primitive"""
 
         #super(raw, self).__init__()
 
-        self.docker = kwargs.get('docker', '') # Docker specific
-        self.singularity = kwargs.get('singularity', '') # Singularity specific
+        self.__docker = kwargs.get('docker', '') # Docker specific
+        self.__singularity = kwargs.get('singularity', '') # Singularity
+                                                           # specific
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
-        if ctype == container_type.DOCKER:
-            return self.docker
-        elif ctype == container_type.SINGULARITY:
-            return self.singularity
+    def __str__(self):
+        """String representation of the primitive"""
+        if hpccm.config.g_ctype == container_type.DOCKER:
+            return str(self.__docker)
+        elif hpccm.config.g_ctype == container_type.SINGULARITY:
+            return str(self.__singularity)
         else:
-            logging.error('Unknown container type')
-            return ''
+            raise RuntimeError('Unknown container type')

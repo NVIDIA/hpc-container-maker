@@ -46,17 +46,17 @@ class python(object):
         if self.__python3:
             self.__packages.append('python3')
 
+    def __str__(self):
+        """String representation of the building block"""
+        instructions = []
+        instructions.append(comment('Python'))
+        instructions.append(apt_get(ospackages=self.__packages))
+
+        return '\n'.join([str(x) for x in instructions])
+
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('Python'))
         instructions.append(apt_get(ospackages=self.__packages))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-        instructions = []
-        instructions.append(comment('Python'))
-        instructions.append(apt_get(ospackages=self.__packages))
-
-        return '\n'.join([x.toString(ctype) for x in instructions])

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the hdf5 module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.hdf5 import hdf5
 
 class Test_hdf5(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_hdf5(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default hdf5 building block"""
         h = hdf5()
-        self.assertEqual(h.toString(container_type.DOCKER),
+        self.assertEqual(str(h),
 r'''# HDF5 version 1.10.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -52,11 +54,12 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         h = hdf5()
         r = h.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# HDF5
 RUN apt-get update -y && \
@@ -68,10 +71,11 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
+    @docker
     def test_directory(self):
         """Directory in local build context"""
         h = hdf5(directory='hdf5-1.10.1')
-        self.assertEqual(h.toString(container_type.DOCKER),
+        self.assertEqual(str(h),
 r'''# HDF5
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

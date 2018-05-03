@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.shell import shell
 from hpccm.Stage import Stage
 
@@ -45,18 +46,19 @@ class Test_Stage(unittest.TestCase):
         s += [1, 2]
         self.assertTrue(s.is_defined())
 
+    @docker
     def test_baseimage(self):
         """Base image specification"""
         s = Stage()
         s.name = 'bar'
         s.baseimage('foo')
-        self.assertEqual(s.toString(container_type.DOCKER), 'FROM foo AS bar')
+        self.assertEqual(str(s), 'FROM foo AS bar')
 
+    @docker
     def test_baseimage_first(self):
         """Base image is always first"""
         s = Stage()
         s += shell(commands=['abc'])
         s.name = 'bar'
         s.baseimage('foo')
-        self.assertEqual(s.toString(container_type.DOCKER),
-                         'FROM foo AS bar\n\nRUN abc')
+        self.assertEqual(str(s), 'FROM foo AS bar\n\nRUN abc')

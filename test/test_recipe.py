@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the recipe module"""
 
@@ -35,21 +35,21 @@ class Test_recipe(unittest.TestCase):
         """No arguments"""
 
         with self.assertRaises(TypeError):
-            r = recipe()
+            recipe()
 
     def test_bad_recipe(self):
         """Bad (invalid) recipe file"""
         path = os.path.dirname(__file__)
         rf = os.path.join(path, 'bad_recipe.py')
         with self.assertRaises(SystemExit):
-            r = recipe(rf)
+            recipe(rf)
 
     def test_raise_exceptions(self):
         """Bad (invalid) recipe file with raise exceptions enabled"""
         path = os.path.dirname(__file__)
         rf = os.path.join(path, 'bad_recipe.py')
         with self.assertRaises(SyntaxError):
-            r = recipe(rf, raise_exceptions=True)
+            recipe(rf, raise_exceptions=True)
 
     def test_basic_example(self):
         """Basic example"""

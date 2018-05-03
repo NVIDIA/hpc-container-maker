@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the ofed module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.ofed import ofed
 
 class Test_ofed(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default ofed building block"""
         o = ofed()
-        self.assertEqual(o.toString(container_type.DOCKER),
+        self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -57,11 +59,12 @@ RUN apt-get update -y && \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         o = ofed()
         r = o.runtime()
-        self.assertEqual(r.toString(container_type.DOCKER),
+        self.assertEqual(str(r),
 r'''# OFED
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

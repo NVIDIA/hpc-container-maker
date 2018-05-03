@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the label module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.label import label
 
 class Test_label(unittest.TestCase):
@@ -30,31 +31,45 @@ class Test_label(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No label specified"""
         l = label()
-        self.assertEqual(l.toString(container_type.DOCKER), '')
+        self.assertEqual(str(l), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         l = label(metadata={'A': 'B'})
-        self.assertEqual(l.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(l)
 
-    def test_single(self):
+    @docker
+    def test_single_docker(self):
         """Single label specified"""
         l = label(metadata={'A': 'B'})
-        self.assertEqual(l.toString(container_type.DOCKER), 'LABEL A=B')
-        self.assertEqual(l.toString(container_type.SINGULARITY),
-                         '%labels\n    A B')
+        self.assertEqual(str(l), 'LABEL A=B')
 
-    def test_multiple(self):
+    @singularity
+    def test_single_singularity(self):
+        """Single label specified"""
+        l = label(metadata={'A': 'B'})
+        self.assertEqual(str(l), '%labels\n    A B')
+
+    @docker
+    def test_multiple_docker(self):
         """Multiple labels specified"""
         l = label(metadata={'ONE': 1, 'TWO': 2, 'THREE': 3})
-        self.assertEqual(l.toString(container_type.DOCKER),
+        self.assertEqual(str(l),
 '''LABEL ONE=1 \\
     THREE=3 \\
     TWO=2''')
-        self.assertEqual(l.toString(container_type.SINGULARITY),
+
+    @singularity
+    def test_multiple_singularity(self):
+        """Multiple labels specified"""
+        l = label(metadata={'ONE': 1, 'TWO': 2, 'THREE': 3})
+        self.assertEqual(str(l),
 '''%labels
     ONE 1
     THREE 3

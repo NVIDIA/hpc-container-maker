@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the mlnx_ofed module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.mlnx_ofed import mlnx_ofed
 
 class Test_mlnx_ofed(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_mlnx_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
-        self.assertEqual(mofed.toString(container_type.DOCKER),
+        self.assertEqual(str(mofed),
 r'''# Mellanox OFED version 3.4-1.0.0.0
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -50,11 +52,12 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://content.mella
     dpkg --install /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/ibverbs-utils_*_amd64.deb && \
     rm -rf /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64.tgz /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         mofed = mlnx_ofed()
         r = mofed.runtime()
-        self.assertEqual(r.toString(container_type.DOCKER),
+        self.assertEqual(str(r),
 r'''# Mellanox OFED version 3.4-1.0.0.0
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

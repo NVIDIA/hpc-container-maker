@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.comment import comment
 
 class Test_comment(unittest.TestCase):
@@ -30,34 +31,45 @@ class Test_comment(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No comment string specified"""
         c = comment()
-        self.assertEqual(c.toString(container_type.DOCKER), '')
+        self.assertEqual(str(c), '')
 
+    @docker
     def test_empty_noreformat(self):
         """No comment string specified, reformatting disabled"""
         c = comment(reformat=False)
-        self.assertEqual(c.toString(container_type.DOCKER), '')
+        self.assertEqual(str(c), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified
            Assumes default comment format."""
         c = comment('foo')
-        self.assertEqual(c.toString(None), '# foo')
+        self.assertEqual(str(c), '# foo')
 
-    def test_comment(self):
+    @docker
+    def test_comment_docker(self):
         """Comment string specified"""
         c = comment('foo')
-        self.assertEqual(c.toString(container_type.DOCKER), '# foo')
-        self.assertEqual(c.toString(container_type.SINGULARITY), '# foo')
+        self.assertEqual(str(c), '# foo')
 
+    @singularity
+    def test_comment_singularity(self):
+        """Comment string specified"""
+        c = comment('foo')
+        self.assertEqual(str(c), '# foo')
+
+    @docker
     def test_noreformat(self):
         """Disable reformatting"""
         c = comment('foo\nbar', reformat=False)
-        self.assertEqual(c.toString(container_type.DOCKER), '# foo\n# bar')
+        self.assertEqual(str(c), '# foo\n# bar')
 
+    @docker
     def test_wrap(self):
         """Comment wrapping"""
         c = comment('foo\nbar')
-        self.assertEqual(c.toString(container_type.DOCKER), '# foo bar')
+        self.assertEqual(str(c), '# foo bar')

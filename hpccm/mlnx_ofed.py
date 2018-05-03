@@ -53,6 +53,20 @@ class mlnx_ofed(tar, wget):
         self.__commands = []
         self.__wd = '/tmp'
 
+        # Construct the series of steps to execute
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+
+        instructions = []
+        instructions.append(comment(
+            'Mellanox OFED version {}'.format(self.__version)))
+        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(shell(commands=self.__commands))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def __cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -65,10 +79,6 @@ class mlnx_ofed(tar, wget):
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
-
-        # Check to see if the setup has already been performed
-        if self.__commands:
-            return
 
         # This is Ubuntu 16.04 specific.  This should be generic.
         prefix = 'MLNX_OFED_LINUX-{}-ubuntu16.04-x86_64'.format(self.__version)
@@ -96,17 +106,3 @@ class mlnx_ofed(tar, wget):
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         return self
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-
-        instructions = []
-        instructions.append(comment(
-            'Mellanox OFED version {}'.format(self.__version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-
-        return '\n'.join(instructions)

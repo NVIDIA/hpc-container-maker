@@ -14,56 +14,57 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Label primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 
 class label(object):
-    """Documentation TBD"""
+    """Label primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(label, self).__init__()
 
-        self.metadata = kwargs.get('metadata', {})
+        self.__metadata = kwargs.get('metadata', {})
 
-    def toString(self, ctype):
-        """Documentation TBD"""
+    def __str__(self):
+        """String representation of the primitive"""
 
-        if self.metadata:
-            if ctype == container_type.DOCKER:
+        if self.__metadata:
+            if hpccm.config.g_ctype == container_type.DOCKER:
                 # Format:
                 # LABEL K1=V1 \
                 #     K2=V2 \
                 #     K3=V3
                 keyvals = []
-                for key, val in sorted(self.metadata.items()):
+                for key, val in sorted(self.__metadata.items()):
                     keyvals.append('{0}={1}'.format(key, val))
 
-                label = ['LABEL {}'.format(keyvals[0])]
-                label.extend(['    {}'.format(x) for x in keyvals[1:]])
-                return ' \\\n'.join(label)
-            elif ctype == container_type.SINGULARITY:
+                l = ['LABEL {}'.format(keyvals[0])]
+                l.extend(['    {}'.format(x) for x in keyvals[1:]])
+                return ' \\\n'.join(l)
+            elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
                 # %labels
                 #     K1 V1
                 #     K2 V2
                 #     K3 V3
                 keyvals = []
-                for key, val in sorted(self.metadata.items()):
+                for key, val in sorted(self.__metadata.items()):
                     keyvals.append('{0} {1}'.format(key, val))
 
-                label = ['%labels']
-                label.extend(['    {}'.format(x) for x in keyvals])
-                return '\n'.join(label)
+                l = ['%labels']
+                l.extend(['    {}'.format(x) for x in keyvals])
+                return '\n'.join(l)
             else:
-                logging.error('Unknown container type')
-                return ''
+                raise RuntimeError('Unknown container type')
         else:
             return ''

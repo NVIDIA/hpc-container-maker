@@ -60,19 +60,16 @@ class gnu(object):
             self.toolchain.F90 = 'gfortran'
             self.toolchain.FC = 'gfortran'
 
+    def __str__(self):
+        """String representation of the building block"""
+        instructions = []
+        instructions.append(comment('GNU compiler'))
+        instructions.append(apt_get(ospackages=self.__compiler_packages))
+        return '\n'.join(str(x) for x in instructions)
+
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('GNU compiler runtime'))
         instructions.append(apt_get(ospackages=self.__runtime_packages))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        instructions = []
-        instructions.append(comment('GNU compiler').toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__compiler_packages).toString(ctype))
-
-        return '\n'.join(instructions)

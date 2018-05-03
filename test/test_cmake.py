@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the cmake module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.cmake import cmake
 
 class Test_cmake(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_cmake(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default cmake building block"""
         c = cmake()
-        self.assertEqual(c.toString(container_type.DOCKER),
+        self.assertEqual(str(c),
 r'''# CMake version 3.11.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -43,10 +45,11 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
+    @docker
     def test_eula(self):
         """Accept EULA"""
         c = cmake(eula=True)
-        self.assertEqual(c.toString(container_type.DOCKER),
+        self.assertEqual(str(c),
 r'''# CMake version 3.11.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -56,10 +59,11 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
+    @docker
     def test_version(self):
         """Version option"""
         c = cmake(eula=True, version='3.10.3')
-        self.assertEqual(c.toString(container_type.DOCKER),
+        self.assertEqual(str(c),
 r'''# CMake version 3.10.3
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -69,11 +73,12 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.10.3-Linux-x86_64.sh''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         c = cmake(eula=True)
         r = c.runtime()
-        self.assertEqual(r.toString(container_type.DOCKER),
+        self.assertEqual(str(r),
 r'''# CMake version 3.11.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

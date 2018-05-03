@@ -14,48 +14,49 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Blob primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 
 class blob(object):
-    """Documentation TBD"""
+    """Blob primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(blob, self).__init__()
 
-        self.docker = kwargs.get('docker', {}) # Docker specific
-        self.singularity = kwargs.get('singularity', {}) # Singularity specific
+        self.__docker = kwargs.get('docker', {}) # Docker specific
+        self.__singularity = kwargs.get('singularity', {}) # Singularity
+                                                           # specific
+
+    def __str__(self):
+        """String representation of the primitive"""
+        if hpccm.config.g_ctype == container_type.DOCKER:
+            return self.__read_blob(self.__docker)
+        if hpccm.config.g_ctype == container_type.SINGULARITY:
+            return self.__read_blob(self.__singularity)
+        else:
+            raise RuntimeError('Unknown container type')
 
     def __read_blob(self, path):
-        """Documentation TBD"""
+        """Read the blob from a file"""
 
-        blob = ''
+        b = ''
         try:
             if path:
                 with open(path, 'r') as f:
-                    blob = f.read()
+                    b = f.read()
             else:
                 logging.warning('Blob file not specified')
         except:
             logging.error('Error opening blob {}'.format(path))
 
-        return blob
-
-    def toString(self, ctype):
-        """Documentation TBD"""
-
-        if ctype == container_type.DOCKER:
-            return self.__read_blob(self.docker)
-        if ctype == container_type.SINGULARITY:
-            return self.__read_blob(self.singularity)
-        else:
-            logging.error('Unknown container type')
-            return ''
+        return b

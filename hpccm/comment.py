@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Comment primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -23,13 +23,11 @@ import logging  # pylint: disable=unused-import
 import re
 import textwrap
 
-from .common import container_type
-
 class comment(object):
-    """Documentation TBD"""
+    """Comment primitive"""
 
     def __init__(self, *args, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(comment, self).__init__()
 
@@ -40,9 +38,8 @@ class comment(object):
 
         self.__reformat = kwargs.get('reformat', True)
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
+    def __str__(self):
+        """String representation of the primitive"""
         if self.__string:
             # Comments are universal (so far...)
             if self.__reformat:

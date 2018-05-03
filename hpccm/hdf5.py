@@ -68,6 +68,33 @@ class hdf5(ConfigureMake, tar, wget):
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
 
+        # Construct the series of steps to execute
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+
+        instructions = []
+        if self.__directory:
+            instructions.append(comment('HDF5'))
+        else:
+            instructions.append(comment(
+                'HDF5 version {}'.format(self.__version)))
+
+        instructions.append(apt_get(ospackages=self.__ospackages))
+
+        if self.__directory:
+            # Use source from local build context
+            instructions.append(
+                copy(src=self.__directory,
+                     dest=os.path.join(self.__wd, self.__directory)))
+
+        instructions.append(shell(commands=self.__commands))
+        instructions.append(environment(
+            variables=self.__environment_variables))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -86,7 +113,7 @@ class hdf5(ConfigureMake, tar, wget):
         # apart the full version to get the MAJOR and MINOR components.
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
         major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                        match.groupdict()['minor'])
+                                       match.groupdict()['minor'])
         tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
         url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(self.__baseurl,
                                                      major_minor,
@@ -138,28 +165,3 @@ class hdf5(ConfigureMake, tar, wget):
         instructions.append(environment(
             variables=self.__environment_variables))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-
-        instructions = []
-        if self.__directory:
-            instructions.append(comment('HDF5').toString(ctype))
-        else:
-            instructions.append(comment(
-                'HDF5 version {}'.format(self.__version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
-        if self.__directory:
-            # Use source from local build context
-            instructions.append(
-                copy(src=self.__directory,
-                     dest=os.path.join(self.__wd,
-                                       self.__directory)).toString(ctype))
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-        instructions.append(environment(
-            variables=self.__environment_variables).toString(ctype))
-
-        return '\n'.join(instructions)

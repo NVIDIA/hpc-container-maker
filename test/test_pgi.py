@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the pgi module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.pgi import pgi
 
 class Test_pgi(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_pgi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default pgi building block"""
         p = pgi()
-        self.assertEqual(p.toString(container_type.DOCKER),
+        self.assertEqual(str(p),
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -47,10 +49,11 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @docker
     def test_eula(self):
         """Accept EULA"""
         p = pgi(eula=True)
-        self.assertEqual(p.toString(container_type.DOCKER),
+        self.assertEqual(str(p),
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -64,10 +67,11 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @docker
     def test_tarball(self):
         """tarball"""
         p = pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
-        self.assertEqual(p.toString(container_type.DOCKER),
+        self.assertEqual(str(p),
 r'''# PGI compiler version 17.10
 COPY pgilinux-2017-1710-x86_64.tar.gz /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz
 RUN apt-get update -y && \
@@ -80,11 +84,12 @@ RUN tar -x -f /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz -C /tmp/pgi -z && \
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/17.10/bin:$PATH''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         p = pgi()
         r = p.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# PGI compiler
 RUN apt-get update -y && \

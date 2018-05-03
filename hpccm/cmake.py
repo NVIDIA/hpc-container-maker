@@ -26,7 +26,6 @@ import re
 
 from .apt_get import apt_get
 from .comment import comment
-from .environment import environment
 from .shell import shell
 from .wget import wget
 
@@ -55,6 +54,19 @@ class cmake(wget):
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/tmp' # working directory
 
+        # Construct the series of steps to execute
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+        instructions = []
+        instructions.append(comment(
+            'CMake version {}'.format(self.__version)))
+        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(shell(commands=self.__commands))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -68,17 +80,13 @@ class cmake(wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # Check to see if the setup has already been performed
-        if self.__commands: # pragma: no cover
-            return
-
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the runfile contains MAJOR.MINOR.REVISION, so pull
         # apart the full version to get the MAJOR and MINOR
         # components.
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
         major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                        match.groupdict()['minor'])
+                                       match.groupdict()['minor'])
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
@@ -107,17 +115,3 @@ class cmake(wget):
            case there is no difference between the runtime and the
            full build."""
         return self
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-
-        instructions = []
-        instructions.append(comment(
-            'CMake version {}'.format(self.__version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-
-        return '\n'.join(instructions)

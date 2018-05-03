@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.baseimage import baseimage
 
 class Test_baseimage(unittest.TestCase):
@@ -30,34 +31,57 @@ class Test_baseimage(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    def test_empty(self):
+    @docker
+    def test_empty_docker(self):
         """Default base image"""
         b = baseimage()
-        self.assertNotEqual(b.toString(container_type.DOCKER), '')
-        self.assertNotEqual(b.toString(container_type.SINGULARITY), '')
+        self.assertNotEqual(str(b), '')
 
+    @singularity
+    def test_empty_singularity(self):
+        """Default base image"""
+        b = baseimage()
+        self.assertNotEqual(str(b), '')
+
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         b = baseimage()
-        self.assertEqual(b.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(b)
 
-    def test_value(self):
+    @docker
+    def test_value_docker(self):
         """Image name is specified"""
         b = baseimage(image='foo')
-        self.assertEqual(b.toString(container_type.DOCKER), 'FROM foo')
-        self.assertEqual(b.toString(container_type.SINGULARITY),
-                         'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b), 'FROM foo')
 
-    def test_as_deprecated(self):
+    @singularity
+    def test_value_singularity(self):
+        """Image name is specified"""
+        b = baseimage(image='foo')
+        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+
+    @docker
+    def test_as_deprecated_docker(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', AS='dev')
-        self.assertEqual(b.toString(container_type.DOCKER), 'FROM foo AS dev')
-        self.assertEqual(b.toString(container_type.SINGULARITY),
-                         'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b), 'FROM foo AS dev')
 
-    def test_as(self):
+    @singularity
+    def test_as_deprecated_singularity(self):
+        """Docker specified image naming"""
+        b = baseimage(image='foo', AS='dev')
+        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+
+    @docker
+    def test_as_docker(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
-        self.assertEqual(b.toString(container_type.DOCKER), 'FROM foo AS dev')
-        self.assertEqual(b.toString(container_type.SINGULARITY),
-                         'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b), 'FROM foo AS dev')
+
+    @singularity
+    def test_as_singularity(self):
+        """Docker specified image naming"""
+        b = baseimage(image='foo', _as='dev')
+        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')

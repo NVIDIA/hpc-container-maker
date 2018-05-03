@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.copy import copy
 
 class Test_copy(unittest.TestCase):
@@ -30,35 +31,53 @@ class Test_copy(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No source or destination specified"""
         c = copy()
-        self.assertEqual(c.toString(container_type.DOCKER), '')
+        self.assertEqual(str(c), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         c = copy(src='a', dest='b')
-        self.assertEqual(c.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(c)
 
-    def test_single(self):
+    @docker
+    def test_single_docker(self):
         """Single source file specified"""
         c = copy(src='a', dest='b')
-        self.assertEqual(c.toString(container_type.DOCKER), 'COPY a b')
-        self.assertEqual(c.toString(container_type.SINGULARITY),
-                         '%files\n    a b')
+        self.assertEqual(str(c), 'COPY a b')
 
-    def test_multiple(self):
+    @singularity
+    def test_single_singularity(self):
+        """Single source file specified"""
+        c = copy(src='a', dest='b')
+        self.assertEqual(str(c), '%files\n    a b')
+
+    @docker
+    def test_multiple_docker(self):
         """Multiple source files specified"""
         c = copy(src=['a1', 'a2', 'a3'], dest='b')
-        self.assertEqual(c.toString(container_type.DOCKER),
+        self.assertEqual(str(c),
                          'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')
-        self.assertEqual(c.toString(container_type.SINGULARITY),
+
+    @singularity
+    def test_multiple_singularity(self):
+        """Multiple source files specified"""
+        c = copy(src=['a1', 'a2', 'a3'], dest='b')
+        self.assertEqual(str(c),
                          '%files\n    a1 b\n    a2 b\n    a3 b')
 
-    def test_from(self):
+    @docker
+    def test_from_docker(self):
         """Docker --from syntax"""
         c = copy(src='a', dest='b', _from='dev')
-        self.assertEqual(c.toString(container_type.DOCKER),
-                         'COPY --from=dev a b')
-        self.assertEqual(c.toString(container_type.SINGULARITY),
-                         '%files\n    a b')
+        self.assertEqual(str(c), 'COPY --from=dev a b')
+
+    @singularity
+    def test_from_singularity(self):
+        """Docker --from syntax"""
+        c = copy(src='a', dest='b', _from='dev')
+        self.assertEqual(str(c), '%files\n    a b')
