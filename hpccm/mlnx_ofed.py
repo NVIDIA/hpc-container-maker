@@ -47,6 +47,7 @@ class mlnx_ofed(tar, wget):
                                         'libnuma1', 'wget'])
         self.__packages = kwargs.get('packages',
                                      ['libibverbs1', 'libibverbs-dev',
+                                      'libibumad', 'libibmad',
                                       'libmlx5-1', 'ibverbs-utils'])
         self.__version = kwargs.get('version', '3.4-1.0.0.0')
 
