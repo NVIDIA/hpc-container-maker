@@ -81,3 +81,37 @@ class Test_git(unittest.TestCase):
         g = git(opts=['--single-branch'])
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git'),
                          'mkdir -p /tmp && git -C /tmp clone --single-branch https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
+
+    # This test will fail if git is not installed on the system
+    def test_verify(self):
+        """git with verification enabled"""
+        g = git()
+        repository = 'https://github.com/NVIDIA/hpc-container-maker.git'
+        valid_branch = 'master'
+        invalid_branch = 'does_not_exist'
+        valid_commit = '23996b03b3e72f77a41498e94d90de920935644a'
+        invalid_commit = 'deadbeef'
+
+        self.assertEqual(g.clone_step(repository=repository,
+                                      branch=valid_branch, verify=True),
+                         'mkdir -p /tmp && git -C /tmp clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
+
+        self.assertEqual(g.clone_step(repository=repository,
+                                      branch=invalid_branch, verify=True),
+                         'mkdir -p /tmp && git -C /tmp clone --depth=1 --branch does_not_exist https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker')
+
+        self.assertEqual(g.clone_step(repository=repository,
+                                      commit=valid_commit, verify=True),
+                         'mkdir -p /tmp && git -C /tmp clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && git -C /tmp/hpc-container-maker checkout 23996b03b3e72f77a41498e94d90de920935644a')
+
+        self.assertEqual(g.clone_step(repository=repository,
+                                      commit=invalid_commit, verify=True),
+                         'mkdir -p /tmp && git -C /tmp clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && git -C /tmp/hpc-container-maker checkout deadbeef')
+
+        with self.assertRaises(RuntimeError):
+            g.clone_step(repository=repository,
+                         branch=invalid_branch, verify='fatal')
+
+        with self.assertRaises(RuntimeError):
+            g.clone_step(repository=repository,
+                         commit=invalid_commit, verify='fatal')
