@@ -35,6 +35,7 @@ class Test_mvapich2_gdr(unittest.TestCase):
     def test_defaults(self):
         """Default mvapich2_gdr building block"""
         mv2 = mvapich2_gdr()
+        self.maxDiff = None
         self.assertEqual(str(mv2),
 r'''# MVAPICH2-GDR version 2.3a
 RUN apt-get update -y && \
@@ -45,10 +46,12 @@ RUN apt-get update -y && \
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed3.4/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
     dpkg --install /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
     (test ! -f /usr/bin/bash && ln -s /bin/bash /usr/bin/bash) && \
+    ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
-    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH''')
+    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH \
+    PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
     @docker
     def test_options(self):
@@ -65,10 +68,12 @@ RUN apt-get update -y && \
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed4.0/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb && \
     dpkg --install /tmp/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb && \
     (test ! -f /usr/bin/bash && ln -s /bin/bash /usr/bin/bash) && \
+    ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpirun/pgi17.10/lib64:$LD_LIBRARY_PATH \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
-    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpirun/pgi17.10/bin:$PATH''')
+    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpirun/pgi17.10/bin:$PATH \
+    PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
     @docker
     def test_package(self):
@@ -84,10 +89,12 @@ RUN apt-get update -y && \
 COPY mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb
 RUN dpkg --install /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
     (test ! -f /usr/bin/bash && ln -s /bin/bash /usr/bin/bash) && \
+    ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
-    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH''')
+    PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH \
+    PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
     @docker
     def test_runtime(self):

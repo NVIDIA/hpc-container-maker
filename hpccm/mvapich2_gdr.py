@@ -153,6 +153,12 @@ class mvapich2_gdr(wget):
         # Workaround for bad path in the MPI compiler wrappers
         self.__commands.append('(test ! -f /usr/bin/bash && ln -s /bin/bash /usr/bin/bash)')
 
+        # Workaround for using compiler wrappers in the build stage
+        cuda_home = '/usr/local/cuda'
+        self.__commands.append('ln -s {0} {1}'.format(
+            os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so'),
+            os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so.1')))
+
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, package)]))
@@ -163,12 +169,15 @@ class mvapich2_gdr(wget):
                                            cuda_string, mofed_string,
                                            'mpirun', compiler_string)
         self.__environment_variables = {
+            'LD_LIBRARY_PATH':
+            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__install_path,
+                                                      'lib64')),
             'MV2_USE_GPUDIRECT_GDRCOPY': 0,
             'PATH': '{}:$PATH'.format(os.path.join(self.__install_path,
                                                    'bin')),
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__install_path,
-                                                      'lib64'))}
+            # Workaround for using compiler wrappers in the build stage
+            'PROFILE_POSTLIB': '"-L{} -lnvidia-ml"'.format(
+                '/usr/local/cuda/lib64/stubs')}
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
@@ -178,6 +187,9 @@ class mvapich2_gdr(wget):
         instructions.append(apt_get(ospackages=['openssh-client']))
         instructions.append(copy(src=self.__install_path,
                                  dest=self.__install_path, _from=_from))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        # No need to workaround compiler wrapper issue for the runtime.
+        # Copy the dictionary so not to modify the original.
+        vars = dict(self.__environment_variables)
+        del vars['PROFILE_POSTLIB']
+        instructions.append(environment(variables=vars))
         return instructions
