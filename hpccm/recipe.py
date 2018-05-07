@@ -51,6 +51,7 @@ from .python import python           # pylint: disable=unused-import
 from .raw import raw                 # pylint: disable=unused-import
 from .shell import shell             # pylint: disable=unused-import
 from .workdir import workdir         # pylint: disable=unused-import
+from .yum import yum                 # pylint: disable=unused-import
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):

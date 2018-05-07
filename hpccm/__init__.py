@@ -48,3 +48,4 @@ from .tar import tar
 from .toolchain import toolchain
 from .wget import wget
 from .workdir import workdir
+from .yum import yum
