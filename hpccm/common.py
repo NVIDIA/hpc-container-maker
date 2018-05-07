@@ -24,6 +24,6 @@ class container_type(Enum):
     SINGULARITY = 2
 
 class package_type(Enum):
-    """Support package manager types"""
+    """Supported package manager types"""
     DEB = 1
     RPM = 2
