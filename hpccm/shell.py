@@ -14,48 +14,48 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Shell primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 
 class shell(object):
-    """Documentation TBD"""
+    """Shell primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(wget, self).__init__()
 
         self.commands = kwargs.get('commands', [])
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
+    def __str__(self):
+        """String representation of the primitive"""
         if self.commands:
-            if ctype == container_type.DOCKER:
+            if hpccm.config.g_ctype == container_type.DOCKER:
                 # Format:
                 # RUN cmd1 && \
                 #     cmd2 && \
                 #     cmd3
-                shell = ['RUN {}'.format(self.commands[0])]
-                shell.extend(['    {}'.format(x) for x in self.commands[1:]])
-                return ' && \\\n'.join(shell)
-            elif ctype == container_type.SINGULARITY:
+                s = ['RUN {}'.format(self.commands[0])]
+                s.extend(['    {}'.format(x) for x in self.commands[1:]])
+                return ' && \\\n'.join(s)
+            elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
                 # %post
                 #     cmd1
                 #     cmd2
                 #     cmd3
-                shell = ['%post']
-                shell.extend(['    {}'.format(x) for x in self.commands])
-                return '\n'.join(shell)
+                s = ['%post']
+                s.extend(['    {}'.format(x) for x in self.commands])
+                return '\n'.join(s)
             else:
-                logging.error('Unknown container type')
-                return ''
+                raise RuntimeError('Unknown container type')
         else:
             return ''

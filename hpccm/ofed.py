@@ -45,16 +45,13 @@ class ofed(object):
                                         'librdmacm1', 'librdmacm-dev',
                                         'opensm', 'rdmacm-utils'])
 
+    def __str__(self):
+        """String representation of the building block"""
+        instructions = []
+        instructions.append(comment('OFED'))
+        instructions.append(apt_get(ospackages=self.__ospackages))
+        return '\n'.join(str(x) for x in instructions)
+
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         return self
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        instructions = []
-        instructions.append(comment('OFED').toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
-
-        return '\n'.join(instructions)

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the mvapich2 module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.mvapich2 import mvapich2
 
 class Test_mvapich2(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_mvapich2(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default mvapich2 building block"""
         mv2 = mvapich2()
-        self.assertEqual(mv2.toString(container_type.DOCKER),
+        self.assertEqual(str(mv2),
 r'''# MVAPICH2 version 2.3b
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -51,10 +53,11 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
+    @docker
     def test_directory(self):
         """Directory in local build context"""
         mv2 = mvapich2(directory='mvapich2-2.3')
-        self.assertEqual(mv2.toString(container_type.DOCKER),
+        self.assertEqual(str(mv2),
 r'''# MVAPICH2
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -71,11 +74,12 @@ RUN cd /tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         mv2 = mvapich2()
         r = mv2.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# MVAPICH2
 RUN apt-get update -y && \

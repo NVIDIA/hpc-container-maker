@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the gnu module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.gnu import gnu
 
 class Test_gnu(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_gnu(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default gnu building block"""
         g = gnu()
-        self.assertEqual(g.toString(container_type.DOCKER),
+        self.assertEqual(str(g),
 r'''# GNU compiler
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -42,11 +44,12 @@ RUN apt-get update -y && \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         g = gnu()
         r = g.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# GNU compiler runtime
 RUN apt-get update -y && \

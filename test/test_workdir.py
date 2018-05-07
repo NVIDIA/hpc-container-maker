@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.workdir import workdir
 
 class Test_workdir(unittest.TestCase):
@@ -30,21 +31,27 @@ class Test_workdir(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No workdir specified"""
         w = workdir()
-        self.assertEqual(w.toString(container_type.DOCKER), '')
+        self.assertEqual(str(w), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         w = workdir(directory='foo')
-        self.assertEqual(w.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(w)
 
-    def test_dir(self):
+    @docker
+    def test_dir_docker(self):
         """Working directory specified"""
         w = workdir(directory='foo')
-        self.assertEqual(w.toString(container_type.DOCKER), 'WORKDIR foo')
-        self.assertEqual(w.toString(container_type.SINGULARITY),
-'''%post
-    mkdir -p foo
-    cd foo''')
+        self.assertEqual(str(w), 'WORKDIR foo')
+
+    @singularity
+    def test_dir_singularity(self):
+        """Working directory specified"""
+        w = workdir(directory='foo')
+        self.assertEqual(str(w), '%post\n    mkdir -p foo\n    cd foo')

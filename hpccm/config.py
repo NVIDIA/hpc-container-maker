@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+"""Global configuration
 
-"""Common stuff used by multiple parts of HPC Container Maker"""
+Import this as
+import hpccm.config
 
-from enum import Enum
+And access variables as
+hpccm.config.var
+"""
 
-class container_type(Enum):
-    """Supported container types"""
-    DOCKER = 1
-    SINGULARITY = 2
+from hpccm.common import container_type
+
+# Global variables
+g_ctype = container_type.DOCKER  # Container type

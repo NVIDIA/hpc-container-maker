@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the blob module"""
 
@@ -23,7 +23,8 @@ import logging # pylint: disable=unused-import
 import os
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.blob import blob
 
 class Test_blob(unittest.TestCase):
@@ -31,35 +32,52 @@ class Test_blob(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No blob specified"""
         b = blob()
-        self.assertEqual(b.toString(container_type.DOCKER), '')
+        self.assertEqual(str(b), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         b = blob()
-        self.assertEqual(b.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(b)
 
+    @docker
     def test_invalid_files(self):
         """Invalid file"""
         b = blob(docker='/path/to/nonexistent/file')
-        self.assertEqual(b.toString(container_type.DOCKER), '')
+        self.assertEqual(str(b), '')
 
-    def test_docker_only(self):
+    @docker
+    def test_docker_only_docker(self):
         """Only Docker blob specified"""
         path = os.path.dirname(__file__)
         b = blob(docker=os.path.join(path, 'docker.blob'))
-        self.assertEqual(b.toString(container_type.DOCKER),
-                         'COPY foo bar\nRUN bar\n')
-        self.assertEqual(b.toString(container_type.SINGULARITY), '')
+        self.assertEqual(str(b), 'COPY foo bar\nRUN bar\n')
 
-    def test_singularity_only(self):
+    @singularity
+    def test_docker_only_singularity(self):
+        """Only Docker blob specified"""
+        path = os.path.dirname(__file__)
+        b = blob(docker=os.path.join(path, 'docker.blob'))
+        self.assertEqual(str(b), '')
+
+    @docker
+    def test_singularity_only_docker(self):
         """Only Singularity blob specified"""
         path = os.path.dirname(__file__)
         b = blob(singularity=os.path.join(path, 'singularity.blob'))
-        self.assertEqual(b.toString(container_type.DOCKER), '')
-        self.assertEqual(b.toString(container_type.SINGULARITY),
+        self.assertEqual(str(b), '')
+
+    @singularity
+    def test_singularity_only_singularity(self):
+        """Only Singularity blob specified"""
+        path = os.path.dirname(__file__)
+        b = blob(singularity=os.path.join(path, 'singularity.blob'))
+        self.assertEqual(str(b),
 '''%files
     foo bar
 
@@ -67,14 +85,21 @@ class Test_blob(unittest.TestCase):
     bar
 ''')
 
-    def test_all(self):
+    @docker
+    def test_all_docker(self):
         """Both Docker and Singularity blobs specified"""
         path = os.path.dirname(__file__)
         b = blob(docker=os.path.join(path, 'docker.blob'),
                  singularity=os.path.join(path, 'singularity.blob'))
-        self.assertEqual(b.toString(container_type.DOCKER),
-                         'COPY foo bar\nRUN bar\n')
-        self.assertEqual(b.toString(container_type.SINGULARITY),
+        self.assertEqual(str(b), 'COPY foo bar\nRUN bar\n')
+
+    @singularity
+    def test_all_singularity(self):
+        """Both Docker and Singularity blobs specified"""
+        path = os.path.dirname(__file__)
+        b = blob(docker=os.path.join(path, 'docker.blob'),
+                 singularity=os.path.join(path, 'singularity.blob'))
+        self.assertEqual(str(b),
 '''%files
     foo bar
 

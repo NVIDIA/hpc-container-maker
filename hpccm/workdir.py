@@ -14,39 +14,39 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Working directory primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 from .shell import shell
 
 class workdir(object):
-    """Documentation TBD"""
+    """Workdir primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(workdir, self).__init__()
 
         self.directory = kwargs.get('directory', '')
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
+    def __str__(self):
+        """String representation of the primitive"""
         if self.directory:
-            if ctype == container_type.DOCKER:
+            if hpccm.config.g_ctype == container_type.DOCKER:
                 return 'WORKDIR {}'.format(self.directory)
-            elif ctype == container_type.SINGULARITY:
+            elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 s = shell(commands=['mkdir -p {}'.format(self.directory),
                                     'cd {}'.format(self.directory)])
-                return s.toString(ctype)
+                return str(s)
             else:
-                logging.error('Unknown container type')
-            return ''
+                raise RuntimeError('Unknown container type')
         else:
             logging.error('No directory specified')
             return ''

@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name
 
-"""Documentation TBD"""
+"""Container recipe"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -23,7 +23,10 @@ import logging
 
 import hpccm # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
+
 from .Stage import Stage
 
 from .apt_get import apt_get         # pylint: disable=unused-import
@@ -73,6 +76,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
             logging.error(e)
             exit(1)
 
+    # Set the global container type
+    hpccm.config.g_ctype = ctype
+
     # Only process the first stage of a recipe
     if single_stage:
         del stages[1:]
@@ -90,6 +96,6 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     for index, stage in enumerate(stages):
         if index >= 1:
             r.append('')
-        r.append(stage.toString(ctype))
+        r.append(str(stage))
 
     return '\n'.join(r)

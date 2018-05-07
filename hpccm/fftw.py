@@ -64,6 +64,30 @@ class fftw(ConfigureMake, tar, wget):
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
 
+        # Construct series of steps to execute
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+        instructions = []
+        if self.__directory:
+            instructions.append(comment('FFTW'))
+        else:
+            instructions.append(
+                comment('FFTW version {}'.format(self.__version)))
+        instructions.append(apt_get(ospackages=self.__ospackages))
+        if self.__directory:
+            # Use source from local build context
+            instructions.append(
+                copy(src=self.__directory,
+                     dest=os.path.join(self.__wd,
+                                       self.__directory)))
+        instructions.append(shell(commands=self.__commands))
+        instructions.append(
+            environment(variables=self.__environment_variables))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -100,7 +124,7 @@ class fftw(ConfigureMake, tar, wget):
 
         # Check the build
         if self.__check:
-            # PGI compiler needs a larger stack size 
+            # PGI compiler needs a larger stack size
             self.__commands.append('ulimit -s unlimited')
             self.__commands.append(self.check_step())
 
@@ -126,28 +150,3 @@ class fftw(ConfigureMake, tar, wget):
         instructions.append(environment(
             variables=self.__environment_variables))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-
-        instructions = []
-        if self.__directory:
-            instructions.append(comment('FFTW').toString(ctype))
-        else:
-            instructions.append(comment(
-                'FFTW version {}'.format(self.__version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.__ospackages).toString(ctype))
-        if self.__directory:
-            # Use source from local build context
-            instructions.append(
-                copy(src=self.__directory,
-                     dest=os.path.join(self.__wd,
-                                       self.__directory)).toString(ctype))
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-        instructions.append(environment(
-            variables=self.__environment_variables).toString(ctype))
-
-        return '\n'.join(instructions)

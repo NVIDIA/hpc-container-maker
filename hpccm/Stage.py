@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Container stage"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -24,39 +24,33 @@ import logging # pylint: disable=unused-import
 from .baseimage import baseimage
 
 class Stage(object):
-    """Documentation TBD"""
+    """Class for the container stage.  Docker may have one or more stages,
+       Singularity will always have a single stage."""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize stage"""
 
         self.__layers = []
         self.name = kwargs.get('name', '')
         self.__separator = kwargs.get('separator', '\n\n')
 
     def __iadd__(self, layer):
-        """Documentation TBD"""
+        """Add the layer to the stage.  Allows "+=" syntax."""
         if isinstance(layer, list):
             self.__layers.extend(layer)
         else:
             self.__layers.append(layer)
         return self
 
+    def __str__(self):
+        """String representation of the stage"""
+        return self.__separator.join(str(x) for x in self.__layers)
+
     def baseimage(self, image):
-        """Documentation TBD"""
+        """Insert the baseimage as the first layer"""
         if image:
             self.__layers.insert(0, baseimage(image=image, _as=self.name))
 
     def is_defined(self):
-        """Documentation TBD"""
-        if self.__layers:
-            return True
-        else:
-            return False
-
-    def toString(self, ctype):
-        """Documentation TBD"""
-        l = []
-        for layer in self.__layers:
-            l.append(layer.toString(ctype))
-
-        return self.__separator.join(l)
+        """Return True if any layers have been defined, otherwise False"""
+        return bool(self.__layers)

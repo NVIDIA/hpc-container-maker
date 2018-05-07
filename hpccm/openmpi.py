@@ -76,6 +76,29 @@ class openmpi(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+
+        instructions = []
+        if self.directory:
+            instructions.append(comment('OpenMPI'))
+        else:
+            instructions.append(comment(
+                'OpenMPI version {}'.format(self.version)))
+        instructions.append(apt_get(ospackages=self.ospackages))
+        if self.directory:
+            # Use source from local build context
+            instructions.append(
+                copy(src=self.directory,
+                     dest=os.path.join(self.__wd, self.directory)))
+        instructions.append(shell(commands=self.__commands))
+        instructions.append(environment(
+            variables=self.__environment_variables))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -160,28 +183,3 @@ class openmpi(ConfigureMake, tar, wget):
         instructions.append(environment(
             variables=self.__environment_variables))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-
-        instructions = []
-        if self.directory:
-            instructions.append(comment('OpenMPI').toString(ctype))
-        else:
-            instructions.append(comment(
-                'OpenMPI version {}'.format(self.version)).toString(ctype))
-        instructions.append(apt_get(
-            ospackages=self.ospackages).toString(ctype))
-        if self.directory:
-            # Use source from local build context
-            instructions.append(
-                copy(src=self.directory,
-                     dest=os.path.join(self.__wd,
-                                       self.directory)).toString(ctype))
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-        instructions.append(environment(
-            variables=self.__environment_variables).toString(ctype))
-
-        return '\n'.join(instructions)

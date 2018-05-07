@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""apt-get building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -24,18 +24,26 @@ import logging # pylint: disable=unused-import
 from .shell import shell
 
 class apt_get(object):
-    """Documentation TBD"""
+    """apt-get building block"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize building block"""
 
         #super(apt_get, self).__init__()
 
         self.__commands = []
         self.ospackages = kwargs.get('ospackages', [])
 
+        # Construct the series of commands that form the building
+        # block
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+        return str(shell(commands=self.__commands))
+
     def __setup(self):
-        """Documentation TBD"""
+        """Construct the series of commands to execute"""
 
         self.__commands.append('apt-get update -y')
         if self.ospackages:
@@ -46,10 +54,3 @@ class apt_get(object):
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)
         self.__commands.append('rm -rf /var/lib/apt/lists/*')
-
-    def toString(self, ctype):
-        """Documentation TBD"""
-
-        self.__setup()
-        s = shell(commands=self.__commands)
-        return s.toString(ctype)

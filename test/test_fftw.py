@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the fftw module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.fftw import fftw
 
 class Test_fftw(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_fftw(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default fftw building block"""
         f = fftw()
-        self.assertEqual(f.toString(container_type.DOCKER),
+        self.assertEqual(str(f),
 r'''# FFTW version 3.3.7
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -49,20 +51,22 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/p
     rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         f = fftw()
         r = f.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @docker
     def test_directory(self):
         """Directory in local build context"""
         f = fftw(directory='fftw-3.3.7')
-        self.assertEqual(f.toString(container_type.DOCKER),
+        self.assertEqual(str(f),
 r'''# FFTW
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

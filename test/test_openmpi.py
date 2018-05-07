@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods
+# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
 
 """Test cases for the openmpi module"""
 
@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker
+
 from hpccm.openmpi import openmpi
 
 class Test_openmpi(unittest.TestCase):
@@ -30,10 +31,11 @@ class Test_openmpi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_defaults(self):
         """Default openmpi building block"""
         ompi = openmpi()
-        self.assertEqual(ompi.toString(container_type.DOCKER),
+        self.assertEqual(str(ompi),
 r'''# OpenMPI version 3.0.0
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -51,10 +53,11 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
+    @docker
     def test_directory(self):
         """Directory in local build context"""
         ompi = openmpi(directory='openmpi-3.0.0')
-        self.assertEqual(ompi.toString(container_type.DOCKER),
+        self.assertEqual(str(ompi),
 r'''# OpenMPI
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -71,11 +74,12 @@ RUN cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
+    @docker
     def test_runtime(self):
         """Runtime"""
         ompi = openmpi()
         r = ompi.runtime()
-        s = '\n'.join(x.toString(container_type.DOCKER) for x in r)
+        s = '\n'.join(str(x) for x in r)
         self.assertEqual(s,
 r'''# OpenMPI
 RUN apt-get update -y && \

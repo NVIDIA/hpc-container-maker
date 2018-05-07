@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Copy primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -22,65 +22,70 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.config
+
 from .common import container_type
 
 class copy(object):
-    """Documentation TBD"""
+    """Copy primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(copy, self).__init__()
 
-        self.dest = kwargs.get('dest', '')
-        self.src = kwargs.get('src', '')
+        self.__dest = kwargs.get('dest', '')
         self.__from = kwargs.get('_from', '') # Docker specific
+        self.__src = kwargs.get('src', '')
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
-        if self.dest and self.src:
-            if ctype == container_type.DOCKER:
+    def __str__(self):
+        """String representation of the primitive"""
+        if self.__dest and self.__src:
+            if hpccm.config.g_ctype == container_type.DOCKER:
                 # Format:
                 # COPY src1 \
                 #     src2 \
                 #     src3 \
                 #     dest/
                 # COPY src dest
-                copy = ['COPY ']
+                c = ['COPY ']
 
                 if self.__from:
-                    copy[0] = copy[0] + '--from={} '.format(self.__from)
+                    c[0] = c[0] + '--from={} '.format(self.__from)
 
-                if isinstance(self.src, list):
-                    copy[0] = copy[0] + self.src[0]
-                    copy.extend(['    {}'.format(x) for x in self.src[1:]])
+                if isinstance(self.__src, list):
+                    c[0] = c[0] + self.__src[0]
+                    c.extend(['    {}'.format(x) for x in self.__src[1:]])
                     # Docker requires a trailing slash.  Add one if missing.
-                    copy.append('    {}'.format(os.path.join(self.dest, '')))
+                    c.append('    {}'.format(os.path.join(self.__dest, '')))
                 else:
-                    copy[0] = copy[0] + '{0} {1}'.format(self.src, self.dest)
+                    c[0] = c[0] + '{0} {1}'.format(self.__src, self.__dest)
 
-                return ' \\\n'.join(copy)
-            if ctype == container_type.SINGULARITY:
+                return ' \\\n'.join(c)
+            if hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
                 # %files
                 #     src1 dest
                 #     src2 dest
                 #     src3 dest
                 if self.__from:
-                    logging.warning('The Docker specific "COPY --from" syntax was requested.  Singularity does not have an equivalent, so this is probably not going to do what you want.')
+                    logging.warning('The Docker specific "COPY --from" '
+                                    'syntax was requested.  Singularity does '
+                                    'not have an equivalent, so this is '
+                                    'probably not going to do what you want.')
 
                 # Note: if the source is a file and the destination
                 # path does not already exist in the container, this
                 # will likely error.  Probably need a '%setup' step to
                 # first create the directory.
-                if isinstance(self.src, list):
+                if isinstance(self.__src, list):
                     return '%files\n' + '\n'.join(
-                        ['    {0} {1}'.format(x, self.dest) for x in self.src])
+                        ['    {0} {1}'.format(x, self.__dest)
+                         for x in self.__src])
                 else:
-                    return '%files\n    {0} {1}'.format(self.src, self.dest)
+                    return '%files\n    {0} {1}'.format(self.__src,
+                                                        self.__dest)
             else:
-                logging.error('Unknown container type')
-                return ''
+                raise RuntimeError('Unknown container type')
         else:
             return ''

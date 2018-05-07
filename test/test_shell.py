@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.shell import shell
 
 class Test_shell(unittest.TestCase):
@@ -30,33 +31,43 @@ class Test_shell(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No commands specified"""
         s = shell()
-        self.assertEqual(s.toString(container_type.DOCKER), '')
+        self.assertEqual(str(s), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         s = shell(commands=['a'])
-        self.assertEqual(s.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(s)
 
-    def test_single(self):
+    @docker
+    def test_single_docker(self):
         """Single command specified"""
         cmd = ['z']
-
         s = shell(commands=cmd)
+        self.assertEqual(str(s), 'RUN z')
 
-        self.assertEqual(s.toString(container_type.DOCKER), 'RUN z')
-        self.assertEqual(s.toString(container_type.SINGULARITY),
-                         '%post\n    z')
+    @singularity
+    def test_single_singularity(self):
+        """Single command specified"""
+        cmd = ['z']
+        s = shell(commands=cmd)
+        self.assertEqual(str(s), '%post\n    z')
 
-    def test_multiple(self):
+    @docker
+    def test_multiple_docker(self):
         """List of commands specified"""
         cmds = ['a', 'b', 'c']
-
         s = shell(commands=cmds)
+        self.assertEqual(str(s), 'RUN a && \\\n    b && \\\n    c')
 
-        self.assertEqual(s.toString(container_type.DOCKER),
-                         'RUN a && \\\n    b && \\\n    c')
-        self.assertEqual(s.toString(container_type.SINGULARITY),
-                         '%post\n    a\n    b\n    c')
+    @singularity
+    def test_multiple_singularity(self):
+        """List of commands specified"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds)
+        self.assertEqual(str(s), '%post\n    a\n    b\n    c')

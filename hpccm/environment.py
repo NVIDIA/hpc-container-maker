@@ -14,20 +14,22 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Environment primitive"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from .common import container_type
 
 class environment(object):
-    """Documentation TBD"""
+    """Environment primitive"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize primitive"""
 
         #super(environment, self).__init__()
 
@@ -37,17 +39,16 @@ class environment(object):
         # this variable is True, then also generate a '%post' section
         # to set the variables for the build context.
         self.__export = kwargs.get('_export', True) # Singularity specific
-        self.variables = kwargs.get('variables', {})
+        self.__variables = kwargs.get('variables', {})
 
-    def toString(self, ctype):
-        """Documentation TBD"""
-
-        if self.variables:
+    def __str__(self):
+        """String representation of the primitive"""
+        if self.__variables:
             keyvals = []
-            for key, val in sorted(self.variables.items()):
+            for key, val in sorted(self.__variables.items()):
                 keyvals.append('{0}={1}'.format(key, val))
 
-            if ctype == container_type.DOCKER:
+            if hpccm.config.g_ctype == container_type.DOCKER:
                 # Format:
                 # ENV K1=V1 \
                 #     K2=V2 \
@@ -55,7 +56,7 @@ class environment(object):
                 environ = ['ENV {}'.format(keyvals[0])]
                 environ.extend(['    {}'.format(x) for x in keyvals[1:]])
                 return ' \\\n'.join(environ)
-            elif ctype == container_type.SINGULARITY:
+            elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
                 # %environment
                 #     export K1=V1
@@ -70,10 +71,10 @@ class environment(object):
 
                 if self.__export:
                     environ.extend(['%post'])
-                    environ.extend(['    export {}'.format(x) for x in keyvals])
+                    environ.extend(['    export {}'.format(x)
+                                    for x in keyvals])
                 return '\n'.join(environ)
             else:
-                logging.error('Unknown container type')
-                return ''
+                raise RuntimeError('Unknown container type')
         else:
             return ''

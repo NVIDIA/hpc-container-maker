@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.common import container_type
+from helpers import docker, invalid_ctype, singularity
+
 from hpccm.raw import raw
 
 class Test_raw(unittest.TestCase):
@@ -30,32 +31,51 @@ class Test_raw(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @docker
     def test_empty(self):
         """No raw strings specified"""
         r = raw()
-        self.assertEqual(r.toString(container_type.DOCKER), '')
+        self.assertEqual(str(r), '')
 
+    @invalid_ctype
     def test_invalid_ctype(self):
         """Invalid container type specified"""
         r = raw(docker='RAW')
-        self.assertEqual(r.toString(None), '')
+        with self.assertRaises(RuntimeError):
+            str(r)
 
-    def test_docker_only(self):
+    @docker
+    def test_docker_only_docker(self):
         """Only Docker string specified"""
         r = raw(docker='RAW string')
-        self.assertEqual(r.toString(container_type.DOCKER), 'RAW string')
-        self.assertEqual(r.toString(container_type.SINGULARITY), '')
+        self.assertEqual(str(r), 'RAW string')
 
-    def test_singularity_only(self):
+    @singularity
+    def test_docker_only_singularity(self):
+        """Only Docker string specified"""
+        r = raw(docker='RAW string')
+        self.assertEqual(str(r), '')
+
+    @docker
+    def test_singularity_only_docker(self):
         """Only Singularity string specified"""
         r = raw(singularity='%raw\n    string')
-        self.assertEqual(r.toString(container_type.DOCKER), '')
-        self.assertEqual(r.toString(container_type.SINGULARITY),
-                         '%raw\n    string')
+        self.assertEqual(str(r), '')
 
-    def test_all(self):
+    @singularity
+    def test_singularity_only_singularity(self):
+        """Only Singularity string specified"""
+        r = raw(singularity='%raw\n    string')
+        self.assertEqual(str(r), '%raw\n    string')
+
+    @docker
+    def test_all_docker(self):
         """Both Docker and Singularity strings specified"""
         r = raw(docker='RAW string', singularity='%raw\n    string')
-        self.assertEqual(r.toString(container_type.DOCKER), 'RAW string')
-        self.assertEqual(r.toString(container_type.SINGULARITY),
-                         '%raw\n    string')
+        self.assertEqual(str(r), 'RAW string')
+
+    @singularity
+    def test_all_singularity(self):
+        """Both Docker and Singularity strings specified"""
+        r = raw(docker='RAW string', singularity='%raw\n    string')
+        self.assertEqual(str(r), '%raw\n    string')

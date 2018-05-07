@@ -64,6 +64,39 @@ class pgi(tar, wget):
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
 
+        self.__setup()
+
+    def __str__(self):
+        """String representation of the building block"""
+
+        ospackages = list(self.__ospackages)
+
+        instructions = []
+        instructions.append(comment(
+            'PGI compiler version {}'.format(self.__version)))
+        if self.__tarball:
+            # Use tarball from local build context
+            instructions.append(
+                copy(src=self.__tarball,
+                     dest=os.path.join(self.__wd, self.__tarball)))
+        else:
+            # Downloading, so need wget
+            ospackages.append('wget')
+
+        if ospackages:
+            instructions.append(apt_get(ospackages=ospackages))
+
+        instructions.append(shell(commands=self.__commands))
+        instructions.append(environment(
+            variables={'PATH': '{}:$PATH'.format(os.path.join(self.__basepath,
+                                                              self.__version,
+                                                              'bin')),
+                       'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
+                           os.path.join(self.__basepath, self.__version,
+                                        'lib'))}))
+
+        return '\n'.join(str(x) for x in instructions)
+
     def cleanup_step(self, items=None):
         """Cleanup temporary files"""
 
@@ -137,37 +170,3 @@ class pgi(tar, wget):
             variables={'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
                 os.path.join(self.__basepath, self.__version, 'lib'))}))
         return instructions
-
-    def toString(self, ctype):
-        """Building block container specification"""
-
-        self.__setup()
-        ospackages = list(self.__ospackages)
-
-        instructions = []
-        instructions.append(comment(
-            'PGI compiler version {}'.format(self.__version)).toString(ctype))
-        if self.__tarball:
-            # Use tarball from local build context
-            instructions.append(
-                copy(src=self.__tarball,
-                     dest=os.path.join(self.__wd,
-                                       self.__tarball)).toString(ctype))
-        else:
-            # Downloading, so need wget
-            ospackages.append('wget')
-
-        if ospackages:
-            instructions.append(apt_get(
-                ospackages=ospackages).toString(ctype))
-
-        instructions.append(shell(commands=self.__commands).toString(ctype))
-        instructions.append(environment(
-            variables={'PATH': '{}:$PATH'.format(os.path.join(self.__basepath,
-                                                              self.__version,
-                                                              'bin')),
-                       'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                           os.path.join(self.__basepath, self.__version,
-                                        'lib'))}).toString(ctype))
-
-        return '\n'.join(instructions)
