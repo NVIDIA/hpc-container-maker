@@ -142,6 +142,9 @@ class pgi(tar, wget):
             logging.warning('PGI EULA was not accepted')
             self.__commands.append('cd {} && PGI_ACCEPT_EULA=decline ./install'.format(self.__wd))
 
+        # Create siterc to specify use of the system CUDA
+        self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(os.path.join(self.__basepath, self.__version, 'bin', 'siterc')))
+
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball), self.__wd]))
 
