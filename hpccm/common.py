@@ -22,3 +22,8 @@ class container_type(Enum):
     """Supported container types"""
     DOCKER = 1
     SINGULARITY = 2
+
+class package_type(Enum):
+    """Support package manager types"""
+    DEB = 1
+    RPM = 2

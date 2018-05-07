@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import deb, docker, rpm
 
 from hpccm.pgi import pgi
 
@@ -31,8 +31,9 @@ class Test_pgi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @deb
     @docker
-    def test_defaults(self):
+    def test_defaults_deb(self):
         """Default pgi building block"""
         p = pgi()
         self.assertEqual(str(p),
@@ -40,6 +41,7 @@ r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         libnuma1 \
+        perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
@@ -49,6 +51,26 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @rpm
+    @docker
+    def test_defaults_rpm(self):
+        """Default pgi building block"""
+        p = pgi()
+        self.assertEqual(str(p),
+r'''# PGI compiler version 18.4
+RUN yum install -y \
+        numactl-libs \
+        perl \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+    tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=decline ./install && \
+    rm -rf /tmp/pgi/pgi-community-linux-x64-latest.tar.gz /tmp/pgi
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
+
+    @deb
     @docker
     def test_eula(self):
         """Accept EULA"""
@@ -58,6 +80,7 @@ r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         libnuma1 \
+        perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
@@ -67,6 +90,7 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @deb
     @docker
     def test_tarball(self):
         """tarball"""
@@ -76,7 +100,8 @@ r'''# PGI compiler version 17.10
 COPY pgilinux-2017-1710-x86_64.tar.gz /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-        libnuma1 && \
+        libnuma1 \
+        perl && \
     rm -rf /var/lib/apt/lists/*
 RUN tar -x -f /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_SILENT=true PGI_ACCEPT_EULA=accept ./install && \
@@ -84,6 +109,7 @@ RUN tar -x -f /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz -C /tmp/pgi -z && \
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/17.10/bin:$PATH''')
 
+    @deb
     @docker
     def test_runtime(self):
         """Runtime"""

@@ -23,30 +23,51 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from hpccm.common import container_type
+from hpccm.common import container_type, package_type
+
+def deb(function):
+    """Decorator to set the global package type to deb"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_pkgtype = package_type.DEB
+        return function(*args, **kwargs)
+
+    return wrapper
 
 def docker(function):
-    """Decorator to set the global containter type to docker"""
+    """Decorator to set the global container type to docker"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
         hpccm.config.g_ctype = container_type.DOCKER
         return function(*args, **kwargs)
 
     return wrapper
 
 def invalid_ctype(function):
-    """Decorator to set the global containter type to an invalid value"""
+    """Decorator to set the global container type to an invalid value"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
         hpccm.config.g_ctype = None
         return function(*args, **kwargs)
 
     return wrapper
 
-def singularity(function):
-    """Decorator to set the global containter type to singularity"""
+def invalid_pkgtype(function):
+    """Decorator to set the global package type to an invalid value"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
+        hpccm.config.g_pkgtype = None
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def rpm(function):
+    """Decorator to set the global package type to rpm"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_pkgtype = package_type.RPM
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def singularity(function):
+    """Decorator to set the global container type to singularity"""
+    def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.SINGULARITY
         return function(*args, **kwargs)
 

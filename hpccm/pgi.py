@@ -23,10 +23,13 @@ import logging # pylint: disable=unused-import
 import re
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import package_type
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -46,13 +49,15 @@ class pgi(tar, wget):
 
         self.__basepath = '/opt/pgi/linux86-64/'
         self.__commands = [] # Filled in by __setup()
+        self.__debs = ['libnuma1']
 
         # By setting this value to True, you agree to the PGI End-User
         # License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
         self.__eula = kwargs.get('eula', False)
 
-        self.__ospackages = kwargs.get('ospackages', ['libnuma1'])
+        self.__ospackages = kwargs.get('ospackages', [])
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
+        self.__rpms = ['numactl-libs']
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 
@@ -64,12 +69,25 @@ class pgi(tar, wget):
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
 
+        # Based on the Linux distribution's package manager, set
+        # ospackages accordingly.  A user specified value overrides
+        # any defaults.
+        if not self.__ospackages:
+            if hpccm.config.g_pkgtype == package_type.DEB:
+                self.__ospackages = self.__debs
+            elif hpccm.config.g_pkgtype == package_type.RPM:
+                self.__ospackages = self.__rpms
+            else:
+                raise RuntimeError('Unknown package type')
+
         self.__setup()
 
     def __str__(self):
         """String representation of the building block"""
 
         ospackages = list(self.__ospackages)
+        # Installer needs perl
+        ospackages.append('perl')
 
         instructions = []
         instructions.append(comment(
@@ -84,7 +102,7 @@ class pgi(tar, wget):
             ospackages.append('wget')
 
         if ospackages:
-            instructions.append(apt_get(ospackages=ospackages))
+            instructions.append(packages(ospackages=ospackages))
 
         instructions.append(shell(commands=self.__commands))
         instructions.append(environment(
@@ -150,7 +168,7 @@ class pgi(tar, wget):
         instructions = []
         instructions.append(comment('PGI compiler'))
         if self.__ospackages:
-            instructions.append(apt_get(ospackages=self.__ospackages))
+            instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(copy(_from=_from,
                                  src=os.path.join(self.__basepath,
                                                   self.__version, 'REDIST',

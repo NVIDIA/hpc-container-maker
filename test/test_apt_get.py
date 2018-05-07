@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Test cases for the yum module"""
+"""Test cases for the apt_get module"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -22,23 +22,24 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, rpm
+from helpers import deb, docker
 
-from hpccm.yum import yum
+from hpccm.apt_get import apt_get
 
 class Test_yum(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @rpm
+    @deb
     @docker
     def test_basic(self):
-        """Basic yum"""
-        y = yum(ospackages=['gcc', 'gcc-c++', 'gcc-fortran'])
-        self.assertEqual(str(y),
-r'''RUN yum install -y \
+        """Basic apt_get"""
+        a = apt_get(ospackages=['gcc', 'g++', 'gfortran'])
+        self.assertEqual(str(a),
+r'''RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
         gcc \
-        gcc-c++ \
-        gcc-fortran && \
-    rm -rf /var/cache/yum/*''')
+        g++ \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*''')

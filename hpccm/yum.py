@@ -21,6 +21,9 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
+from .common import package_type
 from .shell import shell
 
 class yum(object):
@@ -32,7 +35,11 @@ class yum(object):
         #super(yum, self).__init__()
 
         self.__commands = []
+        self.__epel = kwargs.get('epel', False)
         self.ospackages = kwargs.get('ospackages', [])
+
+        if hpccm.config.g_pkgtype != package_type.RPM: # pragma: no cover
+            logging.warning('Using yum on a non-RPM based Linux distribution')
 
         # Construct the series of commands that form the building
         # block
@@ -44,6 +51,9 @@ class yum(object):
 
     def __setup(self):
         """Construct the series of commands to execute"""
+
+        if self.__epel:
+            self.__commands.append('yum install -y epel-release')
 
         if self.ospackages:
             install = 'yum install -y \\\n'

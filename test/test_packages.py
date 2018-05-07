@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Test cases for the yum module"""
+"""Test cases for the packages module"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -22,23 +22,43 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, rpm
+from helpers import deb, docker, invalid_pkgtype, rpm
 
-from hpccm.yum import yum
+from hpccm.packages import packages 
 
-class Test_yum(unittest.TestCase):
+class Test_packages(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @deb
+    @docker
+    def test_basic_deb(self):
+        """Basic packages"""
+        p = packages(ospackages=['gcc', 'g++', 'gfortran'])
+        self.assertEqual(str(p),
+r'''RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*''')
+
     @rpm
     @docker
-    def test_basic(self):
-        """Basic yum"""
-        y = yum(ospackages=['gcc', 'gcc-c++', 'gcc-fortran'])
-        self.assertEqual(str(y),
+    def test_basic_rpm(self):
+        """Basic packages"""
+        p = packages(ospackages=['gcc', 'gcc-c++', 'gcc-fortran'])
+        self.assertEqual(str(p),
 r'''RUN yum install -y \
         gcc \
         gcc-c++ \
         gcc-fortran && \
     rm -rf /var/cache/yum/*''')
+
+    @invalid_pkgtype
+    def test_invalid_pkgtype(self):
+        """Invalid package type specified"""
+        p = packages(ospackages=['gcc', 'g++', 'gfortran'])
+        with self.assertRaises(RuntimeError):
+            str(p)
