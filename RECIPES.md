@@ -198,8 +198,8 @@ Building blocks are automatically included in the recipe namespace.
 ### apt_get
 
 The `apt_get` building block specifies the set of operating system
-packages to install.  This building block should only be on images
-that use the Debian package manager (e.g., Ubuntu).
+packages to install.  This building block should only be used on
+images that use the Debian package manager (e.g., Ubuntu).
 
 Parameters:
 
@@ -777,6 +777,23 @@ Stage1 += p.runtime()
 
 ```python
 python(python3=False)
+```
+
+### yum
+
+The `yum` building block specifies the set of operating system
+packages to install.  This building block should only be used on
+images that use the Red Hat package manager (e.g., CentOS).
+
+Parameters:
+
+- `ospackages`: A list of packages to install.  The default is an
+  empty list.
+
+Example:
+
+```python
+yum(ospackages=['make', 'wget'])
 ```
 
 ## Templates
