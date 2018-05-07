@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import deb, docker, rpm
 
 from hpccm.gnu import gnu
 
@@ -31,8 +31,9 @@ class Test_gnu(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @deb
     @docker
-    def test_defaults(self):
+    def test_defaults_deb(self):
         """Default gnu building block"""
         g = gnu()
         self.assertEqual(str(g),
@@ -44,6 +45,20 @@ RUN apt-get update -y && \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @rpm
+    @docker
+    def test_defaults_rpm(self):
+        """Default gnu building block"""
+        g = gnu()
+        self.assertEqual(str(g),
+r'''# GNU compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ \
+        gcc-gfortran && \
+    rm -rf /var/cache/yum/*''')
+
+    @deb
     @docker
     def test_runtime(self):
         """Runtime"""

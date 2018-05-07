@@ -24,7 +24,10 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
+import hpccm.config
+
 from hpccm.baseimage import baseimage
+from hpccm.common import package_type
 
 class Test_baseimage(unittest.TestCase):
     def setUp(self):
@@ -85,3 +88,27 @@ class Test_baseimage(unittest.TestCase):
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
         self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+
+    @docker
+    def test_detect_ubuntu(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04')
+        self.assertEqual(hpccm.config.g_pkgtype, package_type.DEB)
+
+    @docker
+    def test_detect_centos(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nvidia/cuda:9.0-devel-centos7')
+        self.assertEqual(hpccm.config.g_pkgtype, package_type.RPM)
+
+    @docker
+    def test_pkgtype_deb(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _pkgtype='deb')
+        self.assertEqual(hpccm.config.g_pkgtype, package_type.DEB)
+
+    @docker
+    def test_pkgtype_rpm(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _pkgtype='rpm')
+        self.assertEqual(hpccm.config.g_pkgtype, package_type.RPM)

@@ -21,8 +21,8 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from .apt_get import apt_get
 from .comment import comment
+from .packages import packages
 from .toolchain import toolchain
 
 class gnu(object):
@@ -39,23 +39,29 @@ class gnu(object):
         self.__cxx = kwargs.get('cxx', True)
         self.__fortran = kwargs.get('fortran', True)
 
-        self.__compiler_packages = [] # Filled in below
-        self.__runtime_packages = ['libgomp1']
+        self.__compiler_debs = [] # Filled in below
+        self.__compiler_rpms = [] # Filled in below
+        self.__runtime_debs = ['libgomp1']
+        self.__runtime_rpms = ['libgomp']
 
         # Output toolchain
         self.toolchain = toolchain()
 
         if self.__cc:
-            self.__compiler_packages.append('gcc')
+            self.__compiler_debs.append('gcc')
+            self.__compiler_rpms.append('gcc')
             self.toolchain.CC = 'gcc'
 
         if self.__cxx:
-            self.__compiler_packages.append('g++')
+            self.__compiler_debs.append('g++')
+            self.__compiler_rpms.append('gcc-c++')
             self.toolchain.CXX = 'g++'
 
         if self.__fortran:
-            self.__compiler_packages.append('gfortran')
-            self.__runtime_packages.append('libgfortran3')
+            self.__compiler_debs.append('gfortran')
+            self.__runtime_debs.append('libgfortran3')
+            self.__compiler_rpms.append('gcc-gfortran')
+            self.__runtime_rpms.append('libgfortran')
             self.toolchain.F77 = 'gfortran'
             self.toolchain.F90 = 'gfortran'
             self.toolchain.FC = 'gfortran'
@@ -64,12 +70,14 @@ class gnu(object):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('GNU compiler'))
-        instructions.append(apt_get(ospackages=self.__compiler_packages))
+        instructions.append(packages(debs=self.__compiler_debs,
+                                     rpms=self.__compiler_rpms))
         return '\n'.join(str(x) for x in instructions)
 
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('GNU compiler runtime'))
-        instructions.append(apt_get(ospackages=self.__runtime_packages))
+        instructions.append(packages(debs=self.__runtime_debs,
+                                     rpms=self.__runtime_rpms))
         return instructions

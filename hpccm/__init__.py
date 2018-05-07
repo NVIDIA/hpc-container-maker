@@ -17,7 +17,7 @@ import sys
 
 sys.path.append(os.path.dirname(__file__))
 
-from .common import container_type
+from .common import container_type, package_type
 
 from .ConfigureMake import ConfigureMake
 from .Stage import Stage
@@ -37,6 +37,7 @@ from .mlnx_ofed import mlnx_ofed
 from .mvapich2 import mvapich2
 from .ofed import ofed
 from .openmpi import openmpi
+from .packages import packages
 from .pgi import pgi
 from .python import python
 from .raw import raw

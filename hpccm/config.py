@@ -21,7 +21,8 @@ And access variables as
 hpccm.config.var
 """
 
-from hpccm.common import container_type
+from hpccm.common import container_type, package_type
 
 # Global variables
 g_ctype = container_type.DOCKER  # Container type
+g_pkgtype = package_type.DEB     # Package type
