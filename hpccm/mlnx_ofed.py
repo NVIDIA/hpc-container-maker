@@ -22,8 +22,11 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import package_type
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .wget import wget
@@ -42,17 +45,29 @@ class mlnx_ofed(tar, wget):
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://content.mellanox.com/ofed')
-        self.__ospackages = kwargs.get('ospackages',
-                                       ['libnl-3-200', 'libnl-route-3-200',
-                                        'libnuma1', 'wget'])
-        self.__packages = kwargs.get('packages',
-                                     ['libibverbs1', 'libibverbs-dev',
-                                      'libibumad', 'libibmad',
-                                      'libmlx5-1', 'ibverbs-utils'])
+        self.__oslabel = kwargs.get('oslabel', '')
+        self.__oslabel_deb = 'ubuntu16.04'
+        self.__oslabel_rpm = 'rhel7.2'
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__ospackages_deb = ['libnl-3-200', 'libnl-route-3-200',
+                                 'libnuma1', 'wget']
+        self.__ospackages_rpm = ['libnl', 'libnl3', 'numactl-libs', 'wget']
+        self.__packages = kwargs.get('packages', [])
+        self.__packages_deb = ['libibverbs1', 'libibverbs-dev',
+                               'ibverbs-utils', 'libibmad',
+                               'libibmad-devel', 'libibumad',
+                               'libibumad-devel', 'libmlx5-1']
+        self.__packages_rpm = ['libibverbs', 'libibverbs-devel',
+                               'libibverbs-utils', 'libibmad',
+                               'libibmad-devel', 'libibumad',
+                               'libibumad-devel', 'libmlx5']
         self.__version = kwargs.get('version', '3.4-1.0.0.0')
 
         self.__commands = []
         self.__wd = '/tmp'
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -63,7 +78,7 @@ class mlnx_ofed(tar, wget):
         instructions = []
         instructions.append(comment(
             'Mellanox OFED version {}'.format(self.__version)))
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
 
         return '\n'.join(str(x) for x in instructions)
@@ -77,13 +92,51 @@ class mlnx_ofed(tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
+    def __distro(self):
+        """Based on the Linux distribution's package manager, set values
+           accordingly.  A user specified value overrides any
+           defaults."""
+
+        if hpccm.config.g_pkgtype == package_type.DEB:
+            if not self.__oslabel:
+                self.__oslabel = self.__oslabel_deb
+            if not self.__ospackages:
+                self.__ospackages = self.__ospackages_deb
+            if not self.__packages:
+                self.__packages = self.__packages_deb
+
+            self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
+                self.__version, self.__oslabel)
+
+            self.__installer = 'dpkg --install'
+
+            self.__pkglist = ' '.join('{}_*_amd64.deb'.format(
+                os.path.join(self.__wd, self.__prefix, 'DEBS', x))
+                                      for x in self.__packages)
+        elif hpccm.config.g_pkgtype == package_type.RPM:
+            if not self.__oslabel:
+                self.__oslabel = self.__oslabel_rpm
+            if not self.__ospackages:
+                self.__ospackages = self.__ospackages_rpm
+            if not self.__packages:
+                self.__packages = self.__packages_rpm
+
+            self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
+                self.__version, self.__oslabel)
+
+            self.__installer = 'rpm --install'
+
+            self.__pkglist = ' '.join('{}-*.x86_64.rpm'.format(
+                os.path.join(self.__wd, self.__prefix, 'RPMS', x))
+                                      for x in self.__packages)
+        else: # pragma: no cover
+            raise RuntimeError('Unknown package type')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # This is Ubuntu 16.04 specific.  This should be generic.
-        prefix = 'MLNX_OFED_LINUX-{}-ubuntu16.04-x86_64'.format(self.__version)
-        tarball = '{}.tgz'.format(prefix)
+        tarball = '{}.tgz'.format(self.__prefix)
         url = '{0}/MLNX_OFED-{1}/{2}'.format(self.__baseurl, self.__version,
                                              tarball)
 
@@ -93,16 +146,14 @@ class mlnx_ofed(tar, wget):
         self.__commands.append(self.untar_step(
             tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
 
-        # Install packages, order could matter
-        for p in self.__packages:
-            self.__commands.append('dpkg --install {}'.format(
-                os.path.join(self.__wd, prefix, 'DEBS',
-                             '{}_*_amd64.deb'.format(p))))
+        # Install packages
+        self.__commands.append('{0} {1}'.format(self.__installer,
+                                                self.__pkglist))
 
         # Cleanup
         self.__commands.append(self.__cleanup_step(
             items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd, prefix)]))
+                   os.path.join(self.__wd, self.__prefix)]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
