@@ -21,8 +21,8 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from .apt_get import apt_get
 from .comment import comment
+from .packages import packages
 
 class ofed(object):
     """OFED building block"""
@@ -34,22 +34,24 @@ class ofed(object):
         # the parent class constructors manually for now.
         #super(ofed, self).__init__(**kwargs)
 
-        self.__ospackages = kwargs.get('ospackages',
-                                       ['dapl2-utils', 'ibutils',
-                                        'ibverbs-utils', 'infiniband-diags',
-                                        'libdapl-dev', 'libibcm-dev',
-                                        'libibmad5', 'libibmad-dev',
-                                        'libibverbs1', 'libibverbs-dev',
-                                        'libmlx4-1', 'libmlx4-dev',
-                                        'libmlx5-1', 'libmlx5-dev',
-                                        'librdmacm1', 'librdmacm-dev',
-                                        'opensm', 'rdmacm-utils'])
+        self.__ospackages_deb = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
+                                 'infiniband-diags', 'libdapl-dev',
+                                 'libibcm-dev', 'libibmad5', 'libibmad-dev',
+                                 'libibverbs1', 'libibverbs-dev', 'libmlx4-1',
+                                 'libmlx4-dev', 'libmlx5-1', 'libmlx5-dev',
+                                 'librdmacm1', 'librdmacm-dev', 'opensm',
+                                 'rdmacm-utils']
+        self.__ospackages_rpm = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
+                                 'libibmad', 'libibmad-devel', 'libmlx5',
+                                 'libibumad', 'libibverbs', 'libibverbs-utils',
+                                 'librdmacm', 'opensm']
 
     def __str__(self):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('OFED'))
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(debs=self.__ospackages_deb,
+                                     rpms=self.__ospackages_rpm))
         return '\n'.join(str(x) for x in instructions)
 
     def runtime(self, _from='0'):
