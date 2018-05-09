@@ -12,13 +12,21 @@ Contents:
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 
+# Choose between either Ubuntu 16.04 (default) or CentOS 7
+# Add '--userarg centos=true' to the command line to select CentOS
+devel_image = 'nvidia/cuda:9.0-devel-ubuntu16.04'
+runtime_image = 'nvidia/cuda:9.0-runtime-ubuntu16.04'
+if USERARG.get('centos', False):
+    devel_image = 'nvidia/cuda:9.0-devel-centos7'
+    runtime_image = 'nvidia/cuda:9.0-runtime-centos7'
+
 ######
 # Devel stage
 ######
 
 Stage0 += comment(__doc__, reformat=False)
 
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel', _as='devel')
+Stage0 += baseimage(image=devel_image, _as='devel')
 
 # Python
 python = python()
@@ -52,7 +60,7 @@ Stage0 += hdf5
 # Runtime image
 ######
 
-Stage1 += baseimage(image='nvidia/cuda:9.0-runtime')
+Stage1 += baseimage(image=runtime_image)
 
 # Python
 Stage1 += python.runtime()

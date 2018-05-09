@@ -10,10 +10,11 @@ $ hpccm.py --recipe recipes/examples/multistage.py
 
 # Devel stage base image
 Stage0.name = 'devel'
-Stage0.baseimage('nvidia/cuda:9.0-devel')
+Stage0.baseimage('nvidia/cuda:9.0-devel-ubuntu16.04')
 
 # Install compilers (upstream)
-Stage0 += apt_get(ospackages=['gcc', 'g++', 'gfortran'])
+g = gnu()
+Stage0 += g
 
 # Build FFTW using all default options
 f = fftw()
@@ -24,10 +25,10 @@ Stage0 += f
 ######
 
 # Runtime stage base image
-Stage1.baseimage('nvidia/cuda:9.0-runtime')
+Stage1.baseimage('nvidia/cuda:9.0-runtime-ubuntu16.04')
 
 # Compiler runtime (upstream)
-Stage1 += apt_get(ospackages=['libgfortran3', 'libgomp1'])
+Stage1 += g.runtime()
 
 # Copy the FFTW build from the devel stage and setup the runtime environment.
 # The _from option is not necessary, but increases clarity.
