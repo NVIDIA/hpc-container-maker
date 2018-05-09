@@ -24,11 +24,14 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import package_type
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -56,10 +59,13 @@ class openmpi(ConfigureMake, tar, wget):
         self.cuda = kwargs.get('cuda', True)
         self.directory = kwargs.get('directory', '')
         self.infiniband = kwargs.get('infiniband', True)
-        self.ospackages = kwargs.get('ospackages',
-                                     ['file', 'hwloc', 'openssh-client',
-                                      'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__ospackages_deb = ['file', 'hwloc', 'openssh-client', 'wget']
+        self.__ospackages_rpm = ['bzip2', 'file', 'hwloc', 'make',
+                                 'openssh-clients', 'wget']
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
+        self.__runtime_ospackages_deb = ['hwloc', 'openssh-client']
+        self.__runtime_ospackages_rpm = ['hwloc', 'openssh-clients']
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
@@ -76,6 +82,17 @@ class openmpi(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Based on the Linux distribution's package manager, set
+        # ospackages accordingly.  A user specified value overrides
+        # any defaults.
+        if not self.__ospackages:
+            if hpccm.config.g_pkgtype == package_type.DEB:
+                self.__ospackages = self.__ospackages_deb
+            elif hpccm.config.g_pkgtype == package_type.RPM:
+                self.__ospackages = self.__ospackages_rpm
+            else: # pragma: no cover
+                raise RuntimeError('Unknown package type')
+
         self.__setup()
 
     def __str__(self):
@@ -87,7 +104,7 @@ class openmpi(ConfigureMake, tar, wget):
         else:
             instructions.append(comment(
                 'OpenMPI version {}'.format(self.version)))
-        instructions.append(apt_get(ospackages=self.ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         if self.directory:
             # Use source from local build context
             instructions.append(
@@ -176,8 +193,8 @@ class openmpi(ConfigureMake, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('OpenMPI'))
-        # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['hwloc', 'openssh-client']))
+        instructions.append(packages(debs=self.__runtime_ospackages_deb,
+                                     rpms=self.__runtime_ospackages_rpm))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(
