@@ -23,11 +23,14 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import package_type
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -52,10 +55,13 @@ class mvapich2(ConfigureMake, tar, wget):
         self.configure_opts = kwargs.get('configure_opts', ['--disable-mcast'])
         self.cuda = kwargs.get('cuda', True)
         self.directory = kwargs.get('directory', '')
-        self.ospackages = kwargs.get('ospackages',
-                                     ['byacc', 'file', 'openssh-client',
-                                      'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__ospackages_deb = ['byacc', 'file', 'openssh-client', 'wget']
+        self.__ospackages_rpm = ['byacc', 'file', 'make', 'openssh-clients',
+                                 'wget']
         self.prefix = kwargs.get('prefix', '/usr/local/mvapich2')
+        self.__runtime_ospackages_deb = ['openssh-client']
+        self.__runtime_ospackages_rpm = ['openssh-clients']
 
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
@@ -73,6 +79,17 @@ class mvapich2(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Based on the Linux distribution's package manager, set
+        # ospackages accordingly.  A user specified value overrides
+        # any defaults.
+        if not self.__ospackages:
+            if hpccm.config.g_pkgtype == package_type.DEB:
+                self.__ospackages = self.__ospackages_deb
+            elif hpccm.config.g_pkgtype == package_type.RPM:
+                self.__ospackages = self.__ospackages_rpm
+            else: # pragma: no cover
+                raise RuntimeError('Unknown package type')
+
         # Construct the series of steps to execute
         self.__setup()
 
@@ -85,7 +102,7 @@ class mvapich2(ConfigureMake, tar, wget):
         else:
             instructions.append(comment(
                 'MVAPICH2 version {}'.format(self.version)))
-        instructions.append(apt_get(ospackages=self.ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         if self.directory:
             # Use source from local build context
             instructions.append(
@@ -176,7 +193,8 @@ class mvapich2(ConfigureMake, tar, wget):
         instructions = []
         instructions.append(comment('MVAPICH2'))
         # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['openssh-client']))
+        instructions.append(packages(debs=self.__runtime_ospackages_deb,
+                                     rpms=self.__runtime_ospackages_rpm))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         # No need to workaround compiler wrapper issue for the runtime.

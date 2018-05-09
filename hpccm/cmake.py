@@ -24,8 +24,8 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from .apt_get import apt_get
 from .comment import comment
+from .packages import packages
 from .shell import shell
 from .wget import wget
 
@@ -62,7 +62,7 @@ class cmake(wget):
         instructions = []
         instructions.append(comment(
             'CMake version {}'.format(self.__version)))
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
 
         return '\n'.join(str(x) for x in instructions)
