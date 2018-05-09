@@ -24,11 +24,14 @@ import logging # pylint: disable=unused-import
 import re
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import package_type
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -54,8 +57,11 @@ class hdf5(ConfigureMake, tar, wget):
         self.__baseurl = kwargs.get('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
         self.__check = kwargs.get('check', False)
         self.__directory = kwargs.get('directory', '')
-        self.__ospackages = kwargs.get('ospackages',
-                                       ['file', 'make', 'wget', 'zlib1g-dev'])
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__ospackages_deb = ['file', 'make', 'wget', 'zlib1g-dev']
+        self.__ospackages_rpm = ['bzip2', 'file', 'make', 'wget', 'zlib-devel']
+        self.__runtime_ospackages_deb = ['zlib1g']
+        self.__runtime_ospackages_rpm = ['zlib']
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '1.10.1')
 
@@ -67,6 +73,19 @@ class hdf5(ConfigureMake, tar, wget):
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
+
+        # Based on the Linux distribution's package manager, set
+        # ospackages accordingly.  A user specified value overrides
+        # any defaults.
+        if not self.__ospackages:
+            if hpccm.config.g_pkgtype == package_type.DEB:
+                self.__ospackages = self.__ospackages_deb
+                self.__runtime_ospackages = self.__runtime_ospackages_deb
+            elif hpccm.config.g_pkgtype == package_type.RPM:
+                self.__ospackages = self.__ospackages_rpm
+                self.__runtime_ospackages = self.__runtime_ospackages_rpm
+            else: # pragma: no cover
+                raise RuntimeError('Unknown package type')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -81,7 +100,7 @@ class hdf5(ConfigureMake, tar, wget):
             instructions.append(comment(
                 'HDF5 version {}'.format(self.__version)))
 
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
 
         if self.__directory:
             # Use source from local build context
@@ -158,8 +177,7 @@ class hdf5(ConfigureMake, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('HDF5'))
-        # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['zlib1g']))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(

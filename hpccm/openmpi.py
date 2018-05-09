@@ -62,7 +62,7 @@ class openmpi(ConfigureMake, tar, wget):
         self.__ospackages = kwargs.get('ospackages', [])
         self.__ospackages_deb = ['file', 'hwloc', 'openssh-client', 'wget']
         self.__ospackages_rpm = ['bzip2', 'file', 'hwloc', 'make',
-                                 'openssh-clients', 'wget']
+                                 'openssh-clients', 'perl', 'wget']
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
         self.__runtime_ospackages_deb = ['hwloc', 'openssh-client']
         self.__runtime_ospackages_rpm = ['hwloc', 'openssh-clients']

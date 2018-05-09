@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import deb, docker, rpm
 
 from hpccm.hdf5 import hdf5
 
@@ -31,8 +31,9 @@ class Test_hdf5(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @deb
     @docker
-    def test_defaults(self):
+    def test_defaults_deb(self):
         """Default hdf5 building block"""
         h = hdf5()
         self.assertEqual(str(h),
@@ -54,6 +55,31 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
+    @rpm
+    @docker
+    def test_defaults_rpm(self):
+        """Default hdf5 building block"""
+        h = hdf5()
+        self.assertEqual(str(h),
+r'''# HDF5 version 1.10.1
+RUN yum install -y \
+        bzip2 \
+        file \
+        make \
+        wget \
+        zlib-devel && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+    tar -x -f /tmp/hdf5-1.10.1.tar.bz2 -C /tmp -j && \
+    cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/hdf5-1.10.1.tar.bz2 /tmp/hdf5-1.10.1
+ENV HDF5_DIR=/usr/local/hdf5 \
+    LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/hdf5/bin:$PATH''')
+
+    @deb
     @docker
     def test_runtime(self):
         """Runtime"""
@@ -71,6 +97,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
+    @deb
     @docker
     def test_directory(self):
         """Directory in local build context"""

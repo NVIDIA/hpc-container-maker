@@ -23,11 +23,11 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-from .apt_get import apt_get
 from .comment import comment
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -75,7 +75,7 @@ class fftw(ConfigureMake, tar, wget):
         else:
             instructions.append(
                 comment('FFTW version {}'.format(self.__version)))
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         if self.__directory:
             # Use source from local build context
             instructions.append(

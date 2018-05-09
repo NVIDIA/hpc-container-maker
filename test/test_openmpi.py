@@ -68,6 +68,7 @@ RUN yum install -y \
         hwloc \
         make \
         openssh-clients \
+        perl \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
