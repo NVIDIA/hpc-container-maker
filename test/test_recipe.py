@@ -89,8 +89,9 @@ From: ubuntu:16.04
         rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
         r = recipe(rf, single_stage=True)
         self.assertEqual(r.strip(),
-r'''FROM nvidia/cuda:9.0-devel AS devel
+r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
 
+# GNU compiler
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         gcc \
@@ -120,8 +121,9 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         r = recipe(rf, ctype=container_type.SINGULARITY)
         self.assertEqual(r.strip(),
 r'''BootStrap: docker
-From: nvidia/cuda:9.0-devel
+From: nvidia/cuda:9.0-devel-ubuntu16.04
 
+# GNU compiler
 %post
     apt-get update -y
     apt-get install -y --no-install-recommends \
@@ -156,7 +158,7 @@ From: nvidia/cuda:9.0-devel
         rf = os.path.join(path, '..', 'recipes', 'examples', 'userargs.py')
         r = recipe(rf, userarg={'cuda': '9.0', 'ompi': '2.1.2'})
         self.assertEqual(r.strip(),
-r'''FROM nvidia/cuda:9.0-devel AS stage0
+r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS stage0
 
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \
