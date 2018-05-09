@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import deb, docker, rpm
 
 from hpccm.mvapich2 import mvapich2
 
@@ -31,8 +31,9 @@ class Test_mvapich2(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @deb
     @docker
-    def test_defaults(self):
+    def test_defaults_deb(self):
         """Default mvapich2 building block"""
         mv2 = mvapich2()
         self.assertEqual(str(mv2),
@@ -53,6 +54,30 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
+    @rpm
+    @docker
+    def test_defaults_rpm(self):
+        """Default mvapich2 building block"""
+        mv2 = mvapich2()
+        self.assertEqual(str(mv2),
+r'''# MVAPICH2 version 2.3b
+RUN yum install -y \
+        byacc \
+        file \
+        make \
+        openssh-clients \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
+    tar -x -f /tmp/mvapich2-2.3b.tar.gz -C /tmp -z && \
+    cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --with-cuda=/usr/local/cuda && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/mvapich2-2.3b
+ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/mvapich2/bin:$PATH''')
+
+    @deb
     @docker
     def test_directory(self):
         """Directory in local build context"""
@@ -74,6 +99,7 @@ RUN cd /tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
+    @deb
     @docker
     def test_runtime(self):
         """Runtime"""
