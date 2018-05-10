@@ -665,7 +665,8 @@ installed: `dapl2-utils`, `ibutils`, `ibverbs-utils`,
 For RPM-based Linux distributions, the following packages are
 installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
-`libibverbs-utils`, `librdmacm`, and `opensm`.
+`libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
+`rdma-core-devel`.
 
 Parameters:
 
