@@ -44,7 +44,8 @@ class ofed(object):
         self.__ospackages_rpm = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
                                  'libibmad', 'libibmad-devel', 'libmlx5',
                                  'libibumad', 'libibverbs', 'libibverbs-utils',
-                                 'librdmacm', 'opensm']
+                                 'librdmacm', 'opensm', 'rdma-core',
+                                 'rdma-core-devel']
 
     def __str__(self):
         """String representation of the building block"""
