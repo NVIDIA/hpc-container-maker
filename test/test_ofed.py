@@ -79,7 +79,9 @@ RUN yum install -y \
         libibverbs \
         libibverbs-utils \
         librdmacm \
-        opensm && \
+        opensm \
+        rdma-core \
+        rdma-core-devel && \
     rm -rf /var/cache/yum/*''')
 
     @deb
