@@ -56,6 +56,7 @@ class pgi(tar, wget):
 
         self.__ospackages = kwargs.get('ospackages', [])
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
+        self.__system_cuda = kwargs.get('system_cuda', False)
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 
@@ -157,15 +158,25 @@ class pgi(tar, wget):
         self.__commands.append(self.untar_step(
             tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
 
-        if self.__eula:
-            self.__commands.append('cd {} && PGI_SILENT=true PGI_ACCEPT_EULA=accept ./install'.format(self.__wd))
-        else:
+        flags = {'PGI_ACCEPT_EULA': 'accept',
+                 'PGI_INSTALL_NVIDIA': 'true',
+                 'PGI_SILENT': 'true'}
+        if not self.__eula:
             # This will fail when building the container
             logging.warning('PGI EULA was not accepted')
-            self.__commands.append('cd {} && PGI_ACCEPT_EULA=decline ./install'.format(self.__wd))
+            flags['PGI_ACCEPT_EULA'] = 'decline'
+            flags['PGI_SILENT'] = 'false'
+        if self.__system_cuda:
+            flags['PGI_INSTALL_NVIDIA'] = 'false'
+        flag_string = ' '.join('{0}={1}'.format(key, val)
+                               for key, val in sorted(flags.items()))
+
+        self.__commands.append('cd {0} && {1} ./install'.format(self.__wd,
+                                                                flag_string))
 
         # Create siterc to specify use of the system CUDA
-        self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(os.path.join(self.__basepath, self.__version, 'bin', 'siterc')))
+        if self.__system_cuda:
+            self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(os.path.join(self.__basepath, self.__version, 'bin', 'siterc')))
 
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball), self.__wd]))
