@@ -107,14 +107,14 @@ class git(object):
         # Would prefer to use 'git -C', but the ancient git included
         # with CentOS7 does not support that option.
         clone = ['mkdir -p {0}'.format(path),
-                 'pushd {0}'.format(path),
+                 'cd {0}'.format(path),
                  'git clone {0} {1} {2}'.format(
                      opt_string, repository, directory).strip(),
-                 'popd']
+                 'cd -']
 
         if commit:
-            clone.extend(['pushd {0}'.format(os.path.join(path, directory)),
+            clone.extend(['cd {0}'.format(os.path.join(path, directory)),
                           'git checkout {0}'.format(commit),
-                          'popd'])
+                          'cd -'])
 
         return ' && '.join(clone)
