@@ -24,8 +24,8 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 Stage0.name = 'devel'
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
 
-Stage0 += apt_get(ospackages=['autoconf', 'automake', 'ca-certificates',
-                              'cmake', 'git', 'libnuma-dev'])
+Stage0 += packages(ospackages=['autoconf', 'automake', 'ca-certificates',
+                               'cmake', 'git'])
 
 ofed = ofed()
 Stage0 += ofed
@@ -87,7 +87,6 @@ Stage0 += shell(commands=milc_cmds)
 # Release stage
 ###############################################################################
 Stage1 += baseimage(image='nvidia/cuda:9.0-runtime-ubuntu16.04')
-Stage1 += apt_get(ospackages=['libnuma1'])
 
 Stage1 += ofed.runtime()
 
