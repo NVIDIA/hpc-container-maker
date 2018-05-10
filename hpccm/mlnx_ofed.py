@@ -46,21 +46,8 @@ class mlnx_ofed(tar, wget):
         self.__baseurl = kwargs.get('baseurl',
                                     'http://content.mellanox.com/ofed')
         self.__oslabel = kwargs.get('oslabel', '')
-        self.__oslabel_deb = 'ubuntu16.04'
-        self.__oslabel_rpm = 'rhel7.2'
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__ospackages_deb = ['libnl-3-200', 'libnl-route-3-200',
-                                 'libnuma1', 'wget']
-        self.__ospackages_rpm = ['libnl', 'libnl3', 'numactl-libs', 'wget']
         self.__packages = kwargs.get('packages', [])
-        self.__packages_deb = ['libibverbs1', 'libibverbs-dev',
-                               'ibverbs-utils', 'libibmad',
-                               'libibmad-devel', 'libibumad',
-                               'libibumad-devel', 'libmlx5-1']
-        self.__packages_rpm = ['libibverbs', 'libibverbs-devel',
-                               'libibverbs-utils', 'libibmad',
-                               'libibmad-devel', 'libibumad',
-                               'libibumad-devel', 'libmlx5']
         self.__version = kwargs.get('version', '3.4-1.0.0.0')
 
         self.__commands = []
@@ -99,11 +86,15 @@ class mlnx_ofed(tar, wget):
 
         if hpccm.config.g_pkgtype == package_type.DEB:
             if not self.__oslabel:
-                self.__oslabel = self.__oslabel_deb
+                self.__oslabel = 'ubuntu16.04'
             if not self.__ospackages:
-                self.__ospackages = self.__ospackages_deb
+                self.__ospackages = ['libnl-3-200', 'libnl-route-3-200',
+                                     'libnuma1', 'wget']
             if not self.__packages:
-                self.__packages = self.__packages_deb
+                self.__packages = ['libibverbs1', 'libibverbs-dev',
+                                   'ibverbs-utils', 'libibmad',
+                                   'libibmad-devel', 'libibumad',
+                                   'libibumad-devel', 'libmlx5-1']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)
@@ -115,11 +106,14 @@ class mlnx_ofed(tar, wget):
                                       for x in self.__packages)
         elif hpccm.config.g_pkgtype == package_type.RPM:
             if not self.__oslabel:
-                self.__oslabel = self.__oslabel_rpm
+                self.__oslabel = 'rhel7.2'
             if not self.__ospackages:
-                self.__ospackages = self.__ospackages_rpm
+                self.__ospackages = ['libnl', 'libnl3', 'numactl-libs', 'wget']
             if not self.__packages:
-                self.__packages = self.__packages_rpm
+                self.__packages = ['libibverbs', 'libibverbs-devel',
+                                   'libibverbs-utils', 'libibmad',
+                                   'libibmad-devel', 'libibumad',
+                                   'libibumad-devel', 'libmlx5']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)

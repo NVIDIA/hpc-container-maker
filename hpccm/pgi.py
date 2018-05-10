@@ -49,7 +49,6 @@ class pgi(tar, wget):
 
         self.__basepath = '/opt/pgi/linux86-64/'
         self.__commands = [] # Filled in by __setup()
-        self.__debs = ['libnuma1']
 
         # By setting this value to True, you agree to the PGI End-User
         # License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
@@ -57,7 +56,6 @@ class pgi(tar, wget):
 
         self.__ospackages = kwargs.get('ospackages', [])
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
-        self.__rpms = ['numactl-libs']
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 
@@ -69,17 +67,10 @@ class pgi(tar, wget):
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
 
-        # Based on the Linux distribution's package manager, set
-        # ospackages accordingly.  A user specified value overrides
-        # any defaults.
-        if not self.__ospackages:
-            if hpccm.config.g_pkgtype == package_type.DEB:
-                self.__ospackages = self.__debs
-            elif hpccm.config.g_pkgtype == package_type.RPM:
-                self.__ospackages = self.__rpms
-            else:
-                raise RuntimeError('Unknown package type')
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
+        # Construct the series of steps to execute
         self.__setup()
 
     def __str__(self):
@@ -123,6 +114,19 @@ class pgi(tar, wget):
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
+
+    def __distro(self):
+        """Based on the Linux distribution's package manager, set values
+        accordingly.  A user specified value overrides any defaults."""
+
+        if hpccm.config.g_pkgtype == package_type.DEB:
+            if not self.__ospackages:
+                self.__ospackages = ['libnuma1']
+        elif hpccm.config.g_pkgtype == package_type.RPM:
+            if not self.__ospackages:
+                self.__ospackages = ['numactl-libs']
+        else:
+            raise RuntimeError('Unknown package type')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

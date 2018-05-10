@@ -60,12 +60,8 @@ class openmpi(ConfigureMake, tar, wget):
         self.directory = kwargs.get('directory', '')
         self.infiniband = kwargs.get('infiniband', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__ospackages_deb = ['file', 'hwloc', 'openssh-client', 'wget']
-        self.__ospackages_rpm = ['bzip2', 'file', 'hwloc', 'make',
-                                 'openssh-clients', 'perl', 'wget']
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
-        self.__runtime_ospackages_deb = ['hwloc', 'openssh-client']
-        self.__runtime_ospackages_rpm = ['hwloc', 'openssh-clients']
+        self.__runtime_ospackages = [] # Filled in by __distro()
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
@@ -82,17 +78,10 @@ class openmpi(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
-        # Based on the Linux distribution's package manager, set
-        # ospackages accordingly.  A user specified value overrides
-        # any defaults.
-        if not self.__ospackages:
-            if hpccm.config.g_pkgtype == package_type.DEB:
-                self.__ospackages = self.__ospackages_deb
-            elif hpccm.config.g_pkgtype == package_type.RPM:
-                self.__ospackages = self.__ospackages_rpm
-            else: # pragma: no cover
-                raise RuntimeError('Unknown package type')
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
+        # Construct the series of steps to execute
         self.__setup()
 
     def __str__(self):
@@ -125,7 +114,24 @@ class openmpi(ConfigureMake, tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
+    def __distro(self):
+        """Based on the Linux distribution's package manager, set values
+        accordingly.  A user specified value overrides any defaults."""
+
+        if hpccm.config.g_pkgtype == package_type.DEB:
+            if not self.__ospackages:
+                self.__ospackages = ['file', 'hwloc', 'openssh-client', 'wget']
+            self.__runtime_ospackages = ['hwloc', 'openssh-client']
+        elif hpccm.config.g_pkgtype == package_type.RPM:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
+                                     'openssh-clients', 'perl', 'wget']
+            self.__runtime_ospackages = ['hwloc', 'openssh-clients']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown package type')
+
     def __setup(self):
+
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
@@ -193,8 +199,7 @@ class openmpi(ConfigureMake, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('OpenMPI'))
-        instructions.append(packages(debs=self.__runtime_ospackages_deb,
-                                     rpms=self.__runtime_ospackages_rpm))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(

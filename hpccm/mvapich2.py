@@ -49,19 +49,15 @@ class mvapich2(ConfigureMake, tar, wget):
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
-        self.baseurl = kwargs.get('baseurl',
-                                  'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
+        self.__baseurl = kwargs.get('baseurl',
+                                    'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
         self.__check = kwargs.get('check', False)
         self.configure_opts = kwargs.get('configure_opts', ['--disable-mcast'])
         self.cuda = kwargs.get('cuda', True)
         self.directory = kwargs.get('directory', '')
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__ospackages_deb = ['byacc', 'file', 'openssh-client', 'wget']
-        self.__ospackages_rpm = ['byacc', 'file', 'make', 'openssh-clients',
-                                 'wget']
         self.prefix = kwargs.get('prefix', '/usr/local/mvapich2')
-        self.__runtime_ospackages_deb = ['openssh-client']
-        self.__runtime_ospackages_rpm = ['openssh-clients']
+        self.__runtime_ospackages = [] # Filled in by __distro()
 
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
@@ -82,16 +78,8 @@ class mvapich2(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
-        # Based on the Linux distribution's package manager, set
-        # ospackages accordingly.  A user specified value overrides
-        # any defaults.
-        if not self.__ospackages:
-            if hpccm.config.g_pkgtype == package_type.DEB:
-                self.__ospackages = self.__ospackages_deb
-            elif hpccm.config.g_pkgtype == package_type.RPM:
-                self.__ospackages = self.__ospackages_rpm
-            else: # pragma: no cover
-                raise RuntimeError('Unknown package type')
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -126,12 +114,29 @@ class mvapich2(ConfigureMake, tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
+    def __distro(self):
+        """Based on the Linux distribution's package manager, set values
+        accordingly.  A user specified value overrides any
+        defaults."""
+
+        if hpccm.config.g_pkgtype == package_type.DEB:
+            if not self.__ospackages:
+                self.__ospackages = ['byacc', 'file', 'openssh-client', 'wget']
+            self.__runtime_ospackages = ['openssh-client']
+        elif hpccm.config.g_pkgtype == package_type.RPM:
+            if not self.__ospackages:
+                self.__ospackages = ['byacc', 'file', 'make',
+                                     'openssh-clients', 'wget']
+            self.__runtime_ospackages = ['openssh-clients']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown package type')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
         tarball = 'mvapich2-{}.tar.gz'.format(self.version)
-        url = '{0}/{1}'.format(self.baseurl, tarball)
+        url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # CUDA
         if self.cuda:
@@ -182,8 +187,7 @@ class mvapich2(ConfigureMake, tar, wget):
         instructions = []
         instructions.append(comment('MVAPICH2'))
         # TODO: move the definition of runtime ospackages
-        instructions.append(packages(debs=self.__runtime_ospackages_deb,
-                                     rpms=self.__runtime_ospackages_rpm))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(
