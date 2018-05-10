@@ -58,10 +58,7 @@ class hdf5(ConfigureMake, tar, wget):
         self.__check = kwargs.get('check', False)
         self.__directory = kwargs.get('directory', '')
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__ospackages_deb = ['file', 'make', 'wget', 'zlib1g-dev']
-        self.__ospackages_rpm = ['bzip2', 'file', 'make', 'wget', 'zlib-devel']
-        self.__runtime_ospackages_deb = ['zlib1g']
-        self.__runtime_ospackages_rpm = ['zlib']
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '1.10.1')
 
@@ -74,18 +71,8 @@ class hdf5(ConfigureMake, tar, wget):
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
 
-        # Based on the Linux distribution's package manager, set
-        # ospackages accordingly.  A user specified value overrides
-        # any defaults.
-        if not self.__ospackages:
-            if hpccm.config.g_pkgtype == package_type.DEB:
-                self.__ospackages = self.__ospackages_deb
-                self.__runtime_ospackages = self.__runtime_ospackages_deb
-            elif hpccm.config.g_pkgtype == package_type.RPM:
-                self.__ospackages = self.__ospackages_rpm
-                self.__runtime_ospackages = self.__runtime_ospackages_rpm
-            else: # pragma: no cover
-                raise RuntimeError('Unknown package type')
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -122,6 +109,22 @@ class hdf5(ConfigureMake, tar, wget):
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
+
+    def __distro(self):
+        """Based on the Linux distribution's package manager, set values
+        accordingly.  A user specified value overrides any defaults."""
+
+        if hpccm.config.g_pkgtype == package_type.DEB:
+            if not self.__ospackages:
+                self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
+            self.__runtime_ospackages = ['zlib1g']
+        elif hpccm.config.g_pkgtype == package_type.RPM:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'file', 'make', 'wget',
+                                     'zlib-devel']
+            self.__runtime_ospackages = ['zlib']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown package type')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
