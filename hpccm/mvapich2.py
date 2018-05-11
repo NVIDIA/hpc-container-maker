@@ -62,11 +62,8 @@ class mvapich2(ConfigureMake, tar, wget):
                                   'F90': False, 'FC': True}
         self.version = kwargs.get('version', '2.3b')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
+        self.__commands = []              # Filled in by __setup()
+        self.__environment_variables = {} # Filled in by __setup()
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
@@ -118,11 +115,16 @@ class mvapich2(ConfigureMake, tar, wget):
 
         # CUDA
         if self.cuda:
+            cuda_home = "/usr/local/cuda"
             if self.__toolchain.CUDA_HOME:
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
-            else:
-                self.configure_opts.append('--with-cuda=/usr/local/cuda')
+                cuda_home = self.__toolchain.CUDA_HOME
+
+            self.configure_opts.append('--with-cuda={}'.format(cuda_home))
+
+            # Workaround for using compiler wrappers in the build stage
+            self.__commands.append('ln -s {0} {1}'.format(
+                os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so'),
+                os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so.1')))
         else:
             self.configure_opts.append('--without-cuda')
 
@@ -160,6 +162,15 @@ class mvapich2(ConfigureMake, tar, wget):
                        os.path.join(self.__wd,
                                     'mvapich2-{}'.format(self.version))]))
 
+        # Setup environment variables
+        self.__environment_variables = {
+            'LD_LIBRARY_PATH':
+            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib')),
+            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+        if self.cuda:
+            # Workaround for using compiler wrappers in the build stage
+            self.__environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml"'.format('/usr/local/cuda/lib64/stubs')
+
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
@@ -168,6 +179,9 @@ class mvapich2(ConfigureMake, tar, wget):
         instructions.append(apt_get(ospackages=['openssh-client']))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        # No need to workaround compiler wrapper issue for the runtime.
+        # Copy the dictionary so not to modify the original.
+        vars = dict(self.__environment_variables)
+        del vars['PROFILE_POSTLIB']
+        instructions.append(environment(variables=vars))
         return instructions
