@@ -172,6 +172,7 @@ class mvapich2_gdr(wget):
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__install_path,
                                                       'lib64')),
+            'MV2_USE_GPUDIRECT': 0,
             'MV2_USE_GPUDIRECT_GDRCOPY': 0,
             'PATH': '{}:$PATH'.format(os.path.join(self.__install_path,
                                                    'bin')),

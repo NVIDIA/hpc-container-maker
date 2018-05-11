@@ -49,6 +49,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \
+    MV2_USE_GPUDIRECT=0 \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
     PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
@@ -71,6 +72,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpirun/pgi17.10/lib64:$LD_LIBRARY_PATH \
+    MV2_USE_GPUDIRECT=0 \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
     PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpirun/pgi17.10/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
@@ -92,6 +94,7 @@ RUN dpkg --install /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
     rm -rf /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \
+    MV2_USE_GPUDIRECT=0 \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
     PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
@@ -111,5 +114,6 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5 /opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \
+    MV2_USE_GPUDIRECT=0 \
     MV2_USE_GPUDIRECT_GDRCOPY=0 \
     PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5/bin:$PATH''')
