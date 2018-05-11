@@ -442,8 +442,8 @@ Parameters:
   `libnuma1`, and `wget`.
 
 - `packages`: List of packages to install from Mellanox OFED.  The
-  default values are `libibverbs1`, `libibverbs-dev`, `libmlx5-1`, and
-  `ibverbs-utils`.
+  default values are `libibverbs1`, `libibverbs-dev`, `libibumad`,
+  `libibmad`, `libmlx5-1`, and `ibverbs-utils`.
 
 - `version`: The version of Mellanox OFED to download.  The default
   value is `3.4-1.0.0.0`.  Only versions that provide an Ubuntu 16.04
@@ -550,6 +550,85 @@ mvapich2(configure_opts=['--disable-fortran', '--disable-mcast'],
 
 ```python
 mv2 = mvapich2()
+Stage0 += mv2
+...
+Stage1 += mv2.runtime()
+```
+
+### mvapich2_gdr
+
+The `mvapich2_gdr` building blocks installs the
+[MVAPICH2-GDR](http://mvapich.cse.ohio-state.edu) component.
+Depending on the parameters, the package will be downloaded from the
+web (default) or copied from the local build context.
+
+MVAPICH2-GDR is distributed as a binary package, so certain
+dependencies need to be met and only certain combinations of recipe
+components are supported; please refer to the MVAPICH2-GDR
+documentation for more information.
+
+The [GNU compiler](#gnu) building block should be installed prior to
+this building block.
+
+The [Mellanox OFED](#mlnx_ofed) building block should be installed
+prior to this building block.
+
+As a side effect, this building block modifies `PATH` and
+`LD_LIBRARY_PATH` to include the MVAPICH2-GDR build.
+
+As a side effect, a toolchain is created containing the MPI compiler
+wrappers.  The toolchain can be passed to other operations that want
+to build using the MPI compiler wrappers.
+
+```python
+mv2 = mvapich2_gdr()
+
+operation(..., toolchain=mv2.toolchain, ...)
+```
+
+Parameters:
+
+- `cuda_version`: The version of CUDA the MVAPICH2-GDR package was
+  built against.  The version string format is X.Y.  The version
+  should match the version of CUDA provided by the base image.  This
+  value is ignored if `package` is set.  The default value is `9.0`.
+
+- `mlnx_ofed_version`: The version of Mellanox OFED the MVAPICH2-GDR
+  package was built against.  The version string format is X.Y.  The
+  version should match the version of Mellanox OFED installed by the
+  `mlnx_ofed` building block.  This value is ignored if `package` is
+  set.  The default value is `3.4`.
+
+- `ospackages`: List of OS packages to install prior to installation.
+  The default values are `openssh-client` and `wget`.
+
+- `package`: Path to the package file relative to the local build
+  context.  The default value is empty.  If this is defined, the
+  package in the local build context will be used rather than
+  downloading the package from the web.  The package should correspond
+  to the other recipe components (e.g., compiler version, CUDA
+  version, Mellanox OFED version).
+
+- `version`: The version of MVAPICH2-GDR to download.  The value is
+  ignored if `package` is set.  The default value is `2.3a`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+mvapich2_gdr(version='2.3a')
+```
+
+```python
+mvapich2_gdr(package='mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb')
+```
+
+```python
+mv2 = mvapich2_gdr()
 Stage0 += mv2
 ...
 Stage1 += mv2.runtime()
