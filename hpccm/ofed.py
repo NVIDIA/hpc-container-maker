@@ -51,8 +51,8 @@ class ofed(object):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('OFED'))
-        instructions.append(packages(debs=self.__ospackages_deb,
-                                     rpms=self.__ospackages_rpm))
+        instructions.append(packages(apt=self.__ospackages_deb,
+                                     yum=self.__ospackages_rpm))
         return '\n'.join(str(x) for x in instructions)
 
     def runtime(self, _from='0'):

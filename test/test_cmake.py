@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.cmake import cmake
 
@@ -31,9 +31,9 @@ class Test_cmake(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
@@ -46,9 +46,9 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
@@ -60,7 +60,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
-    @deb
+    @ubuntu
     @docker
     def test_eula(self):
         """Accept EULA"""
@@ -75,7 +75,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
-    @deb
+    @ubuntu
     @docker
     def test_version(self):
         """Version option"""
@@ -90,7 +90,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/fi
     /bin/sh /tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.10.3-Linux-x86_64.sh''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

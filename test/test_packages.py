@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, invalid_pkgtype, rpm
+from helpers import centos, docker, invalid_distro, ubuntu
 
 from hpccm.packages import packages 
 
@@ -31,9 +31,9 @@ class Test_packages(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_basic_deb(self):
+    def test_basic_ubuntu(self):
         """Basic packages"""
         p = packages(ospackages=['gcc', 'g++', 'gfortran'])
         self.assertEqual(str(p),
@@ -44,9 +44,9 @@ r'''RUN apt-get update -y && \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
-    @rpm
+    @centos
     @docker
-    def test_basic_rpm(self):
+    def test_basic_centos(self):
         """Basic packages"""
         p = packages(ospackages=['gcc', 'gcc-c++', 'gcc-fortran'])
         self.assertEqual(str(p),
@@ -56,8 +56,8 @@ r'''RUN yum install -y \
         gcc-fortran && \
     rm -rf /var/cache/yum/*''')
 
-    @invalid_pkgtype
-    def test_invalid_pkgtype(self):
+    @invalid_distro
+    def test_invalid_distro(self):
         """Invalid package type specified"""
         p = packages(ospackages=['gcc', 'g++', 'gfortran'])
         with self.assertRaises(RuntimeError):

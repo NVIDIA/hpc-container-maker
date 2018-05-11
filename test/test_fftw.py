@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.fftw import fftw
 
@@ -31,9 +31,9 @@ class Test_fftw(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default fftw building block"""
         f = fftw()
         self.assertEqual(str(f),
@@ -52,9 +52,9 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/p
     rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default fftw building block"""
         f = fftw()
         self.assertEqual(str(f),
@@ -72,7 +72,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/p
     rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""
@@ -84,7 +84,7 @@ r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""

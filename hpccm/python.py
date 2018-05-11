@@ -55,14 +55,14 @@ class python(object):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('Python'))
-        instructions.append(packages(debs=self.__debs, epel=self.__epel,
-                                     rpms=self.__rpms))
+        instructions.append(packages(apt=self.__debs, epel=self.__epel,
+                                     yum=self.__rpms))
         return '\n'.join([str(x) for x in instructions])
 
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('Python'))
-        instructions.append(packages(debs=self.__debs, epel=self.__epel,
-                                     rpms=self.__rpms))
+        instructions.append(packages(apt=self.__debs, epel=self.__epel,
+                                     yum=self.__rpms))
         return instructions

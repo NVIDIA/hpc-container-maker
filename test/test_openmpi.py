@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.openmpi import openmpi
 
@@ -31,9 +31,9 @@ class Test_openmpi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default openmpi building block"""
         ompi = openmpi()
         self.assertEqual(str(ompi),
@@ -54,9 +54,9 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default openmpi building block"""
         ompi = openmpi()
         self.maxDiff = None
@@ -80,7 +80,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""
@@ -102,7 +102,7 @@ RUN cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

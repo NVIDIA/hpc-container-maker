@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.hdf5 import hdf5
 
@@ -31,9 +31,9 @@ class Test_hdf5(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default hdf5 building block"""
         h = hdf5()
         self.assertEqual(str(h),
@@ -55,9 +55,9 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default hdf5 building block"""
         h = hdf5()
         self.assertEqual(str(h),
@@ -79,7 +79,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""
@@ -97,7 +97,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""

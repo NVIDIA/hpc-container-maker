@@ -27,7 +27,7 @@ import re
 import hpccm.config
 
 from .comment import comment
-from .common import package_type
+from .common import linux_distro
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
@@ -115,20 +115,20 @@ class openmpi(ConfigureMake, tar, wget):
         return 'rm -rf {}'.format(' '.join(items))
 
     def __distro(self):
-        """Based on the Linux distribution's package manager, set values
-        accordingly.  A user specified value overrides any defaults."""
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
 
-        if hpccm.config.g_pkgtype == package_type.DEB:
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['file', 'hwloc', 'openssh-client', 'wget']
             self.__runtime_ospackages = ['hwloc', 'openssh-client']
-        elif hpccm.config.g_pkgtype == package_type.RPM:
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
                                      'openssh-clients', 'perl', 'wget']
             self.__runtime_ospackages = ['hwloc', 'openssh-clients']
         else: # pragma: no cover
-            raise RuntimeError('Unknown package type')
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
 

@@ -27,7 +27,7 @@ from helpers import docker, invalid_ctype, singularity
 import hpccm.config
 
 from hpccm.baseimage import baseimage
-from hpccm.common import package_type
+from hpccm.common import linux_distro
 
 class Test_baseimage(unittest.TestCase):
     def setUp(self):
@@ -93,22 +93,34 @@ class Test_baseimage(unittest.TestCase):
     def test_detect_ubuntu(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04')
-        self.assertEqual(hpccm.config.g_pkgtype, package_type.DEB)
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
 
     @docker
     def test_detect_centos(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-centos7')
-        self.assertEqual(hpccm.config.g_pkgtype, package_type.RPM)
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
 
     @docker
-    def test_pkgtype_deb(self):
-        """Base image Linux distribution specification"""
-        b = baseimage(image='foo', _pkgtype='deb')
-        self.assertEqual(hpccm.config.g_pkgtype, package_type.DEB)
+    def test_detect_nonexistent(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nonexistent')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
 
     @docker
-    def test_pkgtype_rpm(self):
+    def test_distro_ubuntu(self):
         """Base image Linux distribution specification"""
-        b = baseimage(image='foo', _pkgtype='rpm')
-        self.assertEqual(hpccm.config.g_pkgtype, package_type.RPM)
+        b = baseimage(image='foo', _distro='ubuntu')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+
+    @docker
+    def test_distro_centos(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='centos')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+
+    @docker
+    def test_distro_nonexistent(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='nonexistent')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)

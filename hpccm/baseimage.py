@@ -24,7 +24,7 @@ import re
 
 import hpccm.config
 
-from .common import container_type, package_type
+from .common import container_type, linux_distro
 
 class baseimage(object):
     """Base image primitive"""
@@ -37,23 +37,24 @@ class baseimage(object):
         self.__as = kwargs.get('AS', '') # Docker specific
         self.__as = kwargs.get('_as', self.__as) # Docker specific
         self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
-        self.__pkgtype = kwargs.get('_pkgtype', '')
+        self.__distro = kwargs.get('_distro', '')
 
-        # Set the global package type.  Use the user specified value
-        # if available, otherwise try to figure it out based on the
-        # image name.
-        self.__pkgtype = self.__pkgtype.lower()
-        if self.__pkgtype == 'deb' or self.__pkgtype == 'debian':
-            hpccm.config.g_pkgtype = package_type.DEB
-        elif self.__pkgtype == 'rpm':
-            hpccm.config.g_pkgtype = package_type.RPM
-        elif re.search(r'centos|rhel', self.image):
-            hpccm.config.g_pkgtype = package_type.RPM
+        # Set the global Linux distribution.  Use the user specified
+        # value if available, otherwise try to figure it out based on
+        # the image name.
+        self.__distro = self.__distro.lower()
+        if self.__distro == 'ubuntu':
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
+        elif (self.__distro == 'centos' or self.__distro == 'rhel' or
+              self.__distro == 'redhat'):
+            hpccm.config.g_linux_distro = linux_distro.CENTOS
+        elif re.search(r'centos|rhel|redhat', self.image):
+            hpccm.config.g_linux_distro = linux_distro.CENTOS
         elif re.search(r'ubuntu', self.image):
-            hpccm.config.g_pkgtype = package_type.DEB
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
         else:
-            logging.warning('Unable to determine the Linux distribution package manager, defaulting to deb')
-            hpccm.config.g_pkgtype = package_type.DEB
+            logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
 
     def __str__(self):
         """String representation of the primitive"""

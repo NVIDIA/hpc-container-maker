@@ -25,7 +25,7 @@ import os
 import hpccm.config
 
 from .comment import comment
-from .common import package_type
+from .common import linux_distro
 from .packages import packages
 from .shell import shell
 from .tar import tar
@@ -80,11 +80,10 @@ class mlnx_ofed(tar, wget):
         return 'rm -rf {}'.format(' '.join(items))
 
     def __distro(self):
-        """Based on the Linux distribution's package manager, set values
-           accordingly.  A user specified value overrides any
-           defaults."""
+        """Based on the Linux distribution, set values accordingly.  A user
+           specified value overrides any defaults."""
 
-        if hpccm.config.g_pkgtype == package_type.DEB:
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
                 self.__oslabel = 'ubuntu16.04'
             if not self.__ospackages:
@@ -104,7 +103,7 @@ class mlnx_ofed(tar, wget):
             self.__pkglist = ' '.join('{}_*_amd64.deb'.format(
                 os.path.join(self.__wd, self.__prefix, 'DEBS', x))
                                       for x in self.__packages)
-        elif hpccm.config.g_pkgtype == package_type.RPM:
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
                 self.__oslabel = 'rhel7.2'
             if not self.__ospackages:
@@ -124,7 +123,7 @@ class mlnx_ofed(tar, wget):
                 os.path.join(self.__wd, self.__prefix, 'RPMS', x))
                                       for x in self.__packages)
         else: # pragma: no cover
-            raise RuntimeError('Unknown package type')
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

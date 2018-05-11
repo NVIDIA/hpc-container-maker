@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, rpm
+from helpers import centos, docker
 
 from hpccm.yum import yum
 
@@ -31,7 +31,7 @@ class Test_yum(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @rpm
+    @centos
     @docker
     def test_basic(self):
         """Basic yum"""
