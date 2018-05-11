@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.pgi import pgi
 
@@ -31,9 +31,9 @@ class Test_pgi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default pgi building block"""
         p = pgi()
         self.assertEqual(str(p),
@@ -51,9 +51,9 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default pgi building block"""
         p = pgi()
         self.assertEqual(str(p),
@@ -70,7 +70,7 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_eula(self):
         """Accept EULA"""
@@ -90,7 +90,7 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_tarball(self):
         """tarball"""
@@ -109,7 +109,7 @@ RUN tar -x -f /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz -C /tmp/pgi -z && \
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/17.10/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

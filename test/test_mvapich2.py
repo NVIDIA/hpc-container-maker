@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.mvapich2 import mvapich2
 
@@ -31,9 +31,9 @@ class Test_mvapich2(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default mvapich2 building block"""
         mv2 = mvapich2()
         self.assertEqual(str(mv2),
@@ -78,9 +78,9 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default mvapich2 building block"""
         mv2 = mvapich2()
         self.assertEqual(str(mv2),
@@ -101,7 +101,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.o
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
-    @deb
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""
@@ -126,7 +126,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

@@ -387,10 +387,9 @@ Parameters:
   than downloading the source from the web.
 
 - `ospackages`: List of OS packages to install prior to configuring
-  and building.  For Debian-based Linux distributions, the default
-  values are `file`, `make`, `wget`, and `zlib1g-dev`.  For RPM-based
-  Linux distributions the default values are `bzip2`, `file`, `make`,
-  `wget` and `zlib-devel`.
+  and building.  For Ubuntu, the default values are `file`, `make`,
+  `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+  default values are `bzip2`, `file`, `make`, `wget` and `zlib-devel`.
 
 - `prefix`: The top level install location.  The default value is
   `/usr/local/hdf5`.
@@ -443,22 +442,21 @@ Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
 Parameters:
 
 - `oslabel`: The Linux distribution label assigned by Mellanox to the
-  tarball.  For Debian-based Linux distributions, the default value is
-  `ubuntu16.04`.  For RPM-based Linux distributions, the default value
-  is `rhel7.2`.
+  tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
+  RHEL-based Linux distributions, the default value is `rhel7.2`.
 
 - `ospackages`: List of OS packages to install prior to installing
-  OFED.  For Debian-based Linux distributions, the default values are
-  `libnl-3-200`, `libnl-route-3-200`, `libnuma1`, and `wget`.  For
-  RPM-based Linux distributions, the default values are `libnl`,
-  `libnl3`, `numactl-libs`, and `wget`.
+  OFED.  For Ubuntu, the default values are `libnl-3-200`,
+  `libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based Linux
+  distributions, the default values are `libnl`, `libnl3`,
+  `numactl-libs`, and `wget`.
 
 - `packages`: List of packages to install from Mellanox OFED.  For
-  Debian-based Linux distributions, the default values are
-  `libibverbs1`, `libibverbs-dev`, `libibmad`, `libibmad-devel`,
-  `libibumad`, `libibumad-devel`, `libmlx5-1`, and `ibverbs-utils`.
-  For RPM-based Linux distributions, the default values are
-  `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
+  Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
+  `libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
+  `libmlx5-1`, and `ibverbs-utils`.  For RHEL-based Linux
+  distributions, the default values are `libibverbs`,
+  `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
   `libibmad-devel`, `libibumad`, `libibumad-devel`, and `libmlx5`.
 
 - `version`: The version of Mellanox OFED to download.  The default
@@ -525,10 +523,10 @@ Parameters:
   than downloading the source from the web.
 
 - `ospackages`: List of OS packages to install prior to configuring
-  and building.  For Debian-based Linux distributions, the default
-  values are `byacc`, `file`, `openssh-client`, and `wget`.  For
-  RPM-based Linux distributions, the default values are `byacc`,
-  `file`, `make`, `openssh-clients`, and `wget`.
+  and building.  For Ubuntu, the default values are `byacc`, `file`,
+  `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+  the default values are `byacc`, `file`, `make`, `openssh-clients`,
+  and `wget`.
 
 - `prefix`: The top level install location.  The default value is
   `/usr/local/mvapich2`.
@@ -655,14 +653,14 @@ Stage1 += mv2.runtime()
 The `ofed` building block installs the OpenFabrics Enterprise
 Distribution packages that are part of the Linux distribution.
 
-For Debian-based Linux distributions, the following packages are
-installed: `dapl2-utils`, `ibutils`, `ibverbs-utils`,
-`infiniband-diags`, `libdapl-dev`, `libibcm-dev`, `libibmad5`,
-`libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
-`libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
-`librdmacm-dev`, `opensm`, and `rdmacm-utils`.
+For Ubuntu, the following packages are installed: `dapl2-utils`,
+`ibutils`, `ibverbs-utils`, `infiniband-diags`, `libdapl-dev`,
+`libibcm-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
+`libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`,
+`libmlx5-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
+`rdmacm-utils`.
 
-For RPM-based Linux distributions, the following packages are
+For RHEL-based Linux distributions, the following packages are
 installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
 `libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
@@ -736,10 +734,10 @@ Parameters:
   default value is True.
 
 - `ospackages`: List of OS packages to install prior to configuring
-  and building.  For Debian-based Linux distributions, the default
-  values are `file`, `hwloc`, `openssh-client`, and `wget`.  For
-  RPM-based Linux distributions, the default values are `bzip2`,
-  `file`, `hwloc`, `make`, `openssh-clients`, `perl`, and `wget`.
+  and building.  For Ubuntu, the default values are `file`, `hwloc`,
+  `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+  the default values are `bzip2`, `file`, `hwloc`, `make`,
+  `openssh-clients`, `perl`, and `wget`.
 
 - `prefix`: The top level install location.  The default value is
   `/usr/local/openmpi`.
@@ -787,30 +785,29 @@ Stage1 += ompi.runtime()
 ### packages
 
 The `packages` building block specifies the set of operating system
-packages to install.  Based on the package manager of the Linux
-distribution, the building block invokes either `apt-get` (Debian) or
-`yum` (RPM).
+packages to install.  Based on the Linux distribution, the building
+block invokes either `apt-get` (Ubuntu) or `yum` (RHEL-based).
 
 This building block is preferred over directly using the
 [`apt_get`](#apt_get) or [`yum`](#yum) building blocks.
 
 Parameters:
 
+- `apt`: A list of Debian packages to install.  The default is an
+  empty list.
+
 - `_epel`: Boolean flag to specify whether to enable the Extra
   Packages for Enterprise Linux (EPEL) repository.  The default is
   False.  This parameter is ignored if the Linux distribution is not
-  RPM-based.
-
-- `debs`: A list of Debian packages to install.  The default is an
-  empty list.
+  RHEL-based.
 
 - `ospackages`: A list of packages to install.  The list is used for
-   both Debian-based and RPM-based Linux distributions, therefore only
+   both Ubuntu and RHEL-based Linux distributions, therefore only
    packages with the consistent names across Linux distributions
-   should be specified.  This parameter is ignored if `debs` or `rpms`
+   should be specified.  This parameter is ignored if `apt` or `yum`
    is specified.  The default value is an empty list.
 
-- `rpms`: A list of RPM packages to install.  The default value is an
+- `yum`: A list of RPM packages to install.  The default value is an
   empty list.
 
 Examples:
@@ -820,11 +817,11 @@ packages(ospackages=['make', 'wget'])
 ```
 
 ```python
-packages(debs=['zlib1g-dev'], rpms=['zlib-devel'])
+packages(apt=['zlib1g-dev'], yum=['zlib-devel'])
 ```
 
 ```python
-packages(debs=['python3'], rpms=['python34'], _epel=True)
+packages(apt=['python3'], yum=['python34'], _epel=True)
 ```
 
 ### pgi
@@ -856,12 +853,12 @@ Parameters:
   The default value is `False`.
 
 - `ospackages`: List of OS packages to install prior to installing the
-  PGI compiler.  For Debian-based Linux distributions, the default
-  values are `libnuma1` and `perl`, and also `wget` (if downloading
-  the PGI compiler rather than using a tarball in the local build
-  context).  For RPM-based Linux distributions, the default values are
-  `numactl-libs` and `perl`, and also `wget` (if downloading the PGI
-  compiler rather than using a tarball in the local build context).
+  PGI compiler.  For Ubuntu, the default values are `libnuma1` and
+  `perl`, and also `wget` (if downloading the PGI compiler rather than
+  using a tarball in the local build context).  For RHEL-based Linux
+  distributions, the default values are `numactl-libs` and `perl`, and
+  also `wget` (if downloading the PGI compiler rather than using a
+  tarball in the local build context).
 
 - `tarball`: Path to the PGI compiler tarball relative to the local
   build context.  The default value is empty.  If this is defined, the

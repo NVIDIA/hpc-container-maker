@@ -24,7 +24,7 @@ import logging # pylint: disable=unused-import
 import hpccm.config
 
 from .apt_get import apt_get
-from .common import package_type
+from .common import linux_distro
 from .yum import yum
 
 class packages(object):
@@ -35,22 +35,22 @@ class packages(object):
 
         #super(packages, self).__init__()
 
-        self.__debs = kwargs.get('debs', [])
+        self.__apt = kwargs.get('apt', [])
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__rpms = kwargs.get('rpms', [])
+        self.__yum = kwargs.get('yum', [])
 
     def __str__(self):
         """String representation of the building block"""
-        if hpccm.config.g_pkgtype == package_type.DEB:
-            if self.__debs:
-                return str(apt_get(ospackages=self.__debs))
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if self.__apt:
+                return str(apt_get(ospackages=self.__apt))
             else:
                 return str(apt_get(ospackages=self.__ospackages))
-        elif hpccm.config.g_pkgtype == package_type.RPM:
-            if self.__rpms:
-                return str(yum(epel=self.__epel, ospackages=self.__rpms))
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if self.__yum:
+                return str(yum(epel=self.__epel, ospackages=self.__yum))
             else:
                 return str(yum(epel=self.__epel, ospackages=self.__ospackages))
         else:
-            raise RuntimeError('Unknown package type')
+            raise RuntimeError('Unknown Linux distribution')

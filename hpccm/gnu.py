@@ -70,14 +70,14 @@ class gnu(object):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('GNU compiler'))
-        instructions.append(packages(debs=self.__compiler_debs,
-                                     rpms=self.__compiler_rpms))
+        instructions.append(packages(apt=self.__compiler_debs,
+                                     yum=self.__compiler_rpms))
         return '\n'.join(str(x) for x in instructions)
 
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('GNU compiler runtime'))
-        instructions.append(packages(debs=self.__runtime_debs,
-                                     rpms=self.__runtime_rpms))
+        instructions.append(packages(apt=self.__runtime_debs,
+                                     yum=self.__runtime_rpms))
         return instructions

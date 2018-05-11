@@ -23,7 +23,7 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from .common import package_type
+from .common import linux_distro
 from .shell import shell
 
 class apt_get(object):
@@ -37,8 +37,8 @@ class apt_get(object):
         self.__commands = []
         self.ospackages = kwargs.get('ospackages', [])
 
-        if hpccm.config.g_pkgtype != package_type.DEB: # pragma: no cover
-            logging.warning('Using apt-get on a non-deb based Linux distribution')
+        if hpccm.config.g_linux_distro != linux_distro.UBUNTU: # pragma: no cover
+            logging.warning('Using apt-get on a non-Ubuntu Linux distribution')
 
         # Construct the series of commands that form the building
         # block

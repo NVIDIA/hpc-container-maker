@@ -27,7 +27,7 @@ import os
 import hpccm.config
 
 from .comment import comment
-from .common import package_type
+from .common import linux_distro
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
@@ -111,20 +111,20 @@ class hdf5(ConfigureMake, tar, wget):
         return 'rm -rf {}'.format(' '.join(items))
 
     def __distro(self):
-        """Based on the Linux distribution's package manager, set values
-        accordingly.  A user specified value overrides any defaults."""
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
 
-        if hpccm.config.g_pkgtype == package_type.DEB:
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
             self.__runtime_ospackages = ['zlib1g']
-        elif hpccm.config.g_pkgtype == package_type.RPM:
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['bzip2', 'file', 'make', 'wget',
                                      'zlib-devel']
             self.__runtime_ospackages = ['zlib']
         else: # pragma: no cover
-            raise RuntimeError('Unknown package type')
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

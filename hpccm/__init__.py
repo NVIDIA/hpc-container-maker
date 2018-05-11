@@ -17,7 +17,7 @@ import sys
 
 sys.path.append(os.path.dirname(__file__))
 
-from .common import container_type, package_type
+from .common import container_type, linux_distro
 
 from .ConfigureMake import ConfigureMake
 from .Stage import Stage

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.mlnx_ofed import mlnx_ofed
 
@@ -31,9 +31,9 @@ class Test_mlnx_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
@@ -50,9 +50,9 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://content.mella
     dpkg --install /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibverbs1_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibverbs-dev_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/ibverbs-utils_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibmad_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibmad-devel_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibumad_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libibumad-devel_*_amd64.deb /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64/DEBS/libmlx5-1_*_amd64.deb && \
     rm -rf /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64.tgz /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-ubuntu16.04-x86_64''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
@@ -68,7 +68,7 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://content.mella
     rpm --install /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibverbs-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibverbs-devel-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibverbs-utils-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibmad-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibmad-devel-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibumad-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libibumad-devel-*.x86_64.rpm /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64/RPMS/libmlx5-*.x86_64.rpm && \
     rm -rf /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64.tgz /tmp/MLNX_OFED_LINUX-3.4-1.0.0.0-rhel7.2-x86_64''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

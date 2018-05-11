@@ -23,7 +23,7 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from .common import package_type
+from .common import linux_distro
 from .shell import shell
 
 class yum(object):
@@ -38,8 +38,8 @@ class yum(object):
         self.__epel = kwargs.get('epel', False)
         self.ospackages = kwargs.get('ospackages', [])
 
-        if hpccm.config.g_pkgtype != package_type.RPM: # pragma: no cover
-            logging.warning('Using yum on a non-RPM based Linux distribution')
+        if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
+            logging.warning('Using yum on a non-RHEL based Linux distribution')
 
         # Construct the series of commands that form the building
         # block

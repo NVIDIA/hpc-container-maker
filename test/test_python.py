@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker, rpm
+from helpers import centos, docker, ubuntu
 
 from hpccm.python import python
 
@@ -31,9 +31,9 @@ class Test_python(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
-    def test_defaults_deb(self):
+    def test_defaults_ubuntu(self):
         """Default python building block"""
         p = python()
         self.assertEqual(str(p),
@@ -44,9 +44,9 @@ RUN apt-get update -y && \
         python3 && \
     rm -rf /var/lib/apt/lists/*''')
 
-    @rpm
+    @centos
     @docker
-    def test_defaults_rpm(self):
+    def test_defaults_centos(self):
         """Default python building block"""
         p = python()
         self.assertEqual(str(p),
@@ -57,7 +57,7 @@ RUN yum install -y epel-release && \
         python34 && \
     rm -rf /var/cache/yum/*''')
 
-    @deb
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import deb, docker
+from helpers import docker, ubuntu
 
 from hpccm.apt_get import apt_get
 
@@ -31,7 +31,7 @@ class Test_yum(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @deb
+    @ubuntu
     @docker
     def test_basic(self):
         """Basic apt_get"""

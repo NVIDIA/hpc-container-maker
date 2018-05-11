@@ -26,7 +26,7 @@ import os
 import hpccm.config
 
 from .comment import comment
-from .common import package_type
+from .common import linux_distro
 from .copy import copy
 from .environment import environment
 from .packages import packages
@@ -116,17 +116,17 @@ class pgi(tar, wget):
         return 'rm -rf {}'.format(' '.join(items))
 
     def __distro(self):
-        """Based on the Linux distribution's package manager, set values
-        accordingly.  A user specified value overrides any defaults."""
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
 
-        if hpccm.config.g_pkgtype == package_type.DEB:
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['libnuma1']
-        elif hpccm.config.g_pkgtype == package_type.RPM:
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['numactl-libs']
         else:
-            raise RuntimeError('Unknown package type')
+            raise RuntimeError('Unknown Linux disribution')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

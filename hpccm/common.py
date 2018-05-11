@@ -23,7 +23,9 @@ class container_type(Enum):
     DOCKER = 1
     SINGULARITY = 2
 
-class package_type(Enum):
-    """Supported package manager types"""
-    DEB = 1
-    RPM = 2
+class linux_distro(Enum):
+    """Supported Linux distribution types"""
+    UBUNTU = 1
+    CENTOS = 2
+    RHEL = 2
+    REDHAT = 2
