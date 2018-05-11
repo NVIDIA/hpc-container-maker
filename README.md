@@ -268,19 +268,11 @@ used, the Docker-based workflow must be used.
 
 ## Current Limitations
 
-- Supports Ubuntu-based containers only
-
 - Singularity does not support multi-stage containers.  This is a
   limitation of Singularity itself, not Container Maker.  Only the
   first stage of a multi-stage recipe will be generated for
   Singularity.
 
-- Native Singularity support is experimental
-
 ## TODO
 
-- Additional building blocks and templates
-
-- Support CentOS-based containers
-
-- Code and interface cleanup
+- Additional building blocks
