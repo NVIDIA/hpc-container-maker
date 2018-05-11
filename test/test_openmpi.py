@@ -59,7 +59,6 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     def test_defaults_centos(self):
         """Default openmpi building block"""
         ompi = openmpi()
-        self.maxDiff = None
         self.assertEqual(str(ompi),
 r'''# OpenMPI version 3.0.0
 RUN yum install -y \

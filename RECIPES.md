@@ -614,7 +614,9 @@ Parameters:
   set.  The default value is `3.4`.
 
 - `ospackages`: List of OS packages to install prior to installation.
-  The default values are `openssh-client` and `wget`.
+  For Ubuntu, the default values are `openssh-client` and `wget`.  For
+  RHEL-based Linux distributions, the default values are
+  `openssh-clients`, `perl` and `wget`.
 
 - `package`: Path to the package file relative to the local build
   context.  The default value is empty.  If this is defined, the

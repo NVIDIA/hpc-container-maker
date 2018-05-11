@@ -133,7 +133,6 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     def test_directory(self):
         """Directory in local build context"""
         mv2 = mvapich2(directory='mvapich2-2.3')
-        self.maxDiff = None
         self.assertEqual(str(mv2),
 r'''# MVAPICH2
 RUN apt-get update -y && \
@@ -169,3 +168,13 @@ RUN apt-get update -y && \
 COPY --from=0 /usr/local/mvapich2 /usr/local/mvapich2
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
+
+    def test_toolchain(self):
+        """Toolchain"""
+        mv2 = mvapich2()
+        tc = mv2.toolchain
+        self.assertEqual(tc.CC, 'mpicc')
+        self.assertEqual(tc.CXX, 'mpicxx')
+        self.assertEqual(tc.FC, 'mpifort')
+        self.assertEqual(tc.F77, 'mpif77')
+        self.assertEqual(tc.F90, 'mpif90')
