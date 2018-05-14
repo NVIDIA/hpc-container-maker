@@ -53,6 +53,8 @@ class yum(object):
         """Construct the series of commands to execute"""
 
         if self.__epel:
+            # This needs to be a discrete, preliminary step so that
+            # packages from EPEL are available to be installed.
             self.__commands.append('yum install -y epel-release')
 
         if self.ospackages:
@@ -62,4 +64,6 @@ class yum(object):
                 packages.append('        {}'.format(pkg))
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)
-        self.__commands.append('rm -rf /var/cache/yum/*')
+
+        if self.__epel or self.ospackages:
+            self.__commands.append('rm -rf /var/cache/yum/*')

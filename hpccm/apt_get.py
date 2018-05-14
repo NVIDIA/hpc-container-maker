@@ -51,12 +51,14 @@ class apt_get(object):
     def __setup(self):
         """Construct the series of commands to execute"""
 
-        self.__commands.append('apt-get update -y')
         if self.ospackages:
+            self.__commands.append('apt-get update -y')
+
             install = 'apt-get install -y --no-install-recommends \\\n'
             packages = []
             for pkg in self.ospackages:
                 packages.append('        {}'.format(pkg))
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)
-        self.__commands.append('rm -rf /var/lib/apt/lists/*')
+
+            self.__commands.append('rm -rf /var/lib/apt/lists/*')
