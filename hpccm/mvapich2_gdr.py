@@ -24,10 +24,13 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import linux_distro
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .toolchain import toolchain
 from .wget import wget
@@ -49,8 +52,7 @@ class mvapich2_gdr(wget):
         self.__gnu = kwargs.get('gnu', True)
         self.__gnu_version = '4.8.5'
         self.__mofed_version = kwargs.get('mlnx_ofed_version', '3.4')
-        self.__ospackages = kwargs.get('ospackages',
-                                       ['openssh-client', 'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
         self.__package = kwargs.get('package', '')
         self.__pgi = kwargs.get('pgi', False)
         self.__pgi_version = '17.10'
@@ -73,6 +75,12 @@ class mvapich2_gdr(wget):
         self.__environment_variables = {} # Filled in by __setup()
         self.__install_path = ''          # Filled in by __setup()
 
+        self.__installer = ''             # Filled in by __distro()
+        self.__package_template = ''      # Filled in by __distro()
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
+
         # Construct the series of steps to execute
         self.__setup()
 
@@ -86,7 +94,7 @@ class mvapich2_gdr(wget):
             instructions.append(comment(
                 'MVAPICH2-GDR version {}'.format(self.version)))
 
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
 
         if self.__package:
             # Use source from local build context
@@ -108,6 +116,32 @@ class mvapich2_gdr(wget):
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['openssh-client', 'wget']
+            self.__runtime_ospackages = ['openssh-client']
+
+            self.__installer = 'dpkg --install'
+
+            self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}_{3}-1.el7.centos_amd64.deb'
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['openssh-clients', 'perl', 'wget']
+            self.__runtime_ospackages = ['openssh-clients']
+
+            # The RPM has dependencies on some CUDA libraries that are
+            # present, but not in the RPM database.  Use --nodeps as a
+            # workaround.
+            self.__installer = 'rpm --install --nodeps'
+
+            self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-1.el7.centos.x86_64.rpm'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
         """Construct the series of shell commands and environment variables,
@@ -138,7 +172,8 @@ class mvapich2_gdr(wget):
             mofed_string = 'mofed{}'.format(self.__mofed_version)
 
             # Package filename
-            package = 'mvapich2-gdr-mcast.{0}.{1}.{2}_{3}-1.el7.centos_amd64.deb'.format(cuda_string, mofed_string, compiler_string, self.version)
+            package = self.__package_template.format(
+                cuda_string, mofed_string, compiler_string, self.version)
         
             # Download source from web
             url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, self.version,
@@ -147,11 +182,11 @@ class mvapich2_gdr(wget):
                                                       directory=self.__wd))
 
         # Install the package
-        self.__commands.append('dpkg --install {0}'.format(
-            os.path.join(self.__wd, package)))
+        self.__commands.append('{0} {1}'.format(
+            self.__installer, os.path.join(self.__wd, package)))
 
         # Workaround for bad path in the MPI compiler wrappers
-        self.__commands.append('(test ! -f /usr/bin/bash && ln -s /bin/bash /usr/bin/bash)')
+        self.__commands.append('(test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash)')
 
         # Workaround for using compiler wrappers in the build stage
         cuda_home = '/usr/local/cuda'
@@ -184,8 +219,7 @@ class mvapich2_gdr(wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('MVAPICH2-GDR'))
-        # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['openssh-client']))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(src=self.__install_path,
                                  dest=self.__install_path, _from=_from))
         # No need to workaround compiler wrapper issue for the runtime.

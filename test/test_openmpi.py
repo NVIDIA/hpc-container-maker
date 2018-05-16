@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import centos, docker, ubuntu
 
 from hpccm.openmpi import openmpi
 
@@ -31,8 +31,9 @@ class Test_openmpi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @ubuntu
     @docker
-    def test_defaults(self):
+    def test_defaults_ubuntu(self):
         """Default openmpi building block"""
         ompi = openmpi()
         self.assertEqual(str(ompi),
@@ -53,6 +54,32 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
+    @centos
+    @docker
+    def test_defaults_centos(self):
+        """Default openmpi building block"""
+        ompi = openmpi()
+        self.assertEqual(str(ompi),
+r'''# OpenMPI version 3.0.0
+RUN yum install -y \
+        bzip2 \
+        file \
+        hwloc \
+        make \
+        openssh-clients \
+        perl \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
+    tar -x -f /tmp/openmpi-3.0.0.tar.bz2 -C /tmp -j && \
+    cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/openmpi-3.0.0.tar.bz2 /tmp/openmpi-3.0.0
+ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/openmpi/bin:$PATH''')
+
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""
@@ -74,6 +101,7 @@ RUN cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

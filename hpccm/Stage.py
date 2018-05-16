@@ -46,10 +46,11 @@ class Stage(object):
         """String representation of the stage"""
         return self.__separator.join(str(x) for x in self.__layers)
 
-    def baseimage(self, image):
+    def baseimage(self, image, _distro=''):
         """Insert the baseimage as the first layer"""
         if image:
-            self.__layers.insert(0, baseimage(image=image, _as=self.name))
+            self.__layers.insert(0, baseimage(image=image, _as=self.name,
+                                              _distro=_distro))
 
     def is_defined(self):
         """Return True if any layers have been defined, otherwise False"""

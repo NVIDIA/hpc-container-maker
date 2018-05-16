@@ -21,7 +21,8 @@ And access variables as
 hpccm.config.var
 """
 
-from hpccm.common import container_type
+from hpccm.common import container_type, linux_distro
 
 # Global variables
-g_ctype = container_type.DOCKER  # Container type
+g_ctype = container_type.DOCKER      # Container type
+g_linux_distro = linux_distro.UBUNTU # Linux distribution

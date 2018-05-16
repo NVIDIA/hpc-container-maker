@@ -24,11 +24,14 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import linux_distro
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -56,10 +59,9 @@ class openmpi(ConfigureMake, tar, wget):
         self.cuda = kwargs.get('cuda', True)
         self.directory = kwargs.get('directory', '')
         self.infiniband = kwargs.get('infiniband', True)
-        self.ospackages = kwargs.get('ospackages',
-                                     ['file', 'hwloc', 'openssh-client',
-                                      'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
+        self.__runtime_ospackages = [] # Filled in by __distro()
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
@@ -76,6 +78,10 @@ class openmpi(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Set the Linux distribution specific parameters
+        self.__distro()
+
+        # Construct the series of steps to execute
         self.__setup()
 
     def __str__(self):
@@ -87,7 +93,7 @@ class openmpi(ConfigureMake, tar, wget):
         else:
             instructions.append(comment(
                 'OpenMPI version {}'.format(self.version)))
-        instructions.append(apt_get(ospackages=self.ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         if self.directory:
             # Use source from local build context
             instructions.append(
@@ -108,7 +114,24 @@ class openmpi(ConfigureMake, tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['file', 'hwloc', 'openssh-client', 'wget']
+            self.__runtime_ospackages = ['hwloc', 'openssh-client']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
+                                     'openssh-clients', 'perl', 'wget']
+            self.__runtime_ospackages = ['hwloc', 'openssh-clients']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
     def __setup(self):
+
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
@@ -176,8 +199,7 @@ class openmpi(ConfigureMake, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('OpenMPI'))
-        # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['hwloc', 'openssh-client']))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(

@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""apt-get building block"""
+"""yum building block"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -26,19 +26,20 @@ import hpccm.config
 from .common import linux_distro
 from .shell import shell
 
-class apt_get(object):
-    """apt-get building block"""
+class yum(object):
+    """yum building block"""
 
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        #super(apt_get, self).__init__()
+        #super(yum, self).__init__()
 
         self.__commands = []
+        self.__epel = kwargs.get('epel', False)
         self.ospackages = kwargs.get('ospackages', [])
 
-        if hpccm.config.g_linux_distro != linux_distro.UBUNTU: # pragma: no cover
-            logging.warning('Using apt-get on a non-Ubuntu Linux distribution')
+        if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
+            logging.warning('Using yum on a non-RHEL based Linux distribution')
 
         # Construct the series of commands that form the building
         # block
@@ -51,14 +52,18 @@ class apt_get(object):
     def __setup(self):
         """Construct the series of commands to execute"""
 
-        if self.ospackages:
-            self.__commands.append('apt-get update -y')
+        if self.__epel:
+            # This needs to be a discrete, preliminary step so that
+            # packages from EPEL are available to be installed.
+            self.__commands.append('yum install -y epel-release')
 
-            install = 'apt-get install -y --no-install-recommends \\\n'
+        if self.ospackages:
+            install = 'yum install -y \\\n'
             packages = []
             for pkg in self.ospackages:
                 packages.append('        {}'.format(pkg))
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)
 
-            self.__commands.append('rm -rf /var/lib/apt/lists/*')
+        if self.__epel or self.ospackages:
+            self.__commands.append('rm -rf /var/cache/yum/*')

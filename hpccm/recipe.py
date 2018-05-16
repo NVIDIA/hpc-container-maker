@@ -46,11 +46,13 @@ from .mvapich2 import mvapich2       # pylint: disable=unused-import
 from .mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
 from .ofed import ofed               # pylint: disable=unused-import
 from .openmpi import openmpi         # pylint: disable=unused-import
+from .packages import packages       # pylint: disable=unused-import
 from .pgi import pgi                 # pylint: disable=unused-import
 from .python import python           # pylint: disable=unused-import
 from .raw import raw                 # pylint: disable=unused-import
 from .shell import shell             # pylint: disable=unused-import
 from .workdir import workdir         # pylint: disable=unused-import
+from .yum import yum                 # pylint: disable=unused-import
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):

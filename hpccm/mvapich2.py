@@ -23,11 +23,14 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import linux_distro
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -46,16 +49,15 @@ class mvapich2(ConfigureMake, tar, wget):
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
-        self.baseurl = kwargs.get('baseurl',
-                                  'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
+        self.__baseurl = kwargs.get('baseurl',
+                                    'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
         self.__check = kwargs.get('check', False)
         self.configure_opts = kwargs.get('configure_opts', ['--disable-mcast'])
         self.cuda = kwargs.get('cuda', True)
         self.directory = kwargs.get('directory', '')
-        self.ospackages = kwargs.get('ospackages',
-                                     ['byacc', 'file', 'openssh-client',
-                                      'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
         self.prefix = kwargs.get('prefix', '/usr/local/mvapich2')
+        self.__runtime_ospackages = [] # Filled in by __distro()
 
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
@@ -73,6 +75,9 @@ class mvapich2(ConfigureMake, tar, wget):
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Set the Linux distribution specific parameters
+        self.__distro()
+
         # Construct the series of steps to execute
         self.__setup()
 
@@ -85,7 +90,7 @@ class mvapich2(ConfigureMake, tar, wget):
         else:
             instructions.append(comment(
                 'MVAPICH2 version {}'.format(self.version)))
-        instructions.append(apt_get(ospackages=self.ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
         if self.directory:
             # Use source from local build context
             instructions.append(
@@ -106,12 +111,28 @@ class mvapich2(ConfigureMake, tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['byacc', 'file', 'openssh-client', 'wget']
+            self.__runtime_ospackages = ['openssh-client']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['byacc', 'file', 'make',
+                                     'openssh-clients', 'wget']
+            self.__runtime_ospackages = ['openssh-clients']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
         tarball = 'mvapich2-{}.tar.gz'.format(self.version)
-        url = '{0}/{1}'.format(self.baseurl, tarball)
+        url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # CUDA
         if self.cuda:
@@ -176,7 +197,7 @@ class mvapich2(ConfigureMake, tar, wget):
         instructions = []
         instructions.append(comment('MVAPICH2'))
         # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['openssh-client']))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         # No need to workaround compiler wrapper issue for the runtime.

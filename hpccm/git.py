@@ -104,12 +104,17 @@ class git(object):
                           fatal=fatal)
 
         # Ensure the path exists
+        # Would prefer to use 'git -C', but the ancient git included
+        # with CentOS7 does not support that option.
         clone = ['mkdir -p {0}'.format(path),
-                 'git -C {0} clone {1} {2} {3}'.format(
-                     path, opt_string, repository, directory).strip()]
+                 'cd {0}'.format(path),
+                 'git clone {0} {1} {2}'.format(
+                     opt_string, repository, directory).strip(),
+                 'cd -']
 
         if commit:
-            clone.append('git -C {0} checkout {1}'.format(
-                os.path.join(path, directory), commit))
+            clone.extend(['cd {0}'.format(os.path.join(path, directory)),
+                          'git checkout {0}'.format(commit),
+                          'cd -'])
 
         return ' && '.join(clone)

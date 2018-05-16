@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import centos, docker, ubuntu
 
 from hpccm.ofed import ofed
 
@@ -31,8 +31,9 @@ class Test_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @ubuntu
     @docker
-    def test_defaults(self):
+    def test_defaults_ubuntu(self):
         """Default ofed building block"""
         o = ofed()
         self.assertEqual(str(o),
@@ -59,6 +60,31 @@ RUN apt-get update -y && \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @centos
+    @docker
+    def test_defaults_centos(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN yum install -y \
+        dapl \
+        dapl-devel \
+        ibutils \
+        libibcm \
+        libibmad \
+        libibmad-devel \
+        libmlx5 \
+        libibumad \
+        libibverbs \
+        libibverbs-utils \
+        librdmacm \
+        opensm \
+        rdma-core \
+        rdma-core-devel && \
+    rm -rf /var/cache/yum/*''')
+
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""

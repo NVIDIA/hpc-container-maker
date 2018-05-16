@@ -22,3 +22,10 @@ class container_type(Enum):
     """Supported container types"""
     DOCKER = 1
     SINGULARITY = 2
+
+class linux_distro(Enum):
+    """Supported Linux distribution types"""
+    UBUNTU = 1
+    CENTOS = 2
+    RHEL = 2
+    REDHAT = 2

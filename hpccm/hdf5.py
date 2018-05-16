@@ -24,11 +24,14 @@ import logging # pylint: disable=unused-import
 import re
 import os
 
-from .apt_get import apt_get
+import hpccm.config
+
 from .comment import comment
+from .common import linux_distro
 from .ConfigureMake import ConfigureMake
 from .copy import copy
 from .environment import environment
+from .packages import packages
 from .shell import shell
 from .tar import tar
 from .toolchain import toolchain
@@ -54,8 +57,8 @@ class hdf5(ConfigureMake, tar, wget):
         self.__baseurl = kwargs.get('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
         self.__check = kwargs.get('check', False)
         self.__directory = kwargs.get('directory', '')
-        self.__ospackages = kwargs.get('ospackages',
-                                       ['file', 'make', 'wget', 'zlib1g-dev'])
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '1.10.1')
 
@@ -67,6 +70,9 @@ class hdf5(ConfigureMake, tar, wget):
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/tmp' # working directory
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -81,7 +87,7 @@ class hdf5(ConfigureMake, tar, wget):
             instructions.append(comment(
                 'HDF5 version {}'.format(self.__version)))
 
-        instructions.append(apt_get(ospackages=self.__ospackages))
+        instructions.append(packages(ospackages=self.__ospackages))
 
         if self.__directory:
             # Use source from local build context
@@ -103,6 +109,22 @@ class hdf5(ConfigureMake, tar, wget):
             return ''
 
         return 'rm -rf {}'.format(' '.join(items))
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
+            self.__runtime_ospackages = ['zlib1g']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'file', 'make', 'wget',
+                                     'zlib-devel']
+            self.__runtime_ospackages = ['zlib']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -158,8 +180,7 @@ class hdf5(ConfigureMake, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('HDF5'))
-        # TODO: move the definition of runtime ospackages
-        instructions.append(apt_get(ospackages=['zlib1g']))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(

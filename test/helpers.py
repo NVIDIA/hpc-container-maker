@@ -23,31 +23,52 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from hpccm.common import container_type
+from hpccm.common import container_type, linux_distro
+
+def centos(function):
+    """Decorator to set the Linux distribution to CentOS"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.CENTOS
+        return function(*args, **kwargs)
+
+    return wrapper
 
 def docker(function):
-    """Decorator to set the global containter type to docker"""
+    """Decorator to set the global container type to docker"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
         hpccm.config.g_ctype = container_type.DOCKER
         return function(*args, **kwargs)
 
     return wrapper
 
 def invalid_ctype(function):
-    """Decorator to set the global containter type to an invalid value"""
+    """Decorator to set the global container type to an invalid value"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
         hpccm.config.g_ctype = None
         return function(*args, **kwargs)
 
     return wrapper
 
-def singularity(function):
-    """Decorator to set the global containter type to singularity"""
+def invalid_distro(function):
+    """Decorator to set the global Linux distribution to an invalid value"""
     def wrapper(*args, **kwargs):
-        """Wrapper"""
+        hpccm.config.g_linux_distro = None
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def singularity(function):
+    """Decorator to set the global container type to singularity"""
+    def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.SINGULARITY
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def ubuntu(function):
+    """Decorator to set the Linux distribution to Ubuntu"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.UBUNTU
         return function(*args, **kwargs)
 
     return wrapper

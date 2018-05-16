@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name, too-few-public-methods, bad-continuation
+# pylint: disable=invalid-name, too-few-public-methods
 
-"""Test cases for the python module"""
+"""Test cases for the packages module"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -22,52 +22,43 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, invalid_distro, ubuntu
 
-from hpccm.python import python
+from hpccm.packages import packages 
 
-class Test_python(unittest.TestCase):
+class Test_packages(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
-        """Default python building block"""
-        p = python()
+    def test_basic_ubuntu(self):
+        """Basic packages"""
+        p = packages(ospackages=['gcc', 'g++', 'gfortran'])
         self.assertEqual(str(p),
-r'''# Python
-RUN apt-get update -y && \
+r'''RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-        python \
-        python3 && \
+        gcc \
+        g++ \
+        gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
     @centos
     @docker
-    def test_defaults_centos(self):
-        """Default python building block"""
-        p = python()
+    def test_basic_centos(self):
+        """Basic packages"""
+        p = packages(ospackages=['gcc', 'gcc-c++', 'gcc-fortran'])
         self.assertEqual(str(p),
-r'''# Python
-RUN yum install -y epel-release && \
-    yum install -y \
-        python \
-        python34 && \
+r'''RUN yum install -y \
+        gcc \
+        gcc-c++ \
+        gcc-fortran && \
     rm -rf /var/cache/yum/*''')
 
-    @ubuntu
-    @docker
-    def test_runtime(self):
-        """Runtime"""
-        p = python()
-        r = p.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
-r'''# Python
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-        python \
-        python3 && \
-    rm -rf /var/lib/apt/lists/*''')
+    @invalid_distro
+    def test_invalid_distro(self):
+        """Invalid package type specified"""
+        p = packages(ospackages=['gcc', 'g++', 'gfortran'])
+        with self.assertRaises(RuntimeError):
+            str(p)

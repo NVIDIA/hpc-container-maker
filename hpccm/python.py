@@ -22,8 +22,8 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from .apt_get import apt_get
 from .comment import comment
+from .packages import packages
 
 class python(object):
     """Python building block"""
@@ -35,28 +35,34 @@ class python(object):
         # the parent class constructors manually for now.
         #super(python, self).__init__(**kwargs)
 
+        self.__epel = False
         self.__python2 = kwargs.get('python2', True)
         self.__python3 = kwargs.get('python3', True)
 
-        self.__packages = [] # Filled in below
+        self.__debs = [] # Filled in below
+        self.__rpms = [] # Filled in below
 
         if self.__python2:
-            self.__packages.append('python')
+            self.__debs.append('python')
+            self.__rpms.append('python')
 
         if self.__python3:
-            self.__packages.append('python3')
+            self.__debs.append('python3')
+            self.__rpms.append('python34')  # EPEL package
+            self.__epel = True
 
     def __str__(self):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('Python'))
-        instructions.append(apt_get(ospackages=self.__packages))
-
+        instructions.append(packages(apt=self.__debs, epel=self.__epel,
+                                     yum=self.__rpms))
         return '\n'.join([str(x) for x in instructions])
 
     def runtime(self, _from='0'):
         """Runtime specification"""
         instructions = []
         instructions.append(comment('Python'))
-        instructions.append(apt_get(ospackages=self.__packages))
+        instructions.append(packages(apt=self.__debs, epel=self.__epel,
+                                     yum=self.__rpms))
         return instructions

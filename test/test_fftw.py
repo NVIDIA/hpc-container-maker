@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import centos, docker, ubuntu
 
 from hpccm.fftw import fftw
 
@@ -31,8 +31,9 @@ class Test_fftw(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @ubuntu
     @docker
-    def test_defaults(self):
+    def test_defaults_ubuntu(self):
         """Default fftw building block"""
         f = fftw()
         self.assertEqual(str(f),
@@ -51,6 +52,27 @@ RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/p
     rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @centos
+    @docker
+    def test_defaults_centos(self):
+        """Default fftw building block"""
+        f = fftw()
+        self.assertEqual(str(f),
+r'''# FFTW version 3.3.7
+RUN yum install -y \
+        file \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
+    tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
+    cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
+ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""
@@ -62,6 +84,7 @@ r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @ubuntu
     @docker
     def test_directory(self):
         """Directory in local build context"""
