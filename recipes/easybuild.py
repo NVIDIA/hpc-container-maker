@@ -1,15 +1,17 @@
 """EasyBuild container (https://github.com/easybuilders/easybuild)
    Set the user argument 'easyconfig' to specify the EasyConfig to
-   build.  Otherwise, it will just build a base EasyBuild container.
+   build.  Otherwise, it will just build a base EasyBuild container
+   image.
 
    Sample workflow:
 $ hpccm.py --recipe recipes/easybuild.py --userarg easyconfig=GROMACS-2016.3-foss-2016b-GPU-enabled.eb > Dockerfile.gromacs.eb
 $ docker build -t gromacs.eb -f Dockerfile.gromacs.eb .
-$ docker run --rm -ti gromacs.eb bash -l
+$ nvidia-docker run --rm -ti gromacs.eb bash -l
 container:/tmp> module load GROMACS
 ...
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
+import os
 
 Stage0 += comment(__doc__, reformat=False)
 
@@ -41,4 +43,9 @@ Stage0 += environment(variables={'MODULEPATH': '/opt/easybuild/modules/all:/home
 
 easyconfig = USERARG.get('easyconfig', None)
 if easyconfig:
+     # If the easyconfig is a file in the local build context, inject it
+     # into the container image
+     if os.path.isfile(easyconfig):
+          Stage0 += copy(src=easyconfig, dest='/home/easybuild')
+
      Stage0 += shell(commands=['runuser easybuild -l -c "eb {} -r --installpath /opt/easybuild"'.format(easyconfig)])
