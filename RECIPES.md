@@ -867,11 +867,6 @@ Parameters:
   bundled with the PGI compiler will be installed.  The default value
   is False.
 
-- `system_cuda`: Boolean flag to specify whether the PGI compiler
-  should use the system CUDA.  If False, the version(s) of CUDA
-  bundled with the PGI compiler will be installed.  The default value
-  is False.
-
 - `tarball`: Path to the PGI compiler tarball relative to the local
   build context.  The default value is empty.  If this is defined, the
   tarball in the local build context will be used rather than
