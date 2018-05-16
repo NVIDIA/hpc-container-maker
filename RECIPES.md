@@ -988,11 +988,11 @@ Parameters:
 - `_as`: Name for the build stage (Docker specific).  The default
   value is empty.
 
-- `_pkgtype': The package type of the underlying Linux distribution.
-  Valid values are `deb` and `rpm`.  By default, the primitive
-  attempts to figure out the package type by inspecting the image
-  identifier, and falls back to `deb` if unable to determine the
-  package type automatically.
+- `_distro': The underlying Linux distribution of the base image.
+  Valid values are `centos`, `redhat`, `rhel`, and `ubuntu`.  By
+  default, the primitive attempts to figure out the Linux distribution
+  by inspecting the image identifier, and falls back to `ubuntu` if
+  unable to determine the Linux distribution automatically.
 
 - `image`: The image identifier to use as the base image.  The default
   value is `nvidia/cuda:9.0-devel-ubuntu16.04`
