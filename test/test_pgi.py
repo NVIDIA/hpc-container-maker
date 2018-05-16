@@ -65,7 +65,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=decline ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_NVIDIA=true PGI_SILENT=false ./install && \
     rm -rf /tmp/pgi/pgi-community-linux-x64-latest.tar.gz /tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
@@ -112,13 +112,14 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     @ubuntu
     @docker
     def test_system_cuda(self):
-        """tarball"""
+        """System CUDA"""
         p = pgi(eula=True, system_cuda=True)
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         libnuma1 \
+        perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
@@ -129,6 +130,7 @@ RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-communit
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""
