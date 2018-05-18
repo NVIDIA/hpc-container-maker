@@ -1,8 +1,11 @@
 language: python
 matrix:
   include:
+    - python: 2.7
     - python: 3.4
     - python: 3.5
     - python: 3.6
+install:
+    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then travis_retry pip install enum34; fi
 script:
   - ./runtests.sh

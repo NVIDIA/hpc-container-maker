@@ -1,8 +1,8 @@
 #!/bin/bash
 
 COVERAGE=false
-COVERAGE_TOOL=coverage3
-PYTHON=python3
+COVERAGE_TOOL=coverage
+PYTHON=python
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -12,6 +12,10 @@ while [ "$1" != "" ]; do
         --python2 )
             COVERAGE_TOOL=coverage2
             PYTHON=python2
+            ;;
+        --python3 )
+            COVERAGE_TOOL=coverage3
+            PYTHON=python3
             ;;
         --verbose )
             VERBOSE="-v"
