@@ -17,21 +17,22 @@
 
 """FFTW building block"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import os
 
-from .comment import comment
-from .ConfigureMake import ConfigureMake
-from .copy import copy
-from .environment import environment
-from .packages import packages
-from .shell import shell
-from .tar import tar
-from .toolchain import toolchain
-from .wget import wget
+from hpccm.comment import comment
+from hpccm.ConfigureMake import ConfigureMake
+from hpccm.copy import copy
+from hpccm.environment import environment
+from hpccm.packages import packages
+from hpccm.shell import shell
+from hpccm.tar import tar
+from hpccm.toolchain import toolchain
+from hpccm.wget import wget
 
 class fftw(ConfigureMake, tar, wget):
     """FFTW building block"""

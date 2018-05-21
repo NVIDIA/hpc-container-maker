@@ -16,6 +16,7 @@
 
 """Copy primitive"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -24,7 +25,7 @@ import os
 
 import hpccm.config
 
-from .common import container_type
+from hpccm.common import container_type
 
 class copy(object):
     """Copy primitive"""

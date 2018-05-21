@@ -16,6 +16,7 @@
 
 """packages building block"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -23,9 +24,9 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from .apt_get import apt_get
-from .common import linux_distro
-from .yum import yum
+from hpccm.apt_get import apt_get
+from hpccm.common import linux_distro
+from hpccm.yum import yum
 
 class packages(object):
     """packages building block"""
