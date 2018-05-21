@@ -25,4 +25,4 @@ setup(
     install_requires=['enum34', 'six'],
     entry_points={
         'console_scripts': [
-            'hpccm=hpccm.hpccm:main']})
+            'hpccm=hpccm.cli:main']})
