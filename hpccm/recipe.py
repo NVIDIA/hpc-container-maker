@@ -18,6 +18,7 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from six import raise_from
 
 import logging
 
@@ -74,7 +75,7 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
             exec(compile(f.read(), recipe_file, 'exec'))
     except Exception as e:
         if raise_exceptions:
-            raise e from e
+            raise_from(e, e)
         else:
             logging.error(e)
             exit(1)

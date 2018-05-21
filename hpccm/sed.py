@@ -18,9 +18,9 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
-import shlex
 
 class sed(object):
     """sed template"""
@@ -51,8 +51,8 @@ class sed(object):
 
         opt_string = ' '.join(opts)
 
-        quoted_patterns = ['-e {}'.format(shlex.quote(patterns[0]))]
-        quoted_patterns.extend('        -e {}'.format(shlex.quote(x)) for x in patterns[1:])
+        quoted_patterns = ['-e {}'.format(shlex_quote(patterns[0]))]
+        quoted_patterns.extend('        -e {}'.format(shlex_quote(x)) for x in patterns[1:])
         quoted_pattern_string = ' \\\n'.join(quoted_patterns)
 
         return 'sed {0} {1} {2}'.format(opt_string, quoted_pattern_string, file) 

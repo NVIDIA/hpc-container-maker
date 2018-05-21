@@ -50,8 +50,9 @@ class git(object):
             command = 'git ls-remote --exit-code --heads {0} {1}'.format(repository, branch)
             ref = branch
 
-        p = subprocess.Popen(command, shell=True, stdout=subprocess.DEVNULL,
-                             stderr=subprocess.DEVNULL)
+        with open(os.devnull, 'w') as DEVNULL:
+            p = subprocess.Popen(command, shell=True, stdout=DEVNULL,
+                                 stderr=DEVNULL)
         o = p.communicate()
 
         if p.returncode != 0:
