@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Setup script for hpccm."""
 
@@ -10,7 +10,7 @@ from setuptools import setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the README file
-with open(os.path.join(here, 'README.md'), encoding='utf-8') as fp:
+with open(os.path.join(here, 'README.md')) as fp:
     long_description = fp.read()
 
 setup(
@@ -18,6 +18,8 @@ setup(
     version='',
     description='HPC Container Maker',
     long_description=long_description,
+    license='Apache License Version 2.0',
+    url='https://github.com/NVIDIA/hpc-container-maker',
     packages=find_packages(),
     # Make hpccm.hpccm.main available from the command line as `hpccm`.
     install_requires=['enum34', 'six'],
