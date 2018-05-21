@@ -38,7 +38,7 @@ class KeyValue(argparse.Action): # pylint: disable=too-few-public-methods
             d[key] = value
         setattr(namespace, self.dest, d)
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='HPC Container Maker')
     parser.add_argument('--format', type=str, default='docker',
                         choices=[i.name.lower() for i in hpccm.container_type],
@@ -65,3 +65,6 @@ if __name__ == "__main__":
                           single_stage=args.single_stage,
                           userarg=args.userarg)
     print(recipe)
+
+if __name__ == "__main__":
+    main()
