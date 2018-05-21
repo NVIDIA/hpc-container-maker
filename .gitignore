@@ -1,3 +1,5 @@
+hpccm.egg-info
+__pycache__
 *.pyc
 .coverage
 Dockerfile*

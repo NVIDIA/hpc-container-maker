@@ -17,6 +17,7 @@
 
 """MVAPICH2-GDR building block"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -26,14 +27,14 @@ import re
 
 import hpccm.config
 
-from .comment import comment
-from .common import linux_distro
-from .copy import copy
-from .environment import environment
-from .packages import packages
-from .shell import shell
-from .toolchain import toolchain
-from .wget import wget
+from hpccm.comment import comment
+from hpccm.common import linux_distro
+from hpccm.copy import copy
+from hpccm.environment import environment
+from hpccm.packages import packages
+from hpccm.shell import shell
+from hpccm.toolchain import toolchain
+from hpccm.wget import wget
 
 class mvapich2_gdr(wget):
     """MVAPICH2-GDR building block"""
@@ -174,7 +175,7 @@ class mvapich2_gdr(wget):
             # Package filename
             package = self.__package_template.format(
                 cuda_string, mofed_string, compiler_string, self.version)
-        
+
             # Download source from web
             url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, self.version,
                                            mofed_string, package)

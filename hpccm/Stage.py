@@ -16,12 +16,13 @@
 
 """Container stage"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from .baseimage import baseimage
+from hpccm.baseimage import baseimage
 
 class Stage(object):
     """Class for the container stage.  Docker may have one or more stages,

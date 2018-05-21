@@ -16,6 +16,7 @@
 
 """Container recipe"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 from six import raise_from
@@ -26,34 +27,34 @@ import hpccm # pylint: disable=unused-import
 
 import hpccm.config
 
-from .common import container_type
+from hpccm.common import container_type
 
-from .Stage import Stage
+from hpccm.Stage import Stage
 
-from .apt_get import apt_get         # pylint: disable=unused-import
-from .baseimage import baseimage     # pylint: disable=unused-import
-from .blob import blob               # pylint: disable=unused-import
-from .cmake import cmake             # pylint: disable=unused-import
-from .comment import comment         # pylint: disable=unused-import
-from .copy import copy               # pylint: disable=unused-import
-from .environment import environment # pylint: disable=unused-import
-from .fftw import fftw               # pylint: disable=unused-import
-from .git import git                 # pylint: disable=unused-import
-from .gnu import gnu                 # pylint: disable=unused-import
-from .hdf5 import hdf5               # pylint: disable=unused-import
-from .label import label             # pylint: disable=unused-import
-from .mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
-from .mvapich2 import mvapich2       # pylint: disable=unused-import
-from .mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
-from .ofed import ofed               # pylint: disable=unused-import
-from .openmpi import openmpi         # pylint: disable=unused-import
-from .packages import packages       # pylint: disable=unused-import
-from .pgi import pgi                 # pylint: disable=unused-import
-from .python import python           # pylint: disable=unused-import
-from .raw import raw                 # pylint: disable=unused-import
-from .shell import shell             # pylint: disable=unused-import
-from .workdir import workdir         # pylint: disable=unused-import
-from .yum import yum                 # pylint: disable=unused-import
+from hpccm.apt_get import apt_get         # pylint: disable=unused-import
+from hpccm.baseimage import baseimage     # pylint: disable=unused-import
+from hpccm.blob import blob               # pylint: disable=unused-import
+from hpccm.cmake import cmake             # pylint: disable=unused-import
+from hpccm.comment import comment         # pylint: disable=unused-import
+from hpccm.copy import copy               # pylint: disable=unused-import
+from hpccm.environment import environment # pylint: disable=unused-import
+from hpccm.fftw import fftw               # pylint: disable=unused-import
+from hpccm.git import git                 # pylint: disable=unused-import
+from hpccm.gnu import gnu                 # pylint: disable=unused-import
+from hpccm.hdf5 import hdf5               # pylint: disable=unused-import
+from hpccm.label import label             # pylint: disable=unused-import
+from hpccm.mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
+from hpccm.mvapich2 import mvapich2       # pylint: disable=unused-import
+from hpccm.mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
+from hpccm.ofed import ofed               # pylint: disable=unused-import
+from hpccm.openmpi import openmpi         # pylint: disable=unused-import
+from hpccm.packages import packages       # pylint: disable=unused-import
+from hpccm.pgi import pgi                 # pylint: disable=unused-import
+from hpccm.python import python           # pylint: disable=unused-import
+from hpccm.raw import raw                 # pylint: disable=unused-import
+from hpccm.shell import shell             # pylint: disable=unused-import
+from hpccm.workdir import workdir         # pylint: disable=unused-import
+from hpccm.yum import yum                 # pylint: disable=unused-import
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):

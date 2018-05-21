@@ -16,6 +16,7 @@
 
 """PGI building block"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -25,15 +26,15 @@ import os
 
 import hpccm.config
 
-from .comment import comment
-from .common import linux_distro
-from .copy import copy
-from .environment import environment
-from .packages import packages
-from .shell import shell
-from .tar import tar
-from .toolchain import toolchain
-from .wget import wget
+from hpccm.comment import comment
+from hpccm.common import linux_distro
+from hpccm.copy import copy
+from hpccm.environment import environment
+from hpccm.packages import packages
+from hpccm.shell import shell
+from hpccm.tar import tar
+from hpccm.toolchain import toolchain
+from hpccm.wget import wget
 
 class pgi(tar, wget):
     """PGI building block"""

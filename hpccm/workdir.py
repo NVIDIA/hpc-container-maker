@@ -16,6 +16,7 @@
 
 """Working directory primitive"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -23,8 +24,8 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from .common import container_type
-from .shell import shell
+from hpccm.common import container_type
+from hpccm.shell import shell
 
 class workdir(object):
     """Workdir primitive"""

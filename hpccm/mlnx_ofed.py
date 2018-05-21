@@ -16,6 +16,7 @@
 
 """Mellanox OFED building block"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -24,12 +25,12 @@ import os
 
 import hpccm.config
 
-from .comment import comment
-from .common import linux_distro
-from .packages import packages
-from .shell import shell
-from .tar import tar
-from .wget import wget
+from hpccm.comment import comment
+from hpccm.common import linux_distro
+from hpccm.packages import packages
+from hpccm.shell import shell
+from hpccm.tar import tar
+from hpccm.wget import wget
 
 class mlnx_ofed(tar, wget):
     """Mellanox OFED building block"""

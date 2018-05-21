@@ -16,6 +16,7 @@
 
 """Base image primitive"""
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -24,7 +25,7 @@ import re
 
 import hpccm.config
 
-from .common import container_type, linux_distro
+from hpccm.common import container_type, linux_distro
 
 class baseimage(object):
     """Base image primitive"""
