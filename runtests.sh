@@ -27,7 +27,7 @@ while [ "$1" != "" ]; do
 done
 
 if ${COVERAGE}; then
-  ${COVERAGE_TOOL} run --source=. --omit="test*" -m unittest discover -s test ${VERBOSE}
+  ${COVERAGE_TOOL} run --source=hpccm -m unittest discover -s test ${VERBOSE}
   ${COVERAGE_TOOL} report -m
 else
   ${PYTHON} -m unittest discover -s test ${VERBOSE}

@@ -155,6 +155,27 @@ ENV PATH=/usr/local/openmpi/bin:$PATH \
     export LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH
 ```
 
+## Installation
+
+To install the latest stable version:
+
+```
+$ pip install hpccm
+```
+
+To install the current development branch:
+
+```
+$ pip install https://github.com/NVIDIA/hpc-container-maker/tarball/master
+```
+
+In either case, `hpccm` will be installed in your `PATH`.
+
+You can also use `hpccm.py` or `python -m hpccm.cli` from a clone of
+the repository without having to install anything.
+
+The sections below assume `hpccm.py` from a clone of the repository.
+
 ## How to Use Container Maker
 
 Typically, Container Maker will be used in 1 of 2 scenarios.
