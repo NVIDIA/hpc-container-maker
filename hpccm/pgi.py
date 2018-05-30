@@ -176,8 +176,15 @@ class pgi(tar, wget):
                                                                 flag_string))
 
         # Create siterc to specify use of the system CUDA
+        siterc = os.path.join(self.__basepath, self.__version, 'bin', 'siterc')
         if self.__system_cuda:
-            self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(os.path.join(self.__basepath, self.__version, 'bin', 'siterc')))
+            self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(siterc))
+
+        # Create siterc to respect LIBRARY_PATH
+        # https://www.pgroup.com/support/faq.htm#lib_path_ldflags
+        self.__commands.append(r'echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> {}'.format(siterc))
+        self.__commands.append(r'echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> {}'.format(siterc))
+        self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
 
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball), self.__wd]))
