@@ -99,7 +99,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
     tar -x -f /tmp/mvapich2-2.3b.tar.gz -C /tmp -z && \
-    cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --without-cuda && \
+    cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
     make -j4 && \
     make -j4 install && \
     rm -rf /tmp/mvapich2-2.3b.tar.gz /tmp/mvapich2-2.3b

@@ -166,15 +166,15 @@ class mvapich2(ConfigureMake, sed, tar, wget):
                 os.path.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
 
         else:
-            self.configure_opts.append('--without-cuda')
+            self.configure_opts.append('--disable-cuda')
 
         if self.directory:
             # Use source from local build context
+            self.__set_gpu_arch(
+                directory=os.path.join(self.__wd, self.directory))
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd, self.directory),
                 toolchain=self.__toolchain))
-            self.__set_gpu_arch(
-                directory=os.path.join(self.__wd, self.directory))
         else:
             # Download source from web
             self.__commands.append(self.download_step(url=url,
@@ -184,10 +184,12 @@ class mvapich2(ConfigureMake, sed, tar, wget):
             self.__set_gpu_arch(
                 directory=os.path.join(self.__wd,
                                        'mvapich2-{}'.format(self.version)))
+
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
                                        'mvapich2-{}'.format(self.version)),
                 toolchain=self.__toolchain))
+
 
         self.__commands.append(self.build_step())
 
@@ -227,6 +229,7 @@ class mvapich2(ConfigureMake, sed, tar, wget):
         # No need to workaround compiler wrapper issue for the runtime.
         # Copy the dictionary so not to modify the original.
         vars = dict(self.__environment_variables)
-        del vars['PROFILE_POSTLIB']
+        if vars.get('PROFILE_POSTLIB'):
+            del vars['PROFILE_POSTLIB']
         instructions.append(environment(variables=vars))
         return instructions
