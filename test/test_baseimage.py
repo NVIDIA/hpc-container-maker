@@ -63,7 +63,11 @@ class Test_baseimage(unittest.TestCase):
     def test_value_singularity(self):
         """Image name is specified"""
         b = baseimage(image='foo')
-        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b),
+r'''BootStrap: docker
+From: foo
+%post
+    . /.singularity.d/env/10-docker.sh''')
 
     @docker
     def test_as_deprecated_docker(self):
@@ -75,7 +79,11 @@ class Test_baseimage(unittest.TestCase):
     def test_as_deprecated_singularity(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', AS='dev')
-        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b),
+r'''BootStrap: docker
+From: foo
+%post
+    . /.singularity.d/env/10-docker.sh''')
 
     @docker
     def test_as_docker(self):
@@ -87,7 +95,11 @@ class Test_baseimage(unittest.TestCase):
     def test_as_singularity(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
-        self.assertEqual(str(b), 'BootStrap: docker\nFrom: foo')
+        self.assertEqual(str(b),
+r'''BootStrap: docker
+From: foo
+%post
+    . /.singularity.d/env/10-docker.sh''')
 
     @docker
     def test_detect_ubuntu(self):

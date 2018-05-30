@@ -26,6 +26,7 @@ import re
 import hpccm.config
 
 from hpccm.common import container_type, linux_distro
+from hpccm.shell import shell
 
 class baseimage(object):
     """Base image primitive"""
@@ -67,6 +68,10 @@ class baseimage(object):
 
             return image
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
-            return 'BootStrap: docker\nFrom: {}'.format(self.image)
+            # Singularity does not inherit the environment from the
+            # Docker base image automatically.  Do it manually.
+            docker_env = shell(commands=['. /.singularity.d/env/10-docker.sh'])
+            return 'BootStrap: docker\nFrom: {0}\n{1}'.format(self.image,
+                                                              str(docker_env))
         else:
             raise RuntimeError('Unknown container type')
