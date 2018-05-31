@@ -585,9 +585,10 @@ Parameters:
   defined, the source in the local build context will be used rather
   than downloading the source from the web.
 
-- `gpu_arch`: The GPU architecture to use.  By default, MVAPICH2 is
-  currently hard-coded to use "sm_20".  The default value is to use
-  the MVAPICH2 default.
+- `gpu_arch`: The GPU architecture to use.  Older versions of MVAPICH2
+  (2.3b and previous) were hard-coded to use "sm_20".  This option has
+  no effect on more recent MVAPICH2 versions.  The default value is to
+  use the MVAPICH2 default.
 
 - `ospackages`: List of OS packages to install prior to configuring
   and building.  For Ubuntu, the default values are `byacc`, `file`,
