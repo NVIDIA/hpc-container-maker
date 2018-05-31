@@ -66,7 +66,7 @@ class mvapich2(ConfigureMake, sed, tar, wget):
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3b')
+        self.version = kwargs.get('version', '2.3rc2')
 
         self.__commands = []              # Filled in by __setup()
         self.__environment_variables = {} # Filled in by __setup()
@@ -132,8 +132,9 @@ class mvapich2(ConfigureMake, sed, tar, wget):
             raise RuntimeError('Unknown Linux distribution')
 
     def __set_gpu_arch(self, directory=None):
-        """MVAPICH2 is currently hard-coded to use the "sm_20" GPU
-        architecture.  Use the specified value instead."""
+        """Older versions of MVAPICH2 (2.3b and previous) were hard-coded to
+        use the "sm_20" GPU architecture.  Use the specified value
+        instead."""
 
         if self.cuda and self.__gpu_arch and directory:
             self.__commands.append(
