@@ -513,9 +513,9 @@ Parameters:
 
 - `cuda`: Boolean flag to control whether a CUDA aware build is
   performed.  If True, adds `--enable-cuda --with-cuda` to the list of
-  `configure` options, otherwise adds `--without-cuda`.  If the
-  toolchain specifies `CUDA_HOME`, then that path is used.  The
-  default value is True.
+  `configure` options, otherwise adds `--disable-cuda`.  If the
+  toolchain specifies `CUDA_HOME`, then that path is used, otherwise
+  `/usr/local/cuda` is used for the path.  The default value is True.
 
 - `directory`: Path to the unpackaged source directory relative to the
   local build context.  The default value is empty.  If this is
