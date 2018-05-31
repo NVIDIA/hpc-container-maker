@@ -139,7 +139,7 @@ class pgi(tar, wget):
             tarball = self.__tarball
 
             # Figure out the version from the tarball name
-            match = re.match(r'pgilinux-\d+-(?P<year>\d\d)(?P<month>\d\d)',
+            match = re.match(r'pgilinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
                              tarball)
             if match.groupdict()['year'] and match.groupdict()['month']:
                 self.__version = '{0}.{1}'.format(match.groupdict()['year'],
