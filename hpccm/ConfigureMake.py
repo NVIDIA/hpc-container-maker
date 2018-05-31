@@ -19,6 +19,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
+from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
 
@@ -64,8 +65,20 @@ class ConfigureMake(object):
             if toolchain.CC and self.toolchain_control.get('CC'):
                 prefix.append('CC={}'.format(toolchain.CC))
 
+            if toolchain.CFLAGS:
+                prefix.append('CFLAGS={}'.format(shlex_quote(
+                    toolchain.CFLAGS)))
+
+            if toolchain.CPPFLAGS:
+                prefix.append('CPPFLAGS={}'.format(shlex_quote(
+                    toolchain.CPPFLAGS)))
+
             if toolchain.CXX and self.toolchain_control.get('CXX'):
                 prefix.append('CXX={}'.format(toolchain.CXX))
+
+            if toolchain.CXXFLAGS:
+                prefix.append('CXXFLAGS={}'.format(shlex_quote(
+                    toolchain.CXXFLAGS)))
 
             if toolchain.F77 and self.toolchain_control.get('F77'):
                 prefix.append('F77={}'.format(toolchain.F77))
@@ -75,6 +88,22 @@ class ConfigureMake(object):
 
             if toolchain.FC and self.toolchain_control.get('FC'):
                 prefix.append('FC={}'.format(toolchain.FC))
+
+            if toolchain.FCFLAGS:
+                prefix.append('FCFLAGS={}'.format(shlex_quote(
+                    toolchain.FCFLAGS)))
+
+            if toolchain.FFLAGS:
+                prefix.append('FFLAGS={}'.format(shlex_quote(
+                    toolchain.FFLAGS)))
+
+            if toolchain.LD_LIBRARY_PATH:
+                prefix.append('LD_LIBRARY_PATH={}'.format(shlex_quote(
+                    toolchain.LD_LIBRARY_PATH)))
+
+            if toolchain.LDFLAGS:
+                prefix.append('LDFLAGS={}'.format(shlex_quote(
+                    toolchain.LDFLAGS)))
 
         configure_prefix = ' '.join(prefix)
 

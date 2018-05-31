@@ -54,10 +54,13 @@ class Test_ConfigureMake(unittest.TestCase):
         """Toolchain specified"""
         cm = ConfigureMake()
         tc = toolchain(CC='mycc', CXX='mycxx', FC='myfc', F77='myf77',
-                       F90='myf90')
+                       F90='myf90', CFLAGS='-g -O3', CPPFLAGS='-DFOO -DBAR',
+                       CXXFLAGS='-g -O3', FCFLAGS='-g -O3', FFLAGS='-g -O3',
+                       LD_LIBRARY_PATH='/opt/mysw/lib:/opt/yoursw/lib',
+                       LDFLAGS='-Wl,--start-group foo.o bar.o -Wl,--endgroup')
 
         configure = cm.configure_step(toolchain=tc)
-        self.assertEqual(configure, 'CC=mycc CXX=mycxx F77=myf77 F90=myf90 FC=myfc ./configure --prefix=/usr/local')
+        self.assertEqual(configure, '''CC=mycc CFLAGS='-g -O3' CPPFLAGS='-DFOO -DBAR' CXX=mycxx CXXFLAGS='-g -O3' F77=myf77 F90=myf90 FC=myfc FCFLAGS='-g -O3' FFLAGS='-g -O3' LD_LIBRARY_PATH=/opt/mysw/lib:/opt/yoursw/lib LDFLAGS='-Wl,--start-group foo.o bar.o -Wl,--endgroup' ./configure --prefix=/usr/local''')
 
     def test_directory(self):
         """Source directory specified"""

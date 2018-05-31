@@ -29,8 +29,15 @@ class toolchain(object):
         """Documentation TBD"""
 
         self.CC = kwargs.get('CC')
+        self.CFLAGS = kwargs.get('CFLAGS')
+        self.CPPFLAGS = kwargs.get('CPPFLAGS')
         self.CUDA_HOME = kwargs.get('CUDA_HOME')
         self.CXX = kwargs.get('CXX')
+        self.CXXFLAGS = kwargs.get('CXXFLAGS')
         self.F77 = kwargs.get('F77')
         self.F90 = kwargs.get('F90')
         self.FC = kwargs.get('FC')
+        self.FCFLAGS = kwargs.get('FCFLAGS')
+        self.FFLAGS = kwargs.get('FFLAGS')
+        self.LDFLAGS = kwargs.get('LDFLAGS')
+        self.LD_LIBRARY_PATH = kwargs.get('LD_LIBRARY_PATH')
