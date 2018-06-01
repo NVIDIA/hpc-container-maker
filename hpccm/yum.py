@@ -37,7 +37,9 @@ class yum(object):
 
         self.__commands = []
         self.__epel = kwargs.get('epel', False)
+        self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
+        self.__repositories = kwargs.get('repositories', [])
 
         if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
             logging.warning('Using yum on a non-RHEL based Linux distribution')
@@ -52,6 +54,15 @@ class yum(object):
 
     def __setup(self):
         """Construct the series of commands to execute"""
+
+        if self.__keys:
+            self.__commands.append('rpm --import {}'.format(
+                ' '.join(self.__keys)))
+
+        if self.__repositories:
+            for repo in self.__repositories:
+                self.__commands.append(
+                    'yum-config-manager --add-repo {}'.format(repo))
 
         if self.__epel:
             # This needs to be a discrete, preliminary step so that

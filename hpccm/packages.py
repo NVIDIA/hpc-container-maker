@@ -38,20 +38,29 @@ class packages(object):
 
         self.__apt = kwargs.get('apt', [])
         self.__epel = kwargs.get('epel', False)
+        self.__keys = kwargs.get('keys', [])
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__repositories = kwargs.get('repositories', [])
         self.__yum = kwargs.get('yum', [])
 
     def __str__(self):
         """String representation of the building block"""
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if self.__apt:
-                return str(apt_get(ospackages=self.__apt))
+                return str(apt_get(keys=self.__keys, ospackages=self.__apt,
+                                   repositories=self.__repositories))
             else:
-                return str(apt_get(ospackages=self.__ospackages))
+                return str(apt_get(keys=self.__keys,
+                                   ospackages=self.__ospackages,
+                                   repositories=self.__repositories))
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if self.__yum:
-                return str(yum(epel=self.__epel, ospackages=self.__yum))
+                return str(yum(epel=self.__epel, keys=self.__keys,
+                               ospackages=self.__yum,
+                               repositories=self.__repositories))
             else:
-                return str(yum(epel=self.__epel, ospackages=self.__ospackages))
+                return str(yum(epel=self.__epel, keys=self.__keys,
+                               ospackages=self.__ospackages,
+                               repositories=self.__repositories))
         else:
             raise RuntimeError('Unknown Linux distribution')

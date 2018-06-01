@@ -33,6 +33,7 @@ from hpccm.gnu import gnu
 from hpccm.hdf5 import hdf5
 from hpccm.label import label
 from hpccm.mlnx_ofed import mlnx_ofed
+from hpccm.mkl import mkl
 from hpccm.mvapich2 import mvapich2
 from hpccm.mvapich2_gdr import mvapich2_gdr
 from hpccm.ofed import ofed

@@ -44,6 +44,7 @@ from hpccm.gnu import gnu                 # pylint: disable=unused-import
 from hpccm.hdf5 import hdf5               # pylint: disable=unused-import
 from hpccm.label import label             # pylint: disable=unused-import
 from hpccm.mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
+from hpccm.mkl import mkl                 # pylint: disable=unused-import
 from hpccm.mvapich2 import mvapich2       # pylint: disable=unused-import
 from hpccm.mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
 from hpccm.ofed import ofed               # pylint: disable=unused-import
