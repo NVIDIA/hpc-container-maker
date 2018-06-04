@@ -48,13 +48,16 @@ class mkl(wget):
         #super(mkl, self).__init__(**kwargs)
         wget.__init__(self, **kwargs)
 
+        # By setting this value to True, you agree to the
+        # corresponding Intel End User License Agreement
+        # (https://software.intel.com/en-us/articles/end-user-license-agreement)
+        self.__eula = kwargs.get('eula', False)
+
         self.__mklvars = kwargs.get('mklvars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.version = kwargs.get('version', '2018.3-051')
 
         self.__bashrc = ''      # Filled in by __distro()
-        self.__key = ''         # Filled in by __distro()
-        self.__repository = ''  # Filled in by __distro()
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -68,10 +71,15 @@ class mkl(wget):
         if self.__ospackages:
             instructions.append(packages(ospackages=self.__ospackages))
 
+        if not self.__eula:
+            raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
+
         instructions.append(packages(
-            keys=[self.__key],
+            apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            apt_repositories=['deb https://apt.repos.intel.com/mkl all main'],
             ospackages=['intel-mkl-64bit-{}'.format(self.version)],
-            repositories=[self.__repository]))
+            yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            yum_repositories=['https://yum.repos.intel.com/mkl/setup/intel-mkl.repo']))
 
         # Set the environment
         if self.__mklvars:
@@ -102,19 +110,11 @@ class mkl(wget):
 
             self.__bashrc = '/etc/bash.bashrc'
 
-            # Setup apt repository
-            self.__key = 'https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'
-            self.__repository = 'deb https://apt.repos.intel.com/mkl all main'
-
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = []
 
             self.__bashrc = '/etc/bashrc'
-
-            # Setup yum repository
-            self.__key = 'https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'
-            self.__repository = 'https://yum.repos.intel.com/mkl/setup/intel-mkl.repo'
 
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

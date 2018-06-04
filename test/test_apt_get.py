@@ -43,3 +43,18 @@ r'''RUN apt-get update -y && \
         g++ \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu
+    @docker
+    def test_add_repo(self):
+        """Add repo and key"""
+        a = apt_get(keys=['https://www.example.com/key.pub'],
+                    ospackages=['example'],
+                    repositories=['deb http://www.example.com all main'])
+        self.assertEqual(str(a),
+r'''RUN wget -qO - https://www.example.com/key.pub | apt-key add - && \
+    echo "deb http://www.example.com all main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        example && \
+    rm -rf /var/lib/apt/lists/*''')
