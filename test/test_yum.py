@@ -42,3 +42,17 @@ r'''RUN yum install -y \
         gcc-c++ \
         gcc-fortran && \
     rm -rf /var/cache/yum/*''')
+
+    @centos
+    @docker
+    def test_add_repo(self):
+        """Add repo and key"""
+        y = yum(keys=['https://www.example.com/key.pub'],
+                ospackages=['example'],
+                repositories=['http://www.example.com/example.repo'])
+        self.assertEqual(str(y),
+r'''RUN rpm --import https://www.example.com/key.pub && \
+    yum-config-manager --add-repo http://www.example.com/example.repo && \
+    yum install -y \
+        example && \
+    rm -rf /var/cache/yum/*''')

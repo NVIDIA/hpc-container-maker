@@ -36,7 +36,9 @@ class apt_get(object):
         #super(apt_get, self).__init__()
 
         self.__commands = []
+        self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
+        self.__repositories = kwargs.get('repositories', [])
 
         if hpccm.config.g_linux_distro != linux_distro.UBUNTU: # pragma: no cover
             logging.warning('Using apt-get on a non-Ubuntu Linux distribution')
@@ -51,6 +53,16 @@ class apt_get(object):
 
     def __setup(self):
         """Construct the series of commands to execute"""
+
+        if self.__keys:
+            for key in self.__keys:
+                self.__commands.append(
+                    'wget -qO - {} | apt-key add -'.format(key))
+
+        if self.__repositories:
+            for repo in self.__repositories:
+                self.__commands.append(
+                    'echo "{}" >> /etc/apt/sources.list.d/hpccm.list'.format(repo))
 
         if self.ospackages:
             self.__commands.append('apt-get update -y')

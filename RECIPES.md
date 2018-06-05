@@ -206,8 +206,13 @@ used instead of `apt_get`.
 
 Parameters:
 
+- `keys`: A list of GPG keys to add.  The default is an empty list.
+
 - `ospackages`: A list of packages to install.  The default is an
   empty list.
+
+- 'repositories`: A list of apt repositories to add.  The default is
+  an empty list.
 
 Example:
 
@@ -431,6 +436,64 @@ h = hdf5()
 Stage0 += h
 ...
 Stage1 += h.runtime()
+```
+
+### mkl
+
+The `mkl` building block downloads and installs the [Intel Math Kernel
+Library](http://software.intel.com/mkl).
+
+You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
+to use this building block.
+
+As a side effect, this building block modifies `LIBRARY_PATH`,
+`LD_LIBRARY_PATH`, and other environment variables to include MKL.
+Please see the `mklvars` parameter for more information.
+
+Parameters:
+
+- `eula`: By setting this value to `True`, you agree to the [Intel End
+  User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+  The default value is `False`.
+
+- `mklvars`: MKL provides an environment script (`mklvars.sh`) to
+  setup the MKL environment.  If this value is `True`, the bashrc is
+  modified to automatically source this environment script.  However,
+  the MKL environment is not automatically available to subsequent
+  container image build steps; the environment is available when the
+  container image is run.  To set the MKL environment in subsequent
+  build steps you can explicitly call `source
+  /opt/intel/mkl/bin/mklvars.sh intel64` in each build step.  If this
+  value is to set `False`, then the environment is set such that the
+  environment is visible to both subsequent container image build
+  steps and when the container image is run.  However, the environment
+  may differ slightly from that set by `mklvars.sh`.  The default
+  value is `True`.
+
+- `ospackages`: List os OS packages to install prior to installing
+  MKL.  For Ubuntu, the default values are `apt-transport-https`,
+  `ca-certificates`, and `wget`.  For RHEL-based Linux distributions,
+  the default is an empty list.
+
+- `version`: The version of MKL to install.  The default value is
+  `2018.3-051`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+mkl(eula=True, version='2018.3-051')
+```
+
+```python
+m = mkl(eula=True)
+Stage0 += m
+...
+Stage1 += m.runtime()
 ```
 
 ### mlnx_ofed
@@ -798,6 +861,12 @@ Parameters:
 - `apt`: A list of Debian packages to install.  The default is an
   empty list.
 
+- `apt_keys`: A list of GPG keys to add.  The default is an empty
+  list.
+
+- `apt_repositories`: A list of apt repositories to add.  The default
+  is an empty list.
+
 - `_epel`: Boolean flag to specify whether to enable the Extra
   Packages for Enterprise Linux (EPEL) repository.  The default is
   False.  This parameter is ignored if the Linux distribution is not
@@ -811,6 +880,12 @@ Parameters:
 
 - `yum`: A list of RPM packages to install.  The default value is an
   empty list.
+
+- `yum_keys`: A list of GPG keys to import.  The default is an empty
+  list.
+
+- `yum_repositories`: A list of yum repositories to add.  The default
+  is an empty list.
 
 Examples:
 
@@ -945,8 +1020,13 @@ used instead of `yum`.
 
 Parameters:
 
+- `keys`: A list of GPG keys to import.  The default is an empty list.
+
 - `ospackages`: A list of packages to install.  The default is an
   empty list.
+
+- `repositories`: A list of yum repositories to add.  The default is
+  an empty list.
 
 Example:
 

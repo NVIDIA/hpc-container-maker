@@ -37,21 +37,32 @@ class packages(object):
         #super(packages, self).__init__()
 
         self.__apt = kwargs.get('apt', [])
+        self.__apt_keys = kwargs.get('apt_keys', [])
+        self.__apt_repositories = kwargs.get('apt_repositories', [])
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__yum = kwargs.get('yum', [])
+        self.__yum_keys = kwargs.get('yum_keys', [])
+        self.__yum_repositories = kwargs.get('yum_repositories', [])
 
     def __str__(self):
         """String representation of the building block"""
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if self.__apt:
-                return str(apt_get(ospackages=self.__apt))
+                return str(apt_get(keys=self.__apt_keys, ospackages=self.__apt,
+                                   repositories=self.__apt_repositories))
             else:
-                return str(apt_get(ospackages=self.__ospackages))
+                return str(apt_get(keys=self.__apt_keys,
+                                   ospackages=self.__ospackages,
+                                   repositories=self.__apt_repositories))
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if self.__yum:
-                return str(yum(epel=self.__epel, ospackages=self.__yum))
+                return str(yum(epel=self.__epel, keys=self.__yum_keys,
+                               ospackages=self.__yum,
+                               repositories=self.__yum_repositories))
             else:
-                return str(yum(epel=self.__epel, ospackages=self.__ospackages))
+                return str(yum(epel=self.__epel, keys=self.__yum_keys,
+                               ospackages=self.__ospackages,
+                               repositories=self.__yum_repositories))
         else:
             raise RuntimeError('Unknown Linux distribution')
