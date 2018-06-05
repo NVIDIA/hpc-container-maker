@@ -206,8 +206,13 @@ used instead of `apt_get`.
 
 Parameters:
 
+- `keys`: A list of GPG keys to add.  The default is an empty list.
+
 - `ospackages`: A list of packages to install.  The default is an
   empty list.
+
+- 'repositories`: A list of apt repositories to add.  The default is
+  an empty list.
 
 Example:
 
@@ -438,18 +443,17 @@ Stage1 += h.runtime()
 The `mkl` building block downloads and installs the [Intel Math Kernel
 Library](http://software.intel.com/mkl).
 
-You must agree to the [Intel End User License
-Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
+You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
 to use this building block.
 
 As a side effect, this building block modifies `LIBRARY_PATH`,
 `LD_LIBRARY_PATH`, and other environment variables to include MKL.
+Please see the `mklvars` parameter for more information.
 
 Parameters:
 
 - `eula`: By setting this value to `True`, you agree to the [Intel End
-  User License
-  Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+  User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
   The default value is `False`.
 
 - `mklvars`: MKL provides an environment script (`mklvars.sh`) to
@@ -857,6 +861,12 @@ Parameters:
 - `apt`: A list of Debian packages to install.  The default is an
   empty list.
 
+- `apt_keys`: A list of GPG keys to add.  The default is an empty
+  list.
+
+- `apt_repositories`: A list of apt repositories to add.  The default
+  is an empty list.
+
 - `_epel`: Boolean flag to specify whether to enable the Extra
   Packages for Enterprise Linux (EPEL) repository.  The default is
   False.  This parameter is ignored if the Linux distribution is not
@@ -870,6 +880,12 @@ Parameters:
 
 - `yum`: A list of RPM packages to install.  The default value is an
   empty list.
+
+- `yum_keys`: A list of GPG keys to import.  The default is an empty
+  list.
+
+- `yum_repositories`: A list of yum repositories to add.  The default
+  is an empty list.
 
 Examples:
 
@@ -1004,8 +1020,13 @@ used instead of `yum`.
 
 Parameters:
 
+- `keys`: A list of GPG keys to import.  The default is an empty list.
+
 - `ospackages`: A list of packages to install.  The default is an
   empty list.
+
+- `repositories`: A list of yum repositories to add.  The default is
+  an empty list.
 
 Example:
 

@@ -115,7 +115,8 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2018.3-051 && \
     rm -rf /var/lib/apt/lists/*
-ENV LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
+ENV CPATH=/opt/intel/mkl/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LIBRARY_PATH \
     MKLROOT=/opt/intel/mkl''')
 

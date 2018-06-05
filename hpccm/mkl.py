@@ -93,6 +93,7 @@ class mkl(wget):
             # but this may miss some things relative to the mklvars
             # environment script.
             instructions.append(environment(variables={
+                'CPATH': '/opt/intel/mkl/include:$CPATH',
                 'LD_LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LD_LIBRARY_PATH',
                 'LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LIBRARY_PATH',
                 'MKLROOT': '/opt/intel/mkl'}))
