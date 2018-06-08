@@ -23,6 +23,8 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import os
+import re
+from copy import copy as _copy
 
 import hpccm.config
 
@@ -145,17 +147,37 @@ class mvapich2(ConfigureMake, sed, tar, wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
+        # Create a copy of the toolchain so that it can be modified
+        # without impacting the original.
+        toolchain = _copy(self.__toolchain)
+
         tarball = 'mvapich2-{}.tar.gz'.format(self.version)
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # CUDA
         if self.cuda:
             cuda_home = "/usr/local/cuda"
-            if self.__toolchain.CUDA_HOME:
-                cuda_home = self.__toolchain.CUDA_HOME
+            if toolchain.CUDA_HOME:
+                cuda_home = toolchain.CUDA_HOME
 
-            self.configure_opts.append(
-                '--enable-cuda --with-cuda={}'.format(cuda_home))
+            # The PGI compiler needs some special handling for CUDA.
+            # http://mvapich.cse.ohio-state.edu/static/media/mvapich/mvapich2-2.0-userguide.html#x1-120004.5
+            if toolchain.CC and re.match('.*pgcc', toolchain.CC):
+                self.configure_opts.append(
+                    '--enable-cuda=basic --with-cuda={}'.format(cuda_home))
+
+                if not toolchain.CFLAGS:
+                    toolchain.CFLAGS = '-ta=tesla:nordc'
+
+                if not toolchain.CPPFLAGS:
+                    toolchain.CPPFLAGS = '-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI='
+
+                if not toolchain.LD_LIBRARY_PATH:
+                    toolchain.LD_LIBRARY_PATH = os.path.join(cuda_home,
+                                                             'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
+            else:
+                self.configure_opts.append(
+                    '--enable-cuda --with-cuda={}'.format(cuda_home))
 
             # Workaround for using compiler wrappers in the build stage
             self.__commands.append('ln -s {0} {1}'.format(
@@ -175,7 +197,7 @@ class mvapich2(ConfigureMake, sed, tar, wget):
                 directory=os.path.join(self.__wd, self.directory))
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd, self.directory),
-                toolchain=self.__toolchain))
+                toolchain=toolchain))
         else:
             # Download source from web
             self.__commands.append(self.download_step(url=url,
@@ -189,7 +211,7 @@ class mvapich2(ConfigureMake, sed, tar, wget):
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
                                        'mvapich2-{}'.format(self.version)),
-                toolchain=self.__toolchain))
+                toolchain=toolchain))
 
 
         self.__commands.append(self.build_step())

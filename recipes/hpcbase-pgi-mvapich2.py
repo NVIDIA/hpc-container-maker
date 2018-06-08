@@ -53,7 +53,7 @@ ofed = mlnx_ofed(version='3.4-1.0.0.0')
 Stage0 += ofed
 
 # MVAPICH2
-mv2 = mvapich2(version='2.3rc2', toolchain=tc, cuda=False)
+mv2 = mvapich2(version='2.3rc2', toolchain=tc)
 Stage0 += mv2
 
 # FFTW

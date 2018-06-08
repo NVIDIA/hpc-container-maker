@@ -25,6 +25,7 @@ import unittest
 from helpers import centos, docker, ubuntu
 
 from hpccm.mvapich2 import mvapich2
+from hpccm.toolchain import toolchain
 
 class Test_mvapich2(unittest.TestCase):
     def setUp(self):
@@ -59,6 +60,37 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_pgi_cuda(self):
+        """mvapich2 with pgi and cuda"""
+        tc = toolchain()
+        tc.CC = 'pgcc'
+        tc.CXX = 'pgc++'
+        tc.F77 = 'pgfortran'
+        tc.FC = 'pgfortran'
+        mv2 = mvapich2(toolchain=tc, cuda=True)
+        self.assertEqual(str(mv2),
+r'''# MVAPICH2 version 2.3rc2
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        byacc \
+        file \
+        openssh-client \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
+    ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
+    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
+    tar -x -f /tmp/mvapich2-2.3rc2.tar.gz -C /tmp -z && \
+    cd /tmp/mvapich2-2.3rc2 &&  CC=pgcc CFLAGS=-ta=tesla:nordc CPPFLAGS='-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI=' CXX=pgc++ F77=pgfortran FC=pgfortran LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda=basic --with-cuda=/usr/local/cuda && \
+    make -j4 && \
+    make -j4 install && \
+    rm -rf /tmp/mvapich2-2.3rc2.tar.gz /tmp/mvapich2-2.3rc2
+ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/mvapich2/bin:$PATH \
+    PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml -lcuda"''')
+
+    @ubuntu
+    @docker
     def test_gpu_arch(self):
         """mvapich2 GPU architecture"""
         mv2 = mvapich2(version='2.3b', gpu_arch='sm_60')
@@ -84,6 +116,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml -lcuda"''')
 
+    @ubuntu
     @docker
     def test_nocuda(self):
         """Disable CUDA"""
