@@ -123,6 +123,28 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_tarball_leading_zero(self):
+        """tarball"""
+        p = pgi(eula=True, tarball='pgilinux-2018-1804-x86_64.tar.gz')
+        self.assertEqual(str(p),
+r'''# PGI compiler version 18.4
+COPY pgilinux-2018-1804-x86_64.tar.gz /tmp/pgi/pgilinux-2018-1804-x86_64.tar.gz
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        libnuma1 \
+        perl && \
+    rm -rf /var/lib/apt/lists/*
+RUN tar -x -f /tmp/pgi/pgilinux-2018-1804-x86_64.tar.gz -C /tmp/pgi -z && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_NVIDIA=true PGI_SILENT=true ./install && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    rm -rf /tmp/pgi/pgilinux-2018-1804-x86_64.tar.gz /tmp/pgi
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_system_cuda(self):
         """System CUDA"""
         p = pgi(eula=True, system_cuda=True)
