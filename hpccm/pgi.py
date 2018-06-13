@@ -55,6 +55,7 @@ class pgi(tar, wget):
         # License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
         self.__eula = kwargs.get('eula', False)
 
+        self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
@@ -160,7 +161,9 @@ class pgi(tar, wget):
             tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
 
         flags = {'PGI_ACCEPT_EULA': 'accept',
+                 'PGI_INSTALL_MPI': 'false',
                  'PGI_INSTALL_NVIDIA': 'true',
+                 'PGI_MPI_GPU_SUPPORT': 'false',
                  'PGI_SILENT': 'true'}
         if not self.__eula:
             # This will fail when building the container
@@ -169,6 +172,9 @@ class pgi(tar, wget):
             flags['PGI_SILENT'] = 'false'
         if self.__system_cuda:
             flags['PGI_INSTALL_NVIDIA'] = 'false'
+        if self.__mpi:
+            flags['PGI_INSTALL_MPI'] = 'true'
+            flags['PGI_MPI_GPU_SUPPORT'] = 'true'
         flag_string = ' '.join('{0}={1}'.format(key, val)
                                for key, val in sorted(flags.items()))
 
