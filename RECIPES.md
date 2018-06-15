@@ -929,9 +929,9 @@ Parameters:
   End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
   The default value is `False`.
 
-- `mpi`: Boolean flag to specify whether the MPI (and ScaLAPACK)
-  components should be installed.  If True, MPI (and ScaLAPACK) will
-  be installed.  The default value is False.
+- `mpi`: Boolean flag to specify whether the MPI component should be
+  installed.  If True, MPI will be installed.  The default value is
+  False.
 
 - `ospackages`: List of OS packages to install prior to installing the
   PGI compiler.  For Ubuntu, the default values are `libnuma1` and
