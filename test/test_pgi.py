@@ -46,7 +46,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_NVIDIA=true PGI_SILENT=false ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -68,7 +68,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_NVIDIA=true PGI_SILENT=false ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -91,7 +91,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_NVIDIA=true PGI_SILENT=true ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -113,7 +113,7 @@ RUN apt-get update -y && \
         perl && \
     rm -rf /var/lib/apt/lists/*
 RUN tar -x -f /tmp/pgi/pgilinux-2017-1710-x86_64.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_NVIDIA=true PGI_SILENT=true ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
@@ -135,7 +135,7 @@ RUN apt-get update -y && \
         perl && \
     rm -rf /var/lib/apt/lists/*
 RUN tar -x -f /tmp/pgi/pgilinux-2018-1804-x86_64.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_NVIDIA=true PGI_SILENT=true ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -158,8 +158,31 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
-    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_NVIDIA=false PGI_SILENT=true ./install && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=false PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "set CUDAROOT=/usr/local/cuda;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    rm -rf /tmp/pgi/pgi-community-linux-x64-latest.tar.gz /tmp/pgi
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_mpi(self):
+        """System CUDA"""
+        p = pgi(eula=True, mpi=True)
+        self.assertEqual(str(p),
+r'''# PGI compiler version 18.4
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        libnuma1 \
+        perl \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /tmp/pgi && wget -q --no-check-certificate -O /tmp/pgi/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp/pgi https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+    tar -x -f /tmp/pgi/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
+    cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=true PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=true PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
