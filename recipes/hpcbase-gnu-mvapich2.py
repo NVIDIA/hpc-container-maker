@@ -7,7 +7,7 @@ Contents:
   GNU compilers (upstream)
   HDF5 version 1.10.1
   Mellanox OFED version 3.4-1.0.0.0
-  MVAPICH version 2.3b
+  MVAPICH version 2.3rc2
   Python 2 and 3 (upstream)
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
@@ -45,7 +45,7 @@ ofed = mlnx_ofed(version='3.4-1.0.0.0')
 Stage0 += ofed
 
 # MVAPICH2
-mv2 = mvapich2(version='2.3b', toolchain=tc)
+mv2 = mvapich2(version='2.3rc2', toolchain=tc)
 Stage0 += mv2
 
 # FFTW

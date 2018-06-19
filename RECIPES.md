@@ -575,15 +575,20 @@ Parameters:
   default values are `--disable-mcast`.
 
 - `cuda`: Boolean flag to control whether a CUDA aware build is
-  performed.  If True, adds `--with-cuda` to the list of `configure`
-  options, otherwise adds `--without-cuda`.  If the toolchain
-  specifies `CUDA_HOME`, then that path is used.  The default value is
-  True.
+  performed.  If True, adds `--enable-cuda --with-cuda` to the list of
+  `configure` options, otherwise adds `--disable-cuda`.  If the
+  toolchain specifies `CUDA_HOME`, then that path is used, otherwise
+  `/usr/local/cuda` is used for the path.  The default value is True.
 
 - `directory`: Path to the unpackaged source directory relative to the
   local build context.  The default value is empty.  If this is
   defined, the source in the local build context will be used rather
   than downloading the source from the web.
+
+- `gpu_arch`: The GPU architecture to use.  Older versions of MVAPICH2
+  (2.3b and previous) were hard-coded to use "sm_20".  This option has
+  no effect on more recent MVAPICH2 versions.  The default value is to
+  use the MVAPICH2 default.
 
 - `ospackages`: List of OS packages to install prior to configuring
   and building.  For Ubuntu, the default values are `byacc`, `file`,

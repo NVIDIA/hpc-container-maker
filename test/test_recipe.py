@@ -74,6 +74,8 @@ RUN apt-get update -y && \
         self.assertEqual(r.strip(),
 r'''BootStrap: docker
 From: ubuntu:16.04
+%post
+    . /.singularity.d/env/10-docker.sh
 
 %post
     apt-get update -y
@@ -122,6 +124,8 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(r.strip(),
 r'''BootStrap: docker
 From: nvidia/cuda:9.0-devel-ubuntu16.04
+%post
+    . /.singularity.d/env/10-docker.sh
 
 # GNU compiler
 %post
