@@ -47,6 +47,7 @@ from hpccm.mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
 from hpccm.mkl import mkl                 # pylint: disable=unused-import
 from hpccm.mvapich2 import mvapich2       # pylint: disable=unused-import
 from hpccm.mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
+from hpccm.netcdf import netcdf           # pylint: disable=unused-import
 from hpccm.ofed import ofed               # pylint: disable=unused-import
 from hpccm.openmpi import openmpi         # pylint: disable=unused-import
 from hpccm.packages import packages       # pylint: disable=unused-import
