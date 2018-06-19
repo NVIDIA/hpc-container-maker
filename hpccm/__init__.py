@@ -36,6 +36,7 @@ from hpccm.mlnx_ofed import mlnx_ofed
 from hpccm.mkl import mkl
 from hpccm.mvapich2 import mvapich2
 from hpccm.mvapich2_gdr import mvapich2_gdr
+from hpccm.netcdf import netcdf
 from hpccm.ofed import ofed
 from hpccm.openmpi import openmpi
 from hpccm.packages import packages
