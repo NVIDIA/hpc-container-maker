@@ -37,7 +37,6 @@ from hpccm.shell import shell
 from hpccm.tar import tar
 from hpccm.toolchain import toolchain
 from hpccm.wget import wget
-from hpccm.yum import yum
 
 class netcdf(ConfigureMake, tar, wget):
     """NetCDF building block"""
