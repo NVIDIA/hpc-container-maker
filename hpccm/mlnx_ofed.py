@@ -94,7 +94,8 @@ class mlnx_ofed(tar, wget):
                 self.__packages = ['libibverbs1', 'libibverbs-dev',
                                    'ibverbs-utils', 'libibmad',
                                    'libibmad-devel', 'libibumad',
-                                   'libibumad-devel', 'libmlx5-1']
+                                   'libibumad-devel', 'libmlx4-1',
+                                   'libmlx5-1']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)
@@ -113,7 +114,8 @@ class mlnx_ofed(tar, wget):
                 self.__packages = ['libibverbs', 'libibverbs-devel',
                                    'libibverbs-utils', 'libibmad',
                                    'libibmad-devel', 'libibumad',
-                                   'libibumad-devel', 'libmlx5']
+                                   'libibumad-devel', 'libmlx4',
+                                   'libmlx5']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)

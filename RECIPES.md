@@ -517,10 +517,11 @@ Parameters:
 - `packages`: List of packages to install from Mellanox OFED.  For
   Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
   `libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
-  `libmlx5-1`, and `ibverbs-utils`.  For RHEL-based Linux
+  `libmlx4-1`, `libmlx5-1`, and `ibverbs-utils`.  For RHEL-based Linux
   distributions, the default values are `libibverbs`,
   `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
-  `libibmad-devel`, `libibumad`, `libibumad-devel`, and `libmlx5`.
+  `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`, and
+  `libmlx5`.
 
 - `version`: The version of Mellanox OFED to download.  The default
   value is `3.4-1.0.0.0`.
