@@ -65,7 +65,7 @@ class pgi(tar, wget):
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
         self.__version = kwargs.get('version', '18.4')
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')

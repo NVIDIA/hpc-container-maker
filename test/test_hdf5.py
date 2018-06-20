@@ -45,12 +45,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
-    mkdir -p /tmp && tar -x -f /tmp/hdf5-1.10.1.tar.bz2 -C /tmp -j && \
-    cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.1.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/hdf5-1.10.1.tar.bz2 /tmp/hdf5-1.10.1
+    rm -rf /var/tmp/hdf5-1.10.1.tar.bz2 /var/tmp/hdf5-1.10.1
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
@@ -69,12 +69,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
-    mkdir -p /tmp && tar -x -f /tmp/hdf5-1.10.1.tar.bz2 -C /tmp -j && \
-    cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.1.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/hdf5-1.10.1.tar.bz2 /tmp/hdf5-1.10.1
+    rm -rf /var/tmp/hdf5-1.10.1.tar.bz2 /var/tmp/hdf5-1.10.1
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
@@ -111,11 +111,11 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-COPY hdf5-1.10.1 /tmp/hdf5-1.10.1
-RUN cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+COPY hdf5-1.10.1 /var/tmp/hdf5-1.10.1
+RUN cd /var/tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/hdf5-1.10.1
+    rm -rf /var/tmp/hdf5-1.10.1
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')

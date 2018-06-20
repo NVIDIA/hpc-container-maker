@@ -73,7 +73,7 @@ class openmpi(ConfigureMake, tar, wget):
             'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',

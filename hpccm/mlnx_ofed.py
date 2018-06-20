@@ -52,7 +52,7 @@ class mlnx_ofed(tar, wget):
         self.__version = kwargs.get('version', '3.4-1.0.0.0')
 
         self.__commands = []
-        self.__wd = '/tmp'
+        self.__wd = '/var/tmp'
 
         # Set the Linux distribution specific parameters
         self.__distro()

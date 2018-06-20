@@ -45,12 +45,12 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
-    mkdir -p /tmp && tar -x -f /tmp/openmpi-3.0.0.tar.bz2 -C /tmp -j && \
-    cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-3.0.0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/openmpi-3.0.0.tar.bz2 /tmp/openmpi-3.0.0
+    rm -rf /var/tmp/openmpi-3.0.0.tar.bz2 /var/tmp/openmpi-3.0.0
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
@@ -70,12 +70,12 @@ RUN yum install -y \
         perl \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
-    mkdir -p /tmp && tar -x -f /tmp/openmpi-3.0.0.tar.bz2 -C /tmp -j && \
-    cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-3.0.0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/openmpi-3.0.0.tar.bz2 /tmp/openmpi-3.0.0
+    rm -rf /var/tmp/openmpi-3.0.0.tar.bz2 /var/tmp/openmpi-3.0.0
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
@@ -93,11 +93,11 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-COPY openmpi-3.0.0 /tmp/openmpi-3.0.0
-RUN cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+COPY openmpi-3.0.0 /var/tmp/openmpi-3.0.0
+RUN cd /var/tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/openmpi-3.0.0
+    rm -rf /var/tmp/openmpi-3.0.0
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 

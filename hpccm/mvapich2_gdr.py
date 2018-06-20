@@ -58,7 +58,7 @@ class mvapich2_gdr(wget):
         self.__pgi = kwargs.get('pgi', False)
         self.__pgi_version = '17.10'
         self.version = kwargs.get('version', '2.3a')
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
