@@ -65,7 +65,7 @@ class pgi(tar, wget):
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
         self.__version = kwargs.get('version', '18.4')
-        self.__wd = '/tmp/pgi' # working directory
+        self.__wd = '/tmp' # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
@@ -158,7 +158,8 @@ class pgi(tar, wget):
                 referer=self.__referer, directory=self.__wd))
 
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=os.path.join(self.__wd, tarball),
+            directory=os.path.join(self.__wd, 'pgi')))
 
         flags = {'PGI_ACCEPT_EULA': 'accept',
                  'PGI_INSTALL_MPI': 'false',
@@ -178,8 +179,8 @@ class pgi(tar, wget):
         flag_string = ' '.join('{0}={1}'.format(key, val)
                                for key, val in sorted(flags.items()))
 
-        self.__commands.append('cd {0} && {1} ./install'.format(self.__wd,
-                                                                flag_string))
+        self.__commands.append('cd {0} && {1} ./install'.format(
+            os.path.join(self.__wd, 'pgi'), flag_string))
 
         # Create siterc to specify use of the system CUDA
         siterc = os.path.join(self.__basepath, self.__version, 'bin', 'siterc')
@@ -193,7 +194,8 @@ class pgi(tar, wget):
         self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
 
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball), self.__wd]))
+            items=[os.path.join(self.__wd, tarball),
+                   os.path.join(self.__wd, 'pgi')]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""

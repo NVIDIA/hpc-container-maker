@@ -56,4 +56,4 @@ class Test_tar(unittest.TestCase):
         """Directory specified"""
         t = tar()
         self.assertEqual(t.untar_step(tarball='foo.tgz', directory='bar'),
-                         'tar -x -f foo.tgz -C bar -z')
+                         'mkdir -p bar && tar -x -f foo.tgz -C bar -z')
