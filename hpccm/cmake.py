@@ -53,7 +53,7 @@ class cmake(wget):
         self.__version = kwargs.get('version', '3.11.1')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
         self.__setup()

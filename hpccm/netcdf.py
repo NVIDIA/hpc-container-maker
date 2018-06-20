@@ -65,7 +65,7 @@ class netcdf(ConfigureMake, tar, wget):
         self.__version = kwargs.get('version', '4.6.1')
         self.__version_cxx = kwargs.get('version_cxx', '4.3.0')
         self.__version_fortran = kwargs.get('version_fortran', '4.4.4')
-        self.__wd = '/tmp'
+        self.__wd = '/var/tmp'
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

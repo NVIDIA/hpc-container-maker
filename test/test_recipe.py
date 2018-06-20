@@ -108,12 +108,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
-    cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     def test_multistage_example_singularity(self):
@@ -145,12 +145,12 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         wget
     rm -rf /var/lib/apt/lists/*
 %post
-    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
-    mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z
-    cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z
+    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
     make -j4
     make -j4 install
-    rm -rf /tmp/fftw-3.3.7.tar.gz /tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 %post
@@ -172,11 +172,11 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
-    mkdir -p /tmp && tar -x -f /tmp/openmpi-2.1.2.tar.bz2 -C /tmp -j && \
-    cd /tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-2.1.2.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /tmp/openmpi-2.1.2.tar.bz2 /tmp/openmpi-2.1.2
+    rm -rf /var/tmp/openmpi-2.1.2.tar.bz2 /var/tmp/openmpi-2.1.2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')

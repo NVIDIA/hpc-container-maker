@@ -70,7 +70,7 @@ class hdf5(ConfigureMake, tar, wget):
             '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
         self.__distro()

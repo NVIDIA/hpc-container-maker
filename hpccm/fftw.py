@@ -63,7 +63,7 @@ class fftw(ConfigureMake, tar, wget):
         self.__environment_variables = {
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
-        self.__wd = '/tmp' # working directory
+        self.__wd = '/var/tmp' # working directory
 
         # Construct series of steps to execute
         self.__setup()
