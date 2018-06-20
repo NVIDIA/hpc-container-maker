@@ -38,28 +38,28 @@ class Test_wget(unittest.TestCase):
         """Basic wget"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz'),
-                         'mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mysite.com/foo.tgz')
 
     def test_referer(self):
         """wget with referer"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          referer='http://mysite.com/foo.html'),
-                         'mkdir -p /tmp && wget -q --no-check-certificate --referer http://mysite.com/foo.html -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc --no-check-certificate --referer http://mysite.com/foo.html -P /tmp http://mysite.com/foo.tgz')
 
     def test_directory(self):
         """wget with non-default output directory"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          directory='/scratch'),
-                         'mkdir -p /scratch && wget -q --no-check-certificate -P /scratch http://mysite.com/foo.tgz')
+                         'mkdir -p /scratch && wget -q -nc --no-check-certificate -P /scratch http://mysite.com/foo.tgz')
 
     def test_outfile(self):
         """wget with non-default output file"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          outfile='bar.tgz'),
-                         'mkdir -p /tmp && wget -q --no-check-certificate -O bar.tgz -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc --no-check-certificate -O bar.tgz -P /tmp http://mysite.com/foo.tgz')
 
     def test_opts(self):
         """wget with non-default command line options"""

@@ -108,7 +108,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
     cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
@@ -145,7 +145,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         wget
     rm -rf /var/lib/apt/lists/*
 %post
-    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
+    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
     mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z
     cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
     make -j4
@@ -172,7 +172,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
     mkdir -p /tmp && tar -x -f /tmp/openmpi-2.1.2.tar.bz2 -C /tmp -j && \
     cd /tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
     make -j4 && \

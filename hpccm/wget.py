@@ -30,7 +30,8 @@ class wget(object):
 
         #super(wget, self).__init__()
 
-        self._opts = kwargs.get('opts', ['-q --no-check-certificate'])
+        self._opts = kwargs.get('opts', ['-q', '-nc',
+                                         '--no-check-certificate'])
 
     def download_step(self, outfile=None, referer=None, url=None,
                       directory='/tmp'):
