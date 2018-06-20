@@ -43,7 +43,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed3.4/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed3.4/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
     dpkg --install /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -66,7 +66,7 @@ RUN yum install -y \
         perl \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed3.4/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5-2.3a-1.el7.centos.x86_64.rpm && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed3.4/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5-2.3a-1.el7.centos.x86_64.rpm && \
     rpm --install --nodeps /tmp/mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5-2.3a-1.el7.centos.x86_64.rpm && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -90,7 +90,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed4.0/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3a/mofed4.0/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb && \
     dpkg --install /tmp/mvapich2-gdr-mcast.cuda8.0.mofed4.0.pgi17.10_2.3a-1.el7.centos_amd64.deb && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \

@@ -45,7 +45,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
     mkdir -p /tmp && tar -x -f /tmp/hdf5-1.10.1.tar.bz2 -C /tmp -j && \
     cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j4 && \
@@ -69,7 +69,7 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.bz2 && \
     mkdir -p /tmp && tar -x -f /tmp/hdf5-1.10.1.tar.bz2 -C /tmp -j && \
     cd /tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j4 && \

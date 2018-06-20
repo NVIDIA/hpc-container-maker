@@ -45,7 +45,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
     mkdir -p /tmp && tar -x -f /tmp/openmpi-3.0.0.tar.bz2 -C /tmp -j && \
     cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j4 && \
@@ -70,7 +70,7 @@ RUN yum install -y \
         perl \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
     mkdir -p /tmp && tar -x -f /tmp/openmpi-3.0.0.tar.bz2 -C /tmp -j && \
     cd /tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j4 && \

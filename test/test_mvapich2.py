@@ -48,7 +48,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
+    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/mvapich2-2.3rc2.tar.gz -C /tmp -z && \
     cd /tmp/mvapich2-2.3rc2 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
     make -j4 && \
@@ -79,7 +79,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
+    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/mvapich2-2.3rc2.tar.gz -C /tmp -z && \
     cd /tmp/mvapich2-2.3rc2 &&  CC=pgcc CFLAGS=-ta=tesla:nordc CPPFLAGS='-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI=' CXX=pgc++ F77=pgfortran FC=pgfortran LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda=basic --with-cuda=/usr/local/cuda && \
     make -j4 && \
@@ -105,7 +105,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
+    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/mvapich2-2.3b.tar.gz -C /tmp -z && \
     sed -i -e 's/-arch sm_20/-arch sm_60/g' /tmp/mvapich2-2.3b/Makefile.in && \
     cd /tmp/mvapich2-2.3b &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
@@ -130,7 +130,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/mvapich2-2.3rc2.tar.gz -C /tmp -z && \
     cd /tmp/mvapich2-2.3rc2 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
     make -j4 && \
@@ -155,7 +155,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /tmp && wget -q --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
+    mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3rc2.tar.gz && \
     mkdir -p /tmp && tar -x -f /tmp/mvapich2-2.3rc2.tar.gz -C /tmp -z && \
     cd /tmp/mvapich2-2.3rc2 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
     make -j4 && \

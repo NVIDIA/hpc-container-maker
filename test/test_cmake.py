@@ -42,7 +42,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
@@ -56,7 +56,7 @@ r'''# CMake version 3.11.1
 RUN yum install -y \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
@@ -71,7 +71,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')
 
@@ -86,7 +86,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh && \
     /bin/sh /tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.10.3-Linux-x86_64.sh''')
 
@@ -102,6 +102,6 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp https://cmake.org/files/v3.11/cmake-3.11.1-Linux-x86_64.sh && \
     /bin/sh /tmp/cmake-3.11.1-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /tmp/cmake-3.11.1-Linux-x86_64.sh''')

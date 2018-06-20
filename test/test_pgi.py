@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /tmp/pgi && tar -x -f /tmp/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -66,7 +66,7 @@ RUN yum install -y \
         perl \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /tmp/pgi && tar -x -f /tmp/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -89,7 +89,7 @@ RUN apt-get update -y && \
         perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /tmp/pgi && tar -x -f /tmp/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -156,7 +156,7 @@ RUN apt-get update -y && \
         perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /tmp/pgi && tar -x -f /tmp/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=false PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "set CUDAROOT=/usr/local/cuda;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
@@ -180,7 +180,7 @@ RUN apt-get update -y && \
         perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /tmp && wget -q --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+RUN mkdir -p /tmp && wget -q -nc --no-check-certificate -O /tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /tmp/pgi && tar -x -f /tmp/pgi-community-linux-x64-latest.tar.gz -C /tmp/pgi -z && \
     cd /tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=true PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=true PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
