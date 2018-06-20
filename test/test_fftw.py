@@ -45,7 +45,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
+    mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
     cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
@@ -65,7 +65,7 @@ RUN yum install -y \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /tmp && wget -q --no-check-certificate -P /tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
+    mkdir -p /tmp && tar -x -f /tmp/fftw-3.3.7.tar.gz -C /tmp -z && \
     cd /tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
