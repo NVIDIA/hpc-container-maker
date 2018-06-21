@@ -40,9 +40,13 @@ class Test_openmpi(unittest.TestCase):
 r'''# OpenMPI version 3.0.0
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        bzip2 \
         file \
         hwloc \
+        make \
         openssh-client \
+        perl \
+        tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
@@ -68,6 +72,7 @@ RUN yum install -y \
         make \
         openssh-clients \
         perl \
+        tar \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.bz2 && \
@@ -88,9 +93,13 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
 r'''# OpenMPI
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        bzip2 \
         file \
         hwloc \
+        make \
         openssh-client \
+        perl \
+        tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
 COPY openmpi-3.0.0 /var/tmp/openmpi-3.0.0
