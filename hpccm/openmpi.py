@@ -121,12 +121,13 @@ class openmpi(ConfigureMake, tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['file', 'hwloc', 'openssh-client', 'wget']
+                self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
+                                     'openssh-client', 'perl', 'tar', 'wget']
             self.__runtime_ospackages = ['hwloc', 'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
-                                     'openssh-clients', 'perl', 'wget']
+                                     'openssh-clients', 'perl', 'tar', 'wget']
             self.__runtime_ospackages = ['hwloc', 'openssh-clients']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

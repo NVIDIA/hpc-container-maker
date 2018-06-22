@@ -167,9 +167,13 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS stage0
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        bzip2 \
         file \
         hwloc \
+        make \
         openssh-client \
+        perl \
+        tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \

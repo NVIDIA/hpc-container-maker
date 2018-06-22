@@ -867,10 +867,11 @@ Parameters:
   default value is True.
 
 - `ospackages`: List of OS packages to install prior to configuring
-  and building.  For Ubuntu, the default values are `file`, `hwloc`,
-  `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-  the default values are `bzip2`, `file`, `hwloc`, `make`,
-  `openssh-clients`, `perl`, and `wget`.
+  and building.  For Ubuntu, the default values are `bzip2`, `file`,
+  `hwloc`, `make`, `openssh-client`, `perl`, `tar`, and `wget`.  For
+  RHEL-based Linux distributions, the default values are `bzip2`,
+  `file`, `hwloc`, `make`, `openssh-clients`, `perl`, `tar`, and
+  `wget`.
 
 - `prefix`: The top level install location.  The default value is
   `/usr/local/openmpi`.
