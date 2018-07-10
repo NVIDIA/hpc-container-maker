@@ -192,6 +192,68 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_extended_environment(self):
+        """Extended environment without MPI"""
+        p = pgi(eula=True, extended_environment=True, mpi=False)
+        self.assertEqual(str(p),
+r'''# PGI compiler version 18.4
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        libnuma1 \
+        perl \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+    mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
+    cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
+ENV CC=/opt/pgi/linux86-64/18.4/bin/pgcc \
+    CPP="/opt/pgi/linux86-64/18.4/bin/pgcc -Mcpp" \
+    CXX=/opt/pgi/linux86-64/18.4/bin/pgc++ \
+    F77=/opt/pgi/linux86-64/18.4/bin/pgf77 \
+    F90=/opt/pgi/linux86-64/18.4/bin/pgf90 \
+    FC=/opt/pgi/linux86-64/18.4/bin/pgfortran \
+    LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
+    MODULEPATH=/opt/pgi/modulefiles:$MODULEPATH \
+    PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_extended_environment_mpi(self):
+        """Extended environment with MPI"""
+        p = pgi(eula=True, extended_environment=True, mpi=True)
+        self.assertEqual(str(p),
+r'''# PGI compiler version 18.4
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        libnuma1 \
+        perl \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
+    mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
+    cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_MPI=true PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=true PGI_SILENT=true ./install && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
+ENV CC=/opt/pgi/linux86-64/18.4/bin/pgcc \
+    CPP="/opt/pgi/linux86-64/18.4/bin/pgcc -Mcpp" \
+    CXX=/opt/pgi/linux86-64/18.4/bin/pgc++ \
+    F77=/opt/pgi/linux86-64/18.4/bin/pgf77 \
+    F90=/opt/pgi/linux86-64/18.4/bin/pgf90 \
+    FC=/opt/pgi/linux86-64/18.4/bin/pgfortran \
+    LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/mpi/openmpi/lib:/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
+    MODULEPATH=/opt/pgi/modulefiles:$MODULEPATH \
+    PATH=/opt/pgi/linux86-64/18.4/mpi/openmpi/bin:/opt/pgi/linux86-64/18.4/bin:$PATH \
+    PGI_OPTL_INCLUDE_DIRS=/opt/pgi/linux86-64/18.4/mpi/openmpi/include \
+    PGI_OPTL_LIB_DIRS=/opt/pgi/linux86-64/18.4/mpi/openmpi/lib''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         p = pgi()

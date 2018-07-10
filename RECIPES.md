@@ -998,6 +998,16 @@ Parameters:
   End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
   The default value is `False`.
 
+- `extended_environment`: Boolean flag to specify whether an extended
+  set of environment variables should be defined.  If True, the
+  following environment variables will be defined: `CC`, `CPP`, `CXX`,
+  `F77`, `F90`, `FC`, and `MODULEPATH`.  In addition, if the PGI MPI
+  component is selected then `PGI_OPTL_INCLUDE_DIRS` and
+  `PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
+  `LD_LIBRARY_PATH` will include the PGI MPI component.  If False,
+  then only `PATH` and `LD_LIBRARY_PATH` will be extended to include
+  the PGI compiler.  The default value is `False`.
+
 - `mpi`: Boolean flag to specify whether the MPI component should be
   installed.  If True, MPI will be installed.  The default value is
   False.
