@@ -34,6 +34,7 @@ from hpccm.Stage import Stage
 from hpccm.apt_get import apt_get         # pylint: disable=unused-import
 from hpccm.baseimage import baseimage     # pylint: disable=unused-import
 from hpccm.blob import blob               # pylint: disable=unused-import
+from hpccm.charm import charm             # pylint: disable=unused-import
 from hpccm.cmake import cmake             # pylint: disable=unused-import
 from hpccm.comment import comment         # pylint: disable=unused-import
 from hpccm.copy import copy               # pylint: disable=unused-import
