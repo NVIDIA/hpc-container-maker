@@ -43,6 +43,7 @@ from hpccm.fftw import fftw               # pylint: disable=unused-import
 from hpccm.git import git                 # pylint: disable=unused-import
 from hpccm.gnu import gnu                 # pylint: disable=unused-import
 from hpccm.hdf5 import hdf5               # pylint: disable=unused-import
+from hpccm.intel_psxe import intel_psxe   # pylint: disable=unused-import
 from hpccm.label import label             # pylint: disable=unused-import
 from hpccm.mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
 from hpccm.mkl import mkl                 # pylint: disable=unused-import
