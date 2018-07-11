@@ -1104,6 +1104,62 @@ Stage1 += p.runtime()
 pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
 ```
 
+### pnetcdf
+
+The `pnetcdf` building block downloads, configures, builds, and
+installs the
+[PnetCDF](http://cucis.ece.northwestern.edu/projects/PnetCDF/index.html)
+component.
+
+As a side effect, this building block modifies `PATH` and
+`LD_LIBRARY_PATH` to include the PnetCDF build.
+
+Parameters:
+
+- `check`: Boolean flag to specify whether the `make check` step
+  should be performed.  The default is False.
+
+- `configure_opts`: List of options to pass to `configure`.  The
+  default values are `--enable-shared`.
+
+- `ospackages`: List of OS packages to install prior to configuring
+  and building.  The default values are `m4`, `make`, `tar`, and
+  `wget`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/pnetcdf`.
+
+- `toolchain`: The toolchain object.  A MPI compiler toolchain must be
+  used.  The default is to use the standard MPI compiler wrappers,
+  e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
+
+- `version`: The version of PnetCDF source to download.  The default
+  value is `1.10.0`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Example:
+
+```python
+pnetcdf(prefix='/opt/pnetcdf/1.10.0', version='1.10.0')
+```
+
+```python
+ompi = openmpi(...)
+...
+pnetcdf(toolchain=ompi.toolchain)
+```
+
+```python
+p = pnetcdf()
+Stage0 += p
+...
+Stage1 += p.runtime()
+```
+
 ### python
 
 The `python` building block installs Python from the upstream Linux
