@@ -518,7 +518,7 @@ Parameters:
   required, the installation is unlikely to be successful without a
   valid license.
 
-- `ospackages`: List os OS packages to install prior to installing
+- `ospackages`: List of OS packages to install prior to installing
   Intel Parallel Studio XE.  The default value is `cpio`.
 
 - `prefix`: The top level install location.  The default value is
@@ -578,7 +578,7 @@ Parameters:
   may differ slightly from that set by `mklvars.sh`.  The default
   value is `True`.
 
-- `ospackages`: List os OS packages to install prior to installing
+- `ospackages`: List of OS packages to install prior to installing
   MKL.  For Ubuntu, the default values are `apt-transport-https`,
   `ca-certificates`, and `wget`.  For RHEL-based Linux distributions,
   the default is an empty list.
