@@ -57,7 +57,7 @@ class pgi(tar, wget):
         self.__extended_environment = kwargs.get('extended_environment', False)
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__prefix = '/opt/pgi'
+        self.__prefix = kwargs.get('prefix', '/opt/pgi')
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
         self.__tarball = kwargs.get('tarball', '')
@@ -209,6 +209,7 @@ class pgi(tar, wget):
             directory=os.path.join(self.__wd, 'pgi')))
 
         flags = {'PGI_ACCEPT_EULA': 'accept',
+                 'PGI_INSTALL_DIR': self.__prefix,
                  'PGI_INSTALL_MPI': 'false',
                  'PGI_INSTALL_NVIDIA': 'true',
                  'PGI_MPI_GPU_SUPPORT': 'false',
