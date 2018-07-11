@@ -53,6 +53,7 @@ from hpccm.ofed import ofed               # pylint: disable=unused-import
 from hpccm.openmpi import openmpi         # pylint: disable=unused-import
 from hpccm.packages import packages       # pylint: disable=unused-import
 from hpccm.pgi import pgi                 # pylint: disable=unused-import
+from hpccm.pnetcdf import pnetcdf         # pylint: disable=unused-import
 from hpccm.python import python           # pylint: disable=unused-import
 from hpccm.raw import raw                 # pylint: disable=unused-import
 from hpccm.shell import shell             # pylint: disable=unused-import
