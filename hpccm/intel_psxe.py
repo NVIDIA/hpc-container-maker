@@ -32,6 +32,7 @@ from hpccm.packages import packages
 from hpccm.sed import sed
 from hpccm.shell import shell
 from hpccm.tar import tar
+from hpccm.toolchain import toolchain
 
 class intel_psxe(sed, tar):
     """Intel Parallel Studio XE building block"""
@@ -57,6 +58,9 @@ class intel_psxe(sed, tar):
         self.__prefix = kwargs.get('prefix', '/opt/intel')
         self.__tarball = kwargs.get('tarball', None)
         self.__wd = '/var/tmp' # working directory
+
+        self.toolchain = toolchain(CC='icc', CXX='icpc', F77='ifort',
+                                   F90='ifort', FC='ifort')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

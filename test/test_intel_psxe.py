@@ -99,3 +99,13 @@ ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
 r'''# Intel Parallel Studio XE
 COPY --from=0 /var/tmp/intel_psxe_runtime/* /opt/intel/lib/intel64/
 ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH''')
+
+    def test_toolchain(self):
+        """Toolchain"""
+        psxe = intel_psxe(tarball='foo.tgz')
+        tc = psxe.toolchain
+        self.assertEqual(tc.CC, 'icc')
+        self.assertEqual(tc.CXX, 'icpc')
+        self.assertEqual(tc.FC, 'ifort')
+        self.assertEqual(tc.F77, 'ifort')
+        self.assertEqual(tc.F90, 'ifort')
