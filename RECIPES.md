@@ -1128,6 +1128,9 @@ Parameters:
   also `wget` (if downloading the PGI compiler rather than using a
   tarball in the local build context).
 
+- `prefix`: The top level install prefix.  The default value is
+  `/opt/pgi`.
+
 - `system_cuda`: Boolean flag to specify whether the PGI compiler
   should use the system CUDA.  If False, the version(s) of CUDA
   bundled with the PGI compiler will be installed.  The default value
