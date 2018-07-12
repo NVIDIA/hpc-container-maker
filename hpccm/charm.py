@@ -24,12 +24,12 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-from hpccm.comment import comment
-from hpccm.copy import copy
-from hpccm.environment import environment
 from hpccm.packages import packages
+from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
+from hpccm.primitives.shell import shell
 from hpccm.sed import sed
-from hpccm.shell import shell
 from hpccm.tar import tar
 from hpccm.wget import wget
 

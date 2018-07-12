@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.raw import raw
+from hpccm.primitives.raw import raw
 
 class Test_raw(unittest.TestCase):
     def setUp(self):

@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.workdir import workdir
+from hpccm.primitives.workdir import workdir
 
 class Test_workdir(unittest.TestCase):
     def setUp(self):

@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.environment import environment
+from hpccm.primitives.environment import environment
 
 class Test_environment(unittest.TestCase):
     def setUp(self):

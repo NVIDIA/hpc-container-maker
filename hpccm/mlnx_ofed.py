@@ -25,10 +25,10 @@ import os
 
 import hpccm.config
 
-from hpccm.comment import comment
 from hpccm.common import linux_distro
 from hpccm.packages import packages
-from hpccm.shell import shell
+from hpccm.primitives.comment import comment
+from hpccm.primitives.shell import shell
 from hpccm.tar import tar
 from hpccm.wget import wget
 

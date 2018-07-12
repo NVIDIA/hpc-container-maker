@@ -26,7 +26,7 @@ import re
 import hpccm.config
 
 from hpccm.common import container_type, linux_distro
-from hpccm.shell import shell
+from hpccm.primitives.shell import shell
 
 class baseimage(object):
     """Base image primitive"""

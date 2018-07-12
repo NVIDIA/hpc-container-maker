@@ -25,7 +25,7 @@ import logging # pylint: disable=unused-import
 import hpccm.config
 
 from hpccm.common import container_type
-from hpccm.shell import shell
+from hpccm.primitives.shell import shell
 
 class workdir(object):
     """Workdir primitive"""

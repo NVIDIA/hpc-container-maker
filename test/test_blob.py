@@ -25,7 +25,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.blob import blob
+from hpccm.primitives.blob import blob
 
 class Test_blob(unittest.TestCase):
     def setUp(self):

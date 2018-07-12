@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.comment import comment
+from hpccm.primitives.comment import comment
 
 class Test_comment(unittest.TestCase):
     def setUp(self):

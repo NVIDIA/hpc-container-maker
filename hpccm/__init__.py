@@ -20,18 +20,11 @@ from hpccm.common import linux_distro
 from hpccm.ConfigureMake import ConfigureMake
 from hpccm.Stage import Stage
 from hpccm.apt_get import apt_get
-from hpccm.baseimage import baseimage
-from hpccm.blob import blob
-
 from hpccm.cmake import cmake
-from hpccm.comment import comment
-from hpccm.copy import copy
-from hpccm.environment import environment
 from hpccm.fftw import fftw
 from hpccm.git import git
 from hpccm.gnu import gnu
 from hpccm.hdf5 import hdf5
-from hpccm.label import label
 from hpccm.mlnx_ofed import mlnx_ofed
 from hpccm.mkl import mkl
 from hpccm.mvapich2 import mvapich2
@@ -42,12 +35,9 @@ from hpccm.openmpi import openmpi
 from hpccm.packages import packages
 from hpccm.pgi import pgi
 from hpccm.python import python
-from hpccm.raw import raw
 from hpccm.recipe import recipe
 from hpccm.sed import sed
-from hpccm.shell import shell
 from hpccm.tar import tar
 from hpccm.toolchain import toolchain
 from hpccm.wget import wget
-from hpccm.workdir import workdir
 from hpccm.yum import yum
