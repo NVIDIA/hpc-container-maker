@@ -15,21 +15,21 @@
 # pylint: disable=invalid-name, too-few-public-methods
 # pylint: disable=too-many-instance-attributes
 
-"""OpenMPI building block"""
+"""HDF5 building block"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
 import re
+import os
 
 import hpccm.config
 
+from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.ConfigureMake import ConfigureMake
-from hpccm.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -38,46 +38,39 @@ from hpccm.tar import tar
 from hpccm.toolchain import toolchain
 from hpccm.wget import wget
 
-class openmpi(ConfigureMake, tar, wget):
-    """OpenMPI building block"""
+class hdf5(ConfigureMake, tar, wget):
+    """HDF5 building block"""
 
     def __init__(self, **kwargs):
         """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
-        #super(openmpi, self).__init__(**kwargs)
+        #super(hdf5, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
-        self.baseurl = kwargs.get('baseurl',
-                                  'https://www.open-mpi.org/software/ompi')
-        self.__check = kwargs.get('check', False)
         self.configure_opts = kwargs.get('configure_opts',
-                                         ['--disable-getpwuid',
-                                          '--enable-orterun-prefix-by-default'])
-        self.cuda = kwargs.get('cuda', True)
-        self.directory = kwargs.get('directory', '')
-        self.infiniband = kwargs.get('infiniband', True)
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
-        self.__runtime_ospackages = [] # Filled in by __distro()
+                                         ['--enable-cxx', '--enable-fortran'])
+        self.prefix = kwargs.get('prefix', '/usr/local/hdf5')
 
-        # Input toolchain, i.e., what to use when building
+        self.__baseurl = kwargs.get('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
+        self.__check = kwargs.get('check', False)
+        self.__directory = kwargs.get('directory', '')
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.version = kwargs.get('version', '3.0.0')
+        self.__version = kwargs.get('version', '1.10.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
+            'HDF5_DIR': self.prefix,
+            'PATH':
+            '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
-
-        # Output toolchain
-        self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
-                                   F90='mpif90', FC='mpifort')
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -89,17 +82,20 @@ class openmpi(ConfigureMake, tar, wget):
         """String representation of the building block"""
 
         instructions = []
-        if self.directory:
-            instructions.append(comment('OpenMPI'))
+        if self.__directory:
+            instructions.append(comment('HDF5'))
         else:
             instructions.append(comment(
-                'OpenMPI version {}'.format(self.version)))
+                'HDF5 version {}'.format(self.__version)))
+
         instructions.append(packages(ospackages=self.__ospackages))
-        if self.directory:
+
+        if self.__directory:
             # Use source from local build context
             instructions.append(
-                copy(src=self.directory,
-                     dest=os.path.join(self.__wd, self.directory)))
+                copy(src=self.__directory,
+                     dest=os.path.join(self.__wd, self.__directory)))
+
         instructions.append(shell(commands=self.__commands))
         instructions.append(environment(
             variables=self.__environment_variables))
@@ -121,52 +117,35 @@ class openmpi(ConfigureMake, tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
-                                     'openssh-client', 'perl', 'tar', 'wget']
-            self.__runtime_ospackages = ['hwloc', 'openssh-client']
+                self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
+            self.__runtime_ospackages = ['zlib1g']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
-                                     'openssh-clients', 'perl', 'tar', 'wget']
-            self.__runtime_ospackages = ['hwloc', 'openssh-clients']
+                self.__ospackages = ['bzip2', 'file', 'make', 'wget',
+                                     'zlib-devel']
+            self.__runtime_ospackages = ['zlib']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
-
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the tarball contains MAJOR.MINOR.REVISION, so pull
         # apart the full version to get the MAJOR and MINOR components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.version)
-        major_minor = 'v{0}.{1}'.format(match.groupdict()['major'],
-                                        match.groupdict()['minor'])
-        tarball = 'openmpi-{}.tar.bz2'.format(self.version)
-        url = '{0}/{1}/downloads/{2}'.format(self.baseurl, major_minor,
-                                             tarball)
+        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
+        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
+                                       match.groupdict()['minor'])
+        tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
+        url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(self.__baseurl,
+                                                     major_minor,
+                                                     self.__version, tarball)
 
-        # CUDA
-        if self.cuda:
-            if self.__toolchain.CUDA_HOME:
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
-            else:
-                self.configure_opts.append('--with-cuda')
-        else:
-            self.configure_opts.append('--without-cuda')
-
-        # InfiniBand
-        if self.infiniband:
-            self.configure_opts.append('--with-verbs')
-        else:
-            self.configure_opts.append('--without-verbs')
-
-        if self.directory:
+        if self.__directory:
             # Use source from local build context
             self.__commands.append(self.configure_step(
-                directory=os.path.join(self.__wd, self.directory),
+                directory=os.path.join(self.__wd, self.__directory),
                 toolchain=self.__toolchain))
         else:
             # Download source from web
@@ -176,31 +155,32 @@ class openmpi(ConfigureMake, tar, wget):
                 tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
-                                       'openmpi-{}'.format(self.version)),
+                                       'hdf5-{}'.format(self.__version)),
                 toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())
 
+        # Check the build
         if self.__check:
             self.__commands.append(self.check_step())
 
         self.__commands.append(self.install_step())
 
-        if self.directory:
+        if self.__directory:
             # Using source from local build context, cleanup directory
             self.__commands.append(self.cleanup_step(
-                items=[os.path.join(self.__wd, self.directory)]))
+                items=[os.path.join(self.__wd, self.__directory)]))
         else:
             # Using downloaded source, cleanup tarball and directory
             self.__commands.append(self.cleanup_step(
                 items=[os.path.join(self.__wd, tarball),
                        os.path.join(self.__wd,
-                                    'openmpi-{}'.format(self.version))]))
+                                    'hdf5-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
-        instructions.append(comment('OpenMPI'))
+        instructions.append(comment('HDF5'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))

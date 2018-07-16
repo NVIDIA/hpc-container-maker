@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.mvapich2 import mvapich2
+from hpccm.building_blocks.mvapich2 import mvapich2
 from hpccm.toolchain import toolchain
 
 class Test_mvapich2(unittest.TestCase):

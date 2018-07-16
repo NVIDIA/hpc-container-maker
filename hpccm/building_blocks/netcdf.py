@@ -27,9 +27,9 @@ from copy import copy as _copy
 
 import hpccm.config
 
+from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.ConfigureMake import ConfigureMake
-from hpccm.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment

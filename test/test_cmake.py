@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.cmake import cmake
+from hpccm.building_blocks.cmake import cmake
 
 class Test_cmake(unittest.TestCase):
     def setUp(self):

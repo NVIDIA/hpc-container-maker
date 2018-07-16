@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, ubuntu
 
-from hpccm.apt_get import apt_get
+from hpccm.building_blocks.apt_get import apt_get
 
 class Test_yum(unittest.TestCase):
     def setUp(self):

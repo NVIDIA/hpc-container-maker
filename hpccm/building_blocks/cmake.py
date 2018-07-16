@@ -25,7 +25,7 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from hpccm.packages import packages
+from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 from hpccm.wget import wget

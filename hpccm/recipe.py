@@ -43,26 +43,25 @@ from hpccm.primitives.shell import shell
 from hpccm.primitives.workdir import workdir
 
 # Building blocks
-from hpccm.apt_get import apt_get
-from hpccm.charm import charm
-from hpccm.cmake import cmake
-from hpccm.fftw import fftw
-from hpccm.git import git
-from hpccm.gnu import gnu
-from hpccm.hdf5 import hdf5
-from hpccm.intel_psxe import intel_psxe
-from hpccm.mlnx_ofed import mlnx_ofed
-from hpccm.mkl import mkl
-from hpccm.mvapich2 import mvapich2
-from hpccm.mvapich2_gdr import mvapich2_gdr
-from hpccm.netcdf import netcdf
-from hpccm.ofed import ofed
-from hpccm.openmpi import openmpi
-from hpccm.packages import packages
-from hpccm.pgi import pgi
-from hpccm.pnetcdf import pnetcdf
-from hpccm.python import python
-from hpccm.yum import yum
+from hpccm.building_blocks.apt_get import apt_get
+from hpccm.building_blocks.charm import charm
+from hpccm.building_blocks.cmake import cmake
+from hpccm.building_blocks.fftw import fftw
+from hpccm.building_blocks.gnu import gnu
+from hpccm.building_blocks.hdf5 import hdf5
+from hpccm.building_blocks.intel_psxe import intel_psxe
+from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
+from hpccm.building_blocks.mkl import mkl
+from hpccm.building_blocks.mvapich2 import mvapich2
+from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
+from hpccm.building_blocks.netcdf import netcdf
+from hpccm.building_blocks.ofed import ofed
+from hpccm.building_blocks.openmpi import openmpi
+from hpccm.building_blocks.packages import packages
+from hpccm.building_blocks.pgi import pgi
+from hpccm.building_blocks.pnetcdf import pnetcdf
+from hpccm.building_blocks.python import python
+from hpccm.building_blocks.yum import yum
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):

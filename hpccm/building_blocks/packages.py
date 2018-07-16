@@ -24,9 +24,9 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from hpccm.apt_get import apt_get
+from hpccm.building_blocks.apt_get import apt_get
+from hpccm.building_blocks.yum import yum
 from hpccm.common import linux_distro
-from hpccm.yum import yum
 
 class packages(object):
     """packages building block"""

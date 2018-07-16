@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.mlnx_ofed import mlnx_ofed
+from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 
 class Test_mlnx_ofed(unittest.TestCase):
     def setUp(self):

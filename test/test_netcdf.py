@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.netcdf import netcdf
+from hpccm.building_blocks.netcdf import netcdf
 
 class Test_netcdf(unittest.TestCase):
     def setUp(self):

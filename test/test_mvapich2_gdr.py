@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.mvapich2_gdr import mvapich2_gdr
+from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 
 class Test_mvapich2_gdr(unittest.TestCase):
     def setUp(self):

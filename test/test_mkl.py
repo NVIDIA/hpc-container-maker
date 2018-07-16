@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.mkl import mkl
+from hpccm.building_blocks.mkl import mkl
 
 class Test_mkl(unittest.TestCase):
     def setUp(self):
