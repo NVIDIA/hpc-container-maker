@@ -29,9 +29,9 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.sed import sed
-from hpccm.tar import tar
-from hpccm.wget import wget
+from hpccm.templates.sed import sed
+from hpccm.templates.tar import tar
+from hpccm.templates.wget import wget
 
 class charm(sed, tar, wget):
     """Charm++ building block"""

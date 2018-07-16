@@ -29,8 +29,8 @@ from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
-from hpccm.tar import tar
-from hpccm.wget import wget
+from hpccm.templates.tar import tar
+from hpccm.templates.wget import wget
 
 class mlnx_ofed(tar, wget):
     """Mellanox OFED building block"""

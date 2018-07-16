@@ -33,8 +33,8 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
-from hpccm.wget import wget
 
 class mvapich2_gdr(wget):
     """MVAPICH2-GDR building block"""

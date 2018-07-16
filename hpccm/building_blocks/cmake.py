@@ -28,7 +28,7 @@ import re
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
-from hpccm.wget import wget
+from hpccm.templates.wget import wget
 
 class cmake(wget):
     """CMake building block"""

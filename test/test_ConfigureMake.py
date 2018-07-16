@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.ConfigureMake import ConfigureMake
+from hpccm.templates.ConfigureMake import ConfigureMake
 from hpccm.toolchain import toolchain
 
 class Test_ConfigureMake(unittest.TestCase):

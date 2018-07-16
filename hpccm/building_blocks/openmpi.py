@@ -29,14 +29,14 @@ import hpccm.config
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
-from hpccm.ConfigureMake import ConfigureMake
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.tar import tar
+from hpccm.templates.ConfigureMake import ConfigureMake
+from hpccm.templates.tar import tar
+from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
-from hpccm.wget import wget
 
 class openmpi(ConfigureMake, tar, wget):
     """OpenMPI building block"""

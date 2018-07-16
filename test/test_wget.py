@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.wget import wget
+from hpccm.templates.wget import wget
 
 class Test_wget(unittest.TestCase):
     def setUp(self):
