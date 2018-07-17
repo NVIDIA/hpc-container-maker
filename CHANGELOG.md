@@ -1,3 +1,11 @@
+# v18.7.0
+
+- Adds Charm++ (`charm`), Intel Parallel Studio XE (`intel_psxe`), and
+  PnetCDF (`pnetcdf`) building blocks
+- New parameters in the PGI (`pgi`) building block
+- Internal reorganization of files into sub-directories for building
+  blocks, templates, and primitives
+
 # v18.6.0
 
 - Adds Intel MKL (`mkl`) and NetCDF (`netcdf`) building blocks
