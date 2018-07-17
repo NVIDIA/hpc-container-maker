@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.sed import sed
+from hpccm.templates.sed import sed
 
 class Test_sed(unittest.TestCase):
     def setUp(self):

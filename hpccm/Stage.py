@@ -22,7 +22,7 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from hpccm.baseimage import baseimage
+from hpccm.primitives.baseimage import baseimage
 
 class Stage(object):
     """Class for the container stage.  Docker may have one or more stages,

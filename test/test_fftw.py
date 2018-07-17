@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.fftw import fftw
+from hpccm.building_blocks.fftw import fftw
 
 class Test_fftw(unittest.TestCase):
     def setUp(self):

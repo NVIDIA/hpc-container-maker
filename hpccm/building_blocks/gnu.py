@@ -22,8 +22,8 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-from hpccm.comment import comment
-from hpccm.packages import packages
+from hpccm.building_blocks.packages import packages
+from hpccm.primitives.comment import comment
 from hpccm.toolchain import toolchain
 
 class gnu(object):

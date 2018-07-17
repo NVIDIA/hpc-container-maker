@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.intel_psxe import intel_psxe
+from hpccm.building_blocks.intel_psxe import intel_psxe
 
 class Test_intel_psxe(unittest.TestCase):
     def setUp(self):

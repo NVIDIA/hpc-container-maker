@@ -25,10 +25,10 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
-from hpccm.comment import comment
-from hpccm.packages import packages
-from hpccm.shell import shell
-from hpccm.wget import wget
+from hpccm.building_blocks.packages import packages
+from hpccm.primitives.comment import comment
+from hpccm.primitives.shell import shell
+from hpccm.templates.wget import wget
 
 class cmake(wget):
     """CMake building block"""

@@ -26,7 +26,7 @@ from helpers import docker, invalid_ctype, singularity
 
 import hpccm.config
 
-from hpccm.baseimage import baseimage
+from hpccm.primitives.baseimage import baseimage
 from hpccm.common import linux_distro
 
 class Test_baseimage(unittest.TestCase):

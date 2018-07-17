@@ -11,6 +11,7 @@ Contents:
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 # pylama: ignore=E0602
 import os
+from hpccm.templates.git import git
 
 gromacs_version = USERARG.get('GROMACS_VERSION', '2018')
 
@@ -35,7 +36,7 @@ Stage0 += ompi
 
 build_cmds = ['mkdir -p /gromacs/install',
               'mkdir -p /gromacs/builds',
-              hpccm.git().clone_step(
+              git().clone_step(
                   repository='https://github.com/gromacs/gromacs',
                   branch='v' + gromacs_version, path='/gromacs',
                   directory='src'),

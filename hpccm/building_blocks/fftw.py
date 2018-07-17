@@ -15,90 +15,77 @@
 # pylint: disable=invalid-name, too-few-public-methods
 # pylint: disable=too-many-instance-attributes
 
-"""HDF5 building block"""
+"""FFTW building block"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import re
 import os
 
-import hpccm.config
-
-from hpccm.comment import comment
-from hpccm.common import linux_distro
-from hpccm.ConfigureMake import ConfigureMake
-from hpccm.copy import copy
-from hpccm.environment import environment
-from hpccm.packages import packages
-from hpccm.shell import shell
-from hpccm.tar import tar
+from hpccm.building_blocks.packages import packages
+from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
+from hpccm.primitives.shell import shell
+from hpccm.templates.ConfigureMake import ConfigureMake
+from hpccm.templates.tar import tar
+from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
-from hpccm.wget import wget
 
-class hdf5(ConfigureMake, tar, wget):
-    """HDF5 building block"""
+class fftw(ConfigureMake, tar, wget):
+    """FFTW building block"""
 
     def __init__(self, **kwargs):
         """Initialize building block"""
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
-        #super(hdf5, self).__init__(**kwargs)
+        #super(fftw, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
-                                         ['--enable-cxx', '--enable-fortran'])
-        self.prefix = kwargs.get('prefix', '/usr/local/hdf5')
+                                         ['--enable-shared', '--enable-openmp',
+                                          '--enable-threads', '--enable-sse2'])
+        self.prefix = kwargs.get('prefix', '/usr/local/fftw')
 
-        self.__baseurl = kwargs.get('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
+        self.__baseurl = kwargs.get('baseurl', 'ftp://ftp.fftw.org/pub/fftw')
         self.__check = kwargs.get('check', False)
         self.__directory = kwargs.get('directory', '')
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.__runtime_ospackages = [] # Filled in by __distro()
+        self.__ospackages = kwargs.get('ospackages', ['file', 'make', 'wget'])
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.10.1')
+        self.__version = kwargs.get('version', '3.3.7')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'HDF5_DIR': self.prefix,
-            'PATH':
-            '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
 
-        # Set the Linux distribution specific parameters
-        self.__distro()
-
-        # Construct the series of steps to execute
+        # Construct series of steps to execute
         self.__setup()
 
     def __str__(self):
         """String representation of the building block"""
-
         instructions = []
         if self.__directory:
-            instructions.append(comment('HDF5'))
+            instructions.append(comment('FFTW'))
         else:
-            instructions.append(comment(
-                'HDF5 version {}'.format(self.__version)))
-
+            instructions.append(
+                comment('FFTW version {}'.format(self.__version)))
         instructions.append(packages(ospackages=self.__ospackages))
-
         if self.__directory:
             # Use source from local build context
             instructions.append(
                 copy(src=self.__directory,
-                     dest=os.path.join(self.__wd, self.__directory)))
-
+                     dest=os.path.join(self.__wd,
+                                       self.__directory)))
         instructions.append(shell(commands=self.__commands))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        instructions.append(
+            environment(variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
 
@@ -111,36 +98,12 @@ class hdf5(ConfigureMake, tar, wget):
 
         return 'rm -rf {}'.format(' '.join(items))
 
-    def __distro(self):
-        """Based on the Linux distribution, set values accordingly.  A user
-        specified value overrides any defaults."""
-
-        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-            if not self.__ospackages:
-                self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
-            self.__runtime_ospackages = ['zlib1g']
-        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if not self.__ospackages:
-                self.__ospackages = ['bzip2', 'file', 'make', 'wget',
-                                     'zlib-devel']
-            self.__runtime_ospackages = ['zlib']
-        else: # pragma: no cover
-            raise RuntimeError('Unknown Linux distribution')
-
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # The download URL has the format contains vMAJOR.MINOR in the
-        # path and the tarball contains MAJOR.MINOR.REVISION, so pull
-        # apart the full version to get the MAJOR and MINOR components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
-        tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
-        url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(self.__baseurl,
-                                                     major_minor,
-                                                     self.__version, tarball)
+        tarball = 'fftw-{}.tar.gz'.format(self.__version)
+        url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         if self.__directory:
             # Use source from local build context
@@ -155,13 +118,15 @@ class hdf5(ConfigureMake, tar, wget):
                 tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
-                                       'hdf5-{}'.format(self.__version)),
+                                       'fftw-{}'.format(self.__version)),
                 toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())
 
         # Check the build
         if self.__check:
+            # PGI compiler needs a larger stack size
+            self.__commands.append('ulimit -s unlimited')
             self.__commands.append(self.check_step())
 
         self.__commands.append(self.install_step())
@@ -175,13 +140,12 @@ class hdf5(ConfigureMake, tar, wget):
             self.__commands.append(self.cleanup_step(
                 items=[os.path.join(self.__wd, tarball),
                        os.path.join(self.__wd,
-                                    'hdf5-{}'.format(self.__version))]))
+                                    'fftw-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
-        instructions.append(comment('HDF5'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
+        instructions.append(comment('FFTW'))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         instructions.append(environment(

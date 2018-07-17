@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.shell import shell
+from hpccm.primitives.shell import shell
 
 class Test_shell(unittest.TestCase):
     def setUp(self):

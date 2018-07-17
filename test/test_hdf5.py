@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.hdf5 import hdf5
+from hpccm.building_blocks.hdf5 import hdf5
 
 class Test_hdf5(unittest.TestCase):
     def setUp(self):

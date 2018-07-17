@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name, unused-import
 
 """Container recipe"""
 
@@ -23,7 +23,7 @@ from six import raise_from
 
 import logging
 
-import hpccm # pylint: disable=unused-import
+import hpccm
 
 import hpccm.config
 
@@ -31,35 +31,37 @@ from hpccm.common import container_type
 
 from hpccm.Stage import Stage
 
-from hpccm.apt_get import apt_get         # pylint: disable=unused-import
-from hpccm.baseimage import baseimage     # pylint: disable=unused-import
-from hpccm.blob import blob               # pylint: disable=unused-import
-from hpccm.charm import charm             # pylint: disable=unused-import
-from hpccm.cmake import cmake             # pylint: disable=unused-import
-from hpccm.comment import comment         # pylint: disable=unused-import
-from hpccm.copy import copy               # pylint: disable=unused-import
-from hpccm.environment import environment # pylint: disable=unused-import
-from hpccm.fftw import fftw               # pylint: disable=unused-import
-from hpccm.git import git                 # pylint: disable=unused-import
-from hpccm.gnu import gnu                 # pylint: disable=unused-import
-from hpccm.hdf5 import hdf5               # pylint: disable=unused-import
-from hpccm.intel_psxe import intel_psxe   # pylint: disable=unused-import
-from hpccm.label import label             # pylint: disable=unused-import
-from hpccm.mlnx_ofed import mlnx_ofed     # pylint: disable=unused-import
-from hpccm.mkl import mkl                 # pylint: disable=unused-import
-from hpccm.mvapich2 import mvapich2       # pylint: disable=unused-import
-from hpccm.mvapich2_gdr import mvapich2_gdr # pylint: disable=unused-import
-from hpccm.netcdf import netcdf           # pylint: disable=unused-import
-from hpccm.ofed import ofed               # pylint: disable=unused-import
-from hpccm.openmpi import openmpi         # pylint: disable=unused-import
-from hpccm.packages import packages       # pylint: disable=unused-import
-from hpccm.pgi import pgi                 # pylint: disable=unused-import
-from hpccm.pnetcdf import pnetcdf         # pylint: disable=unused-import
-from hpccm.python import python           # pylint: disable=unused-import
-from hpccm.raw import raw                 # pylint: disable=unused-import
-from hpccm.shell import shell             # pylint: disable=unused-import
-from hpccm.workdir import workdir         # pylint: disable=unused-import
-from hpccm.yum import yum                 # pylint: disable=unused-import
+# Primitives
+from hpccm.primitives.baseimage import baseimage
+from hpccm.primitives.blob import blob
+from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
+from hpccm.primitives.label import label
+from hpccm.primitives.raw import raw
+from hpccm.primitives.shell import shell
+from hpccm.primitives.workdir import workdir
+
+# Building blocks
+from hpccm.building_blocks.apt_get import apt_get
+from hpccm.building_blocks.charm import charm
+from hpccm.building_blocks.cmake import cmake
+from hpccm.building_blocks.fftw import fftw
+from hpccm.building_blocks.gnu import gnu
+from hpccm.building_blocks.hdf5 import hdf5
+from hpccm.building_blocks.intel_psxe import intel_psxe
+from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
+from hpccm.building_blocks.mkl import mkl
+from hpccm.building_blocks.mvapich2 import mvapich2
+from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
+from hpccm.building_blocks.netcdf import netcdf
+from hpccm.building_blocks.ofed import ofed
+from hpccm.building_blocks.openmpi import openmpi
+from hpccm.building_blocks.packages import packages
+from hpccm.building_blocks.pgi import pgi
+from hpccm.building_blocks.pnetcdf import pnetcdf
+from hpccm.building_blocks.python import python
+from hpccm.building_blocks.yum import yum
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):

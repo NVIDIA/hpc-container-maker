@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker
 
-from hpccm.yum import yum
+from hpccm.building_blocks.yum import yum
 
 class Test_yum(unittest.TestCase):
     def setUp(self):

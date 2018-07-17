@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.label import label
+from hpccm.primitives.label import label
 
 class Test_label(unittest.TestCase):
     def setUp(self):

@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.ofed import ofed
+from hpccm.building_blocks.ofed import ofed
 
 class Test_ofed(unittest.TestCase):
     def setUp(self):

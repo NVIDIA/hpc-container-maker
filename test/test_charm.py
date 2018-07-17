@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.charm import charm
+from hpccm.building_blocks.charm import charm
 
 class Test_charm(unittest.TestCase):
     def setUp(self):

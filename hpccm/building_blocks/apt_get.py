@@ -25,7 +25,7 @@ import logging # pylint: disable=unused-import
 import hpccm.config
 
 from hpccm.common import linux_distro
-from hpccm.shell import shell
+from hpccm.primitives.shell import shell
 
 class apt_get(object):
     """apt-get building block"""

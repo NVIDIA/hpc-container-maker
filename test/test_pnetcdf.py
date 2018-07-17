@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.pnetcdf import pnetcdf
+from hpccm.building_blocks.pnetcdf import pnetcdf
 
 class Test_pnetcdf(unittest.TestCase):
     def setUp(self):

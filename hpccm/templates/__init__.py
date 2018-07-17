@@ -13,18 +13,3 @@
 # limitations under the License.
 
 from __future__ import absolute_import
-
-from hpccm.common import container_type
-from hpccm.common import linux_distro
-
-from hpccm.Stage import Stage
-from hpccm.recipe import recipe
-from hpccm.toolchain import toolchain
-
-# Templates
-# For backwards compatibility with recipes that use "hpccm.git()", etc.
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.git import git
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget

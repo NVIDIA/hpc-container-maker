@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker, invalid_ctype, singularity
 
-from hpccm.copy import copy
+from hpccm.primitives.copy import copy
 
 class Test_copy(unittest.TestCase):
     def setUp(self):

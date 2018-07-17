@@ -12,6 +12,10 @@ Contents:
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 # pylama: ignore=E0602
 import os
+from hpccm.templates.git import git
+from hpccm.templates.sed import sed
+from hpccm.templates.tar import tar
+from hpccm.templates.wget import wget
 
 gpu_arch = USERARG.get('GPU_ARCH', 'sm_60')
 
@@ -35,7 +39,7 @@ ompi = openmpi(configure_opts=['--enable-mpi-cxx'], prefix='/opt/openmpi',
 Stage0 += ompi
 
 # build QUDA
-g = hpccm.git()
+g = git()
 quda_cmds = ['mkdir -p /quda/build',
              g.clone_step(repository='https://github.com/lattice/quda',
                           branch='v0.8.0', path='/quda', directory='src'),
@@ -61,13 +65,13 @@ Stage0 += shell(commands=quda_cmds)
 # build MILC
 milc_version = '7.8.1'
 milc_cmds = ['mkdir -p /milc',
-             hpccm.wget().download_step(url='http://www.physics.utah.edu/~detar/milc/milc_qcd-{}.tar.gz'.format(milc_version)),
-             hpccm.tar().untar_step(
+             wget().download_step(url='http://www.physics.utah.edu/~detar/milc/milc_qcd-{}.tar.gz'.format(milc_version)),
+             tar().untar_step(
                  tarball='/tmp/milc_qcd-{}.tar.gz'.format(milc_version),
                  directory='/milc'),
              'cd /milc/milc_qcd-{}/ks_imp_rhmc'.format(milc_version),
              'cp ../Makefile .',
-             hpccm.sed().sed_step(
+             sed().sed_step(
                  file='/milc/milc_qcd-{}/ks_imp_rhmc/Makefile'.format(
                      milc_version),
                  patterns=[r's/WANTQUDA\(.*\)=.*/WANTQUDA\1= true/g',

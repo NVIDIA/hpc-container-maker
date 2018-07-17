@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.gnu import gnu
+from hpccm.building_blocks.gnu import gnu
 
 class Test_gnu(unittest.TestCase):
     def setUp(self):

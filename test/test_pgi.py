@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.pgi import pgi
+from hpccm.building_blocks.pgi import pgi
 
 class Test_pgi(unittest.TestCase):
     def setUp(self):

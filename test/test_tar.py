@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.tar import tar
+from hpccm.templates.tar import tar
 
 class Test_tar(unittest.TestCase):
     def setUp(self):

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from hpccm.git import git
+from hpccm.templates.git import git
 
 class Test_git(unittest.TestCase):
     def setUp(self):

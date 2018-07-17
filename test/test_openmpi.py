@@ -24,7 +24,7 @@ import unittest
 
 from helpers import centos, docker, ubuntu
 
-from hpccm.openmpi import openmpi
+from hpccm.building_blocks.openmpi import openmpi
 
 class Test_openmpi(unittest.TestCase):
     def setUp(self):

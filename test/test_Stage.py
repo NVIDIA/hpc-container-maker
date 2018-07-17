@@ -24,7 +24,7 @@ import unittest
 
 from helpers import docker
 
-from hpccm.shell import shell
+from hpccm.primitives.shell import shell
 from hpccm.Stage import Stage
 
 class Test_Stage(unittest.TestCase):
