@@ -44,6 +44,7 @@ from hpccm.primitives.workdir import workdir
 
 # Building blocks
 from hpccm.building_blocks.apt_get import apt_get
+from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
 from hpccm.building_blocks.fftw import fftw

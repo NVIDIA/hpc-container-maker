@@ -39,5 +39,7 @@ class toolchain(object):
         self.FC = kwargs.get('FC')
         self.FCFLAGS = kwargs.get('FCFLAGS')
         self.FFLAGS = kwargs.get('FFLAGS')
+        self.FLIBS = kwargs.get('FLIBS')
         self.LDFLAGS = kwargs.get('LDFLAGS')
         self.LD_LIBRARY_PATH = kwargs.get('LD_LIBRARY_PATH')
+        self.LIBS = kwargs.get('LIBS')
