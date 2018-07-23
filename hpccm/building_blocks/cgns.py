@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import os
+import re
 from copy import copy as _copy
 
 import hpccm.config
@@ -122,6 +123,9 @@ class cgns(ConfigureMake, tar, wget):
             toolchain.LIBS = '-Wl,--no-as-needed -ldl'
         if not toolchain.FLIBS:
             toolchain.FLIBS = '-Wl,--no-as-needed -ldl'
+        # See https://cgnsorg.atlassian.net/browse/CGNS-40
+        if not toolchain.FFLAGS and re.match('.*pgf.*', toolchain.FC):
+            toolchain.FFLAGS = '-Mx,125,0x200'
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,
