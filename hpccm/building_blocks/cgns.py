@@ -46,7 +46,7 @@ class cgns(ConfigureMake, tar, wget):
 
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
-        #super(pnetcdf, self).__init__(**kwargs)
+        #super(cgns, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
