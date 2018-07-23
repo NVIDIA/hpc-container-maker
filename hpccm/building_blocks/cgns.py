@@ -124,7 +124,8 @@ class cgns(ConfigureMake, tar, wget):
         if not toolchain.FLIBS:
             toolchain.FLIBS = '-Wl,--no-as-needed -ldl'
         # See https://cgnsorg.atlassian.net/browse/CGNS-40
-        if not toolchain.FFLAGS and re.match('.*pgf.*', toolchain.FC):
+        if (not toolchain.FFLAGS and toolchain.FC and
+            re.match('.*pgf.*', toolchain.FC)):
             toolchain.FFLAGS = '-Mx,125,0x200'
 
         # Download source from web
