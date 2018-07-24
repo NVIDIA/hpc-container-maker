@@ -97,6 +97,10 @@ class ConfigureMake(object):
                 prefix.append('FFLAGS={}'.format(shlex_quote(
                     toolchain.FFLAGS)))
 
+            if toolchain.FLIBS:
+                prefix.append('FLIBS={}'.format(shlex_quote(
+                    toolchain.FLIBS)))
+
             if toolchain.LD_LIBRARY_PATH:
                 prefix.append('LD_LIBRARY_PATH={}'.format(shlex_quote(
                     toolchain.LD_LIBRARY_PATH)))
@@ -104,6 +108,10 @@ class ConfigureMake(object):
             if toolchain.LDFLAGS:
                 prefix.append('LDFLAGS={}'.format(shlex_quote(
                     toolchain.LDFLAGS)))
+
+            if toolchain.LIBS:
+                prefix.append('LIBS={}'.format(shlex_quote(
+                    toolchain.LIBS)))
 
         configure_prefix = ' '.join(prefix)
 

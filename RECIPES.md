@@ -220,6 +220,48 @@ Example:
 apt_get(ospackages=['make', 'wget'])
 ```
 
+### cgns
+
+The `cgns` building block downloads and installs the
+[CGNS](https://cgns.github.io/index.html) component.
+
+The [HDF5](#hdf5) building block should be installed prior to this
+building block.
+
+Parameters:
+
+- `check`: Boolean flag to specify whether the test cases should be
+  run.  The default is False.
+
+- `configure_opts`: List of options to pass to `configure`.  The
+  default value is `--with-hdf5=/usr/local/hdf5` and `--with-zlib`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/cgns`.
+
+- `ospackages`: List of OS packages to install prior to configuring
+  and building.  For Ubuntu, the default values are `file`, `make`,
+  `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+  default values are `bzip2`, `file`, `make`, `wget` and `zlib-devel`.
+
+- `toolchain`: The toolchain object.  This should be used if
+  non-default compilers or other toolchain options are needed.  The
+  default is empty.
+
+- `version`: The version of CGNS source to download.  The default
+  value is `3.3.1`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Example:
+
+```python
+cgns(prefix='/opt/cgns/3.3.1', version='3.3.1')
+```
+
 ### charm
 
 The `charm` building block downloads and install the
