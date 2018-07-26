@@ -58,8 +58,7 @@ ENV CHARMBASE=/usr/local/charm-v6.8.2 \
         """Runtime"""
         c = charm()
         r = c.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# Charm++
 COPY --from=0 /usr/local/charm-v6.8.2 /usr/local/charm-v6.8.2
 ENV CHARMBASE=/usr/local/charm-v6.8.2 \

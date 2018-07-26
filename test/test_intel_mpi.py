@@ -124,7 +124,7 @@ ENV I_MPI_ROOT=/opt/intel/compilers_and_libraries/linux/mpi \
         """Runtime"""
         impi = intel_mpi(eula=True)
         r = impi.runtime()
-        self.assertEqual(str(r),
+        self.assertEqual(r,
 r'''# Intel MPI version 2018.3-051
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

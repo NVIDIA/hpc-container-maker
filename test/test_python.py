@@ -63,8 +63,7 @@ RUN yum install -y epel-release && \
         """Runtime"""
         p = python()
         r = p.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# Python
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

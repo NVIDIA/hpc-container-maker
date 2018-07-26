@@ -130,8 +130,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpi
         """Runtime"""
         mv2 = mvapich2_gdr()
         r = mv2.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# MVAPICH2-GDR
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

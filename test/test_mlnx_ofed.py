@@ -74,7 +74,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
         """Runtime"""
         mofed = mlnx_ofed()
         r = mofed.runtime()
-        self.assertEqual(str(r),
+        self.assertEqual(r,
 r'''# Mellanox OFED version 3.4-1.0.0.0
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

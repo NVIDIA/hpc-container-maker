@@ -96,7 +96,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Runtime"""
         c = cmake(eula=True)
         r = c.runtime()
-        self.assertEqual(str(r),
+        self.assertEqual(r,
 r'''# CMake version 3.11.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

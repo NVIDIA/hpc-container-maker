@@ -60,8 +60,7 @@ ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
         """Runtime"""
         p = pnetcdf()
         r = p.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# PnetCDF
 COPY --from=0 /usr/local/pnetcdf /usr/local/pnetcdf
 ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \

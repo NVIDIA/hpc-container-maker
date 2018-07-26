@@ -159,4 +159,4 @@ class cgns(ConfigureMake, tar, wget):
         instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

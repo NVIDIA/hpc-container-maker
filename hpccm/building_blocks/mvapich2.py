@@ -255,4 +255,4 @@ class mvapich2(ConfigureMake, sed, tar, wget):
         if vars.get('PROFILE_POSTLIB'):
             del vars['PROFILE_POSTLIB']
         instructions.append(environment(variables=vars))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

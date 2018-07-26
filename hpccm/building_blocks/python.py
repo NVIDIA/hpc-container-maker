@@ -66,4 +66,4 @@ class python(object):
         instructions.append(comment('Python'))
         instructions.append(packages(apt=self.__debs, epel=self.__epel,
                                      yum=self.__rpms))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

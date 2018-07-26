@@ -114,8 +114,7 @@ ENV LD_LIBRARY_PATH=/usr/local/netcdf/lib:$LD_LIBRARY_PATH \
         """Runtime"""
         n = netcdf()
         r = n.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# NetCDF
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

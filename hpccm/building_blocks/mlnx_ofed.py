@@ -153,4 +153,4 @@ class mlnx_ofed(tar, wget):
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
-        return self
+        return str(self)

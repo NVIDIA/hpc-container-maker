@@ -116,8 +116,7 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
         """Runtime"""
         ompi = openmpi()
         r = ompi.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# OpenMPI
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

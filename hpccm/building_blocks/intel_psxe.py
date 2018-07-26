@@ -174,4 +174,4 @@ class intel_psxe(sed, tar):
         instructions.append(environment(
             variables={'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
                 os.path.join(self.__prefix, 'lib', 'intel64'))}))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

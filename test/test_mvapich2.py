@@ -196,8 +196,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         """Runtime"""
         mv2 = mvapich2()
         r = mv2.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# MVAPICH2
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

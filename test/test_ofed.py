@@ -90,7 +90,7 @@ RUN yum install -y \
         """Runtime"""
         o = ofed()
         r = o.runtime()
-        self.assertEqual(str(r),
+        self.assertEqual(r,
 r'''# OFED
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

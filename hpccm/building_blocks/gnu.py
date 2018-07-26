@@ -81,4 +81,4 @@ class gnu(object):
         instructions.append(comment('GNU compiler runtime'))
         instructions.append(packages(apt=self.__runtime_debs,
                                      yum=self.__runtime_rpms))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

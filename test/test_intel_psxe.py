@@ -94,8 +94,7 @@ ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
         """Runtime"""
         psxe = intel_psxe(eula=True, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
         r = psxe.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# Intel Parallel Studio XE
 COPY --from=0 /var/tmp/intel_psxe_runtime/* /opt/intel/lib/intel64/
 ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH''')

@@ -266,4 +266,4 @@ class pgi(tar, wget):
                              'libnuma.so'))]))
         instructions.append(environment(
             variables=self.__environment(runtime=True)))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)
