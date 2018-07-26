@@ -50,6 +50,7 @@ from hpccm.building_blocks.cmake import cmake
 from hpccm.building_blocks.fftw import fftw
 from hpccm.building_blocks.gnu import gnu
 from hpccm.building_blocks.hdf5 import hdf5
+from hpccm.building_blocks.intel_mpi import intel_mpi
 from hpccm.building_blocks.intel_psxe import intel_psxe
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 from hpccm.building_blocks.mkl import mkl
