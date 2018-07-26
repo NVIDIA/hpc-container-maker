@@ -100,7 +100,6 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
     def test_mklvars(self):
         """mklvars is False"""
         m = mkl(eula=True, mklvars=False)
-        self.maxDiff = None
         self.assertEqual(str(m),
 r'''# MKL version 2018.3-051
 RUN apt-get update -y && \
