@@ -125,7 +125,7 @@ ENV CPATH=/opt/intel/mkl/include:$CPATH \
         """Runtime"""
         m = mkl(eula=True)
         r = m.runtime()
-        self.assertEqual(str(r),
+        self.assertEqual(r,
 r'''# MKL version 2018.3-051
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

@@ -228,4 +228,4 @@ class mvapich2_gdr(wget):
         vars = dict(self.__environment_variables)
         del vars['PROFILE_POSTLIB']
         instructions.append(environment(variables=vars))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

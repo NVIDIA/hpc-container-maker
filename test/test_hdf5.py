@@ -85,8 +85,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
         """Runtime"""
         h = hdf5()
         r = h.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# HDF5
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

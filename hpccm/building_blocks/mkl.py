@@ -123,4 +123,4 @@ class mkl(wget):
         """Install the runtime from a full build in a previous stage.  In this
            case thre is no difference between the runtime and the full
            build."""
-        return self
+        return str(self)

@@ -186,4 +186,4 @@ class hdf5(ConfigureMake, tar, wget):
                                  dest=self.prefix))
         instructions.append(environment(
             variables=self.__environment_variables))
-        return instructions
+        return '\n'.join(str(x) for x in instructions)

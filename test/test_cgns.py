@@ -79,8 +79,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Runtime"""
         c = cgns()
         r = c.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# CGNS
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

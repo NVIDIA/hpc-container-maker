@@ -64,8 +64,7 @@ RUN yum install -y \
         """Runtime"""
         g = gnu()
         r = g.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# GNU compiler runtime
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \

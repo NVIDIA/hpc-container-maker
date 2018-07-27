@@ -115,4 +115,4 @@ class cmake(wget):
         """Install the runtime from a full build in a previous stage.  In this
            case there is no difference between the runtime and the
            full build."""
-        return self
+        return str(self)

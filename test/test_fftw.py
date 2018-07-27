@@ -78,8 +78,7 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         """Runtime"""
         f = fftw()
         r = f.runtime()
-        s = '\n'.join(str(x) for x in r)
-        self.assertEqual(s,
+        self.assertEqual(r,
 r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
