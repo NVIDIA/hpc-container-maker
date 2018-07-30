@@ -1029,6 +1029,55 @@ Stage0 += o
 Stage1 += o.runtime()
 ```
 
+### openblas
+
+The `openblas` building block builds and installs the
+[OpenBLAS](https://www.openblas.net) component.
+
+As a side effect, this building block modifies `LD_LIBRARY_PATH` to
+include the OpenBLAS build.
+
+Parameters:
+
+- `make_opts`: List of options to pass to `make`.  The default value
+  is `USE_OPENMP=1`.
+
+- `ospackages`: List of OS packages to install prior to building.  The
+  default values are `make`, `tar`, and `wget`.
+
+- `prefix`: The top level installation location.  The default value is
+  `/usr/local/openblas`.
+
+- `toolchain`: The toolchain object.  This should be used if
+  non-default compilers or other toolchain options are needed.  The
+  default is empty.
+
+- `version`: The version of OpenBLAS source to download.  The default
+  value is `0.3.1`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
+```
+
+```python
+p = pgi(eula=True)
+openblas(toolchain=p.toolchain)
+```
+
+```python
+openblas = openblas()
+Stage0 += openblas
+...
+Stage1 += openblas.runtime()
+```
+
 ### openmpi
 
 The `openmpi` building block configures, builds, and installs the
