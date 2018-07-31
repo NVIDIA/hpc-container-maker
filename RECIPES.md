@@ -220,6 +220,46 @@ Example:
 apt_get(ospackages=['make', 'wget'])
 ```
 
+### boost
+
+The `boost` building block downloads and installs the
+[Boost](https://www.boost.org) component.
+
+As a side effect, this building block modifies `LD_LIBRARY_PATH` to
+include the Boost build.
+
+Parameters:
+
+- `bootstrap_opts`: List of options to pass to `bootstrap.sh`.  The
+  default is an empty list.
+
+- `ospackages`: List of OS packages to install prior to building.  The
+  default values are `bzip2`, `tar`, and `wget`.
+
+- `prefix`: The top level installation locaation.  The default value
+  is `/usr/local/boost`.
+
+- `version`: The version of Boost source to download.  The default
+  value is `1.67.0`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+boost(prefix='/opt/boost/1.67.0', version='1.67.0')
+```
+
+```python
+boost = boost()
+Stage0 += boost
+...
+Stage1 += boost.runtime()
+```
+
 ### cgns
 
 The `cgns` building block downloads and installs the
