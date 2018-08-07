@@ -76,6 +76,13 @@ class Test_git(unittest.TestCase):
                                       directory='hpccm'),
                          'mkdir -p /tmp && cd /tmp && git clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpccm && cd -')
 
+    def test_lfs(self):
+        """Basic git"""
+        g = git()
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      lfs=True),
+                         'mkdir -p /tmp && cd /tmp && git lfs clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+
     def test_opts(self):
         """git with non-default command line options"""
         g = git(opts=['--single-branch'])
