@@ -172,7 +172,7 @@ $ pip install https://github.com/NVIDIA/hpc-container-maker/tarball/master
 In either case, `hpccm` will be installed in your `PATH`.
 
 You can also use `hpccm.py` or `python -m hpccm.cli` from a clone of
-the repository without having to install anything.
+the repository without having to install anything (maybe you have to install the `six`-package: `pip install six`).
 
 The sections below assume `hpccm.py` from a clone of the repository.
 
