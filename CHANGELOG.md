@@ -1,3 +1,7 @@
+# v18.8.0
+
+- Added `user`-primitive for setting the active user in Dockerfiles, usage: `Stage0 += user(user='root')`
+
 # v18.7.0
 
 - Adds Charm++ (`charm`), Intel Parallel Studio XE (`intel_psxe`), and

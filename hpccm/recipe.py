@@ -40,6 +40,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.label import label
 from hpccm.primitives.raw import raw
 from hpccm.primitives.shell import shell
+from hpccm.primitives.user import user
 from hpccm.primitives.workdir import workdir
 
 # Building blocks
