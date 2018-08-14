@@ -1,6 +1,7 @@
 # v18.8.0
 
 - Added `user`-primitive for setting the active user in Dockerfiles, usage: `Stage0 += user(user='root')`
+- Added option `lfs` to `git().clone_step()` to pull lfs files faster, usage: `git().clone_step(..., lfs=True)`
 
 # v18.7.0
 

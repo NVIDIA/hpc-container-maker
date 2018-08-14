@@ -65,7 +65,7 @@ class git(object):
         return
 
     def clone_step(self, branch=None, commit=None, directory='', path='/tmp',
-                   repository=None, verify=None):
+                   repository=None, verify=None, lfs=False):
         """Clone a git repository"""
 
         if not repository:
@@ -105,13 +105,18 @@ class git(object):
             self.__verify(repository, branch=branch, commit=commit,
                           fatal=fatal)
 
+        # If lfs=True use `git lfs clone`
+        lfs_string = " "
+        if lfs:
+          lfs_string = " lfs "
+
         # Ensure the path exists
         # Would prefer to use 'git -C', but the ancient git included
         # with CentOS7 does not support that option.
         clone = ['mkdir -p {0}'.format(path),
                  'cd {0}'.format(path),
-                 'git clone {0} {1} {2}'.format(
-                     opt_string, repository, directory).strip(),
+                 'git{0}clone {1} {2} {3}'.format(
+                     lfs_string, opt_string, repository, directory).strip(),
                  'cd -']
 
         if commit:
