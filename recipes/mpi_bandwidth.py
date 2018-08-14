@@ -10,7 +10,7 @@ Contents:
 
 Stage0 += comment(__doc__, reformat=False)
 
-# CUDA base image
+# CentOS base image
 Stage0 += baseimage(image='centos:7')
 
 # GNU compilers
