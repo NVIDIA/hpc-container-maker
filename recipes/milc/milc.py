@@ -41,9 +41,9 @@ Stage0 += ompi
 # build QUDA
 g = git()
 quda_cmds = ['mkdir -p /quda/build',
+             'cd /quda/build',
              g.clone_step(repository='https://github.com/lattice/quda',
                           branch='v0.8.0', path='/quda', directory='src'),
-             'cd /quda/build',
              'cmake ../src ' +
              '-DCMAKE_BUILD_TYPE=RELEASE ' +
              '-DQUDA_DIRAC_CLOVER=ON ' +

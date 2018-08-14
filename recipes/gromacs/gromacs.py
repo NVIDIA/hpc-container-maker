@@ -1,5 +1,5 @@
 r"""
-GROMACS 2018
+GROMACS 2018.2
 
 Contents:
   Ubuntu 16.04
@@ -13,7 +13,7 @@ Contents:
 import os
 from hpccm.templates.git import git
 
-gromacs_version = USERARG.get('GROMACS_VERSION', '2018')
+gromacs_version = USERARG.get('GROMACS_VERSION', '2018.2')
 
 Stage0 += comment(__doc__.strip(), reformat=False)
 Stage0.name = 'devel'
@@ -36,11 +36,11 @@ Stage0 += ompi
 
 build_cmds = ['mkdir -p /gromacs/install',
               'mkdir -p /gromacs/builds',
+              'cd /gromacs/builds',
               git().clone_step(
                   repository='https://github.com/gromacs/gromacs',
                   branch='v' + gromacs_version, path='/gromacs',
                   directory='src'),
-              'cd /gromacs/builds',
               ('CC=gcc CXX=g++ cmake /gromacs/src ' +
                '-DCMAKE_BUILD_TYPE=Release ' +
                '-DCMAKE_INSTALL_PREFIX=/gromacs/install ' +
