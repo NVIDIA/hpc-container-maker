@@ -75,9 +75,11 @@ RUN apt-get update -y && \
 r'''BootStrap: docker
 From: ubuntu:16.04
 %post
+    cd /
     . /.singularity.d/env/10-docker.sh
 
 %post
+    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         gcc \
@@ -125,10 +127,12 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 r'''BootStrap: docker
 From: nvidia/cuda:9.0-devel-ubuntu16.04
 %post
+    cd /
     . /.singularity.d/env/10-docker.sh
 
 # GNU compiler
 %post
+    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         gcc \
@@ -138,6 +142,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 
 # FFTW version 3.3.7
 %post
+    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         file \
@@ -145,6 +150,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         wget
     rm -rf /var/lib/apt/lists/*
 %post
+    cd /
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z
     cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2

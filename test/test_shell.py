@@ -56,7 +56,7 @@ class Test_shell(unittest.TestCase):
         """Single command specified"""
         cmd = ['z']
         s = shell(commands=cmd)
-        self.assertEqual(str(s), '%post\n    z')
+        self.assertEqual(str(s), '%post\n    cd /\n    z')
 
     @docker
     def test_multiple_docker(self):
@@ -70,4 +70,4 @@ class Test_shell(unittest.TestCase):
         """List of commands specified"""
         cmds = ['a', 'b', 'c']
         s = shell(commands=cmds)
-        self.assertEqual(str(s), '%post\n    a\n    b\n    c')
+        self.assertEqual(str(s), '%post\n    cd /\n    a\n    b\n    c')

@@ -54,6 +54,7 @@ class shell(object):
                 #     cmd2
                 #     cmd3
                 s = ['%post']
+                s.append('    cd /') # for consistency with Docker
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)
             else:
