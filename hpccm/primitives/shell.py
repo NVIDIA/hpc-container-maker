@@ -34,6 +34,7 @@ class shell(object):
 
         #super(wget, self).__init__()
 
+        self.chdir = kwargs.get('chdir', True)
         self.commands = kwargs.get('commands', [])
 
     def __str__(self):
@@ -54,7 +55,13 @@ class shell(object):
                 #     cmd2
                 #     cmd3
                 s = ['%post']
-                s.append('    cd /') # for consistency with Docker
+
+                # For consistency with Docker. Docker resets the
+                # working directory to '/' at the beginning of each
+                # 'RUN' instruction.
+                if self.chdir:
+                    s.append('    cd /')
+
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)
             else:

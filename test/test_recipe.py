@@ -75,7 +75,6 @@ RUN apt-get update -y && \
 r'''BootStrap: docker
 From: ubuntu:16.04
 %post
-    cd /
     . /.singularity.d/env/10-docker.sh
 
 %post
@@ -127,7 +126,6 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 r'''BootStrap: docker
 From: nvidia/cuda:9.0-devel-ubuntu16.04
 %post
-    cd /
     . /.singularity.d/env/10-docker.sh
 
 # GNU compiler

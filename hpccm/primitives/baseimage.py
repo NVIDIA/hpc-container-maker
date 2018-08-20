@@ -70,7 +70,8 @@ class baseimage(object):
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
             # Singularity does not inherit the environment from the
             # Docker base image automatically.  Do it manually.
-            docker_env = shell(commands=['. /.singularity.d/env/10-docker.sh'])
+            docker_env = shell(chdir=False,
+                               commands=['. /.singularity.d/env/10-docker.sh'])
             return 'BootStrap: docker\nFrom: {0}\n{1}'.format(self.image,
                                                               str(docker_env))
         else:

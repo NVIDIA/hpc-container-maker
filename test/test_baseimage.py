@@ -67,7 +67,6 @@ class Test_baseimage(unittest.TestCase):
 r'''BootStrap: docker
 From: foo
 %post
-    cd /
     . /.singularity.d/env/10-docker.sh''')
 
     @docker
@@ -84,7 +83,6 @@ From: foo
 r'''BootStrap: docker
 From: foo
 %post
-    cd /
     . /.singularity.d/env/10-docker.sh''')
 
     @docker
@@ -101,7 +99,6 @@ From: foo
 r'''BootStrap: docker
 From: foo
 %post
-    cd /
     . /.singularity.d/env/10-docker.sh''')
 
     @docker
