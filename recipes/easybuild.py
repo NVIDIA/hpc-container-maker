@@ -24,9 +24,9 @@ Stage0 += ofed()
 
 # Additional dependencies
 ospackages = ['build-essential', 'bzip2', 'file', 'git', 'gzip',
-              'libssl-dev', 'libtool', 'lmod', 'make', 'patch',
-              'python-pip', 'python-setuptools', 'tar', 'wget',
-              'unzip', 'xz-utils']
+              'libssl-dev', 'libtool', 'lmod', 'make', 'openssh-client',
+              'patch', 'python-pip', 'python-setuptools', 'rsh-client',
+              'tar', 'wget', 'unzip', 'xz-utils']
 Stage0 += apt_get(ospackages=ospackages)
 
 # lmod setup
