@@ -59,14 +59,14 @@ class Test_shell(unittest.TestCase):
         self.assertEqual(str(s), '%post\n    cd /\n    z')
 
     @docker
-    def test_nochdir(self):
+    def test_nochdir_docker(self):
         """chdir disable"""
         cmd = ['z']
         s = shell(chdir=False, commands=cmd)
         self.assertEqual(str(s), 'RUN z')
 
     @singularity
-    def test_nochdir(self):
+    def test_nochdir_singularity(self):
         """chdir disable"""
         cmd = ['z']
         s = shell(chdir=False, commands=cmd)
