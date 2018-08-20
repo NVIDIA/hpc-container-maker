@@ -59,6 +59,20 @@ class Test_shell(unittest.TestCase):
         self.assertEqual(str(s), '%post\n    cd /\n    z')
 
     @docker
+    def test_nochdir(self):
+        """chdir disable"""
+        cmd = ['z']
+        s = shell(chdir=False, commands=cmd)
+        self.assertEqual(str(s), 'RUN z')
+
+    @singularity
+    def test_nochdir(self):
+        """chdir disable"""
+        cmd = ['z']
+        s = shell(chdir=False, commands=cmd)
+        self.assertEqual(str(s), '%post\n    z')
+
+    @docker
     def test_multiple_docker(self):
         """List of commands specified"""
         cmds = ['a', 'b', 'c']

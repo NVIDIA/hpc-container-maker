@@ -78,7 +78,6 @@ From: ubuntu:16.04
     . /.singularity.d/env/10-docker.sh
 
 %post
-    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         gcc \
@@ -130,7 +129,6 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 
 # GNU compiler
 %post
-    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         gcc \
@@ -140,7 +138,6 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 
 # FFTW version 3.3.7
 %post
-    cd /
     apt-get update -y
     apt-get install -y --no-install-recommends \
         file \
