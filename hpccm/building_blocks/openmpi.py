@@ -186,6 +186,8 @@ class openmpi(ConfigureMake, tar, wget):
 
         self.__commands.append(self.install_step())
 
+        self.__commands.append('cd -')
+
         if self.directory:
             # Using source from local build context, cleanup directory
             self.__commands.append(self.cleanup_step(
