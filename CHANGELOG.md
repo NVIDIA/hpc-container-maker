@@ -1,7 +1,14 @@
 # v18.8.0
 
-- Added `user`-primitive for setting the active user in Dockerfiles, usage: `Stage0 += user(user='root')`
-- Added option `lfs` to `git().clone_step()` to pull lfs files faster, usage: `git().clone_step(..., lfs=True)`
+- Adds Boost (`boost`), CGNS (`cgns`), Intel MPI (`intel_mpi`), and
+  OpenBLAS (`openblas`) building blocks
+- Adds Spack and MPI Bandwidth reference recipes, refreshes
+  the GROMACS and EasyBuild reference recipes
+- Adds `user` primitive for setting the active user in Dockerfiles
+- Adds `rm` template for cleaning up files and directories
+- New parameter in the `git` template for LFS support
+- Internal reorganization of `runtime()` methods to consistently output
+  strings
 
 # v18.7.0
 
