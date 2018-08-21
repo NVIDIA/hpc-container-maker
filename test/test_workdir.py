@@ -54,4 +54,4 @@ class Test_workdir(unittest.TestCase):
     def test_dir_singularity(self):
         """Working directory specified"""
         w = workdir(directory='foo')
-        self.assertEqual(str(w), '%post\n    mkdir -p foo\n    cd foo')
+        self.assertEqual(str(w), '%post\n    cd /\n    mkdir -p foo\n    cd foo')

@@ -49,7 +49,7 @@ class apt_get(object):
 
     def __str__(self):
         """String representation of the building block"""
-        return str(shell(commands=self.__commands))
+        return str(shell(chdir=False, commands=self.__commands))
 
     def __setup(self):
         """Construct the series of commands to execute"""
