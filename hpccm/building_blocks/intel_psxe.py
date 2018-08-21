@@ -30,11 +30,12 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.rm import rm
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar
 from hpccm.toolchain import toolchain
 
-class intel_psxe(sed, tar):
+class intel_psxe(rm, sed, tar):
     """Intel Parallel Studio XE building block"""
 
     def __init__(self, **kwargs):
@@ -43,6 +44,7 @@ class intel_psxe(sed, tar):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(intel_psxe, self).__init__(**kwargs)
+        rm.__init__(self, **kwargs)
         sed.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
 
@@ -88,15 +90,6 @@ class intel_psxe(sed, tar):
             environment(variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
-
-    def cleanup_step(self, items=None):
-        """Cleanup temporary files"""
-
-        if not items: # pragma: no cover
-            logging.warning('items are not defined')
-            return ''
-
-        return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

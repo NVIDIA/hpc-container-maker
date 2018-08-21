@@ -28,9 +28,10 @@ import re
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
+from hpccm.templates.rm import rm
 from hpccm.templates.wget import wget
 
-class cmake(wget):
+class cmake(rm, wget):
     """CMake building block"""
 
     def __init__(self, **kwargs):
@@ -39,6 +40,7 @@ class cmake(wget):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(cmake, self).__init__(**kwargs)
+        rm.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
         self.__baseurl = kwargs.get('baseurl', 'https://cmake.org/files')
@@ -67,15 +69,6 @@ class cmake(wget):
         instructions.append(shell(commands=self.__commands))
 
         return '\n'.join(str(x) for x in instructions)
-
-    def cleanup_step(self, items=None):
-        """Cleanup temporary files"""
-
-        if not items: # pragma: no cover
-            logging.warning('items are not defined')
-            return ''
-
-        return 'rm -rf {}'.format(' '.join(items))
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

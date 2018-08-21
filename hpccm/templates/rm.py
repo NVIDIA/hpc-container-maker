@@ -12,20 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# pylint: disable=invalid-name, too-few-public-methods
+
+"""rm template"""
+
 from __future__ import absolute_import
+from __future__ import unicode_literals
+from __future__ import print_function
 
-from hpccm.common import container_type
-from hpccm.common import linux_distro
+import logging # pylint: disable=unused-import
 
-from hpccm.Stage import Stage
-from hpccm.recipe import recipe
-from hpccm.toolchain import toolchain
+class rm(object):
+    """Template for cleaning up files and directories"""
 
-# Templates
-# For backwards compatibility with recipes that use "hpccm.git()", etc.
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.git import git
-from hpccm.templates.rm import rm
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
+    def __init__(self, **kwargs):
+        """Initialize template"""
+
+        #super(rm, self).__init__()
+        pass
+
+    def cleanup_step(self, items=None):
+        """Cleanup files and directories"""
+
+        if not items:
+            logging.error('items are not defined')
+            return ''
+
+        return 'rm -rf {}'.format(' '.join(items))

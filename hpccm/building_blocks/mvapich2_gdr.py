@@ -33,10 +33,11 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.rm import rm
 from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class mvapich2_gdr(wget):
+class mvapich2_gdr(rm, wget):
     """MVAPICH2-GDR building block"""
 
     def __init__(self, **kwargs):
@@ -45,6 +46,7 @@ class mvapich2_gdr(wget):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(mvapich2_gdr, self).__init__(**kwargs)
+        rm.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
@@ -108,15 +110,6 @@ class mvapich2_gdr(wget):
             variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
-
-    def cleanup_step(self, items=None):
-        """Cleanup temporary files"""
-
-        if not items: # pragma: no cover
-            logging.warning('items are not defined')
-            return ''
-
-        return 'rm -rf {}'.format(' '.join(items))
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
