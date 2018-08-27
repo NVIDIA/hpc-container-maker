@@ -78,3 +78,10 @@ class Test_runscript(unittest.TestCase):
         cmds = ['a', 'b', 'c']
         s = runscript(commands=cmds, _app='foo')
         self.assertEqual(str(s), '%apprun foo\n    a\n    b\n    exec c')
+
+    @docker
+    def test_apprun_docker(self):
+        """apprun not implemented in Docker"""
+        cmds = ['a', 'b', 'c']
+        s = runscript(commands=cmds, _app='foo')
+        self.assertEqual(str(s), '')

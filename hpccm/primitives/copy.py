@@ -38,11 +38,18 @@ class copy(object):
         self.__dest = kwargs.get('dest', '')
         self.__from = kwargs.get('_from', '') # Docker specific
         self.__src = kwargs.get('src', '')
+        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
         if self.__dest and self.__src:
             if hpccm.config.g_ctype == container_type.DOCKER:
+                if self._app:
+                    logging.warning('The Singularity specific %app.. syntax was'
+                                    'was requested. Docker does not have an '
+                                    'equivalent: ignoring statement!')
+                    return ''
+
                 # Format:
                 # COPY src1 \
                 #     src2 \
@@ -79,13 +86,17 @@ class copy(object):
                 # path does not already exist in the container, this
                 # will likely error.  Probably need a '%setup' step to
                 # first create the directory.
+                files_directive = '%files'
+                if self._app:
+                    files_directive = '%appfiles {0}'.format(self._app)
                 if isinstance(self.__src, list):
-                    return '%files\n' + '\n'.join(
+                    return '{0}\n'.format(files_directive) + '\n'.join(
                         ['    {0} {1}'.format(x, self.__dest)
                          for x in self.__src])
                 else:
-                    return '%files\n    {0} {1}'.format(self.__src,
-                                                        self.__dest)
+                    return '{0}\n    {1} {2}'.format(files_directive,
+                                                     self.__src,
+                                                     self.__dest)
             else:
                 raise RuntimeError('Unknown container type')
         else:

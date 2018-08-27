@@ -36,11 +36,18 @@ class shell(object):
 
         self.chdir = kwargs.get('chdir', True)
         self.commands = kwargs.get('commands', [])
+        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
         if self.commands:
             if hpccm.config.g_ctype == container_type.DOCKER:
+                if self._app:
+                    logging.warning('The Singularity specific %app.. syntax was'
+                                    'was requested. Docker does not have an '
+                                    'equivalent: ignoring statement!')
+                    return ''
+
                 # Format:
                 # RUN cmd1 && \
                 #     cmd2 && \
@@ -50,17 +57,20 @@ class shell(object):
                 return ' && \\\n'.join(s)
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
-                # %post
+                # %post [OR %appinstall app_name]
                 #     cmd1
                 #     cmd2
                 #     cmd3
-                s = ['%post']
-
-                # For consistency with Docker. Docker resets the
-                # working directory to '/' at the beginning of each
-                # 'RUN' instruction.
-                if self.chdir:
-                    s.append('    cd /')
+                if self._app:
+                    s = ['%appinstall {0}'.format(self._app)]
+                else:
+                    s = ['%post']
+                    # For consistency with Docker. Docker resets the
+                    # working directory to '/' at the beginning of each
+                    # 'RUN' instruction. Singularity %appinstall is already
+                    # run in its own working directory.
+                    if self.chdir:
+                        s.append('    cd /')
 
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)

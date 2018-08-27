@@ -74,3 +74,19 @@ class Test_label(unittest.TestCase):
     ONE 1
     THREE 3
     TWO 2''')
+
+    @singularity
+    def test_applabel_multiple_singularity(self):
+        """Multiple app-specific labels specified"""
+        l = label(metadata={'ONE': 1, 'TWO': 2, 'THREE': 3}, _app='foo')
+        self.assertEqual(str(l),
+'''%applabels foo
+    ONE 1
+    THREE 3
+    TWO 2''')
+
+    @docker
+    def test_applabels_docker(self):
+        """applabels not implemented in Docker"""
+        l = label(metadata={'ONE': 1, 'TWO': 2, 'THREE': 3}, _app='foo')
+        self.assertEqual(str(l), '')

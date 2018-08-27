@@ -35,12 +35,18 @@ class label(object):
         #super(label, self).__init__()
 
         self.__metadata = kwargs.get('metadata', {})
+        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
 
         if self.__metadata:
             if hpccm.config.g_ctype == container_type.DOCKER:
+                if self._app:
+                    logging.warning('The Singularity specific %app.. syntax was'
+                                    'was requested. Docker does not have an '
+                                    'equivalent: ignoring statement!')
+                    return ''
                 # Format:
                 # LABEL K1=V1 \
                 #     K2=V2 \
@@ -62,7 +68,10 @@ class label(object):
                 for key, val in sorted(self.__metadata.items()):
                     keyvals.append('{0} {1}'.format(key, val))
 
-                l = ['%labels']
+                if self._app:
+                    l = ['%applabels {0}'.format(self._app)]
+                else:
+                    l = ['%labels']
                 l.extend(['    {}'.format(x) for x in keyvals])
                 return '\n'.join(l)
             else:

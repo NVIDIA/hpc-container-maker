@@ -35,6 +35,7 @@ class runscript(object):
         #super(wget, self).__init__()
 
         self.commands = kwargs.get('commands', [])
+        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
@@ -64,7 +65,10 @@ class runscript(object):
                 #     cmd1
                 #     cmd2
                 #     exec cmd3
-                s = ['%runscript']
+                if self._app:
+                    s = ['%apprun {0}'.format(self._app)]
+                else:
+                    s = ['%runscript']
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)
             else:
