@@ -91,6 +91,6 @@ class Test_copy(unittest.TestCase):
 
     @docker
     def test_appfiles_docker(self):
-        """appfiles not implemented in Docker"""
+        """app-parameter is ignored in Docker"""
         c = copy(src=['a1', 'a2', 'a3'], dest='b', _app='foo')
-        self.assertEqual(str(c), '')
+        self.assertEqual(str(c), 'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')

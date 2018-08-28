@@ -35,10 +35,10 @@ class copy(object):
 
         #super(copy, self).__init__()
 
+        self._app = kwargs.get('_app', '') # Singularity specific
         self.__dest = kwargs.get('dest', '')
         self.__from = kwargs.get('_from', '') # Docker specific
         self.__src = kwargs.get('src', '')
-        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
@@ -47,8 +47,7 @@ class copy(object):
                 if self._app:
                     logging.warning('The Singularity specific %app.. syntax was'
                                     'was requested. Docker does not have an '
-                                    'equivalent: ignoring statement!')
-                    return ''
+                                    'equivalent: using regular COPY!')
 
                 # Format:
                 # COPY src1 \
