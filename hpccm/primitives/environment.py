@@ -39,9 +39,9 @@ class environment(object):
         # The variables are only set when the container is run.  If
         # this variable is True, then also generate a '%post' section
         # to set the variables for the build context.
+        self._app = kwargs.get('_app', '') # Singularity specific
         self.__export = kwargs.get('_export', True) # Singularity specific
         self.__variables = kwargs.get('variables', {})
-        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
@@ -52,10 +52,10 @@ class environment(object):
 
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
-                    logging.warning('The Singularity specific %app.. syntax was'
+                    logging.warning('The Singularity specific %app.. syntax '
                                     'was requested. Docker does not have an '
-                                    'equivalent: ignoring statement!')
-                    return ''
+                                    'equivalent: using regular ENV!')
+
                 # Format:
                 # ENV K1=V1 \
                 #     K2=V2 \

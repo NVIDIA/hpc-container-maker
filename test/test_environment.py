@@ -104,7 +104,9 @@ class Test_environment(unittest.TestCase):
     @docker
     def test_appenv_docker(self):
         """appenv not implemented in Docker"""
-        cmds = ['a', 'b', 'c']
         e = environment(variables={'ONE': 1, 'TWO': 2, 'THREE': 3},
                         _app='foo')
-        self.assertEqual(str(e), '')
+        self.assertEqual(str(e),
+'''ENV ONE=1 \\
+    THREE=3 \\
+    TWO=2''')

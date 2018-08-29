@@ -45,7 +45,7 @@ class copy(object):
         if self.__dest and self.__src:
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
-                    logging.warning('The Singularity specific %app.. syntax was'
+                    logging.warning('The Singularity specific %app.. syntax '
                                     'was requested. Docker does not have an '
                                     'equivalent: using regular COPY!')
 

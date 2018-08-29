@@ -98,4 +98,13 @@ class Test_shell(unittest.TestCase):
         """appinstall not implemented in Docker"""
         cmds = ['a', 'b', 'c']
         s = shell(commands=cmds, _app='foo')
-        self.assertEqual(str(s), '')
+        self.assertEqual(str(s), 'RUN a && \\\n    b && \\\n    c')
+
+    @singularity
+    def test_appinstall_env_multiple_singularity(self):
+        """Multiple app-specific install commands"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds, _app='foo', _appenv=True)
+        self.assertEqual(str(s), '%appinstall foo\n'
+            '    for f in /.singularity.d/env/*; do . $f; done\n'
+            '    a\n    b\n    c')

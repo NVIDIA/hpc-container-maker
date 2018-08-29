@@ -36,8 +36,8 @@ class runscript(object):
 
         #super(wget, self).__init__()
 
-        self.commands = kwargs.get('commands', [])
         self._app = kwargs.get('_app', '') # Singularity specific
+        self.commands = kwargs.get('commands', [])
 
     def __str__(self):
         """String representation of the primitive"""

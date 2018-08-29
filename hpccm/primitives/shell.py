@@ -34,20 +34,23 @@ class shell(object):
 
         #super(wget, self).__init__()
 
+        self._app = kwargs.get('_app', '') # Singularity specific
+        self._appenv = kwargs.get('_appenv', False) # Singularity specific
         self.chdir = kwargs.get('chdir', True)
         self.commands = kwargs.get('commands', [])
-        self._app = kwargs.get('_app', '') # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
         if self.commands:
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
-                    logging.warning('The Singularity specific %app.. syntax was'
+                    logging.warning('The Singularity specific %app.. syntax '
                                     'was requested. Docker does not have an '
-                                    'equivalent: ignoring statement!')
-                    return ''
+                                    'equivalent: using regular RUN!')
 
+                if self._appenv:
+                    logging.warning('The Singularity specific _appenv argument '
+                                    'was given: ignoring argument!')
                 # Format:
                 # RUN cmd1 && \
                 #     cmd2 && \
@@ -63,12 +66,23 @@ class shell(object):
                 #     cmd3
                 if self._app:
                     s = ['%appinstall {0}'.format(self._app)]
+                    # Do not `cd /` here: Singularity %appinstall is already
+                    # run in its own working directory at /scif/apps/[appname].
+
+                    # %appinstall commands do not run in regular Singularity
+                    # environment. If _appenv=True load environment.
+                    if self._appenv:
+                        s.append('    for f in /.singularity.d/env/*; do . $f; '
+                                 'done')
                 else:
+                    if self._appenv:
+                        logging.warning('The _appenv argument has to be used '
+                                        'together with the _app argument: '
+                                        'ignoring argument!')
                     s = ['%post']
                     # For consistency with Docker. Docker resets the
                     # working directory to '/' at the beginning of each
-                    # 'RUN' instruction. Singularity %appinstall is already
-                    # run in its own working directory.
+                    # 'RUN' instruction.
                     if self.chdir:
                         s.append('    cd /')
 

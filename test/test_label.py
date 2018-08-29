@@ -89,4 +89,7 @@ class Test_label(unittest.TestCase):
     def test_applabels_docker(self):
         """applabels not implemented in Docker"""
         l = label(metadata={'ONE': 1, 'TWO': 2, 'THREE': 3}, _app='foo')
-        self.assertEqual(str(l), '')
+        self.assertEqual(str(l),
+'''LABEL ONE=1 \\
+    THREE=3 \\
+    TWO=2''')
