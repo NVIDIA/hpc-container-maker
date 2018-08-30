@@ -14,11 +14,13 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Label primitive"""
+"""Runscript primitive"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
+import shlex
+from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
 
@@ -26,54 +28,51 @@ import hpccm.config
 
 from hpccm.common import container_type
 
-class label(object):
-    """Label primitive"""
+class runscript(object):
+    """Runscript primitive"""
 
     def __init__(self, **kwargs):
         """Initialize primitive"""
 
-        #super(label, self).__init__()
+        #super(wget, self).__init__()
 
         self._app = kwargs.get('_app', '') # Singularity specific
-        self.__metadata = kwargs.get('metadata', {})
+        self.commands = kwargs.get('commands', [])
 
     def __str__(self):
         """String representation of the primitive"""
-
-        if self.__metadata:
+        if self.commands:
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
-                    logging.warning('The Singularity specific %app.. syntax '
-                                    'was requested. Docker does not have an '
-                                    'equivalent: using regular LABEL!')
+                    logging.warning('The Singularity specific %app.. syntax was '
+                                    'requested. Docker does not have an '
+                                    'equivalent: using regular ENTRYPOINT!')
 
+                if len(self.commands) > 1:
+                    logging.warning('Multiple commands given to runscript. '
+                                    'Docker ENTRYPOINT supports just one cmd: '
+                                    'ignoring remaining commands!')
                 # Format:
-                # LABEL K1=V1 \
-                #     K2=V2 \
-                #     K3=V3
-                keyvals = []
-                for key, val in sorted(self.__metadata.items()):
-                    keyvals.append('{0}={1}'.format(key, val))
+                # ENTRYPOINT ["cmd1", "arg1", "arg2", ...]
+                s = []
+                s.extend('"{}"'.format(shlex_quote(x))
+                    for x in shlex.split(self.commands[0]))
+                return 'ENTRYPOINT [' + ', '.join(s) + ']'
 
-                l = ['LABEL {}'.format(keyvals[0])]
-                l.extend(['    {}'.format(x) for x in keyvals[1:]])
-                return ' \\\n'.join(l)
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
+                # prepend last command with exec
+                self.commands[-1] = 'exec {0}'.format(self.commands[-1])
                 # Format:
-                # %labels
-                #     K1 V1
-                #     K2 V2
-                #     K3 V3
-                keyvals = []
-                for key, val in sorted(self.__metadata.items()):
-                    keyvals.append('{0} {1}'.format(key, val))
-
+                # %runscript
+                #     cmd1
+                #     cmd2
+                #     exec cmd3
                 if self._app:
-                    l = ['%applabels {0}'.format(self._app)]
+                    s = ['%apprun {0}'.format(self._app)]
                 else:
-                    l = ['%labels']
-                l.extend(['    {}'.format(x) for x in keyvals])
-                return '\n'.join(l)
+                    s = ['%runscript']
+                s.extend(['    {}'.format(x) for x in self.commands])
+                return '\n'.join(s)
             else:
                 raise RuntimeError('Unknown container type')
         else:

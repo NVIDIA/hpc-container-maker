@@ -81,3 +81,16 @@ class Test_copy(unittest.TestCase):
         """Docker --from syntax"""
         c = copy(src='a', dest='b', _from='dev')
         self.assertEqual(str(c), '%files\n    a b')
+
+    @singularity
+    def test_appfiles_multiple_singularity(self):
+        """Multiple app-specific source files specified"""
+        c = copy(src=['a1', 'a2', 'a3'], dest='b', _app='foo')
+        self.assertEqual(str(c),
+                         '%appfiles foo\n    a1 b\n    a2 b\n    a3 b')
+
+    @docker
+    def test_appfiles_docker(self):
+        """app-parameter is ignored in Docker"""
+        c = copy(src=['a1', 'a2', 'a3'], dest='b', _app='foo')
+        self.assertEqual(str(c), 'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')

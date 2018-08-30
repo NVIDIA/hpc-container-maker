@@ -39,6 +39,7 @@ class environment(object):
         # The variables are only set when the container is run.  If
         # this variable is True, then also generate a '%post' section
         # to set the variables for the build context.
+        self._app = kwargs.get('_app', '') # Singularity specific
         self.__export = kwargs.get('_export', True) # Singularity specific
         self.__variables = kwargs.get('variables', {})
 
@@ -50,6 +51,11 @@ class environment(object):
                 keyvals.append('{0}={1}'.format(key, val))
 
             if hpccm.config.g_ctype == container_type.DOCKER:
+                if self._app:
+                    logging.warning('The Singularity specific %app.. syntax '
+                                    'was requested. Docker does not have an '
+                                    'equivalent: using regular ENV!')
+
                 # Format:
                 # ENV K1=V1 \
                 #     K2=V2 \
@@ -59,7 +65,7 @@ class environment(object):
                 return ' \\\n'.join(environ)
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 # Format:
-                # %environment
+                # %environment [OR %appenv app_name]
                 #     export K1=V1
                 #     export K2=V2
                 #     export K3=V3
@@ -67,10 +73,13 @@ class environment(object):
                 #     export K1=V1
                 #     export K2=V2
                 #     export K3=V3
-                environ = ['%environment']
+                if self._app:
+                    environ = ['%appenv {0}'.format(self._app)]
+                else:
+                    environ = ['%environment']
                 environ.extend(['    export {}'.format(x) for x in keyvals])
 
-                if self.__export:
+                if self.__export and not self._app:
                     environ.extend(['%post'])
                     environ.extend(['    export {}'.format(x)
                                     for x in keyvals])
