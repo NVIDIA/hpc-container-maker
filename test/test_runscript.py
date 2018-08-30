@@ -84,4 +84,5 @@ class Test_runscript(unittest.TestCase):
         """apprun not implemented in Docker"""
         cmds = ['a', 'b', 'c']
         s = runscript(commands=cmds, _app='foo')
-        self.assertEqual(str(s), '')
+        self.assertEqual(str(s), 'ENTRYPOINT ["a"]')
+

@@ -44,10 +44,10 @@ class runscript(object):
         if self.commands:
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
-                    logging.warning('The Singularity specific %app.. syntax was'
+                    logging.warning('The Singularity specific %app.. syntax was '
                                     'requested. Docker does not have an '
-                                    'equivalent: ignoring statement!')
-                    return ''
+                                    'equivalent: using regular ENTRYPOINT!')
+
                 if len(self.commands) > 1:
                     logging.warning('Multiple commands given to runscript. '
                                     'Docker ENTRYPOINT supports just one cmd: '
