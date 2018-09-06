@@ -171,6 +171,7 @@ RUN apt-get update -y && \
         bzip2 \
         file \
         hwloc \
+        libnuma-dev \
         make \
         openssh-client \
         perl \
