@@ -43,6 +43,7 @@ RUN apt-get update -y && \
         bzip2 \
         file \
         hwloc \
+        libnuma-dev \
         make \
         openssh-client \
         perl \
@@ -70,6 +71,7 @@ RUN yum install -y \
         file \
         hwloc \
         make \
+        numactl-devel \
         openssh-clients \
         perl \
         tar \
@@ -96,6 +98,7 @@ RUN apt-get update -y && \
         bzip2 \
         file \
         hwloc \
+        libnuma-dev \
         make \
         openssh-client \
         perl \
