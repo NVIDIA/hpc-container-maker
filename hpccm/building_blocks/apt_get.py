@@ -38,6 +38,7 @@ class apt_get(object):
         self.__commands = []
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
+        self.__ppas = kwargs.get('ppas', [])
         self.__repositories = kwargs.get('repositories', [])
 
         if hpccm.config.g_linux_distro != linux_distro.UBUNTU: # pragma: no cover
@@ -58,6 +59,13 @@ class apt_get(object):
             for key in self.__keys:
                 self.__commands.append(
                     'wget -qO - {} | apt-key add -'.format(key))
+
+        if self.__ppas:
+            # Need to install apt-add-repository
+            self.__commands.extend(['apt-get update -y',
+                                    'apt-get install -y --no-install-recommends software-properties-common'])
+            for ppa in self.__ppas:
+                self.__commands.append('apt-add-repository {} -y'.format(ppa))
 
         if self.__repositories:
             for repo in self.__repositories:

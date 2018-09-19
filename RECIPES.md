@@ -211,6 +211,9 @@ Parameters:
 - `ospackages`: A list of packages to install.  The default is an
   empty list.
 
+- `ppas`: A list of personal package archives to add.  The default is
+  an empty list.
+
 - 'repositories`: A list of apt repositories to add.  The default is
   an empty list.
 
@@ -472,8 +475,24 @@ Parameters:
 - `cxx`: Boolean flag to specify whether to install `g++`.  The
   default is True.
 
+- `extra_repository`: Boolean flag to specify whether to enable an
+  extra package repository containing addition GNU compiler packages.
+  For Ubuntu, setting this flag to True enables the
+  `ppa:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
+  distributions, setting this flag to True enables the Software
+  Collections (SCL) repository.  The default is False.
+
 - `fortran`: Boolean flag to specify whether to install `gfortran`.
   The default is True.
+
+- `version`: The version of the GNU compilers to install.  Note that
+  the version refers to the Linux distribution packaging, not the
+  actual compiler version.  For Ubuntu, the version is appended to the
+  default package name, e.g., `gcc-7`.  For RHEL-based Linux
+  distributions, the version is inserted into the SCL Developer
+  Toolset package name, e.g., `devtoolset-7-gcc`.  For RHEL-based
+  Linux distributions, specifying the version automatically sets
+  `extra_repository` to True.  The default is an empty value.
 
 Methods:
 
@@ -495,6 +514,10 @@ Stage1 += g.runtime()
 
 ```python
 gnu(fortran=False)
+```
+
+```python
+gnu(extra_repository=True, version='7')
 ```
 
 ### hdf5
@@ -1230,6 +1253,9 @@ Parameters:
 - `apt_keys`: A list of GPG keys to add.  The default is an empty
   list.
 
+- `apt_ppas`: A list of personal package archives to add.  The default
+  is an empty list.
+
 - `apt_repositories`: A list of apt repositories to add.  The default
   is an empty list.
 
@@ -1243,6 +1269,10 @@ Parameters:
    packages with the consistent names across Linux distributions
    should be specified.  This parameter is ignored if `apt` or `yum`
    is specified.  The default value is an empty list.
+
+- `_scl`: - Boolean flag to specify whether to enable the Software
+  Collections (SCL) repository.  The default is False.  This parameter
+  is ignored if the Linux distribution is not RHEL-based.
 
 - `yum`: A list of RPM packages to install.  The default value is an
   empty list.
@@ -1459,6 +1489,10 @@ used instead of `yum`.
 
 Parameters:
 
+- `epel`: - Boolean flag to specify whether to enable the Extra
+  Packages for Enterprise Linux (EPEL) repository.  The default is
+  False.
+
 - `keys`: A list of GPG keys to import.  The default is an empty list.
 
 - `ospackages`: A list of packages to install.  The default is an
@@ -1466,6 +1500,9 @@ Parameters:
 
 - `repositories`: A list of yum repositories to add.  The default is
   an empty list.
+
+- `scl`: - Boolean flag to specify whether to enable the Software
+  Collections (SCL) repository.  The default is False.
 
 Example:
 
