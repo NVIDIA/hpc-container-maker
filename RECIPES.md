@@ -738,7 +738,7 @@ Parameters:
   actual compiler version.  For Ubuntu, the version is appended to the
   default package name, e.g., `clang-6.0`.  For RHEL-based Linux
   distributions, the version is inserted into the SCL Developer
-  Toolset package name, e.g., `llvm-toolset-6-clang`.  For RHEL-based
+  Toolset package name, e.g., `llvm-toolset-7-clang`.  For RHEL-based
   Linux distributions, specifying the version automatically sets
   `extra_repository` to True.  The default is an empty value.
 
@@ -761,7 +761,7 @@ Stage1 += l.runtime()
 ```
 
 ```python
-llvm(extra_repository=True, version='6')
+llvm(extra_repository=True, version='7')
 ```
 
 ### mkl
