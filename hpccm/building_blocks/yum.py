@@ -40,6 +40,7 @@ class yum(object):
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
         self.__repositories = kwargs.get('repositories', [])
+        self.__scl = kwargs.get('scl', False)
 
         if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
             logging.warning('Using yum on a non-RHEL based Linux distribution')
@@ -68,6 +69,11 @@ class yum(object):
             # This needs to be a discrete, preliminary step so that
             # packages from EPEL are available to be installed.
             self.__commands.append('yum install -y epel-release')
+
+        if self.__scl:
+            # This needs to be a discrete, preliminary step so that
+            # packages from SCL are available to be installed.
+            self.__commands.append('yum install -y centos-release-scl')
 
         if self.ospackages:
             install = 'yum install -y \\\n'

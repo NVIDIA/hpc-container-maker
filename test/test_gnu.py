@@ -60,6 +60,41 @@ RUN yum install -y \
 
     @ubuntu
     @docker
+    def test_version_ubuntu(self):
+        """GNU compiler version"""
+        g = gnu(extra_repository=True, version='7')
+        self.assertEqual(str(g),
+r'''# GNU compiler
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test -y && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        gcc-7 \
+        g++-7 \
+        gfortran-7 && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-7) 30 && \
+    update-alternatives --install /usr/bin/g++ g++ $(which g++-7) 30 && \
+    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-7) 30''')
+
+    @centos
+    @docker
+    def test_version_centos(self):
+        """GNU compiler version"""
+        g = gnu(extra_repository=True, version='7')
+        self.assertEqual(str(g),
+r'''# GNU compiler
+RUN yum install -y centos-release-scl && \
+    yum install -y \
+        devtoolset-7-gcc \
+        devtoolset-7-gcc-c++ \
+        devtoolset-7-gcc-gfortran && \
+    rm -rf /var/cache/yum/*
+ENV PATH=/opt/rh/devtoolset-7/root/usr/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         g = gnu()
