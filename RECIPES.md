@@ -709,6 +709,61 @@ Stage0 += psxe
 Stage1 += psxe.runtime()
 ```
 
+### llvm
+
+The `llvm` building block installs the LLVM compilers (clang and
+clang++) from the upstream Linux distribution.
+
+As a side effect, a toolchain is created containing the LLVM
+compilers.  A toolchain can be passed to other operations that want to
+build using the LLVM compilers.
+
+```python
+l = llvm()
+
+operation(..., toolchain=l.toolchain, ...)
+```
+
+Parameters:
+
+- `extra_repository`: Boolean flag to specify whether to enable an
+  extra package repository containing addition LLVM compiler packages.
+  For Ubuntu, setting this flag to True enables the
+  `ppa:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
+  distributions, setting this flag to True enables the Software
+  Collections (SCL) repository.  The default is False.
+
+- `version`: The version of the LLVM compilers to install.  Note that
+  the version refers to the Linux distribution packaging, not the
+  actual compiler version.  For Ubuntu, the version is appended to the
+  default package name, e.g., `clang-6.0`.  For RHEL-based Linux
+  distributions, the version is inserted into the SCL Developer
+  Toolset package name, e.g., `llvm-toolset-7-clang`.  For RHEL-based
+  Linux distributions, specifying the version automatically sets
+  `extra_repository` to True.  The default is an empty value.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples
+
+```python
+llvm()
+```
+
+```python
+l = llvm()
+Stage0 += l
+...
+Stage1 += l.runtime()
+```
+
+```python
+llvm(extra_repository=True, version='7')
+```
+
 ### mkl
 
 The `mkl` building block downloads and installs the [Intel Math Kernel
