@@ -1,3 +1,11 @@
+# v18.9.0
+
+- Adds LLVM (`llvm`) building block.
+- New parameters in the GNU (`gnu`) building block
+- Adds support for the  Scientific Filesystem (SCIF) for Singularity recipe
+  files
+- Resolves an issue with OpenMPI process affinity
+
 # v18.8.0
 
 - Adds Boost (`boost`), CGNS (`cgns`), Intel MPI (`intel_mpi`), and
