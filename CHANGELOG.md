@@ -1,6 +1,6 @@
 # v18.9.0
 
-- Adds LLVM (`llvm`) building block.
+- Adds LLVM (`llvm`) building block
 - New parameters in the GNU (`gnu`) building block
 - Adds support for the  Scientific Filesystem (SCIF) for Singularity recipe
   files
