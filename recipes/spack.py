@@ -37,7 +37,8 @@ Stage0 += shell(commands=[
     '/opt/spack/bin/spack bootstrap',
     'ln -s /opt/spack/share/spack/setup-env.sh /etc/profile.d/spack.sh',
     'ln -s /opt/spack/share/spack/spack-completion.bash /etc/profile.d'])
-Stage0 += environment(variables={'PATH': '/opt/spack/bin:$PATH'})
+Stage0 += environment(variables={'PATH': '/opt/spack/bin:$PATH',
+                                 'FORCE_UNSAFE_CONFIGURE': '1'})
 
 spack_package = USERARG.get('package', None)
 if spack_package:
