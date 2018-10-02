@@ -62,5 +62,5 @@ class Test_tar(unittest.TestCase):
         """Argument given"""
         t = tar()
         self.assertEqual(t.untar_step(tarball="foo.tar.gz",
-                                      args="--strip-components=1"),
+                                      args=["--strip-components=1"]),
                          'tar -x -f foo.tar.gz -z --strip-components=1')

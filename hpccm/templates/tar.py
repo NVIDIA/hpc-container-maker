@@ -54,7 +54,7 @@ class tar(object):
             logging.warning('File type not recognized, trying anyway...')
 
         if args:
-            opts.append(args)
+            opts.extend(args)
 
         if directory:
             return 'mkdir -p {0} && tar {1}'.format(directory, ' '.join(opts))
