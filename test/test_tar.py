@@ -57,3 +57,10 @@ class Test_tar(unittest.TestCase):
         t = tar()
         self.assertEqual(t.untar_step(tarball='foo.tgz', directory='bar'),
                          'mkdir -p bar && tar -x -f foo.tgz -C bar -z')
+
+    def test_args(self):
+        """Argument given"""
+        t = tar()
+        self.assertEqual(t.untar_step(tarball="foo.tar.gz",
+                                      args=["--strip-components=1"]),
+                         'tar -x -f foo.tar.gz -z --strip-components=1')

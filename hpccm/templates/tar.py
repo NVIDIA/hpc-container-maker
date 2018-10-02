@@ -31,7 +31,7 @@ class tar(object):
 
         #super(tar, self).__init__()
 
-    def untar_step(self, tarball=None, directory=None):
+    def untar_step(self, tarball=None, directory=None, args=None):
         """Documentation TBD"""
 
         if not tarball:
@@ -52,6 +52,9 @@ class tar(object):
             pass
         else:
             logging.warning('File type not recognized, trying anyway...')
+
+        if args:
+            opts.extend(args)
 
         if directory:
             return 'mkdir -p {0} && tar {1}'.format(directory, ' '.join(opts))
