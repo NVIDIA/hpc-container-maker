@@ -254,7 +254,7 @@ ENV CC=/opt/pgi/linux86-64/18.4/bin/pgcc \
 
     @ubuntu
     @docker
-    def test_runtime(self):
+    def test_runtime_ubuntu(self):
         """Runtime"""
         p = pgi()
         r = p.runtime()
@@ -265,7 +265,21 @@ RUN apt-get update -y && \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/pgi/linux86-64/18.4/REDIST/*.so /opt/pgi/linux86-64/18.4/lib/
-RUN ln -s /opt/pgi/linux86-64/18.4/lib/libpgnuma.so /opt/pgi/linux86-64/18.4/lib/libnuma.so
+RUN ln -s /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH''')
+
+    @centos
+    @docker
+    def test_runtime_centos(self):
+        """Runtime"""
+        p = pgi()
+        r = p.runtime()
+        self.assertEqual(r,
+r'''# PGI compiler
+RUN yum install -y \
+        numactl-libs && \
+    rm -rf /var/cache/yum/*
+COPY --from=0 /opt/pgi/linux86-64/18.4/REDIST/*.so /opt/pgi/linux86-64/18.4/lib/
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH''')
 
     def test_toolchain(self):

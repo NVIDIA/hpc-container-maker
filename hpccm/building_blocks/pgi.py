@@ -51,6 +51,7 @@ class pgi(rm, tar, wget):
         wget.__init__(self, **kwargs)
 
         self.__commands = [] # Filled in by __setup()
+        self.__runtime_commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the PGI End-User
         # License Agreement (https://www.pgroup.com/doc/LICENSE.txt)
@@ -120,7 +121,7 @@ class pgi(rm, tar, wget):
             if not self.__ospackages:
                 self.__ospackages = ['numactl-libs']
         else:
-            raise RuntimeError('Unknown Linux disribution')
+            raise RuntimeError('Unknown Linux distribution')
 
     def __environment(self, runtime=False):
         """Define environment variables"""
@@ -238,6 +239,16 @@ class pgi(rm, tar, wget):
             items=[os.path.join(self.__wd, tarball),
                    os.path.join(self.__wd, 'pgi')]))
 
+        # Runtime workaround for libnuma issue impacting version 18.4
+        # on Ubuntu
+        if (self.__version == '18.4' and
+            hpccm.config.g_linux_distro == linux_distro.UBUNTU):
+            self.__runtime_commands.append('ln -s {0} {1}'.format(
+                '/usr/lib/x86_64-linux-gnu/libnuma.so.1',
+                os.path.join(self.__basepath, self.__version, 'lib',
+                             'libnuma.so')))
+
+
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
@@ -251,12 +262,9 @@ class pgi(rm, tar, wget):
                                  dest=os.path.join(self.__basepath,
                                                    self.__version,
                                                    'lib', '')))
-        instructions.append(shell(
-            commands=['ln -s {0} {1}'.format(
-                os.path.join(self.__basepath, self.__version, 'lib',
-                             'libpgnuma.so'),
-                os.path.join(self.__basepath, self.__version, 'lib',
-                             'libnuma.so'))]))
+        if self.__runtime_commands:
+            instructions.append(shell(commands=self.__runtime_commands))
+
         instructions.append(environment(
             variables=self.__environment(runtime=True)))
         return '\n'.join(str(x) for x in instructions)
