@@ -37,7 +37,7 @@ Stage0 += shell(commands=[
 Stage0 += shell(commands=['useradd -m easybuild',
                           'mkdir -p /opt/easybuild',
                           'chown easybuild:easybuild /opt/easybuild',
-                          'easy_install easybuild'])
+                          'easy_install easybuild==3.6.2'])
 
 Stage0 += environment(variables={'MODULEPATH': '/opt/easybuild/modules/all:/home/easybuild/.local/easybuild/modules/all:$MODULEPATH'})
 
