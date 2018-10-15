@@ -25,7 +25,10 @@ import logging # pylint: disable=unused-import
 import re
 import os
 
+import hpccm.config
+
 from hpccm.building_blocks.packages import packages
+from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -48,11 +51,13 @@ class boost(rm, tar, wget):
         wget.__init__(self, **kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
-                                    'https://dl.bintray.com/boostorg/release')
+                                    'https://dl.bintray.com/boostorg/release/__version__/source')
         self.__bootstrap_opts = kwargs.get('bootstrap_opts', [])
-        self.__ospackages = kwargs.get('ospackages', ['bzip2', 'tar', 'wget'])
+        self.__ospackages = kwargs.get('ospackages', [])
         self.__parallel = kwargs.get('parallel', 4)
         self.__prefix = kwargs.get('prefix', '/usr/local/boost')
+        self.__python = kwargs.get('python', False)
+        self.__sourceforge = kwargs.get('sourceforge', False)
         self.__version = kwargs.get('version', '1.67.0')
 
         self.__commands = [] # Filled in by __setup()
@@ -60,6 +65,12 @@ class boost(rm, tar, wget):
             'LD_LIBRARY_PATH':
             '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
+
+        if self.__sourceforge:
+            self.__baseurl = 'https://sourceforge.net/projects/boost/files/boost/__version__'
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -76,6 +87,21 @@ class boost(rm, tar, wget):
             variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)
 
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'libbz2-dev', 'tar', 'wget',
+                                     'zlib1g-dev']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['bzip2', 'bzip2-devel', 'tar', 'wget',
+                                     'which', 'zlib-devel']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
@@ -90,8 +116,15 @@ class boost(rm, tar, wget):
                                             match.groupdict()['revision'])
 
         tarball = 'boost_{}.tar.bz2'.format(v_underscore)
-        url = '{0}/{1}/source/{2}'.format(self.__baseurl, self.__version,
-                                          tarball)
+        url = '{0}/{1}'.format(self.__baseurl, tarball)
+        url = url.replace('__version__', self.__version)
+
+        # Python support requires pyconfig.h which is not part of the
+        # standard Python install.  It requires the development
+        # package, python-dev or python-devel.  So skip Python unless
+        # it's specifically enabled.
+        if not self.__python:
+            self.__bootstrap_opts.append('--without-libraries=python')
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,
@@ -107,7 +140,7 @@ class boost(rm, tar, wget):
                 ' '.join(self.__bootstrap_opts)))
 
         # Build and install
-        self.__commands.append('./b2 -j{} install'.format(self.__parallel))
+        self.__commands.append('./b2 -j{} -q install'.format(self.__parallel))
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(

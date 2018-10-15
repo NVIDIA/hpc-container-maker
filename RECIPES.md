@@ -236,11 +236,24 @@ Parameters:
 - `bootstrap_opts`: List of options to pass to `bootstrap.sh`.  The
   default is an empty list.
 
-- `ospackages`: List of OS packages to install prior to building.  The
-  default values are `bzip2`, `tar`, and `wget`.
+- `ospackages`: List of OS packages to install prior to building.  For
+  Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`, `wget`,
+  and `zlib1g-dev`.  For RHEL-based Linux distributions the default
+  values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`, and
+  `zlib-devel`.
 
 - `prefix`: The top level installation locaation.  The default value
   is `/usr/local/boost`.
+
+- `python`: Boolean flag to specify whether Boost should be built with
+  Python support.  If enabled, the Python C headers need to be
+  installed (typically this can be done by adding `python-dev` or
+  `python-devel` to the list of OS packages).  The default is False.
+
+- `sourceforge`: Boolean flag to specify whether Boost should be
+  downloaded from SourceForge rather than the current Boost
+  repository.  For versions of Boost older than 1.63.0, the
+  SourceForge repository should be used.  The default is False.
 
 - `version`: The version of Boost source to download.  The default
   value is `1.67.0`.
@@ -254,6 +267,10 @@ Examples:
 
 ```python
 boost(prefix='/opt/boost/1.67.0', version='1.67.0')
+```
+
+```python
+boost(sourceforge=True, version='1.57.0')
 ```
 
 ```python
