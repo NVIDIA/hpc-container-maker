@@ -20,12 +20,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
+import logging  # pylint: disable=unused-import
 import os
 
 import hpccm.config
 
 from hpccm.common import container_type
+
 
 class copy(object):
     """Copy primitive"""
@@ -35,9 +36,11 @@ class copy(object):
 
         #super(copy, self).__init__()
 
-        self._app = kwargs.get('_app', '') # Singularity specific
+        self._app = kwargs.get('_app', '')  # Singularity specific
         self.__dest = kwargs.get('dest', '')
-        self.__from = kwargs.get('_from', '') # Docker specific
+        self.__from = kwargs.get('_from', '')  # Docker specific
+        self._mkdir = kwargs.get('_mkdir', '')  # Singularity specific
+        self._post = kwargs.get('_post', '')  # Singularity specific
         self.__src = kwargs.get('src', '')
 
     def __str__(self):
@@ -81,6 +84,15 @@ class copy(object):
                                     'not have an equivalent, so this is '
                                     'probably not going to do what you want.')
 
+                if self._mkdir and self._post:
+                    logging.error('_mkdir and _post are mutually exclusive!')
+
+                if self._app and (self._mkdir or self._post):
+                    logging.error('_app cannot be used with _mkdir or _post!')
+
+                if self._post and isinstance(self.__src, list):
+                    logging.error('_post cannot be used with multiple files!')
+
                 # Note: if the source is a file and the destination
                 # path does not already exist in the container, this
                 # will likely error.  Probably need a '%setup' step to
@@ -89,13 +101,29 @@ class copy(object):
                 if self._app:
                     files_directive = '%appfiles {0}'.format(self._app)
                 if isinstance(self.__src, list):
-                    return '{0}\n'.format(files_directive) + '\n'.join(
+                    multiple_files_str = '{0}\n'.format(files_directive) + '\n'.join(
                         ['    {0} {1}'.format(x, self.__dest)
                          for x in self.__src])
+                    if self._mkdir:
+                        return '%setup\n    mkdir -p ${{SINGULARITY_ROOTFS}}{0}\n{1}'.format(
+                            self.__dest, multiple_files_str)
+                    return multiple_files_str
                 else:
-                    return '{0}\n    {1} {2}'.format(files_directive,
-                                                     self.__src,
-                                                     self.__dest)
+                    single_file_str = '{0}\n    {1} {2}'.format(files_directive,
+                                                                self.__src,
+                                                                self.__dest)
+                    if self._post:
+                        basename = os.path.basename(self.__src)
+                        return '%files\n    {0} /\n%post\n    mv /{1} {2}'.format(
+                            self.__src,
+                            basename,
+                            self.__dest)
+                    elif self._mkdir:
+                        dirname = os.path.dirname(self.__dest)
+                        return '%setup\n    mkdir -p ${{SINGULARITY_ROOTFS}}{0}\n{1}'.format(
+                            dirname, single_file_str)
+                    else:
+                        return single_file_str
             else:
                 raise RuntimeError('Unknown container type')
         else:

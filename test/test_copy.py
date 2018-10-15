@@ -94,3 +94,28 @@ class Test_copy(unittest.TestCase):
         """app-parameter is ignored in Docker"""
         c = copy(src=['a1', 'a2', 'a3'], dest='b', _app='foo')
         self.assertEqual(str(c), 'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')
+
+    @singularity
+    def test_post_file_singularity(self):
+        """Move file during post"""
+        c = copy(src='a', dest='/opt/a', _post=True)
+        self.assertEqual(str(c),
+                         '%files\n    a /\n%post\n    mv /a /opt/a')
+
+        c = copy(src='a', dest='/opt/', _post=True)
+        self.assertEqual(str(c),
+                         '%files\n    a /\n%post\n    mv /a /opt/')
+
+    @singularity
+    def test_mkdir_file_singularity(self):
+        """mkdir folder with setup, single file"""
+        c = copy(src='a', dest='/opt/foo/a', _mkdir=True)
+        self.assertEqual(str(c),
+                         '%setup\n    mkdir -p ${SINGULARITY_ROOTFS}/opt/foo\n%files\n    a /opt/foo/a')
+
+    @singularity
+    def test_mkdir_files_singularity(self):
+        """mkdir folder with setup, multiple files"""
+        c = copy(src=['a', 'b'], dest='/opt/foo', _mkdir=True)
+        self.assertEqual(str(c),
+                         '%setup\n    mkdir -p ${SINGULARITY_ROOTFS}/opt/foo\n%files\n    a /opt/foo\n    b /opt/foo')
