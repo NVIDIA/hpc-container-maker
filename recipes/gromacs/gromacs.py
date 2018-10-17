@@ -11,6 +11,7 @@ Contents:
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 # pylama: ignore=E0602
 import os
+from hpccm.templates.CMakeBuild import CMakeBuild
 from hpccm.templates.git import git
 
 gromacs_version = USERARG.get('GROMACS_VERSION', '2018.2')
@@ -34,27 +35,27 @@ ompi = openmpi(configure_opts=['--enable-mpi-cxx'], parallel=32,
                prefix="/opt/openmpi", version='3.0.0')
 Stage0 += ompi
 
-build_cmds = ['mkdir -p /gromacs/install',
-              'mkdir -p /gromacs/builds',
-              'cd /gromacs/builds',
-              git().clone_step(
+cm = CMakeBuild()
+build_cmds = [git().clone_step(
                   repository='https://github.com/gromacs/gromacs',
                   branch='v' + gromacs_version, path='/gromacs',
                   directory='src'),
-              ('CC=gcc CXX=g++ cmake /gromacs/src ' +
-               '-DCMAKE_BUILD_TYPE=Release ' +
-               '-DCMAKE_INSTALL_PREFIX=/gromacs/install ' +
-               '-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda ' +
-               '-DGMX_BUILD_OWN_FFTW=ON ' +
-               '-DGMX_GPU=ON ' +
-               '-DGMX_MPI=OFF ' +
-               '-DGMX_OPENMP=ON ' +
-               '-DGMX_PREFER_STATIC_LIBS=ON ' +
-               '-DMPIEXEC_PREFLAGS=--allow-run-as-root ' +
-               '-DREGRESSIONTEST_DOWNLOAD=ON'),
-              'make -j',
-              'make install',
-              'make check']
+              cm.configure_step(directory='/gromacs/src',
+                                build_directory='/gromacs/build',
+                                opts=[
+                                  '-DCMAKE_BUILD_TYPE=Release',
+                                  '-DCMAKE_INSTALL_PREFIX=/gromacs/install',
+                                  '-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                                  '-DGMX_BUILD_OWN_FFTW=ON',
+                                  '-DGMX_GPU=ON',
+                                  '-DGMX_MPI=OFF',
+                                  '-DGMX_OPENMP=ON',
+                                  '-DGMX_PREFER_STATIC_LIBS=ON',
+                                  '-DMPIEXEC_PREFLAGS=--allow-run-as-root',
+                                  '-DREGRESSIONTEST_DOWNLOAD=ON']),
+              cm.build_step(),
+              cm.build_step(target='install'),
+              cm.build_step(target='check')]
 Stage0 += shell(commands=build_cmds)
 
 ######
