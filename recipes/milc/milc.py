@@ -16,6 +16,7 @@ from hpccm.templates.git import git
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
+from hpccm.templates.CMakeBuild import CMakeBuild
 
 gpu_arch = USERARG.get('GPU_ARCH', 'sm_60')
 
@@ -40,26 +41,26 @@ Stage0 += ompi
 
 # build QUDA
 g = git()
-quda_cmds = ['mkdir -p /quda/build',
-             'cd /quda/build',
-             g.clone_step(repository='https://github.com/lattice/quda',
+cm = CMakeBuild()
+quda_cmds = [g.clone_step(repository='https://github.com/lattice/quda',
                           branch='v0.8.0', path='/quda', directory='src'),
-             'cmake ../src ' +
-             '-DCMAKE_BUILD_TYPE=RELEASE ' +
-             '-DQUDA_DIRAC_CLOVER=ON ' +
-             '-DQUDA_DIRAC_DOMAIN_WALL=ON ' +
-             '-DQUDA_DIRAC_STAGGERED=ON ' +
-             '-DQUDA_DIRAC_TWISTED_CLOVER=ON ' +
-             '-DQUDA_DIRAC_TWISTED_MASS=ON ' +
-             '-DQUDA_DIRAC_WILSON=ON ' +
-             '-DQUDA_FORCE_GAUGE=ON  ' +
-             '-DQUDA_FORCE_HISQ=ON ' +
-             '-DQUDA_GPU_ARCH={} '.format(gpu_arch) +
-             '-DQUDA_INTERFACE_MILC=ON ' +
-             '-DQUDA_INTERFACE_QDP=ON ' +
-             '-DQUDA_LINK_HISQ=ON ' +
-             '-DQUDA_MPI=ON',
-             'make -j32']
+             cm.configure_step(directory='/quda/src',
+                               build_directory='/quda/build', opts=[
+                                   '-DCMAKE_BUILD_TYPE=RELEASE',
+                                   '-DQUDA_DIRAC_CLOVER=ON',
+                                   '-DQUDA_DIRAC_DOMAIN_WALL=ON',
+                                   '-DQUDA_DIRAC_STAGGERED=ON',
+                                   '-DQUDA_DIRAC_TWISTED_CLOVER=ON',
+                                   '-DQUDA_DIRAC_TWISTED_MASS=ON',
+                                   '-DQUDA_DIRAC_WILSON=ON',
+                                   '-DQUDA_FORCE_GAUGE=ON',
+                                   '-DQUDA_FORCE_HISQ=ON',
+                                   '-DQUDA_GPU_ARCH={}'.format(gpu_arch),
+                                   '-DQUDA_INTERFACE_MILC=ON',
+                                   '-DQUDA_INTERFACE_QDP=ON',
+                                   '-DQUDA_LINK_HISQ=ON',
+                                   '-DQUDA_MPI=ON']),
+             cm.build_step(parallel=32)]
 Stage0 += shell(commands=quda_cmds)
 
 # build MILC
