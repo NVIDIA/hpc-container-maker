@@ -169,6 +169,9 @@ class mvapich2(ConfigureMake, rm, sed, tar, wget):
                     toolchain.LD_LIBRARY_PATH = os.path.join(cuda_home,
                                                              'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
             else:
+                if not toolchain.LD_LIBRARY_PATH:
+                    toolchain.LD_LIBRARY_PATH = os.path.join(cuda_home,
+                                                             'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
                 self.configure_opts.append(
                     '--enable-cuda --with-cuda={}'.format(cuda_home))
 
