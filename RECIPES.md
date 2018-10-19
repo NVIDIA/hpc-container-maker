@@ -919,7 +919,7 @@ Parameters:
 
 - `ospackages`: List of OS packages to install prior to configuring
   and building.  For Ubuntu, the default values are `byacc`, `file`,
-  `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+  `make`, `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
   the default values are `byacc`, `file`, `make`, `openssh-clients`,
   and `wget`.
 
