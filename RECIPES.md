@@ -618,7 +618,7 @@ Parameters:
   subsequent container image build steps; the environment is available
   when the container image is run.  To set the Intel MPI environment
   in subsequent build steps you can explicitly call `source
-  /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh
+  /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh
   intel64` in each build step.  If this value is to set `False`, then
   the environment is set such that the environment is visible to both
   subsequent container image build steps and when the container image

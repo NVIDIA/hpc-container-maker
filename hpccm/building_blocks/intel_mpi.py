@@ -86,7 +86,7 @@ class intel_mpi(wget):
             # Source the mpivars environment script when starting the
             # container, but the variables not be available for any
             # subsequent build steps.
-            instructions.append(shell(commands=['echo "source /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh intel64" >> {}'.format(self.__bashrc)]))
+            instructions.append(shell(commands=['echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> {}'.format(self.__bashrc)]))
         else:
             # Set the environment so that it will be available to
             # subsequent build steps and when starting the container,
@@ -94,8 +94,8 @@ class intel_mpi(wget):
             # environment script.
             instructions.append(environment(variables={
                 'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
-                'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/lib64:$LD_LIBRARY_PATH',
-                'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/bin64:$PATH'}))
+                'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH',
+                'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'}))
 
         return '\n'.join(str(x) for x in instructions)
 
