@@ -40,6 +40,7 @@ class Test_hdf5(unittest.TestCase):
 r'''# HDF5 version 1.10.1
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        bzip2 \
         file \
         make \
         wget \
@@ -105,6 +106,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
 r'''# HDF5
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        bzip2 \
         file \
         make \
         wget \

@@ -110,7 +110,8 @@ class hdf5(ConfigureMake, rm, tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['file', 'make', 'wget', 'zlib1g-dev']
+                self.__ospackages = ['bzip2', 'file', 'make', 'wget',
+                                     'zlib1g-dev']
             self.__runtime_ospackages = ['zlib1g']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
