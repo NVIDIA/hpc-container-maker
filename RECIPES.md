@@ -564,9 +564,10 @@ Parameters:
   than downloading the source from the web.
 
 - `ospackages`: List of OS packages to install prior to configuring
-  and building.  For Ubuntu, the default values are `file`, `make`,
-  `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-  default values are `bzip2`, `file`, `make`, `wget` and `zlib-devel`.
+  and building.  For Ubuntu, the default values are `bzip2`, `file`,
+  `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions
+  the default values are `bzip2`, `file`, `make`, `wget` and
+  `zlib-devel`.
 
 - `prefix`: The top level install location.  The default value is
   `/usr/local/hdf5`.
