@@ -58,7 +58,7 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     apt-get install -y --no-install-recommends \
         intel-mpi-2018.3-051 && \
     rm -rf /var/lib/apt/lists/*
-RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh intel64" >> /etc/bash.bashrc''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
 
     @centos
     @docker
@@ -72,7 +72,7 @@ RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW
     yum install -y \
         intel-mpi-2018.3-051 && \
     rm -rf /var/cache/yum/*
-RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh intel64" >> /etc/bashrc''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bashrc''')
 
     @ubuntu
     @docker
@@ -93,7 +93,7 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     apt-get install -y --no-install-recommends \
         intel-mpi-2018.2-046 && \
     rm -rf /var/lib/apt/lists/*
-RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh intel64" >> /etc/bash.bashrc''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
 
     @ubuntu
     @docker
@@ -115,8 +115,8 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
         intel-mpi-2018.3-051 && \
     rm -rf /var/lib/apt/lists/*
 ENV I_MPI_ROOT=/opt/intel/compilers_and_libraries/linux/mpi \
-    LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/mpi/lib64:$LD_LIBRARY_PATH \
-    PATH=/opt/intel/compilers_and_libraries/linux/mpi/bin64:$PATH''')
+    LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -138,4 +138,4 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     apt-get install -y --no-install-recommends \
         intel-mpi-2018.3-051 && \
     rm -rf /var/lib/apt/lists/*
-RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/bin64/mpivars.sh intel64" >> /etc/bash.bashrc''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
