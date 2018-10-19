@@ -116,7 +116,8 @@ class mvapich2(ConfigureMake, rm, sed, tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['byacc', 'file', 'openssh-client', 'wget']
+                self.__ospackages = ['byacc', 'file', 'make',
+                                     'openssh-client', 'wget']
             self.__runtime_ospackages = ['openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
