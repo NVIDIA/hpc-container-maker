@@ -57,6 +57,7 @@ class fftw(ConfigureMake, rm, tar, wget):
         self.__baseurl = kwargs.get('baseurl', 'ftp://ftp.fftw.org/pub/fftw')
         self.__check = kwargs.get('check', False)
         self.__directory = kwargs.get('directory', '')
+        self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', ['file', 'make', 'wget'])
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '3.3.7')
@@ -97,6 +98,9 @@ class fftw(ConfigureMake, rm, tar, wget):
 
         tarball = 'fftw-{}.tar.gz'.format(self.__version)
         url = '{0}/{1}'.format(self.__baseurl, tarball)
+
+        if self.__mpi:
+            self.configure_opts.append('--enable-mpi')
 
         if self.__directory:
             # Use source from local build context
