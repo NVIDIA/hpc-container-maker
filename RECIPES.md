@@ -407,6 +407,9 @@ Parameters:
   defined, the source in the local build context will be used rather
   than downloading the source from the web.
 
+- `mpi`: Boolean flag to specify whether to build with MPI support
+  enabled.  The default is False.
+
 - `ospackages`: List of OS packages to install prior to configuring
   and building.  The default values are `file`, `make`, and `wget`.
 
