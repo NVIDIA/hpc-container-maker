@@ -40,6 +40,8 @@ class Test_pgi(unittest.TestCase):
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \
@@ -62,6 +64,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.4
 RUN yum install -y \
+        gcc \
+        gcc-c++ \
         numactl-libs \
         perl \
         wget && \
@@ -85,6 +89,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \
@@ -109,6 +115,8 @@ r'''# PGI compiler version 17.10
 COPY pgilinux-2017-1710-x86_64.tar.gz /var/tmp/pgilinux-2017-1710-x86_64.tar.gz
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
@@ -131,6 +139,8 @@ r'''# PGI compiler version 18.4
 COPY pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
@@ -152,6 +162,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \
@@ -176,6 +188,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \
@@ -199,6 +213,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \
@@ -229,6 +245,8 @@ ENV CC=/opt/pgi/linux86-64/18.4/bin/pgcc \
 r'''# PGI compiler version 18.4
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
         libnuma1 \
         perl \
         wget && \

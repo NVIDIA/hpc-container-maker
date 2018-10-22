@@ -1416,12 +1416,13 @@ Parameters:
   False.
 
 - `ospackages`: List of OS packages to install prior to installing the
-  PGI compiler.  For Ubuntu, the default values are `libnuma1` and
-  `perl`, and also `wget` (if downloading the PGI compiler rather than
-  using a tarball in the local build context).  For RHEL-based Linux
-  distributions, the default values are `numactl-libs` and `perl`, and
-  also `wget` (if downloading the PGI compiler rather than using a
-  tarball in the local build context).
+  PGI compiler.  For Ubuntu, the default values are `gcc`, `g++`,
+  `libnuma1` and `perl`, and also `wget` (if downloading the PGI
+  compiler rather than using a tarball in the local build context).
+  For RHEL-based Linux distributions, the default values are `gcc`,
+  `gcc-c++`, `numactl-libs` and `perl`, and also `wget` (if downloading
+  the PGI compiler rather than using a tarball in the local build
+  context).
 
 - `prefix`: The top level install prefix.  The default value is
   `/opt/pgi`.
