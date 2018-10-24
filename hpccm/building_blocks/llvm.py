@@ -48,6 +48,7 @@ class llvm(object):
         self.__compiler_debs = ['clang']  # Filled in below
         self.__compiler_rpms = ['clang']  # Filled in below
         self.__environment = {}    # Filled in below
+        self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_debs = ['libclang1']
         self.__runtime_rpms = ['llvm-libs']
 
@@ -77,22 +78,31 @@ class llvm(object):
         """Based on the Linux distribution, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        # Setup the environment so that the alternate compiler version
-        # is the new default
-        if self.__version:
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            # Setup the environment so that the alternate compiler version
+            # is the new default
+            if self.__version:
                 self.__commands.append('update-alternatives --install /usr/bin/clang clang $(which clang-{}) 30'.format(self.__version))
                 self.__commands.append('update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-{}) 30'.format(self.__version))
-            elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            # Dependencies on the GNU compiler
+            if not self.__ospackages:
+                self.__ospackages = ['gcc', 'gcc-c++']
+
+            # Setup the environment so that the alternate compiler version
+            # is the new default
+            if self.__version:
                 self.__environment = {'PATH': '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version),
                                       'LD_LIBRARY_PATH': '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)}
-            else: # pragma: no cover
+        else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
     def __str__(self):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('LLVM compiler'))
+        if self.__ospackages:
+            instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(packages(apt=self.__compiler_debs,
                                      scl=bool(self.__version), # True / False
                                      yum=self.__compiler_rpms))

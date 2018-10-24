@@ -51,6 +51,10 @@ RUN apt-get update -y && \
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
         clang && \
     rm -rf /var/cache/yum/*''')
 
@@ -75,6 +79,10 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && 
         l = llvm(extra_repository=True, version='7')
         self.assertEqual(str(l),
 r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
 RUN yum install -y centos-release-scl && \
     yum install -y \
         llvm-toolset-7-clang && \

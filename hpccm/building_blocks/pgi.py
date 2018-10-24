@@ -60,6 +60,7 @@ class pgi(rm, tar, wget):
         self.__extended_environment = kwargs.get('extended_environment', False)
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/pgi')
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
@@ -85,10 +86,6 @@ class pgi(rm, tar, wget):
     def __str__(self):
         """String representation of the building block"""
 
-        ospackages = list(self.__ospackages)
-        # Installer needs perl
-        ospackages.append('perl')
-
         instructions = []
         instructions.append(comment(
             'PGI compiler version {}'.format(self.__version)))
@@ -99,10 +96,10 @@ class pgi(rm, tar, wget):
                      dest=os.path.join(self.__wd, self.__tarball)))
         else:
             # Downloading, so need wget
-            ospackages.append('wget')
+            self.__ospackages.append('wget')
 
-        if ospackages:
-            instructions.append(packages(ospackages=ospackages))
+        if self.__ospackages:
+            instructions.append(packages(ospackages=self.__ospackages))
 
         instructions.append(shell(commands=self.__commands))
 
@@ -116,10 +113,12 @@ class pgi(rm, tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['libnuma1']
+                self.__ospackages = ['gcc', 'g++', 'libnuma1', 'perl']
+                self.__runtime_ospackages = ['libnuma1']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['numactl-libs']
+                self.__ospackages = ['gcc', 'gcc-c++', 'numactl-libs', 'perl']
+                self.__runtime_ospackages = ['numactl-libs']
         else:
             raise RuntimeError('Unknown Linux distribution')
 
@@ -253,8 +252,8 @@ class pgi(rm, tar, wget):
         """Install the runtime from a full build in a previous stage"""
         instructions = []
         instructions.append(comment('PGI compiler'))
-        if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
+        if self.__runtime_ospackages:
+            instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from,
                                  src=os.path.join(self.__basepath,
                                                   self.__version,
