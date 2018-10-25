@@ -22,6 +22,7 @@ from __future__ import print_function
 
 import argparse
 import logging
+import os
 
 import hpccm
 
@@ -54,17 +55,34 @@ def main(): # pragma: no cover
                         help='generate a container spec for the RECIPE file')
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
                         nargs='+', help='specify user parameters')
+    parser.add_argument('--out', default=None, help='output directory' +
+                        '(default: None)')
     args = parser.parse_args()
 
     # configure logger
     logging.basicConfig(format='%(levelname)s: %(message)s')
 
+    if args.out:
+        if not os.path.exists(args.out):
+            os.makedirs(args.out)
+
     recipe = hpccm.recipe(args.recipe,
                           ctype=hpccm.container_type[args.format.upper()],
                           raise_exceptions=args.print_exceptions,
                           single_stage=args.single_stage,
-                          userarg=args.userarg)
+                          userarg=args.userarg,
+                          output_directory=args.out)
     print(recipe)
+
+    if args.out:
+        if args.format.upper() == 'DOCKER':
+            def_filename = 'Dockerfile'
+        else:
+            def_filename = 'Singularity.def'
+
+        def_file = open(os.path.join(args.out, def_filename), "w")
+        def_file.write(recipe)
+        def_file.close()
 
 if __name__ == "__main__": # pragma: no cover
     main()

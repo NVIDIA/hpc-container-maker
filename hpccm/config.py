@@ -32,6 +32,7 @@ from hpccm.common import linux_distro
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
+g_output_directory = None            # Output directory
 
 def set_container_format(ctype):
   """Set the container format
