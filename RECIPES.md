@@ -645,8 +645,9 @@ Parameters:
 
 - `ospackages`: List of OS packages to install prior to installing
   Intel MPI.  For Ubuntu, the default values are
-  `apt-transport-https`, `ca-certificates`, `man-db`, and `wget`.  For
-  RHEL-based Linux distributions, the default value is `man-db`.
+  `apt-transport-https`, `ca-certificates`, `man-db`, `openssh-client`,
+  and `wget`.  For RHEL-based Linux distributions, the default values
+  are `man-db` and `openssh-clients`.
 
 - `version`: The version of Intel MPI to install.  The default value
   is `2018.3-051`.
