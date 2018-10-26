@@ -51,6 +51,7 @@ RUN apt-get update -y && \
         apt-transport-https \
         ca-certificates \
         man-db \
+        openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
@@ -69,7 +70,8 @@ RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivar
         self.assertEqual(str(impi),
 r'''# Intel MPI version 2018.3-051
 RUN yum install -y \
-        man-db && \
+        man-db \
+        openssh-clients && \
     rm -rf /var/cache/yum/*
 RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
     yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
@@ -90,6 +92,7 @@ RUN apt-get update -y && \
         apt-transport-https \
         ca-certificates \
         man-db \
+        openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
@@ -112,6 +115,7 @@ RUN apt-get update -y && \
         apt-transport-https \
         ca-certificates \
         man-db \
+        openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
@@ -137,6 +141,7 @@ RUN apt-get update -y && \
         apt-transport-https \
         ca-certificates \
         man-db \
+        openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \

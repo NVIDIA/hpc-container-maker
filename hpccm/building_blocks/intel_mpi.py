@@ -106,13 +106,13 @@ class intel_mpi(wget):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
-                                     'man-db', 'wget']
+                                     'man-db', 'openssh-client', 'wget']
 
             self.__bashrc = '/etc/bash.bashrc'
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['man-db']
+                self.__ospackages = ['man-db', 'openssh-clients']
 
             self.__bashrc = '/etc/bashrc'
 
