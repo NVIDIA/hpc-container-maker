@@ -52,7 +52,7 @@ class cmake(rm, wget):
 
         self.__ospackages = kwargs.get('ospackages', ['wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local')
-        self.__version = kwargs.get('version', '3.11.1')
+        self.__version = kwargs.get('version', '3.12.3')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

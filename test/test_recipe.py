@@ -101,19 +101,19 @@ RUN apt-get update -y && \
         gfortran && \
     rm -rf /var/lib/apt/lists/*
 
-# FFTW version 3.3.7
+# FFTW version 3.3.8
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     def test_multistage_example_singularity(self):
@@ -136,7 +136,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         gfortran
     rm -rf /var/lib/apt/lists/*
 
-# FFTW version 3.3.7
+# FFTW version 3.3.8
 %post
     apt-get update -y
     apt-get install -y --no-install-recommends \
@@ -146,12 +146,12 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     rm -rf /var/lib/apt/lists/*
 %post
     cd /
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z
-    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
     make -j4
     make -j4 install
-    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 %post

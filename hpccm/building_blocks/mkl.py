@@ -54,7 +54,7 @@ class mkl(wget):
 
         self.__mklvars = kwargs.get('mklvars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2018.3-051')
+        self.version = kwargs.get('version', '2019.0-045')
 
         self.__bashrc = ''      # Filled in by __distro()
 

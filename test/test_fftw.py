@@ -37,19 +37,19 @@ class Test_fftw(unittest.TestCase):
         """Default fftw building block"""
         f = fftw()
         self.assertEqual(str(f),
-r'''# FFTW version 3.3.7
+r'''# FFTW version 3.3.8
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @centos
@@ -58,18 +58,18 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         """Default fftw building block"""
         f = fftw()
         self.assertEqual(str(f),
-r'''# FFTW version 3.3.7
+r'''# FFTW version 3.3.8
 RUN yum install -y \
         file \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
@@ -78,19 +78,19 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         """MPI enabled"""
         f = fftw(mpi=True)
         self.assertEqual(str(f),
-r'''# FFTW version 3.3.7
+r'''# FFTW version 3.3.8
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.7.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.7.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 --enable-mpi && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 --enable-mpi && \
     make -j4 && \
     make -j4 install && \
-    rm -rf /var/tmp/fftw-3.3.7.tar.gz /var/tmp/fftw-3.3.7
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
