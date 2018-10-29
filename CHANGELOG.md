@@ -1,3 +1,18 @@
+# v18.10.0
+
+- Enhancements and fixes for the Boost (`boost`), FFTW (`fftw`),
+  HDF5 (`hdf5`), Intel MPI (`intel_mpi`), LLVM (`llvm`),
+  MVAPICH2 (`mvapich2`), and PGI (`pgi`) building blocks
+- Adds `CMakeBuild` template for working with CMake based components
+- Updated the GROMACS and MILC example recipes to use the new `CMakeBuild`
+  template
+- Fixes for the EasyBuild and Spack example recipes
+- Adds workarounds for Singularity specific issue copying files to
+  a location that does not exist (see
+  https://github.com/sylabs/singularity/issues/1549)
+- New parameter in the `tar` template for more flexible argument
+  specification
+
 # v18.9.0
 
 - Adds LLVM (`llvm`) building block
