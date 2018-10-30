@@ -1,0 +1,11 @@
+include CHANGELOG.md
+include LICENSE
+include README.md
+include RECIPES.md
+include hpccm.py
+include test/bad_recipe.py
+include test/docker.blob
+include test/global_vars_recipe.py
+include test/helpers.py
+include test/singularity.blob
+graft recipes
