@@ -84,6 +84,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     Stage0 = stages[0] # alias # pylint: disable=unused-variable
     Stage1 = stages[1] # alias # pylint: disable=unused-variable
 
+    # Set the global container type
+    hpccm.config.g_ctype = ctype
+
     try:
         with open(recipe_file) as f:
             # pylint: disable=exec-used
@@ -94,9 +97,6 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
         else:
             logging.error(e)
             exit(1)
-
-    # Set the global container type
-    hpccm.config.g_ctype = ctype
 
     # Only process the first stage of a recipe
     if single_stage:
