@@ -72,6 +72,8 @@ from hpccm.building_blocks.pgi import pgi
 from hpccm.building_blocks.pip import pip
 from hpccm.building_blocks.pnetcdf import pnetcdf
 from hpccm.building_blocks.python import python
+from hpccm.building_blocks.scif import scif
+from hpccm.building_blocks.scif_app import scif_app
 from hpccm.building_blocks.ucx import ucx
 from hpccm.building_blocks.xpmem import xpmem
 from hpccm.building_blocks.yum import yum
