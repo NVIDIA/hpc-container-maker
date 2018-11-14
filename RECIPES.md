@@ -21,7 +21,7 @@ Stage0.baseimage('nvidia/cuda:9.0-devel')
 ospackages = ['make', 'wget']
 Stage0 += apt_get(ospackages=ospackages)
 
-p = pgi(eula=True, version='18.4')
+p = pgi(eula=True)
 Stage0 += p
 
 # Use the PGI toolchain to build OpenMPI                                
@@ -256,7 +256,7 @@ Parameters:
   SourceForge repository should be used.  The default is False.
 
 - `version`: The version of Boost source to download.  The default
-  value is `1.67.0`.
+  value is `1.68.0`.
 
 Methods:
 
@@ -388,7 +388,7 @@ Parameters:
   `/usr/local`.
 
 - `version`: The version of CMake to download.  The default value is
-  `3.11.1`.
+  `3.12.3`.
 
 Examples:
 
@@ -438,7 +438,7 @@ Parameters:
   default is empty.
 
 - `version`: The version of FFTW source to download.  This value is
-  ignored if `directory` is set.  The default value is `3.3.7`.
+  ignored if `directory` is set.  The default value is `3.3.8`.
 
 Methods:
 
@@ -577,7 +577,7 @@ Parameters:
   default is empty.
 
 - `version`: The version of HDF5 source to download.  This value is
-  ignored if `directory` is set.  The default value is `1.10.1`.
+  ignored if `directory` is set.  The default value is `1.10.4`.
 
 Methods:
 
@@ -824,7 +824,7 @@ Parameters:
   the default is an empty list.
 
 - `version`: The version of MKL to install.  The default value is
-  `2018.3-051`.
+  `2019.0-045`.
 
 Methods:
 
@@ -953,7 +953,7 @@ Parameters:
   default is empty.
 
 - `version`: The version of MVAPICH2 source to download.  This value
-  is ignored if `directory` is set.  The default value is `2.3b`.
+  is ignored if `directory` is set.  The default value is `2.3`.
 
 Methods:
 
@@ -971,7 +971,7 @@ mvapich2(directory='sources/mvapich2-2.3b')
 ```
 
 ```python
-p = pgi()
+p = pgi(eula=True)
 mvapich2(toolchain=p.toolchain)
 ```
 
@@ -1193,7 +1193,7 @@ Parameters:
   default is empty.
 
 - `version`: The version of OpenBLAS source to download.  The default
-  value is `0.3.1`.
+  value is `0.3.3`.
 
 Methods:
 
@@ -1278,7 +1278,7 @@ Parameters:
   default is empty.
 
 - `version`: The version of OpenMPI source to download.  This value is
-  ignored if `directory` is set.  The default value is `3.0.0`.
+  ignored if `directory` is set.  The default value is `3.1.2`.
 
 Methods:
 
@@ -1441,7 +1441,7 @@ Parameters:
 - `version`: The version of the PGI compiler to use.  Note this value
   is currently only used when setting the environment and does not
   control the version of the compiler downloaded.  The default value
-  is `18.4`.
+  is `18.10`.
 
 Methods:
 
@@ -1451,7 +1451,7 @@ Methods:
 Examples:
 
 ```python
-pgi(eula=True, version='18.4')
+pgi(eula=True)
 ```
 
 ```python

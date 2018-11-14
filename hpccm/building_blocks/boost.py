@@ -58,7 +58,7 @@ class boost(rm, tar, wget):
         self.__prefix = kwargs.get('prefix', '/usr/local/boost')
         self.__python = kwargs.get('python', False)
         self.__sourceforge = kwargs.get('sourceforge', False)
-        self.__version = kwargs.get('version', '1.67.0')
+        self.__version = kwargs.get('version', '1.68.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

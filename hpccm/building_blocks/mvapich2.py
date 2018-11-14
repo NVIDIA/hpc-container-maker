@@ -70,7 +70,7 @@ class mvapich2(ConfigureMake, rm, sed, tar, wget):
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3rc2')
+        self.version = kwargs.get('version', '2.3')
 
         self.__commands = []              # Filled in by __setup()
         self.__environment_variables = {} # Filled in by __setup()

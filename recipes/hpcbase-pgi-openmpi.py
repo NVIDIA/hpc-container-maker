@@ -3,11 +3,11 @@ HPC Base image
 
 Contents:
   CUDA version 9.0
-  FFTW version 3.3.7
-  HDF5 version 1.10.1
+  FFTW version 3.3.8
+  HDF5 version 1.10.4
   Mellanox OFED version 3.4-1.0.0.0
-  OpenMPI version 3.0.0
-  PGI compilers version 18.4
+  OpenMPI version 3.1.2
+  PGI compilers version 18.10
   Python 2 and 3 (upstream)
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
@@ -41,7 +41,7 @@ python = python()
 Stage0 += python
 
 # PGI compilers
-pgi = pgi(eula=pgi_eula, version='18.4')
+pgi = pgi(eula=pgi_eula, version='18.10')
 Stage0 += pgi
 
 # Setup the toolchain.  Use the PGI compiler toolchain as the basis.
@@ -53,15 +53,15 @@ ofed = mlnx_ofed(version='3.4-1.0.0.0')
 Stage0 += ofed
 
 # OpenMPI
-ompi = openmpi(version='3.0.0', toolchain=tc)
+ompi = openmpi(version='3.1.2', toolchain=tc)
 Stage0 += ompi
 
 # FFTW
-fftw = fftw(version='3.3.7', toolchain=tc)
+fftw = fftw(version='3.3.8', mpi=True, toolchain=tc)
 Stage0 += fftw
 
 # HDF5
-hdf5 = hdf5(version='1.10.1', toolchain=tc)
+hdf5 = hdf5(version='1.10.4', toolchain=tc)
 Stage0 += hdf5
 
 ######

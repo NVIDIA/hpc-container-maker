@@ -69,7 +69,7 @@ class pgi(rm, tar, wget):
 
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '18.4')
+        self.__version = kwargs.get('version', '18.10')
         self.__wd = '/var/tmp' # working directory
 
         self.__basepath = os.path.join(self.__prefix, 'linux86-64')

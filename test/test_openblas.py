@@ -39,18 +39,18 @@ class Test_openblas(unittest.TestCase):
         tc = toolchain(CC='gcc', FC='gfortran')
         o = openblas(toolchain=tc)
         self.assertEqual(str(o),
-r'''# OpenBLAS version 0.3.1
+r'''# OpenBLAS version 0.3.3
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         make \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.1 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/OpenBLAS-0.3.3 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
     make install PREFIX=/usr/local/openblas && \
-    rm -rf /var/tmp/v0.3.1.tar.gz /var/tmp/OpenBLAS-0.3.1
+    rm -rf /var/tmp/v0.3.3.tar.gz /var/tmp/OpenBLAS-0.3.3
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu

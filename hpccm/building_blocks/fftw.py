@@ -60,7 +60,7 @@ class fftw(ConfigureMake, rm, tar, wget):
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', ['file', 'make', 'wget'])
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '3.3.7')
+        self.__version = kwargs.get('version', '3.3.8')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

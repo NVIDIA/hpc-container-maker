@@ -68,7 +68,7 @@ class openmpi(ConfigureMake, rm, tar, wget):
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.version = kwargs.get('version', '3.0.0')
+        self.version = kwargs.get('version', '3.1.2')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
