@@ -21,6 +21,10 @@ from hpccm.Stage import Stage
 from hpccm.recipe import recipe
 from hpccm.toolchain import toolchain
 
+import hpccm.building_blocks
+import hpccm.templates
+import hpccm.primitives
+
 # Templates
 # For backwards compatibility with recipes that use "hpccm.git()", etc.
 from hpccm.templates.ConfigureMake import ConfigureMake
