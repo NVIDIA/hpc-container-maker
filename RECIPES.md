@@ -1658,8 +1658,8 @@ mpi_bw += shell(commands=[                      # Used as %appinstall
 mpi_bw += environment(variables={...})         # Used as %appenv
 mpi_bw += copy(...)                            # Used as %appfiles
 mpi_bw += label(metadata={...})                # Used as %applabels
-# TODO: help This app provides a MPI bandwidth test program # Used as %apphelp
-# TODO: test mpirun -np 2 mpi-bandwidth        # Used as %apptest
+mpi_bw += comment('This app provides ...')     # Used as %apphelp
+mpi_bw += test(commands=['mpirun -np 2 ...')   # Used as %apptest
 Stage0 += mpi_bw
 ```
 

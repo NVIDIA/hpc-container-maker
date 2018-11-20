@@ -51,18 +51,22 @@ class comment(object):
         except IndexError:
             self.__string = ''
 
+        self._app = kwargs.get('_app', '') # Singularity specific
         self.__reformat = kwargs.get('reformat', True)
 
     def __str__(self):
         """String representation of the primitive"""
         if self.__string:
             # Comments are universal (so far...)
-            if self.__reformat:
+            if self.__reformat and self._app == '':
                 # Wrap comments
                 return textwrap.fill(self.__string, initial_indent='# ',
                                      subsequent_indent='# ', width=70)
             else:
-                # Just prepend but otherwise apply no formatting
-                return re.sub('^', '# ', self.__string, flags=re.MULTILINE)
+                if self._app != '':
+                    return "%apphelp {0}\n    {1}".format(self._app, self.__string)
+                else:
+                    # Just prepend but otherwise apply no formatting
+                    return re.sub('^', '# ', self.__string, flags=re.MULTILINE)
         else:
             return ''

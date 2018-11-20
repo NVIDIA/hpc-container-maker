@@ -27,11 +27,13 @@ from helpers import centos, docker, singularity
 
 from hpccm.building_blocks.scif import scif
 from hpccm.building_blocks.packages import packages
+from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.label import label
-from hpccm.primitives.shell import shell
 from hpccm.primitives.runscript import runscript
+from hpccm.primitives.shell import shell
+from hpccm.primitives.test import test
 
 import hpccm
 
@@ -123,7 +125,9 @@ r'''# SCIF app bar
         app = scif(name="bar")
         app += [
             shell(commands=['gcc bar.c']),
-            runscript(commands=['bar'])
+            runscript(commands=['bar']),
+            comment('Some help instructions'),
+            test(commands=['bar test'])
         ]
         self.assertEqual(str(app),
 r'''# SCIF app bar
@@ -131,5 +135,11 @@ r'''# SCIF app bar
     gcc bar.c
 
 %apprun bar
-    exec bar''')
+    exec bar
+
+%apphelp bar
+    Some help instructions
+
+%apptest bar
+    exec bar test''')
 
