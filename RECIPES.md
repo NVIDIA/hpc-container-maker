@@ -1627,35 +1627,41 @@ python(python3=False)
 
 ### scif
 
-The `scif` building block installs the
-[Scientific Filesystem](https://sci-f.github.io) executable `scif` via `pip`.
+The `scif` building block installs a
+[Scientific Filesystem](https://sci-f.github.io) (a contained app environment).
+On Singularity it uses the native
+[app syntax](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html#sections)
+an on Docker it uses the [scif](https://pypi.org/project/scif/)-tool to install
+a Scientific Filesystem. A `scif` app is composed of several layer with the
+`+=`-syntax. Behind the scenes `scif` uses the `_app`-syntax of the specific
+building block. Only blocks supporting that `_app`-syntax are allowed!
+
+On Docker the `hpccm`-argument `--out [output_directory]` is required.
 
 Parameters:
 
-- `entrypoint`: Boolean flag to specify wheter `scif` should also be the
-  entrypoint of the container.
+- `name`: The name of the scif app. **Required**
+- `entrypoint`: Boolean flag to specify wheter this scif app should also be the
+  global entrypoint of the container.
 
-### scif_app
+Example:
 
-The `scif_app` building block installs a
-[Scientific Filesystem](https://sci-f.github.io) via the `scif` executables.
-This requires the `scif` building block.
-
-Parameters:
-
-Please refer to the
-[Scientific Filesystem documentation](https://sci-f.github.io///spec-v1#sections)
-for details:
-
-- `env`: Corresponds to `%appenv`.
-- `help`: Corresponds to `%apphelp`.
-- `install`: Corresponds to `%appinstall`.
-- `labels`: Corresponds to `%applabels`.
-- `name`: Corresponds to `%appname`. **Required**
-- `run`: Corresponds to `%apprun`.
-- `test`: Corresponds to `%apptest`.
-- `entrypoint`: Boolean flag to specify wheter the runscript of the app is also
-  the entrypoint of the container.
+```python
+mpi_bw = scif(name="mpi-bw")
+mpi_bw += runscript(commands=['mpi-bandwidth']) # Used as %apprun
+mpi_bw += shell(commands=[                      # Used as %appinstall
+    'wget -q -nc --no-check-certificate -P src '
+    'https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c',
+    'mkdir -p bin',
+    'mpicc -o bin/mpi-bandwidth src/mpi_bandwidth.c'
+])
+mpi_bw += environment(variables={...})         # Used as %appenv
+mpi_bw += copy(...)                            # Used as %appfiles
+mpi_bw += label(metadata={...})                # Used as %applabels
+# TODO: help This app provides a MPI bandwidth test program # Used as %apphelp
+# TODO: test mpirun -np 2 mpi-bandwidth        # Used as %apptest
+Stage0 += mpi_bw
+```
 
 ### ucx
 
