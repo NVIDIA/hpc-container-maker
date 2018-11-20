@@ -13,3 +13,15 @@
 # limitations under the License.
 
 from __future__ import absolute_import
+
+from hpccm.primitives.baseimage import baseimage
+from hpccm.primitives.blob import blob
+from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
+from hpccm.primitives.label import label
+from hpccm.primitives.raw import raw
+from hpccm.primitives.runscript import runscript
+from hpccm.primitives.shell import shell
+from hpccm.primitives.user import user
+from hpccm.primitives.workdir import workdir

@@ -23,9 +23,20 @@ hpccm.config.var
 
 from __future__ import absolute_import
 
+import sys
+
 from hpccm.common import container_type
 from hpccm.common import linux_distro
 
 # Global variables
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
+
+def set_container_format(ctype):
+  this = sys.modules[__name__]
+  if ctype == 'docker':
+    this.g_ctype = container_type.DOCKER
+  elif ctype == 'singularity':
+    this.g_ctype = container_type.SINGULARITY
+  else:
+    raise RuntimeError('Unrecognized container format: {}'.format(ctype))
