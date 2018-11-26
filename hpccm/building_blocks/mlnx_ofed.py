@@ -92,10 +92,12 @@ class mlnx_ofed(tar, wget):
                                      'libnuma1', 'wget']
             if not self.__packages:
                 self.__packages = ['libibverbs1', 'libibverbs-dev',
-                                   'ibverbs-utils', 'libibmad',
-                                   'libibmad-devel', 'libibumad',
-                                   'libibumad-devel', 'libmlx4-1',
-                                   'libmlx5-1']
+                                   'ibverbs-utils',
+                                   'libibmad',  'libibmad-devel',
+                                   'libibumad', 'libibumad-devel',
+                                   'libmlx4-1', 'libmlx4-dev',
+                                   'libmlx5-1', 'libmlx5-dev',
+                                   'librdmacm-dev', 'librdmacm1']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)
@@ -112,10 +114,12 @@ class mlnx_ofed(tar, wget):
                 self.__ospackages = ['libnl', 'libnl3', 'numactl-libs', 'wget']
             if not self.__packages:
                 self.__packages = ['libibverbs', 'libibverbs-devel',
-                                   'libibverbs-utils', 'libibmad',
-                                   'libibmad-devel', 'libibumad',
-                                   'libibumad-devel', 'libmlx4',
-                                   'libmlx5']
+                                   'libibverbs-utils',
+                                   'libibmad', 'libibmad-devel',
+                                   'libibumad', 'libibumad-devel',
+                                   'libmlx4', 'libmlx4-devel',
+                                   'libmlx5', 'libmlx5-devel',
+                                   'librdmacm-devel', 'librdmacm']
 
             self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)

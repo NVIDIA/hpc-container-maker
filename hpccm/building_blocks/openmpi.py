@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 import re
+from six import string_types
 
 import hpccm.config
 
@@ -69,6 +70,7 @@ class openmpi(ConfigureMake, rm, tar, wget):
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.version = kwargs.get('version', '3.1.2')
+        self.__ucx = kwargs.get('ucx', False)
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
@@ -132,6 +134,8 @@ class openmpi(ConfigureMake, rm, tar, wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
+        build_environment = []
+
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the tarball contains MAJOR.MINOR.REVISION, so pull
         # apart the full version to get the MAJOR and MINOR components.
@@ -158,6 +162,28 @@ class openmpi(ConfigureMake, rm, tar, wget):
         else:
             self.configure_opts.append('--without-verbs')
 
+        # UCX
+        if self.__ucx:
+            if isinstance(self.__ucx, string_types):
+                # Use specified path
+                self.configure_opts.append('--with-ucx={}'.format(self.__ucx))
+            else:
+                self.configure_opts.append('--with-ucx')
+
+            # If UCX was built with CUDA support, it is linked with
+            # libcuda.so.1, which is not available during the
+            # build stage.  Assume that if OpenMPI is built with
+            # CUDA support, then UCX was as well...
+            if self.cuda:
+                cuda_home = "/usr/local/cuda"
+                if self.__toolchain.CUDA_HOME:
+                    cuda_home = self.__toolchain.CUDA_HOME
+                self.__commands.append('ln -s {0} {1}'.format(
+                    os.path.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
+                    os.path.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
+                if not self.__toolchain.LD_LIBRARY_PATH:
+                    build_environment.append('LD_LIBRARY_PATH="{}:$LD_LIBRARY_PATH"'.format(os.path.join(cuda_home, 'lib64', 'stubs')))
+
         if self.directory:
             # Use source from local build context
             self.__commands.append(self.configure_step(
@@ -172,6 +198,7 @@ class openmpi(ConfigureMake, rm, tar, wget):
             self.__commands.append(self.configure_step(
                 directory=os.path.join(self.__wd,
                                        'openmpi-{}'.format(self.version)),
+                environment=build_environment,
                 toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())

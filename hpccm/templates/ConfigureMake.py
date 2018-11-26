@@ -53,73 +53,75 @@ class ConfigureMake(object):
         """Documentation TBD"""
         return 'make -j{0:d} check'.format(self.parallel)
 
-    def configure_step(self, directory=None, toolchain=None):
+    def configure_step(self, directory=None, environment=[], toolchain=None):
         """Documentation TBD"""
 
         change_directory = ''
         if directory:
             change_directory = 'cd {} && '.format(directory)
 
-        prefix = []
+        e = []
+        e.extend(environment)
         if toolchain:
             if toolchain.CC and self.toolchain_control.get('CC'):
-                prefix.append('CC={}'.format(toolchain.CC))
+                e.append('CC={}'.format(toolchain.CC))
 
             if toolchain.CFLAGS:
-                prefix.append('CFLAGS={}'.format(shlex_quote(
+                e.append('CFLAGS={}'.format(shlex_quote(
                     toolchain.CFLAGS)))
 
             if toolchain.CPPFLAGS:
-                prefix.append('CPPFLAGS={}'.format(shlex_quote(
+                e.append('CPPFLAGS={}'.format(shlex_quote(
                     toolchain.CPPFLAGS)))
 
             if toolchain.CXX and self.toolchain_control.get('CXX'):
-                prefix.append('CXX={}'.format(toolchain.CXX))
+                e.append('CXX={}'.format(toolchain.CXX))
 
             if toolchain.CXXFLAGS:
-                prefix.append('CXXFLAGS={}'.format(shlex_quote(
+                e.append('CXXFLAGS={}'.format(shlex_quote(
                     toolchain.CXXFLAGS)))
 
             if toolchain.F77 and self.toolchain_control.get('F77'):
-                prefix.append('F77={}'.format(toolchain.F77))
+                e.append('F77={}'.format(toolchain.F77))
 
             if toolchain.F90 and self.toolchain_control.get('F90'):
-                prefix.append('F90={}'.format(toolchain.F90))
+                e.append('F90={}'.format(toolchain.F90))
 
             if toolchain.FC and self.toolchain_control.get('FC'):
-                prefix.append('FC={}'.format(toolchain.FC))
+                e.append('FC={}'.format(toolchain.FC))
 
             if toolchain.FCFLAGS:
-                prefix.append('FCFLAGS={}'.format(shlex_quote(
+                e.append('FCFLAGS={}'.format(shlex_quote(
                     toolchain.FCFLAGS)))
 
             if toolchain.FFLAGS:
-                prefix.append('FFLAGS={}'.format(shlex_quote(
+                e.append('FFLAGS={}'.format(shlex_quote(
                     toolchain.FFLAGS)))
 
             if toolchain.FLIBS:
-                prefix.append('FLIBS={}'.format(shlex_quote(
+                e.append('FLIBS={}'.format(shlex_quote(
                     toolchain.FLIBS)))
 
             if toolchain.LD_LIBRARY_PATH:
-                prefix.append('LD_LIBRARY_PATH={}'.format(shlex_quote(
+                e.append('LD_LIBRARY_PATH={}'.format(shlex_quote(
                     toolchain.LD_LIBRARY_PATH)))
 
             if toolchain.LDFLAGS:
-                prefix.append('LDFLAGS={}'.format(shlex_quote(
+                e.append('LDFLAGS={}'.format(shlex_quote(
                     toolchain.LDFLAGS)))
 
             if toolchain.LIBS:
-                prefix.append('LIBS={}'.format(shlex_quote(
+                e.append('LIBS={}'.format(shlex_quote(
                     toolchain.LIBS)))
 
-        configure_prefix = ' '.join(prefix)
+        configure_env = ' '.join(e)
 
         opts = ' '.join(self.configure_opts)
         if self.prefix:
             opts = '--prefix={0:s} {1}'.format(self.prefix, opts)
 
-        cmd = '{0} {1} ./configure {2}'.format(change_directory, configure_prefix, opts)
+        cmd = '{0} {1} ./configure {2}'.format(change_directory,
+                                               configure_env, opts)
 
         return cmd.strip() # trim whitespace
 
