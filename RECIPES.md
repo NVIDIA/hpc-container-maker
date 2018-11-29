@@ -472,6 +472,37 @@ Stage0 += f
 Stage1 += f.runtime()
 ```
 
+### gdrcopy
+
+The `gdrcopy` building block builds and installs the user space
+library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
+component.
+
+As a side effect, this building block modifies `CPATH`,
+`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+
+Parameters:
+
+- `ospackages`: List of OS packages to install prior to building.
+  The default values are `make` and `wget`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/gdrcopy`.
+
+- `version`: The version of gdrcopy source to download.  The default
+  value is `1.3`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Example:
+
+```python
+gdrcopy(prefix='/opt/gdrcopy/1.3', version='1.3')
+```
+
 ### gnu
 
 The `gnu` building block installs the GNU compilers from the upstream
@@ -731,6 +762,36 @@ Stage0 += psxe
 Stage1 += psxe.runtime()
 ```
 
+### knem
+
+The `knem` building block install the headers from the
+[KNEM](http://knem.gforge.inria.fr) component.
+
+As a side effect, this building block modifies `CPATH`,
+`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+
+Parameters:
+
+- `ospackages`: List of OS packages to install prior to installing.
+  The default values are `ca-certificates` and `git`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/knem`.
+
+- `version`: The version of KNEM source to download.  The default
+  value is `1.1.3`.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Example:
+
+```python
+knem(prefix='/opt/knem/1.1.3', version='1.1.3')
+```
+
 ### llvm
 
 The `llvm` building block installs the LLVM compilers (clang and
@@ -865,11 +926,13 @@ Parameters:
 - `packages`: List of packages to install from Mellanox OFED.  For
   Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
   `libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
-  `libmlx4-1`, `libmlx5-1`, and `ibverbs-utils`.  For RHEL-based Linux
+  `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+  `librdmacm-dev`, and `ibverbs-utils`.  For RHEL-based Linux
   distributions, the default values are `libibverbs`,
   `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
-  `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`, and
-  `libmlx5`.
+  `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
+  `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
+  `librdmacm-devel`.
 
 - `version`: The version of Mellanox OFED to download.  The default
   value is `3.4-1.0.0.0`.
@@ -1277,6 +1340,12 @@ Parameters:
   non-default compilers or other toolchain options are needed.  The
   default is empty.
 
+- `ucx`: Flag to control whether UCX is used by the build.  If True,
+  adds `--with-ucx` to the list of `configure` options.  If a string,
+  uses the value of the string as the UCX path, e.g.,
+  `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
+  list of `configure` options.  The default is False.
+
 - `version`: The version of OpenMPI source to download.  This value is
   ignored if `directory` is set.  The default value is `3.1.2`.
 
@@ -1554,6 +1623,131 @@ Stage1 += p.runtime()
 
 ```python
 python(python3=False)
+```
+
+### ucx
+
+The `ucx` building block configures, builds, and installs the
+[UCX](https://github.com/openucx/ucx) component.
+
+An InfiniBand building block ([OFED](#ofed) or [Mellanox
+OFED](#mlnx_ofed)) should be installed prior to this building block.
+One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
+[XPMEM](#xpmem) building blocks should also be installed prior to
+this building block.
+
+As a side effect, this building block modifies `PATH` and
+`LD_LIBRARY_PATH` to include the UCX build.
+
+Parameters:
+
+- `configure_opts`: List of options to pass to `configure`.  The
+  default values are `--enable-optimizations`, `--disable-logging`,
+  `--disable-debug`, `--disable-assertions`, `--disable-params-check`,
+  and `--disable-doxygen-doc`.
+
+- `cuda`: Flag to control whether a CUDA aware build is performed.  If
+  True, adds `--with-cuda=/usr/local/cuda` to the list of `configure`
+  options.  If a string, uses the value of the string as the CUDA
+  path.  If the toolchain specifies `CUDA_HOME`, then that path is
+  used.  If False, adds `--without-cuda` to the list of `configure`
+  options.  The default value is an empty string.
+
+- `gdrcopy`: Flag to control whether gdrcopy is used by the build.  If
+  True, adds `--with-gdrcopy` to the list of `configure` options.  If
+  a string, uses the value of the string as the gdrcopy path, e.g.,
+  `--with-gdrcopy=/path/to/gdrcopy`.  If False, adds
+  `--without-gdrcopy` to the list of `configure` options.  The default
+  is an empty string, i.e., include neither `--with-gdrcopy` not
+  `--without-gdrcopy` and let `configure` try to automatically detect
+  whether gdrcopy is present or not.
+
+- `knem`: Flag to control whether KNEM is used by the build.  If True,
+  adds `--with-knem` to the list of `configure` options.  If a string,
+  uses the value of the string as the KNEM path, e.g.,
+  `--with-knem=/path/to/knem`.  If False, adds `--without-knem` to the
+  list of `configure` options.  The default is an empty string, i.e.,
+  include neither `--with-knem` not `--without-knem` and let
+  `configure` try to automatically detect whether KNEM is present or
+  not.
+
+- `ospackages`: List of OS packages to install prior to configuring
+  and building.  For Ubuntu, the default values are `binutils-dev`,
+  `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
+  distributions, the default values are `binutils-devel`, `file`,
+  `make`, `numactl-devel`, and `wget`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/ucx`.
+
+- `toolchain`: The toolchain object.  This should be used if
+  non-default compilers or other toolchain options are needed.  The
+  default value is empty.
+
+- `version`: The version of UCX source to download.  The default value
+  is `1.4.0`.
+
+- `xpmem`: Flag to control whether XPMEM is used by the build.  If
+  True, adds `--with-xpmem` to the list of `configure` options.  If a
+  string, uses the value of the string as the XPMEM path, e.g.,
+  `--with-xpmem=/path/to/xpmem`.  If False, adds `--without-xpmem` to
+  the list of `configure` options.  The default is an empty string,
+  i.e., include neither `--with-xpmem` not `--without-xpmem` and let
+  `configure` try to automatically detect whether XPMEM is present or
+  not.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Examples:
+
+```python
+ucx(cuda=False, prefix='/opt/ucx/1.4.0', version='1.4.0')
+```
+
+```python
+ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
+    knem='/usr/local/knem', xpmem='/usr/local/xpmem')
+```
+
+### xpmem
+
+The `xpmem` building block builds and installs the user space library
+from the [XPMEM](https://gitlab.com/hjelmn/xpmem) component.
+
+As a side effect, this building block modifies `CPATH`,
+`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+
+Parameters:
+
+- `branch`: The branch of XPMEM to use.  The default value is
+  `master`.
+
+- `configure_opts`: List of options to pass to `configure`.  The
+  default values are `--disable-kernel-module`.
+
+- `ospackages`: List of OS packages to install prior to configuring
+  and building.  The default value are `autoconf`, `automake`,
+  `ca-certificates`, `file, `git`, `libtool`, and `make`.
+
+- `prefix`: The top level install location.  The default value is
+  `/usr/local/xpmem`.
+
+- `toolchain`: The toolchain object.  This should be used if
+  non-default compilers or other toolchain options are needed.  The
+  default is empty.
+
+Methods:
+
+- `runtime(_from='...')`: Generate the set of instructions to install
+  the runtime specific components from a build in a previous stage.
+
+Example:
+
+```python
+xpmem(prefix='/opt/xpmem', branch='master')
 ```
 
 ### yum
