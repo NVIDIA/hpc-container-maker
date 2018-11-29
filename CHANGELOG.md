@@ -1,3 +1,13 @@
+# v18.11.0
+
+- Adds UCX (`ucx`), gdrcopy (`gdrcopy`), KNEM (`knem`), and XPMEM
+  (`xpmem`) building blocks
+- Refresh default component versions for the Boost (`boost`),
+  CMake (`cmake`), FFTW (`fftw`), HDF5 (`hdf5`), MKL (`mkl`),
+  MVAPICH2 (`mvapich2`), OpenBLAS (`openblas`), OpenMPI (`openmpi`),
+  and PGI (`pgi`) building blocks
+- Improved support for `import hpccm` use cases
+
 # v18.10.0
 
 - Enhancements and fixes for the Boost (`boost`), FFTW (`fftw`),
