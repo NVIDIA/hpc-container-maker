@@ -41,7 +41,88 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class openmpi(ConfigureMake, rm, tar, wget):
-    """OpenMPI building block"""
+    """The `openmpi` building block configures, builds, and installs the
+    [OpenMPI](https://www.open-mpi.org) component.  Depending on the
+    parameters, the source will be downloaded from the web (default)
+    or copied from a source directory in the local build context.
+
+    As a side effect, this building block modifies `PATH` and
+    `LD_LIBRARY_PATH` to include the OpenMPI build.
+
+    As a side effect, a toolchain is created containing the MPI
+    compiler wrappers.  The tool can be passed to other operations
+    that want to build using the MPI compiler wrappers.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--disable-getpwuid` and
+    `--enable-orterun-prefix-by-default`.
+
+    cuda: Boolean flag to control whether a CUDA aware build is
+    performed.  If True, adds `--with-cuda` to the list of `configure`
+    options, otherwise adds `--without-cuda`.  If the toolchain
+    specifies `CUDA_HOME`, then that path is used.  The default value
+    is True.
+
+    directory: Path to the unpackaged source directory relative to the
+    local build context.  The default value is empty.  If this is
+    defined, the source in the local build context will be used rather
+    than downloading the source from the web.
+
+    infiniband: Boolean flag to control whether InfiniBand
+    capabilities are included.  If True, adds `--with-verbs` to the
+    list of `configure` options, otherwise adds `--without-verbs`.
+    The default value is True.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  For Ubuntu, the default values are `bzip2`, `file`,
+    `hwloc`, `libnuma-dev`, `make`, `openssh-client`, `perl`, `tar`,
+    and `wget`.  For RHEL-based Linux distributions, the default
+    values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
+    `openssh-clients`, `perl`, `tar`, and `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/openmpi`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    ucx: Flag to control whether UCX is used by the build.  If True,
+    adds `--with-ucx` to the list of `configure` options.  If a
+    string, uses the value of the string as the UCX path, e.g.,
+    `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
+    list of `configure` options.  The default is False.
+
+    version: The version of OpenMPI source to download.  This
+    value is ignored if `directory` is set.  The default value is
+    `3.1.2`.
+
+    # Examples
+
+    ```python
+    openmpi(cuda=False, infiniband=False, prefix='/opt/openmpi/2.1.2',
+        version='2.1.2')
+    ```
+
+    ```python
+    openmpi(directory='sources/openmpi-3.0.0')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    openmpi(toolchain=p.toolchain)
+    ```
+
+    ```python
+    openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
+            ospackages=['file', 'hwloc', 'libslurm-dev'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -220,7 +301,16 @@ class openmpi(ConfigureMake, rm, tar, wget):
                                     'openmpi-{}'.format(self.version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+        ```python
+        o = openmpi(...)
+        Stage0 += o
+        Stage1 += o.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('OpenMPI'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))

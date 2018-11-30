@@ -36,7 +36,47 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class pnetcdf(ConfigureMake, rm, tar, wget):
-    """PnetCDF building block"""
+    """The `pnetcdf` building block downloads, configures, builds, and
+    installs the
+    [PnetCDF](http://cucis.ece.northwestern.edu/projects/PnetCDF/index.html)
+    component.
+
+    As a side effect, this building block modifies `PATH` and
+    `LD_LIBRARY_PATH` to include the PnetCDF build.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--enable-shared`.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  The default values are `m4`, `make`, `tar`, and
+    `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/pnetcdf`.
+
+    toolchain: The toolchain object.  A MPI compiler toolchain must be
+    used.  The default is to use the standard MPI compiler wrappers,
+    e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
+
+    version: The version of PnetCDF source to download.  The default
+    value is `1.10.0`.
+
+    # Examples
+
+    ```python
+    pnetcdf(prefix='/opt/pnetcdf/1.10.0', version='1.10.0')
+    ```
+
+    ```python
+    ompi = openmpi(...)
+    pnetcdf(toolchain=ompi.toolchain, ...)
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -118,7 +158,17 @@ class pnetcdf(ConfigureMake, rm, tar, wget):
                                 'parallel-netcdf-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        p = pnetcdf(...)
+        Stage0 += p
+        Stage1 += p.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('PnetCDF'))
         instructions.append(copy(_from=_from, src=self.prefix,

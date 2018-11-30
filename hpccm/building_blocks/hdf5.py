@@ -40,7 +40,64 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class hdf5(ConfigureMake, rm, tar, wget):
-    """HDF5 building block"""
+    """The `hdf5` building block downloads, configures, builds, and
+    installs the [HDF5](http://www.hdfgroup.org) component.  Depending
+    on the parameters, the source will be downloaded from the web
+    (default) or copied from a source directory in the local build
+    context.
+
+    As a side effect, this building block modifies `PATH`,
+    `LD_LIBRARY_PATH` to include the HDF5 build, and sets `HDF5_DIR`.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--enable-cxx` and `--enable-fortran`.
+
+    directory: Path to the unpackaged source directory relative to the
+    local build context.  The default value is empty.  If this is
+    defined, the source in the local build context will be used rather
+    than downloading the source from the web.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  For Ubuntu, the default values are `bzip2`, `file`,
+    `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux
+    distributions the default values are `bzip2`, `file`, `make`,
+    `wget` and `zlib-devel`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/hdf5`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    version: The version of HDF5 source to download.  This value is
+    ignored if `directory` is set.  The default value is `1.10.4`.
+
+    # Examples
+
+    ```python
+    hdf5(prefix='/opt/hdf5/1.10.1', version='1.10.1')
+    ```
+
+    ```python
+    hdf5(directory='sources/hdf5-1.10.1')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    hdf5(toolchain=p.toolchain)
+    ```
+
+    ```python
+    hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
+                                     '--enable-profiling=yes'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -172,7 +229,17 @@ class hdf5(ConfigureMake, rm, tar, wget):
                                     'hdf5-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        h = hdf5(...)
+        Stage0 += h
+        Stage1 += h.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('HDF5'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))

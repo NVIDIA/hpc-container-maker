@@ -36,7 +36,65 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class fftw(ConfigureMake, rm, tar, wget):
-    """FFTW building block"""
+    """The `fftw` building block downloads, configures, builds, and
+    installs the [FFTW](http://www.fftw.org) component.  Depending on
+    the parameters, the source will be downloaded from the web
+    (default) or copied from a source directory in the local build
+    context.
+
+    As a side effect, this building block modifies `LD_LIBRARY_PATH`
+    to include the FFTW build.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--enable-shared`, `--enable-openmp`,
+    `--enable-threads`, and `--enable-sse2`.
+
+    directory: Path to the unpackaged source directory relative to the
+    local build context.  The default value is empty.  If this is
+    defined, the source in the local build context will be used rather
+    than downloading the source from the web.
+
+    mpi: Boolean flag to specify whether to build with MPI support
+    enabled.  The default is False.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  The default values are `file`, `make`, and `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/fftw`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    version: The version of FFTW source to download.  This value is
+    ignored if `directory` is set.  The default value is `3.3.8`.
+
+    # Examples
+
+    ```python
+    fftw(prefix='/opt/fftw/3.3.7', version='3.3.7')
+    ```
+
+    ```python
+    fftw(directory='sources/fftw-3.3.7')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    fftw(toolchain=p.toolchain)
+    ```
+
+    ```python
+    fftw(check=True, configure_opts=['--enable-shared', '--enable-threads',
+                                     '--enable-sse2', '--enable-avx'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -140,7 +198,17 @@ class fftw(ConfigureMake, rm, tar, wget):
                                     'fftw-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        f = fftw(...)
+        Stage0 += f
+        Stage1 += f.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('FFTW'))
         instructions.append(copy(_from=_from, src=self.prefix,

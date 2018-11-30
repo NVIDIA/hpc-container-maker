@@ -26,7 +26,32 @@ from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 
 class ofed(object):
-    """OFED building block"""
+    """The `ofed` building block installs the OpenFabrics Enterprise
+    Distribution packages that are part of the Linux distribution.
+
+    For Ubuntu, the following packages are installed: `dapl2-utils`,
+    `ibutils`, `ibverbs-utils`, `infiniband-diags`, `libdapl-dev`,
+    `libibcm-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
+    `libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`,
+    `libmlx5-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
+    `rdmacm-utils`.
+
+    For RHEL-based Linux distributions, the following packages are
+    installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
+    `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
+    `libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
+    `rdma-core-devel`.
+
+    # Parameters
+
+    None
+
+    # Examples
+
+    ```python
+    ofed()
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -57,5 +82,15 @@ class ofed(object):
         return '\n'.join(str(x) for x in instructions)
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        o = ofed(...)
+        Stage0 += o
+        Stage1 += o.runtime()
+        ```
+        """
         return str(self)

@@ -32,7 +32,33 @@ from hpccm.templates.rm import rm
 from hpccm.templates.wget import wget
 
 class cmake(rm, wget):
-    """CMake building block"""
+    """The `cmake` building block downloads and installs the
+    [CMake](https://cmake.org) component.
+
+    # Parameters
+
+    eula: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
+    The default value is `False`.
+
+    ospackages: List of OS packages to install prior to installing.
+    The default value is `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local`.
+
+    version: The version of CMake to download.  The default value is
+    `3.12.3`.
+
+    # Examples
+
+    ```python
+    cmake(eula=True)
+    ```
+
+    ```python
+    cmake(eula=True, version='3.10.3')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -105,7 +131,14 @@ class cmake(rm, wget):
             items=[os.path.join(self.__wd, runfile)]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage.  In this
-           case there is no difference between the runtime and the
-           full build."""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+        ```python
+        cmake = cmake(...)
+        Stage0 += cmake
+        Stage1 += cmake.runtime()
+        ```
+        """
         return str(self)

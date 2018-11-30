@@ -28,7 +28,36 @@ from hpccm.common import linux_distro
 from hpccm.primitives.shell import shell
 
 class yum(object):
-    """yum building block"""
+    """The `yum` building block specifies the set of operating system
+    packages to install.  This building block should only be used on
+    images that use the Red Hat package manager (e.g., CentOS).
+
+    In most cases, the [`packages` building block](#packages) should
+    be used instead of `yum`.
+
+    # Parameters
+
+    epel: - Boolean flag to specify whether to enable the Extra
+    Packages for Enterprise Linux (EPEL) repository.  The default is
+    False.
+
+    keys: A list of GPG keys to import.  The default is an empty list.
+
+    ospackages: A list of packages to install.  The default is an
+    empty list.
+
+    repositories: A list of yum repositories to add.  The default is
+    an empty list.
+
+    scl: - Boolean flag to specify whether to enable the Software
+    Collections (SCL) repository.  The default is False.
+
+    # Examples
+
+    ```python
+    yum(ospackages=['make', 'wget'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""

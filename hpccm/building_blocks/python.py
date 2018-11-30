@@ -27,7 +27,27 @@ from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 
 class python(object):
-    """Python building block"""
+    """The `python` building block installs Python from the upstream Linux
+    distribution.
+
+    # Parameters
+
+    python2: Boolean flag to specify whether to install Python version
+    2.  The default is True.
+
+    python3: Boolean flag to specify whether to install Python version
+    3.  The default is True.
+
+    # Examples
+
+    ```python
+    python()
+    ```
+
+    ```python
+    python(python3=False)
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -61,7 +81,17 @@ class python(object):
         return '\n'.join([str(x) for x in instructions])
 
     def runtime(self, _from='0'):
-        """Runtime specification"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        p = python(...)
+        Stage0 += p
+        Stage1 += p.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('Python'))
         instructions.append(packages(apt=self.__debs, epel=self.__epel,

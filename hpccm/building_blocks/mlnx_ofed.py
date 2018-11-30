@@ -33,7 +33,42 @@ from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
 class mlnx_ofed(tar, wget):
-    """Mellanox OFED building block"""
+    """The `mlnx_ofed` building block downloads and installs the [Mellanox
+    OpenFabrics Enterprise Distribution for
+    Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
+
+    # Parameters
+
+    oslabel: The Linux distribution label assigned by Mellanox to the
+    tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
+    RHEL-based Linux distributions, the default value is `rhel7.2`.
+
+    ospackages: List of OS packages to install prior to installing
+    OFED.  For Ubuntu, the default values are `libnl-3-200`,
+    `libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based Linux
+    distributions, the default values are `libnl`, `libnl3`,
+    `numactl-libs`, and `wget`.
+
+    packages: List of packages to install from Mellanox OFED.  For
+    Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
+    `libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
+    `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`,
+    `librdmacm1`, `librdmacm-dev`, and `ibverbs-utils`.  For
+    RHEL-based Linux distributions, the default values are
+    `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
+    `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
+    `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
+    `librdmacm-devel`.
+
+    version: The version of Mellanox OFED to download.  The default
+    value is `3.4-1.0.0.0`.
+
+    # Examples
+
+    ```python
+    mlnx_ofed(version='4.2-1.0.0.0')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -156,5 +191,15 @@ class mlnx_ofed(tar, wget):
                    os.path.join(self.__wd, self.__prefix)]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        m = mlnx_ofed(...)
+        Stage0 += m
+        Stage1 += m.runtime()
+        ```
+        """
         return str(self)

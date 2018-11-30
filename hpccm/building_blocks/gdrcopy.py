@@ -34,7 +34,30 @@ from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
 class gdrcopy(rm, tar, wget):
-    """GDRCOPY building block"""
+    """The `gdrcopy` building block builds and installs the user space
+    library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
+    component.
+
+    As a side effect, this building block modifies `CPATH`,
+    `LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+
+    # Parameters
+
+    ospackages: List of OS packages to install prior to building.  The
+    default values are `make` and `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/gdrcopy`.
+
+    version: The version of gdrcopy source to download.  The default
+    value is `1.3`.
+
+    # Examples
+
+    ```python
+    gdrcopy(prefix='/opt/gdrcopy/1.3', version='1.3')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -105,7 +128,17 @@ class gdrcopy(rm, tar, wget):
                                 'gdrcopy-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        g = gdrcopy(...)
+        Stage0 += g
+        Stage1 += g.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('GDRCOPY'))
         instructions.append(copy(_from=_from, src=self.__prefix,

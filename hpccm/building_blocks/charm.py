@@ -35,7 +35,47 @@ from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
 class charm(rm, sed, tar, wget):
-    """Charm++ building block"""
+    """The `charm` building block downloads and install the
+    [Charm++](http://charm.cs.illinois.edu/research/charm) component.
+
+    As a side effect, this building block modifies `LD_LIBRARY_PATH`
+    and `PATH` to include the Charm++ build.  It also sets the
+    `CHARMBASE` environment variable to the top level install
+    directory.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the test cases should be
+    run.  The default is False.
+
+    options: List of additional options to use when building Charm++.
+    The default values are `--build-shared`, and `--with-production`.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  The default values are `git`, `make`, and `wget`.
+
+    prefix: The top level install prefix.  The default value is
+    `/usr/local`.
+
+    target: The target Charm++ framework to build.  The default value
+    is `charm++`.
+
+    target_architecture: The target machine architecture to build.
+    The default value is `multicore-linux-x86_64`.
+
+    version: The version of Charm++ to download.  The default value is
+    `6.8.2`.
+
+    # Examples
+
+    ```python
+    charm(prefix='/opt', version='6.8.2')
+    ```
+
+    ```python
+    charm(target_architecture='mpi-linux-x86_64')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -130,7 +170,17 @@ class charm(rm, sed, tar, wget):
             items=[os.path.join(self.__wd, tarball)]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Example
+
+        ```python
+        c = charm(...)
+        Stage0 += c
+        Stage1 += c.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('Charm++'))
         instructions.append(copy(_from=_from, src=self.__installdir,

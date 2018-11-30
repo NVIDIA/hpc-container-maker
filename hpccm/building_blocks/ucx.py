@@ -41,7 +41,86 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class ucx(ConfigureMake, rm, tar, wget):
-    """UCX building block"""
+    """The `ucx` building block configures, builds, and installs the
+    [UCX](https://github.com/openucx/ucx) component.
+
+    An InfiniBand building block ([OFED](#ofed) or [Mellanox
+    OFED](#mlnx_ofed)) should be installed prior to this building
+    block.  One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
+    [XPMEM](#xpmem) building blocks should also be installed prior to
+    this building block.
+
+    As a side effect, this building block modifies `PATH` and
+    `LD_LIBRARY_PATH` to include the UCX build.
+
+    # Parameters
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--enable-optimizations`, `--disable-logging`,
+    `--disable-debug`, `--disable-assertions`,
+    `--disable-params-check`, and `--disable-doxygen-doc`.
+
+    cuda: Flag to control whether a CUDA aware build is performed.  If
+    True, adds `--with-cuda=/usr/local/cuda` to the list of
+    `configure` options.  If a string, uses the value of the string as
+    the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
+    path is used.  If False, adds `--without-cuda` to the list of
+    `configure` options.  The default value is an empty string.
+
+    gdrcopy: Flag to control whether gdrcopy is used by the build.  If
+    True, adds `--with-gdrcopy` to the list of `configure` options.
+    If a string, uses the value of the string as the gdrcopy path,
+    e.g., `--with-gdrcopy=/path/to/gdrcopy`.  If False, adds
+    `--without-gdrcopy` to the list of `configure` options.  The
+    default is an empty string, i.e., include neither `--with-gdrcopy`
+    not `--without-gdrcopy` and let `configure` try to automatically
+    detect whether gdrcopy is present or not.
+
+    knem: Flag to control whether KNEM is used by the build.  If True,
+    adds `--with-knem` to the list of `configure` options.  If a
+    string, uses the value of the string as the KNEM path, e.g.,
+    `--with-knem=/path/to/knem`.  If False, adds `--without-knem` to
+    the list of `configure` options.  The default is an empty string,
+    i.e., include neither `--with-knem` not `--without-knem` and let
+    `configure` try to automatically detect whether KNEM is present or
+    not.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  For Ubuntu, the default values are `binutils-dev`,
+    `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
+    distributions, the default values are `binutils-devel`, `file`,
+    `make`, `numactl-devel`, and `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/ucx`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default value is empty.
+
+    version: The version of UCX source to download.  The default value
+    is `1.4.0`.
+
+    xpmem: Flag to control whether XPMEM is used by the build.  If
+    True, adds `--with-xpmem` to the list of `configure` options.  If
+    a string, uses the value of the string as the XPMEM path, e.g.,
+    `--with-xpmem=/path/to/xpmem`.  If False, adds `--without-xpmem`
+    to the list of `configure` options.  The default is an empty
+    string, i.e., include neither `--with-xpmem` not `--without-xpmem`
+    and let `configure` try to automatically detect whether XPMEM is
+    present or not.
+
+    # Examples
+
+    ```python
+    ucx(cuda=False, prefix='/opt/ucx/1.4.0', version='1.4.0')
+    ```
+
+    ```python
+    ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
+        knem='/usr/local/knem', xpmem='/usr/local/xpmem')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -192,7 +271,17 @@ class ucx(ConfigureMake, rm, tar, wget):
                                 'ucx-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        u = ucx(...)
+        Stage0 += u
+        Stage1 += u.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('UCX'))
         instructions.append(copy(_from=_from, src=self.prefix,

@@ -38,7 +38,49 @@ from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
 class boost(rm, tar, wget):
-    """Boost building block"""
+    """The `boost` building block downloads and installs the
+    [Boost](https://www.boost.org) component.
+
+    As a side effect, this building block modifies `LD_LIBRARY_PATH`
+    to include the Boost build.
+
+    # Parameters
+
+    bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
+    default is an empty list.
+
+    ospackages: List of OS packages to install prior to building.  For
+    Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
+    `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+    default values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`,
+    and `zlib-devel`.
+
+    prefix: The top level installation locaation.  The default value
+    is `/usr/local/boost`.
+
+    python: Boolean flag to specify whether Boost should be built with
+    Python support.  If enabled, the Python C headers need to be
+    installed (typically this can be done by adding `python-dev` or
+    `python-devel` to the list of OS packages).  The default is False.
+
+    sourceforge: Boolean flag to specify whether Boost should be
+    downloaded from SourceForge rather than the current Boost
+    repository.  For versions of Boost older than 1.63.0, the
+    SourceForge repository should be used.  The default is False.
+
+    version: The version of Boost source to download.  The default
+    value is `1.68.0`.
+
+    # Examples
+
+    ```python
+    boost(prefix='/opt/boost/1.67.0', version='1.67.0')
+    ```
+
+    ```python
+    boost(sourceforge=True, version='1.57.0')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -149,7 +191,17 @@ class boost(rm, tar, wget):
                                 'boost_{}'.format(v_underscore))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        b = boost(...)
+        Stage0 += b
+        Stage1 += b.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('Boost'))
         instructions.append(copy(_from=_from, src=self.__prefix,
