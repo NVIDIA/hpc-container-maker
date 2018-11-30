@@ -29,7 +29,46 @@ from hpccm.common import container_type
 
 
 class copy(object):
-    """Copy primitive"""
+    """The `copy` primitive copies files from the host to the container
+    image.
+
+    # Parameters
+
+    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+    identifier.  This also causes the Singularity block to named
+    `%appfiles` rather than `%files` (Singularity specific).
+
+    dest: Path in the container image to copy the file(s)
+
+    _from: Set the source location to a previous build stage rather
+    than the host filesystem (Docker specific).
+
+    _mkdir: Boolean flag specifying that the destination directory
+    should be created in a separate `%setup` step.  This can be used
+    to work around the Singularity limitation that the destination
+    directory must exist in the container image prior to copying files
+    into the image.  The default is False (Singularity specific).
+
+    _post: Boolean flag specifying that file(s) should be first copied
+    to `/` and then moved to the final destination by a `%post` step.
+    This can be used to work around the Singularity limitation that
+    the destination must exist in the container image prior to copying
+    files into the image.  The default is False (Singularity
+    specific).
+
+    src: A file, or a list of files, to copy
+
+    # Examples
+
+    ```python
+    copy(src='component', dest='/opt/component')
+    ```
+
+    ```python
+    copy(src=['a', 'b', 'c'], dest='/tmp')
+    ```
+
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

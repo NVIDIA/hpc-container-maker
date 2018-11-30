@@ -27,7 +27,36 @@ import hpccm.config
 from hpccm.common import container_type
 
 class shell(object):
-    """Shell primitive"""
+    """The `shell` primitive specifies a series of shell commands to
+    execute.
+
+    # Parameters
+
+    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+    identifier.  This also causes the Singularity block to named
+    `%appinstall` rather than `%post` (Singularity specific).
+
+    _appenv: Boolean flag to specify whether the general container
+    environment should be also be loaded when executing a SCI-F
+    `%appinstall` block.  The default is False.
+
+    chdir: Boolean flag to specify whether to change the working
+    directory to `/` before executing any commands.  Docker
+    automatically resets the working directory for each `RUN`
+    instruction.  Setting this option to True make Singularity behave
+    the same.  This option is ignored for Docker.  The default is
+    True.
+
+    commands: A list of commands to execute.  The default is an empty
+    list.
+
+    # Examples
+
+    ```python
+    shell(commands=['cd /path/to/src', './configure', 'make install'])
+    ```
+
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

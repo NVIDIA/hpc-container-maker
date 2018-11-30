@@ -27,7 +27,38 @@ import hpccm.config
 from hpccm.common import container_type
 
 class environment(object):
-    """Environment primitive"""
+    """The `environment` primitive sets the corresponding environment
+    variables.  Note, for Singularity, this primitive may set
+    environment variables for the container runtime but not for the
+    container build process (see this
+    [rationale](https://github.com/singularityware/singularity/issues/1053)).
+    See the `_export` parameter for more information.
+
+    # Parameters
+
+    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+    identifier.  This also causes the Singularity block to named
+    `%appenv` rather than `%environment` (Singularity specific).
+
+    _export: A Boolean flag to specify whether the environment should
+    also be set for the Singularity build context (Singularity
+    specific).  Variables defined in the Singularity `%environment`
+    section are only defined when the container is run and not for
+    subsequent build steps (unlike the analogous Docker `ENV`
+    instruction).  If this flag is true, then in addition to the
+    `%environment` section, a identical `%post` section is generated
+    to export the variables for subsequent build steps.  The default
+    value is True.
+
+    variables: A dictionary of key / value pairs.  The default is an
+    empty dictionary.
+
+    # Examples
+
+    ```python
+    environment(variables={'PATH': '/usr/local/bin:$PATH'})
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

@@ -28,7 +28,20 @@ from hpccm.common import container_type
 from hpccm.primitives.shell import shell
 
 class workdir(object):
-    """Workdir primitive"""
+    """The `workdir` primitive sets the working directory for any
+    subsequent operations.  As a side effect, if the directory does
+    not exist, it is created.
+
+    # Parameters
+
+    directory: The directory path.
+
+    # Examples
+
+    ```python
+    workdir(directory='/path/to/directory')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

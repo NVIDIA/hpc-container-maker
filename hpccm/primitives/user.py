@@ -27,7 +27,21 @@ import hpccm.config
 from hpccm.common import container_type
 
 class user(object):
-    """User primitive"""
+    """The `user` primitive sets the user name to use for any subsequent
+    steps.
+
+    This primitive is the null operation for Singularity.
+
+    # Parameters
+
+    user: The user name to use.  The default is an empty string.
+
+    # Examples
+
+    ```python
+    user(user='ncognito')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""
