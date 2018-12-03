@@ -91,7 +91,7 @@ Stage0 += shell(commands=milc_cmds)
 ###############################################################################
 # Release stage
 ###############################################################################
-Stage1 += baseimage(image='nvidia/cuda:9.0-runtime-ubuntu16.04')
+Stage1 += baseimage(image='nvidia/cuda:9.0-base-ubuntu16.04')
 
 Stage1 += ofed.runtime()
 
