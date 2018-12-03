@@ -37,4 +37,4 @@ distinct advantages over "native" container specification formats.
 
 - [Making Containers Easier With HPC Container Maker](https://github.com/HPCSYSPROS/Workshop18/blob/master/Making_Container_Easier_with_HPC_Container_Maker/ws_hpcsysp103.pdf), presented at the [HPC Systems Professionals Workshop at SC18](/docs/citation.md)
 - [NVIDIA Developer Blog](https://devblogs.nvidia.com/making-containers-easier-with-hpc-container-maker/) by Scott McMillan
-- [ADMIN Magazine article](http://www.admin-magazine.com/mobile/HPC/Articles/HPC-Container-Maker) by Jeff Layton
+- [ADMIN Magazine article](http://www.admin-magazine.com/HPC/Articles/HPC-Container-Maker) by Jeff Layton
