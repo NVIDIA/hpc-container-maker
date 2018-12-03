@@ -46,8 +46,9 @@ Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
 _Note_: `Stage0` refers to the first stage of a [multi-stage Docker
 build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
-size of container images.  This tutorial will not use multi-stage
-builds, so the `Stage0` prefix can be considered boilerplate.
+size of container images.  This tutorial section will not use
+multi-stage builds, so the `Stage0` prefix can be considered
+boilerplate.
 
 The next step is to include the HPCCM [building
 blocks](building_blocks.md) corresponding to the rest of the desired
@@ -70,10 +71,10 @@ compiler = gnu()
 Stage0 += compiler
 ```
 
-_Note_: The `compiler` variable is defined so that OpenMPI is build
+_Note_: The `compiler` variable is defined so that OpenMPI is built
 with the GNU compiler toolchain in the next step.  Since the GNU
-compiler is typically the default compiler, in this case this is just
-being explicit.
+compiler is typically the default compiler, this is just being
+explicit about the default behavior.
 
 The [`openmpi` building block](building_blocks.md#openmpi) installs
 OpenMPI, configured to use the desired version, the GNU compiler, and
@@ -187,8 +188,8 @@ HPCCM recipes to create an application container.
 
 The CentOS 7 base image is sufficient for this example.  The Mellanox
 OFED user space libraries, a compiler, and MPI library are also
-needed.  For this tutorial, the GNU compiler and OpenMPI will be used.
-The corresponding HPCCM recipe is:
+needed.  For this tutorial section, the GNU compiler and OpenMPI will
+be used.  The corresponding HPCCM recipe is:
 
 ```python
 Stage0 += baseimage(image='centos:7')
@@ -200,8 +201,9 @@ Stage0 += openmpi(cuda=False)
 _Note_: `Stage0` refers to the first stage of a [multi-stage Docker
 build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
-size of container images.  This tutorial will not use multi-stage
-builds, so the `Stage0` prefix can be considered boilerplate.
+size of container images.  This tutorial section will not use
+multi-stage builds, so the `Stage0` prefix can be considered
+boilerplate.
 
 The next step is to build the MPI Bandwidth program from source.
 First the source code must be copied into the container, and then
@@ -222,9 +224,9 @@ into the container image.
 Stage0 += copy(src='mpi_bandwidth.c', dest='/var/tmp/mpi_bandwidth.c')
 ```
 
-_Note_: The MPI Bandwidth source code also be downloaded, e.g., using
-`wget`, as part of the container build.  The [MPI Bandwidth example
-recipe](../recipes/mpi_bandwidth.py) does this.
+_Note_: The MPI Bandwidth source code could also be downloaded as part
+of the container build itself, e.g., using `wget`.  The [MPI Bandwidth
+example recipe](../recipes/mpi_bandwidth.py) does this.
 
 Finally, compile the program binary using the `mpicc` MPI compiler
 wrapper.
@@ -266,20 +268,21 @@ Assuming the recipe file is named `mpi_bandwidth.py`, the following
 steps generate Docker and Singularity container images and then
 demostrate running the program on a single node.
 
-```python
+```
 $ hpccm --recipe mpi_bandwidth.py --format docker > Dockerfile
 $ sudo docker build -t mpi_bandwidth -f Dockerfile .
 $ sudo docker run --rm -it mpirun --allow-run-as-root -n 2 /usr/local/bin/mpi_bandwidth
 ```
 
-```python
+```
 $ hpccm --recipe mpi_bandwidth.py --format singularity > Singularity.def
 $ sudo singularity build mpi_bandwidth.sif Singularity.def
 $ singularity exec mpi_bandwidth.sif mpirun -n 2 /usr/local/bin/mpi_bandwidth
 ```
 
 _Note_: The exact same container images may also be used for
-multi-node runs, but that is beyond the scope of this tutorial.
+multi-node runs, but that is beyond the scope of this tutorial
+section.
 
 ## User Arguments
 
@@ -311,10 +314,10 @@ if not StrictVersion(ompi_version):
 Stage0 += openmpi(infiniband=False, version=ompi_version)
 ```
 
-The versions can be set on the command line (assuming the recipe file
+The versions can be set on the command line assuming the recipe file
 is named `userargs.py`.
 
-For the default values:
+To use the default values:
 
 ```
 $ hpccm --recipe userargs.py
@@ -386,7 +389,7 @@ are a very useful capability that separates the application build step
 from the deployment step.  The development toolchain, application
 source code, and build artifacts are not necessary when deploying the
 built application inside a container.  In fact, they can significantly
-and unnecessarily bloat the size of the container image.
+and unnecessarily increase the size of the container image.
 
 The `hpccm` command line tool automatically creates 2 stages,
 `Stage0`, and `Stage1`.  Most [building blocks](building_blocks.md)
@@ -413,7 +416,7 @@ from the first stage only is 5.93 GB, whereas the container image is
 only 429 MB when employing the multi-stage build process.  
 
 ```
-$ wget https://github.com/NVIDIA/hpc-container-maker/blob/master/recipes/milc/milc.py
+$ https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
 $ hpccm --recipe milc.py --single-stage > Dockerfile.single-stage
 $ sudo docker build -t milc-single-stage -f Dockerfile.single-stage .
 
