@@ -10,6 +10,7 @@ tool to make it easier to generate container specification files.
 - [Examples](/recipes/)
 - [API: Building Blocks](/docs/building_blocks.md)
 - [API: Primitives](/docs/primitives.md)
+- [Citation](/docs/citation.md)
 - [License](/LICENSE)
 
 ## Overview
@@ -32,16 +33,8 @@ distinct advantages over "native" container specification formats.
 3. Generate either Dockerfiles or Singularity definition files from
    the same recipe.
 
-## Citation
+## Additional Resources
 
-```
-@InProceedings{McMillanHPCSYSPROS18,
-  author = {McMillan, Scott},
-  title = {Making Containers Easier with HPC Container Maker},
-  url = {https://github.com/HPCSYSPROS/Workshop18/tree/master/Making_Container_Easier_with_HPC_Container_Maker},
-  booktitle = {In HPCSYSPROS18: HPC System Professionals Workshop},
-  year = {2018},
-  month = {November},
-  address = {Dallas, TX},
-}
-```
+- [Making Containers Easier With HPC Container Maker](https://github.com/HPCSYSPROS/Workshop18/blob/master/Making_Container_Easier_with_HPC_Container_Maker/ws_hpcsysp103.pdf), presented at the [HPC Systems Professionals Workshop at SC18](/docs/citation.md)
+- [NVIDIA Developer Blog](https://devblogs.nvidia.com/making-containers-easier-with-hpc-container-maker/) by Scott McMillan
+- [ADMIN Magazine article](http://www.admin-magazine.com/mobile/HPC/Articles/HPC-Container-Maker) by Jeff Layton

@@ -47,11 +47,11 @@ Stage0 += gnu()
 The command line tool manages input and output for you.
 
 ```
-$ hpccm --recipe *file* --format docker
+$ hpccm --recipe <recipe_file> --format docker
 ```
 
 ```
-$ hpccm --recipe *file* --format singularity
+$ hpccm --recipe <recipe_file> --format singularity
 ```
 
 HPCCM recipes are Python scripts, so you can incorporate Python code in
@@ -67,32 +67,36 @@ your prefered container image builder.
 Using [Docker](https://docs.docker.com/engine/reference/commandline/build/):
 
 ```
-$ sudo docker build -t *tag* -f Dockerfile .
+$ sudo docker build -t <tag> -f Dockerfile .
 ```
 
 Using [Singularity](https://www.sylabs.io/guides/latest/user-guide/build_a_container.html):
 
 ```
-$ sudo singularity build *image.sif* Singularity.def
+$ sudo singularity build <image_file.sif> Singularity.def
 ```
 
 Other container builders may also be used.
 
 ## Next Steps
 
-Several [example recipes](../recipes) are included.
+Go through the [tutorial](/docs/tutorial.md) for some more in depth
+examples.
 
-A few [simple examples](../recipes/examples) illustrate some of the
-basic concepts.
+A few [simple examples](/recipes/examples) are included to illustrate
+some of the basic concepts.
 
-The ["hpcbase" recipes](../recipes) provide representative HPC
-development environments including a compiler, MPI library, and common
-HPC libraries.  These recipes are a great starting point for building
-an HPC application container.  Choose the recipe with the compiler /
-MPI library combination that best matches the application requirements
-and add the application specific build instructions.
+Several [example recipes](/recipes) are also included.
 
-A few complete [application examples](../recipes) are also provided.
+The "hpcbase" recipes provide representative HPC development
+environments including a compiler, MPI library, and common HPC
+libraries.  These recipes are a great starting point for building an
+HPC application container.  Choose the recipe with the compiler / MPI
+library combination that best matches the application requirements and
+add the application specific build instructions.
 
-Read the rest of the [documentation](docs/) for more information on
-creating recipes, customizing building block behavior, and more.
+A few complete application examples are also provided.
+
+Read the rest of the [documentation](/docs) for more information on
+creating recipes, customizing building block behavior, the API
+reference, and more.
