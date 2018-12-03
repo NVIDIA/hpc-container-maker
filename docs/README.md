@@ -10,7 +10,7 @@ tool to make it easier to generate container specification files.
 - [Examples](recipes/)
 - [API: Building Blocks](building_blocks.md)
 - [API: Primitives](primitives.md)
-- [License](LICENSE.md)
+- [License](/LICENSE.md)
 
 ## Overview
 
