@@ -52,7 +52,7 @@ Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
 default values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`,
 and `zlib-devel`.
 
-- __prefix__: The top level installation locaation.  The default value
+- __prefix__: The top level installation location.  The default value
 is `/usr/local/boost`.
 
 - __python__: Boolean flag to specify whether Boost should be built with

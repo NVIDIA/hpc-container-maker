@@ -10,6 +10,7 @@ tool to make it easier to generate container specification files.
 - [Examples](/recipes/)
 - [API: Building Blocks](/docs/building_blocks.md)
 - [API: Primitives](/docs/primitives.md)
+- [API: Miscellaneous](/docs/misc_api.md)
 - [Citation](/docs/citation.md)
 - [License](/LICENSE)
 
@@ -19,7 +20,7 @@ HPC Container Maker generates Dockerfiles or Singularity definition
 files from a high level Python recipe.  HPCCM recipes have some
 distinct advantages over "native" container specification formats.
 
-1. A library of HPC [buildling blocks](/docs/building_blocks.md) that
+1. A library of HPC [building blocks](/docs/building_blocks.md) that
    separate the choice of what to include in a container image from
    the details of how it's done.  The building blocks transparently
    take advantage of the latest component and container best

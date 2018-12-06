@@ -24,7 +24,7 @@ specification files.
 import hpccm
 
 # Set to 'docker' to generate a Dockerfile or set to 'singularity' to
-# generate a Singularity defintion file
+# generate a Singularity definition file
 hpccm.config.set_container_format('docker')
 
 print(hpccm.primitives.baseimage(image='centos:7'))
@@ -62,7 +62,7 @@ the recipe.
 The HPCCM output is the container specification, so save the output to
 a file.  By convention, the container specification files are named
 `Dockerfile` or `Singularity.def` for Docker and Singularity,
-respectively.  To generate a container image, use your prefered
+respectively.  To generate a container image, use your preferred
 container image builder.
 
 Using [Docker](https://docs.docker.com/engine/reference/commandline/build/):

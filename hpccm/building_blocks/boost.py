@@ -55,7 +55,7 @@ class boost(rm, tar, wget):
     default values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`,
     and `zlib-devel`.
 
-    prefix: The top level installation locaation.  The default value
+    prefix: The top level installation location.  The default value
     is `/usr/local/boost`.
 
     python: Boolean flag to specify whether Boost should be built with
