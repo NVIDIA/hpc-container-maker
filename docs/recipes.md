@@ -139,7 +139,7 @@ of primitives and their configuration options.
 | `copy(src=['a', 'b', 'c'], dest='z/')`        | `COPY a b c z/`             | `%files`<br>`a z/`<br>`b z/`<br>`c z/`   |
 | `shell(commands=['a'])`                       | `RUN a`                     | `%post`<br>`a`                           |
 | `shell(commands=['a', 'b', 'c'])`             | `RUN a && b && c`           | `%post`<br>`a`<br>`b`<br>`c`             |
-| `environment(variables={'FOO': 'BAR'})`       | `ENV FOO=BAR`               | `%environment`<br>`export FOO=BAR`<br>`%post`<br>`export FOO=BAR |
+| `environment(variables={'FOO': 'BAR'})`       | `ENV FOO=BAR`               | `%environment`<br>`export FOO=BAR`<br>`%post`<br>`export FOO=BAR` |
 | `environment(variables={'A': 'B', 'C': 'D'}, _export=False)` | `ENV A=B C=D`               | `%environment`<br>`export A=B`<br>`export C=D` |
 | `workdir(directory='/path/to')`               | `WORKDIR /path/to`          | `%post`<br>`mkdir -p /path/to`<br>`cd /path/to` |
 | `label(metadata={'FOO': 'BAR'})`              | `LABEL FOO=BAR`             | `%labels`<br>`foo bar`                   |
