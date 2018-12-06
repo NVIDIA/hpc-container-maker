@@ -128,34 +128,21 @@ Some key primitive operations, and their
 [Dockerfile](https://docs.docker.com/engine/reference/builder/) and
 [Singularity definition
 file](https://www.sylabs.io/guides/latest/user-guide/quick_start.html#singularity-definition-files)
-equivalents are shown in the following tables.  Please refer to the
+equivalents are shown in the following table.  Please refer to the
 [primitives](/docs/primitives.md) documentation for the complete list
 of primitives and their configuration options.
 
-| Docker                      | Primitive                                     |
-| --------------------------- | --------------------------------------------- |
-| `FROM image:tag`            | `baseimage(image='image:tag')`                |
-| `COPY foo bar`              | `copy(src='foo', dest='bar')`                 |
-| `COPY a b c z/`             | `copy(src=['a', 'b', 'c'], dest='z/')`        |
-| `RUN a`                     | `shell(commands=['a'])`                       |
-| `RUN a && b && c`           | `shell(commands=['a', 'b', 'c'])`             |
-| `ENV FOO=BAR`               | `environment(variables={'FOO': 'BAR'})`       |
-| `ENV A=B C=D`               | `environment(variables={'A': 'B', 'C': 'D'})` |
-| `WORKDIR /path/to`          | `workdir(directory='/path/to')`               |
-| `LABEL FOO=BAR`             | `label(metadata={'FOO': 'BAR'})`              |
-
-| Singularity                 | Primitive                                     |
-| --------------------------- | --------------------------------------------- |
-| `BootStrap: docker`<br>`From: image:tag` | `baseimage(image='image:tag')`   |
-| `%files`<br>`foo bar`                    | `copy(src='foo', dest='bar')`    |
-| `%files`<br>`a z/`<br>`b z/`<br>`c z/`   | `copy(src=['a', 'b', 'c'], dest='z/')`    |
-| `%post`<br>`a`                           | `shell(commands=['a'])`          |
-| `%post`<br>`a`<br>`b`<br>`c`       | `shell(commands=['a', 'b', 'c'])`      |
-| `%environment`<br>`export FOO=BAR` | `environment(variables={'FOO': 'BAR'})` |
-| `%environment`<br>`export A=B`<br>`export C=D` | `environment(variables={'A': 'B', 'C': 'D'})` |
-| `%post`<br>`mkdir -p /path/to`<br>`cd /path/to` | `workdir(directory='/path/to
-')` |
-| `%labels`<br>`foo bar`                   | `label(metadata={'foo': 'bar'})` |
+| Primitive                                     | Docker                      | Singularity                 |
+| --------------------------------------------- | --------------------------- | --------------------------- |
+| `baseimage(image='image:tag')`                | `FROM image:tag`            | `BootStrap: docker`<br>`From: image:tag` |
+| `copy(src='foo', dest='bar')`                 | `COPY foo bar`              | `%files`<br>`foo bar`                    |
+| `copy(src=['a', 'b', 'c'], dest='z/')`        | `COPY a b c z/`             | `%files`<br>`a z/`<br>`b z/`<br>`c z/`   |
+| `shell(commands=['a'])`                       | `RUN a`                     | `%post`<br>`a`                           |
+| `shell(commands=['a', 'b', 'c'])`             | `RUN a && b && c`           | `%post`<br>`a`<br>`b`<br>`c`             |
+| `environment(variables={'FOO': 'BAR'})`       | `ENV FOO=BAR`               | `%environment`<br>`export FOO=BAR`<br>`%post`<br>`export FOO=BAR |
+| `environment(variables={'A': 'B', 'C': 'D'}, _export=False)` | `ENV A=B C=D`               | `%environment`<br>`export A=B`<br>`export C=D` |
+| `workdir(directory='/path/to')`               | `WORKDIR /path/to`          | `%post`<br>`mkdir -p /path/to`<br>`cd /path/to` |
+| `label(metadata={'FOO': 'BAR'})`              | `LABEL FOO=BAR`             | `%labels`<br>`foo bar`                   |
 
 Primitives also hide many of the differences between the Docker and
 Singularity container image build processes so that behavior is
