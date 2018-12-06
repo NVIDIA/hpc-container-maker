@@ -242,8 +242,7 @@ converted to Singularity images so Singularity can also (indirectly)
 take advantage of multi-stage builds.
 
 ```
-$ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.s
-ock -v /tmp:/output singularityware/docker2singularity <docker-tag>
+$ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity <docker-tag>
 ```
 
 ## Scripts Using the HPCCM Module
