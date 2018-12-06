@@ -93,7 +93,8 @@ class pgi(rm, tar, wget):
             # Use tarball from local build context
             instructions.append(
                 copy(src=self.__tarball,
-                     dest=os.path.join(self.__wd, self.__tarball)))
+                     dest=os.path.join(self.__wd,
+                                       os.path.basename(self.__tarball))))
         else:
             # Downloading, so need wget
             self.__ospackages.append('wget')
@@ -177,12 +178,12 @@ class pgi(rm, tar, wget):
 
         if self.__tarball:
             # Use tarball from local build context
-            tarball = self.__tarball
+            tarball = os.path.basename(self.__tarball)
 
             # Figure out the version from the tarball name
             match = re.match(r'pgilinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
                              tarball)
-            if match.groupdict()['year'] and match.groupdict()['month']:
+            if match and match.groupdict()['year'] and match.groupdict()['month']:
                 self.__version = '{0}.{1}'.format(match.groupdict()['year'],
                                                   match.groupdict()['month'])
         else:
