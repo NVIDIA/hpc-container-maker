@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Global configuration
-
-Import this as
-import hpccm.config
-
-And access variables as
-hpccm.config.var
-"""
+# Global configuration
+#
+# Import this as
+# import hpccm.config
+#
+# And access variables as
+# hpccm.config.var
 
 from __future__ import absolute_import
 
@@ -33,6 +32,17 @@ g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 
 def set_container_format(ctype):
+  """Set the container format
+
+  # Arguments
+
+  ctype (string): 'docker' to specify the Dockerfile format, or
+  'singularity' to specify the Singularity definition file format
+
+  # Raises
+
+  RuntimeError: invalid container type argument
+  """
   this = sys.modules[__name__]
   if ctype == 'docker':
     this.g_ctype = container_type.DOCKER

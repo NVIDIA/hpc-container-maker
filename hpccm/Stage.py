@@ -25,8 +25,20 @@ import logging # pylint: disable=unused-import
 from hpccm.primitives.baseimage import baseimage
 
 class Stage(object):
-    """Class for the container stage.  Docker may have one or more stages,
-       Singularity will always have a single stage."""
+    """Class for container stages.
+
+    Docker may have one or more stages,
+       Singularity will always have a single stage.
+
+    # Parameters
+
+    name: Name to use when refering to the stage (Docker specific).
+    The default is an empty string.
+
+    separator: Separator to insert between stages.  The default is
+    '\\n\\n'.
+
+    """
 
     def __init__(self, **kwargs):
         """Initialize stage"""
@@ -48,11 +60,25 @@ class Stage(object):
         return self.__separator.join(str(x) for x in self.__layers)
 
     def baseimage(self, image, _distro=''):
-        """Insert the baseimage as the first layer"""
+        """Insert the baseimage as the first layer
+
+        # Arguments
+
+        image (string): The image identifier to use as the base image.
+        The value is passed to the `baseimage` primitive.
+
+        _distro: The underlying Linux distribution of the base image.
+        The value is passed to the `baseimage` primitive.
+        """
         if image:
             self.__layers.insert(0, baseimage(image=image, _as=self.name,
                                               _distro=_distro))
 
     def is_defined(self):
-        """Return True if any layers have been defined, otherwise False"""
+        """Check if any layers have been added to the Stage
+
+        # Returns
+
+        True if any layers have been added to the stage, otherwise False
+        """
         return bool(self.__layers)

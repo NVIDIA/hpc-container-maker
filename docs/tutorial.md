@@ -56,8 +56,8 @@ software environment: [Mellanox OFED](building_blocks.md#mlnx_ofed),
 [gcc](building_blocks.md#gnu), and
 [OpenMPI](building_blocks.md#openmpi).
 
-Add the [`mlnx_ofed` building block](building_blocks.md#mlnx_ofed)
-with the desired version to the recipe:
+The [`mlnx_ofed` building block](building_blocks.md#mlnx_ofed)
+installs the OpenFabrics user space libraries:
 
 ```python
 Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
@@ -71,14 +71,14 @@ compiler = gnu()
 Stage0 += compiler
 ```
 
-_Note_: The `compiler` variable is defined so that OpenMPI is built
-with the GNU compiler toolchain in the next step.  Since the GNU
-compiler is typically the default compiler, this is just being
-explicit about the default behavior.
+_Note_: The `compiler` variable is defined here so that in the next
+step the OpenMPI building block can use the GNU compiler toolchain.
+Since the GNU compiler is typically the default compiler, this is just
+being explicit about the default behavior.
 
 The [`openmpi` building block](building_blocks.md#openmpi) installs
 OpenMPI, configured to use the desired version, the GNU compiler, and
-with CUDA enabled:
+with CUDA and InfiniBand enabled:
 
 ```python
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
@@ -114,20 +114,19 @@ $ hpccm --recipe cuda-gcc-openmpi.py --format singularity
 
 Depending on the desired [workflow](workflows.md), the next step might
 be to use a text editor to add the steps to build an HPC application
-to the resulting Dockerfile or Singularity definition file.
+to the Dockerfile or Singularity definition file.
 
 ### Extensions
 
 What if instead of the default version GNU compiler, version 7 was
-needed?  Change `Stage0 += gnu()` to `Stage0 += gnu(version='7')` and
+needed?  Change `compiler = gnu()` to `compiler = gnu(version='7')` and
 see what happens.
 
 What if instead of the GNU compilers, the bare metal environment was
 based on the PGI compilers?  Change `compiler = gnu()` to `compiler =
-pgi(eula=True)` and see what happens.
-
-_Note_: The [PGI compiler EULA](https://www.pgroup.com/doc/LICENSE)
-must be accepted in order to use the building block.
+pgi(eula=True)` and see what happens.  _Note_: The [PGI compiler
+EULA](https://www.pgroup.com/doc/LICENSE) must be accepted in order to
+use the building block.
 
 What if the Linux distribution was Ubuntu instead of CentOS?  Change
 the base image from `nvidia/cuda:9.0-devel-centos7` to
@@ -208,13 +207,13 @@ boilerplate.
 The next step is to build the MPI Bandwidth program from source.
 First the source code must be copied into the container, and then
 compiled.  For both of these steps, HPCCM [primitives](primitives.md)
-will be used.  HPCCM primitives are wrappers around the basic
+will be used.  HPCCM primitives are wrappers around the native
 container specification operations that translate the conceptual
-operation into the corresponding container specific syntax.
-Primitives also hide many of the differences between the Docker and
-Singularity container image build processes so that behavior is
-consistent regardless of the output configuration specification
-format.
+operation into the corresponding native container specific syntax.
+Primitives also hide many of the behavioral differences between the
+Docker and Singularity container image build processes so that
+behavior is consistent regardless of the output configuration
+specification format.
 
 First, download the MPI Bandwidth source code into the same directory
 as the recipe.  Then the local copy of the source code can be copied
@@ -266,7 +265,7 @@ Stage0 += shell(commands=[
 
 Assuming the recipe file is named `mpi_bandwidth.py`, the following
 steps generate Docker and Singularity container images and then
-demostrate running the program on a single node.
+demonstrate running the program on a single node.
 
 ```
 $ hpccm --recipe mpi_bandwidth.py --format docker > Dockerfile
@@ -282,7 +281,9 @@ $ singularity exec mpi_bandwidth.sif mpirun -n 2 /usr/local/bin/mpi_bandwidth
 
 _Note_: The exact same container images may also be used for
 multi-node runs, but that is beyond the scope of this tutorial
-section.
+section.  The webinar [GPU Accelerated Multi-Node HPC Workloads with
+Singularity](https://www.nvidia.com/content/webinar-portal/src/webinar-portal.html?D2C=1850434&isSocialSharing=Y&partnerref=emailShareFromGateway)
+is a good reference for multi-node MPI runs.
 
 ## User Arguments
 
@@ -416,16 +417,16 @@ from the first stage only is 5.93 GB, whereas the container image is
 only 429 MB when employing the multi-stage build process.  
 
 ```
-$ https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
 $ hpccm --recipe milc.py --single-stage > Dockerfile.single-stage
-$ sudo docker build -t milc-single-stage -f Dockerfile.single-stage .
+$ sudo docker build -t milc:single-stage -f Dockerfile.single-stage .
 
 $ hpccm --recipe milc.py > Dockerfile.multi-stage
-$ sudo docker build -t milc-multi-stage -f Dockerfile.multi-stage .
+$ sudo docker build -t milc:multi-stage -f Dockerfile.multi-stage .
 
-$ docker images --format "{{.Repository}}: {{.Size}}" | grep milc
-milc-multi-stage: 429MB
-milc-single-stage: 5.93GB
+$ docker images --format "{{.Repository}}:{{.Tag}}: {{.Size}}" | grep milc
+milc:multi-stage: 429MB
+milc:single-stage: 5.93GB
 ```
 
 The Singularity definition file format and image builder do not
@@ -434,8 +435,8 @@ converted to Singularity images so Singularity can also (indirectly)
 take advantage of multi-stage builds.
 
 ```
-$ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity milc-multi-stage
+$ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity milc:multi-stage
 ...
-Singularity container built: /tmp/milc-multi-stage-2018-12-03-c2b47902c8a8.simg
+Singularity container built: /tmp/milc_multi-stage-2018-12-03-c2b47902c8a8.simg
 ...
 ```

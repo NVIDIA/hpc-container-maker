@@ -44,13 +44,18 @@ generate:
   - hpccm.primitives.shell+
   - hpccm.primitives.user+
   - hpccm.primitives.workdir+
+- misc_api.md:
+  - hpccm.config+
+  - hpccm.recipe+
+  - hpccm.Stage+
 
 pages:
-#- Home: readme.md << docs/README.md
+#- Home: README.md << README.md
 #- Getting Started: getting_started.md << docs/getting_started.md
 #- Tutorial: tutorial.md << docs/tutorial.md
 - Building Blocks: building_blocks.md
 - Primitives: primitives.md
+- Miscellaneous APIs: misc_api.md
 #- Citation: citation.md << docs/citation.md
 #- License: license << LICENSE
 

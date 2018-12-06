@@ -59,20 +59,23 @@ the recipe.
 
 ### Building Container Images
 
-The HPCCM output is the container specification, so save it to a file.
-By convention, the container specification files are named
-`Dockerfile` or `Singularity.def`.  To generate a container image, use
-your prefered container image builder.
+The HPCCM output is the container specification, so save the output to
+a file.  By convention, the container specification files are named
+`Dockerfile` or `Singularity.def` for Docker and Singularity,
+respectively.  To generate a container image, use your prefered
+container image builder.
 
 Using [Docker](https://docs.docker.com/engine/reference/commandline/build/):
 
 ```
+$ hpccm --recipe <recipe.py> --format docker > Dockerfile
 $ sudo docker build -t <tag> -f Dockerfile .
 ```
 
 Using [Singularity](https://www.sylabs.io/guides/latest/user-guide/build_a_container.html):
 
 ```
+$ hpccm --recipe <recipe.py> --format singularity > Singularity.def
 $ sudo singularity build <image_file.sif> Singularity.def
 ```
 
@@ -95,7 +98,9 @@ HPC application container.  Choose the recipe with the compiler / MPI
 library combination that best matches the application requirements and
 add the application specific build instructions.
 
-A few complete application examples are also provided.
+A few complete application examples are also provided, including
+[GROMACS](/recipes/gromacs/gromacs.py), [MILC](/recipes/milc/milc.py),
+and [MPI Bandwidth](/recipes/mpi_bandwidth.py).
 
 Read the rest of the [documentation](/docs) for more information on
 creating recipes, customizing building block behavior, the API
