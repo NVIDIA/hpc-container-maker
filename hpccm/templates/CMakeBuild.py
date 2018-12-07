@@ -43,9 +43,9 @@ class CMakeBuild(object):
                                              'F77': True, 'F90': True,
                                              'FC': True})
 
-    def build_step(self, target='all', parallel=4):
+    def build_step(self, target='all', parallel='$(nproc)'):
         """Documentation TBD"""
-        return 'cmake --build {0} --target {1} -- -j{2:d}'.format(
+        return 'cmake --build {0} --target {1} -- -j{2}'.format(
             self.__build_directory, target, parallel)
 
     def configure_step(self, directory=None, build_directory='build',

@@ -49,8 +49,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
@@ -72,8 +72,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
@@ -96,8 +96,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-xpmem=/xpmem && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
@@ -120,8 +120,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-xpmem && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
@@ -144,8 +144,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --without-gdrcopy --without-knem --without-xpmem && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')

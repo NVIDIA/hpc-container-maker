@@ -52,8 +52,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stub
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
@@ -84,8 +84,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stub
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3 &&  CC=pgcc CFLAGS=-ta=tesla:nordc CPPFLAGS='-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI=' CXX=pgc++ F77=pgfortran FC=pgfortran LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda=basic --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
@@ -112,8 +112,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stub
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3b.tar.gz -C /var/tmp -z && \
     sed -i -e 's/-arch sm_20/-arch sm_60/g' /var/tmp/mvapich2-2.3b/Makefile.in && \
     cd /var/tmp/mvapich2-2.3b &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3b.tar.gz /var/tmp/mvapich2-2.3b
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
@@ -137,8 +137,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
@@ -162,8 +162,8 @@ RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stub
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
@@ -188,8 +188,8 @@ COPY mvapich2-2.3 /var/tmp/mvapich2-2.3
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
     cd /var/tmp/mvapich2-2.3 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
