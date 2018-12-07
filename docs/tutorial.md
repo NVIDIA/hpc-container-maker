@@ -133,7 +133,7 @@ What if the Linux distribution was Ubuntu instead of CentOS?  Change
 the base image from `nvidia/cuda:9.0-devel-centos7` to
 `nvidia/cuda:9.0-devel-ubuntu16.04` and see what happens.
 
-What would the equivalent script using the HPCCM Python library look
+What would the equivalent script using the HPCCM Python module look
 like?
 
 ```python
@@ -341,7 +341,7 @@ $ hpccm --recipe userargs.py --userarg cuda=nine_point_zero
 ERROR: invalid version number 'nine_point_zero'
 ```
 
-When using the HPCCM Python library, the `argparse` Python module can
+When using the HPCCM Python module, the `argparse` Python module can
 provide equivalent functionality.
 
 ```

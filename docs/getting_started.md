@@ -10,12 +10,12 @@ $ sudo pip install hpccm
 
 ## Using HPCCM
 
-HPCCM can be used as a Python library or via the `hpccm` command line
+HPCCM can be used as a Python module or via the `hpccm` command line
 interface.
 
-### Python Library
+### Python Module
 
-The HPCCM Python library is a set of routines to generate container
+The HPCCM Python module is a set of routines to generate container
 specification files.
 
 ```python
@@ -31,7 +31,7 @@ print(hpccm.primitives.baseimage(image='centos:7'))
 print(hpccm.building_blocks.gnu())
 ```
 
-The Python library provides the most flexibility, but you are
+The Python module provides the most flexibility, but you are
 responsible for managing input and output.
 
 ### Command Line Tool
