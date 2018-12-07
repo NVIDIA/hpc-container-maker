@@ -51,20 +51,21 @@ multi-stage builds, so the `Stage0` prefix can be considered
 boilerplate.
 
 The next step is to include the HPCCM [building
-blocks](building_blocks.md) corresponding to the rest of the desired
-software environment: [Mellanox OFED](building_blocks.md#mlnx_ofed),
-[gcc](building_blocks.md#gnu), and
-[OpenMPI](building_blocks.md#openmpi).
+blocks](/docs/building_blocks.md) corresponding to the rest of the
+desired software environment: [Mellanox
+OFED](/docs/building_blocks.md#mlnx_ofed),
+[gcc](/docs/building_blocks.md#gnu), and
+[OpenMPI](/docs/building_blocks.md#openmpi).
 
-The [`mlnx_ofed` building block](building_blocks.md#mlnx_ofed)
+The [`mlnx_ofed` building block](/docs/building_blocks.md#mlnx_ofed)
 installs the OpenFabrics user space libraries:
 
 ```python
 Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
 ```
 
-The [`gnu` building block](building_blocks.md#gnu) installs the GNU
-compiler suite:
+The [`gnu` building block](/docs/building_blocks.md#gnu) installs the
+GNU compiler suite:
 
 ```python
 compiler = gnu()
@@ -76,9 +77,9 @@ step the OpenMPI building block can use the GNU compiler toolchain.
 Since the GNU compiler is typically the default compiler, this is just
 being explicit about the default behavior.
 
-The [`openmpi` building block](building_blocks.md#openmpi) installs
-OpenMPI, configured to use the desired version, the GNU compiler, and
-with CUDA and InfiniBand enabled:
+The [`openmpi` building block](/docs/building_blocks.md#openmpi)
+installs OpenMPI, configured to use the desired version, the GNU
+compiler, and with CUDA and InfiniBand enabled:
 
 ```python
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
@@ -112,9 +113,9 @@ $ hpccm --recipe cuda-gcc-openmpi.py --format docker
 $ hpccm --recipe cuda-gcc-openmpi.py --format singularity
 ```
 
-Depending on the desired [workflow](workflows.md), the next step might
-be to use a text editor to add the steps to build an HPC application
-to the Dockerfile or Singularity definition file.
+Depending on the desired [workflow](/docs/workflows.md), the next step
+might be to use a text editor to add the steps to build an HPC
+application to the Dockerfile or Singularity definition file.
 
 ### Extensions
 
@@ -171,11 +172,11 @@ The "recipe" itself is exactly the same, but the Python script
 requires additional code to import the Python modules, parse input,
 and print output that is handled automatically by the `hpccm` command
 line tool.  However, the script also allows precise control over its
-behavior.  [For instance](../recipes/examples/script.py), additional
+behavior.  [For instance](/recipes/examples/script.py), additional
 command line arguments could be added to specify the compiler version,
 compiler suite, Linux distribution, and so on.  Note it is also
 possible to tailor the behavior of HPCCM recipes with [user
-arguments](recipes.md#userargs).
+arguments](/docs/recipes.md#userargs).
 
 ## MPI Bandwidth
 
@@ -206,14 +207,14 @@ boilerplate.
 
 The next step is to build the MPI Bandwidth program from source.
 First the source code must be copied into the container, and then
-compiled.  For both of these steps, HPCCM [primitives](primitives.md)
-will be used.  HPCCM primitives are wrappers around the native
-container specification operations that translate the conceptual
-operation into the corresponding native container specific syntax.
-Primitives also hide many of the behavioral differences between the
-Docker and Singularity container image build processes so that
-behavior is consistent regardless of the output configuration
-specification format.
+compiled.  For both of these steps, HPCCM
+[primitives](/docs/primitives.md) will be used.  HPCCM primitives are
+wrappers around the native container specification operations that
+translate the conceptual operation into the corresponding native
+container specific syntax.  Primitives also hide many of the
+behavioral differences between the Docker and Singularity container
+image build processes so that behavior is consistent regardless of the
+output configuration specification format.
 
 First, download the MPI Bandwidth source code into the same directory
 as the recipe.  Then the local copy of the source code can be copied
@@ -225,7 +226,7 @@ Stage0 += copy(src='mpi_bandwidth.c', dest='/var/tmp/mpi_bandwidth.c')
 
 _Note_: The MPI Bandwidth source code could also be downloaded as part
 of the container build itself, e.g., using `wget`.  The [MPI Bandwidth
-example recipe](../recipes/mpi_bandwidth.py) does this.
+example recipe](/recipes/mpi_bandwidth.py) does this.
 
 Finally, compile the program binary using the `mpicc` MPI compiler
 wrapper.
@@ -242,7 +243,7 @@ builds](https://docs.docker.com/develop/develop-images/multistage-build/)
 are another approach that separates the application build process from
 the application deployment.
 
-The complete [MPI Bandwidth recipe](../recipes/mpi-bandwidth.py) is:
+The complete [MPI Bandwidth recipe](/recipes/mpi-bandwidth.py) is:
 
 ```python
 # CentOS base image
@@ -393,9 +394,9 @@ built application inside a container.  In fact, they can significantly
 and unnecessarily increase the size of the container image.
 
 The `hpccm` command line tool automatically creates 2 stages,
-`Stage0`, and `Stage1`.  Most [building blocks](building_blocks.md)
-provide a `runtime` method to install the corresponding runtime
-version of a component. 
+`Stage0`, and `Stage1`.  Most [building
+blocks](/docs/building_blocks.md) provide a `runtime` method to
+install the corresponding runtime version of a component.
 
 The following recipe builds OpenMPI in the first (build) stage, and
 then copies the resulting OpenMPI build into the second (deployment)
@@ -411,7 +412,7 @@ Stage1 += baseimage(image='nvidia/cuda:9.0-base-centos7')
 Stage1 += ompi.runtime()
 ```
 
-The [MILC example recipe](../recipes/milc/milc.py) demonstrates the
+The [MILC example recipe](/recipes/milc/milc.py) demonstrates the
 usefulness of multi-stage recipes.  The Docker container image built
 from the first stage only is 5.93 GB, whereas the container image is
 only 429 MB when employing the multi-stage build process.  

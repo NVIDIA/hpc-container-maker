@@ -3,14 +3,15 @@
 HPC Container Maker (HPCCM - pronounced H-P-see-M) is an open source
 tool to make it easier to generate container specification files.
 
-- [Getting Started](/docs/getting_started.md)
-- [Tutorial](/docs/tutorial.md)
-- [Recipes](/docs/recipes.md)
-- [Workflows](/docs/workflows.md)
+- [Documentation](/docs)
+    - [Getting Started](/docs/getting_started.md)
+    - [Tutorial](/docs/tutorial.md)
+    - [Recipes](/docs/recipes.md)
+    - [Workflows](/docs/workflows.md)
+    - [API: Building Blocks](/docs/building_blocks.md)
+    - [API: Primitives](/docs/primitives.md)
+    - [API: Miscellaneous](/docs/misc_api.md)
 - [Examples](/recipes/)
-- [API: Building Blocks](/docs/building_blocks.md)
-- [API: Primitives](/docs/primitives.md)
-- [API: Miscellaneous](/docs/misc_api.md)
 - [Citation](/docs/citation.md)
 - [License](/LICENSE)
 
