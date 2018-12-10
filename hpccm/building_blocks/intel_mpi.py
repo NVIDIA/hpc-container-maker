@@ -37,7 +37,53 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class intel_mpi(wget):
-    """Intel MPI building block"""
+    """The `intel_mpi` building block downloads and installs the [Intel
+    MPI Library](https://software.intel.com/en-us/intel-mpi-library).
+
+    You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
+    to use this building block.
+
+    As a side effect, this building block modifies `PATH`,
+    `LD_LIBRARY_PATH`, and other environment variables to include
+    Intel MPI.  Please see the `mpivars` parameter for more
+    information.
+
+    # Parameters
+
+    eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+    The default value is `False`.
+
+    mpivars: Intel MPI provides an environment script (`mpivars.sh`)
+    to setup the Intel MPI environment.  If this value is `True`, the
+    bashrc is modified to automatically source this environment
+    script.  However, the Intel MPI environment is not automatically
+    available to subsequent container image build steps; the
+    environment is available when the container image is run.  To set
+    the Intel MPI environment in subsequent build steps you can
+    explicitly call `source
+    /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh
+    intel64` in each build step.  If this value is to set `False`,
+    then the environment is set such that the environment is visible
+    to both subsequent container image build steps and when the
+    container image is run.  However, the environment may differ
+    slightly from that set by `mpivars.sh`.  The default value is
+    `True`.
+
+    ospackages: List of OS packages to install prior to installing
+    Intel MPI.  For Ubuntu, the default values are
+    `apt-transport-https`, `ca-certificates`, `man-db`,
+    `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+    the default values are `man-db` and `openssh-clients`.
+
+    version: The version of Intel MPI to install.  The default value
+    is `2018.3-051`.
+
+    # Examples
+
+    ```python
+    intel_mpi(eula=True, version='2018.3-051')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -120,7 +166,15 @@ class intel_mpi(wget):
             raise RuntimeError('Unknown Linux distribution')
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage.  In this
-           case thre is no difference between the runtime and the full
-           build."""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        i = intel_mpi(...)
+        Stage0 += i
+        Stage1 += i.runtime()
+        ```
+        """
         return str(self)

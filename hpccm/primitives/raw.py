@@ -27,7 +27,32 @@ import hpccm.config
 from hpccm.common import container_type
 
 class raw(object):
-    """Raw primitive"""
+    """The `raw` primitive inserts the specified string, without
+    modification, into the corresponding place in the container
+    specification file.
+
+    Generally, the string should be functionally equivalent for each
+    container format.
+
+    Wherever possible, the raw primitive should be avoided and other,
+    more portable, primitives should be used instead.
+
+    # Parameters
+
+    docker: String containing the Dockerfile instruction (Docker
+    specific).
+
+    singularity: String containing the Singularity instruction
+    (Singularity specific).
+
+    # Examples
+
+    ```python
+    raw(docker='COPY --from=0 /usr/local/openmpi /usr/local/openmpi',
+        singularity='# no equivalent to --from')
+    ```
+
+    """
 
     def __init__(self, **kwargs):
         """Raw primitive"""

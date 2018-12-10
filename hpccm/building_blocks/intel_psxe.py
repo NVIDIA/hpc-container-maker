@@ -36,7 +36,58 @@ from hpccm.templates.tar import tar
 from hpccm.toolchain import toolchain
 
 class intel_psxe(rm, sed, tar):
-    """Intel Parallel Studio XE building block"""
+    """The `intel_psxe` building block installs [Intel Parallel Studio
+    XE](https://software.intel.com/en-us/parallel-studio-xe).
+
+    You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
+    to use this building block.
+
+    As a side effect, this building block modifies `PATH` and
+    `LD_LIBRARY_PATH`.
+
+    # Parameters
+
+    components: List of Intel Parallel Studio XE components to
+    install.  The default values are `intel-icc__x86_64` and
+    `intel-ifort__x86_64`, i.e., install the Intel C++ and Fortran
+    compilers only.  Please note that the values are not consistent
+    between versions; for a list of components, extract
+    `pset/mediaconfig.xml` from the tarball and grep for `Abbr`.  The
+    default values correspond to Intel Parallel Studio XE 2018.
+
+    eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+    The default value is `False`.
+
+    license: The license to use to activate Intel Parallel Studio XE.
+    If the string contains a `@` the license is interpreted as a
+    network license, e.g., `12345@lic-server`.  Otherwise, the string
+    is interpreted as the path to the license file relative to the
+    local build context.  The default value is empty.  While this
+    value is not required, the installation is unlikely to be
+    successful without a valid license.
+
+    ospackages: List of OS packages to install prior to installing
+    Intel Parallel Studio XE.  The default value is `cpio`.
+
+    prefix: The top level install location.  The default value is
+    `/opt/intel`.
+
+    tarball: Path to the Intel Parallel Studio XE tarball relative to
+    the local build context.  The default value is empty.  This
+    parameter is required.
+
+    # Examples
+
+    ```python
+    intel_psxe(eula=True, license='XXXXXXXX.lic',
+               tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
+    ```
+
+    ```python
+    i = intel_psxe(...)
+    openmpi(..., toolchain=i.toolchain, ...)
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""

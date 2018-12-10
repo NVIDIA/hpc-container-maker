@@ -25,7 +25,21 @@ import re
 import textwrap
 
 class comment(object):
-    """Comment primitive"""
+    """The `comment` primitive inserts a comment into the corresponding
+    place in the container specification file.
+
+    # Parameters
+
+    reformat: Boolean flag to specify whether the comment string
+    should be wrapped to fit into lines not exceeding 80 characters.
+    The default is True.
+
+    # Examples
+
+    ```python
+    comment('libfoo version X.Y')
+    ```
+    """
 
     def __init__(self, *args, **kwargs):
         """Initialize primitive"""

@@ -76,7 +76,25 @@ from hpccm.building_blocks.yum import yum
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, userarg=None):
-    """Recipe builder"""
+    """Recipe builder
+
+    # Arguments
+
+    recipe_file: path to a recipe file (required).
+
+    ctype: Enum representing the container specification format.  The
+    default is `container_type.DOCKER`.
+
+    raise_exceptions: If False, do not print stack traces when an
+    exception is raised.  The default value is False.
+
+    single_stage: If True, only print the first stage of a multi-stage
+    recipe.  The default is False.
+
+    userarg: A dictionary of key / value pairs provided to the recipe
+    as the `USERARG` dictionary.
+
+    """
 
     # Make user arguments available
     USERARG = {} # pylint: disable=unused-variable

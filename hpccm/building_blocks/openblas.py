@@ -35,7 +35,41 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class openblas(rm, tar, wget):
-    """OpenBLAS building block"""
+    """The `openblas` building block builds and installs the
+    [OpenBLAS](https://www.openblas.net) component.
+
+    As a side effect, this building block modifies `LD_LIBRARY_PATH`
+    to include the OpenBLAS build.
+
+    # Parameters
+
+    make_opts: List of options to pass to `make`.  The default value
+    is `USE_OPENMP=1`.
+
+    ospackages: List of OS packages to install prior to building.  The
+    default values are `make`, `tar`, and `wget`.
+
+    prefix: The top level installation location.  The default value is
+    `/usr/local/openblas`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    version: The version of OpenBLAS source to download.  The default
+    value is `0.3.3`.
+
+    # Examples
+
+    ```python
+    openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    openblas(toolchain=p.toolchain)
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -110,7 +144,17 @@ class openblas(rm, tar, wget):
                                 'OpenBLAS-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        o = openblas(...)
+        Stage0 += o
+        Stage1 += o.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('OpenBLAS'))
         instructions.append(copy(_from=_from, src=self.__prefix,

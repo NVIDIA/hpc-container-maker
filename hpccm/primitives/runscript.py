@@ -29,7 +29,29 @@ import hpccm.config
 from hpccm.common import container_type
 
 class runscript(object):
-    """Runscript primitive"""
+    """The `runscript` primitive specifies the commands to be invoked
+    when the container starts.
+
+    # Parameters
+
+    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+    identifier.  This also causes the Singularity block to named `%apprun`
+    rather than `%runscript` (Singularity specific).
+
+    commands: A list of commands to execute.  The default is an empty
+    list.
+
+    # Examples
+
+    ```python
+    runscript(commands=['cd /workdir', 'source env.sh'])
+    ```
+
+    ```python
+    runscript(commands=['/usr/local/bin/entrypoint.sh'])
+    ```
+
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

@@ -1,0 +1,65 @@
+# Configuration file for pydocmd
+# Run "pydocmd generate" to generate updated documentation
+site_name: "HPC Container Maker"
+
+generate:
+- building_blocks.md:
+  - hpccm.building_blocks.apt_get+
+  - hpccm.building_blocks.boost+
+  - hpccm.building_blocks.cgns+
+  - hpccm.building_blocks.charm+
+  - hpccm.building_blocks.cmake+
+  - hpccm.building_blocks.fftw+
+  - hpccm.building_blocks.gdrcopy+
+  - hpccm.building_blocks.gnu+
+  - hpccm.building_blocks.hdf5+
+  - hpccm.building_blocks.intel_mpi+
+  - hpccm.building_blocks.intel_psxe+
+  - hpccm.building_blocks.knem+
+  - hpccm.building_blocks.llvm+
+  - hpccm.building_blocks.mkl+
+  - hpccm.building_blocks.mlnx_ofed+
+  - hpccm.building_blocks.mvapich2+
+  - hpccm.building_blocks.mvapich2_gdr+
+  - hpccm.building_blocks.netcdf+
+  - hpccm.building_blocks.ofed+
+  - hpccm.building_blocks.openblas+
+  - hpccm.building_blocks.openmpi+
+  - hpccm.building_blocks.packages+
+  - hpccm.building_blocks.pgi+
+  - hpccm.building_blocks.pnetcdf+
+  - hpccm.building_blocks.python+
+  - hpccm.building_blocks.ucx+
+  - hpccm.building_blocks.xpmem+
+  - hpccm.building_blocks.yum+
+- primitives.md:
+  - hpccm.primitives.baseimage+
+  - hpccm.primitives.blob+
+  - hpccm.primitives.comment+
+  - hpccm.primitives.copy+
+  - hpccm.primitives.environment+
+  - hpccm.primitives.label+
+  - hpccm.primitives.raw+
+  - hpccm.primitives.runscript+
+  - hpccm.primitives.shell+
+  - hpccm.primitives.user+
+  - hpccm.primitives.workdir+
+- misc_api.md:
+  - hpccm.config+
+  - hpccm.recipe+
+  - hpccm.Stage+
+
+pages:
+- Home: README.md << README.md
+#- Getting Started: getting_started.md << docs/getting_started.md
+#- Tutorial: tutorial.md << docs/tutorial.md
+- Building Blocks: building_blocks.md
+- Primitives: primitives.md
+- Miscellaneous APIs: misc_api.md
+#- Citation: citation.md << docs/citation.md
+#- License: license << LICENSE
+
+headers: markdown
+
+gens_dir: docs
+site_dir: site

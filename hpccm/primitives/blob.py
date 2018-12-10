@@ -27,7 +27,31 @@ import hpccm.config
 from hpccm.common import container_type
 
 class blob(object):
-    """Blob primitive"""
+    """The `blob` primitive inserts a file, without modification, into the
+    corresponding place in the container specification file.  If a
+    relative path is specified, the path is relative to current
+    directory.
+
+    Generally, the blob should be functionally equivalent for each
+    container format.
+
+    Wherever possible, the blob primitive should be avoided and other,
+    more portable, operations should be used instead.
+
+    # Parameters
+
+    docker: Path to the file containing the Dockerfile blob (Docker
+    specific).
+
+    singularity: Path to the file containing the Singularity blob
+    (Singularity specific).
+
+    # Example
+
+    ```python
+    blob(docker='path/to/foo.docker', singularity='path/to/foo.singularity')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize primitive"""

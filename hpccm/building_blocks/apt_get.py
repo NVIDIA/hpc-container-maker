@@ -28,7 +28,32 @@ from hpccm.common import linux_distro
 from hpccm.primitives.shell import shell
 
 class apt_get(object):
-    """apt-get building block"""
+    """The `apt_get` building block specifies the set of operating system
+    packages to install.  This building block should only be used on
+    images that use the Debian package manager (e.g., Ubuntu).
+
+    In most cases, the [`packages` building block](#packages) should be
+    used instead of `apt_get`.
+
+    # Parameters
+
+    keys: A list of GPG keys to add.  The default is an empty list.
+
+    ospackages: A list of packages to install.  The default is an
+    empty list.
+
+    ppas: A list of personal package archives to add.  The default is
+    an empty list.
+
+    repositories: A list of apt repositories to add.  The default is
+    an empty list.
+
+    # Examples
+
+    ```python
+    apt_get(ospackages=['make', 'wget'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""

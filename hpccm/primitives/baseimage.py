@@ -29,7 +29,31 @@ from hpccm.common import container_type, linux_distro
 from hpccm.primitives.shell import shell
 
 class baseimage(object):
-    """Base image primitive"""
+    """The `baseimage` primitive defines the base image to be used.
+
+    # Parameters
+
+    _as: Name for the build stage (Docker specific).  The default
+    value is empty.
+
+    _distro: The underlying Linux distribution of the base image.
+    Valid values are `centos`, `redhat`, `rhel`, and `ubuntu`.  By
+    default, the primitive attempts to figure out the Linux
+    distribution by inspecting the image identifier, and falls back to
+    `ubuntu` if unable to determine the Linux distribution
+    automatically.
+
+    image: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
+
+    AS: Name for the build stage (Docker specific).  The default value
+    is empty.  This parameter is deprecated; use `_as` instead.
+
+    # Examples
+
+    ```python
+    baseimage(image='nvidia/cuda:9.1-devel')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize the primitive"""

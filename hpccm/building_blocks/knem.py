@@ -38,7 +38,29 @@ from hpccm.templates.git import git
 from hpccm.templates.rm import rm
 
 class knem(git, rm):
-    """KNEM building block"""
+    """The `knem` building block install the headers from the
+    [KNEM](http://knem.gforge.inria.fr) component.
+
+    As a side effect, this building block modifies `CPATH`,
+    `LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+
+    # Parameters
+
+    ospackages: List of OS packages to install prior to installing.
+    The default values are `ca-certificates` and `git`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/knem`.
+
+    version: The version of KNEM source to download.  The default
+    value is `1.1.3`.
+
+    # Examples
+
+    ```python
+    knem(prefix='/opt/knem/1.1.3', version='1.1.3')
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -96,7 +118,17 @@ class knem(git, rm):
                    [os.path.join(self.__wd, 'knem')]))
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        k = knem(...)
+        Stage0 += k
+        Stage1 += k.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('KNEM'))
         instructions.append(copy(_from=_from, src=self.__prefix,

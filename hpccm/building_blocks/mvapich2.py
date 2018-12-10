@@ -42,7 +42,83 @@ from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
 class mvapich2(ConfigureMake, rm, sed, tar, wget):
-    """MVAPICH2 building block"""
+    """The `mvapich2` building block configures, builds, and installs the
+    [MVAPICH2](http://mvapich.cse.ohio-state.edu) component.
+    Depending on the parameters, the source will be downloaded from
+    the web (default) or copied from a source directory in the local
+    build context.
+
+    An InfiniBand building block ([OFED](#ofed) or [Mellanox
+    OFED](#mlnx_ofed)) should be installed prior to this building
+    block.
+
+    As a side effect, this building block modifies `PATH` and
+    `LD_LIBRARY_PATH` to include the MVAPICH2 build.
+
+    As a side effect, a toolchain is created containing the MPI
+    compiler wrappers.  The tool can be passed to other operations
+    that want to build using the MPI compiler wrappers.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default values are `--disable-mcast`.
+
+    cuda: Boolean flag to control whether a CUDA aware build is
+    performed.  If True, adds `--enable-cuda --with-cuda` to the list
+    of `configure` options, otherwise adds `--disable-cuda`.  If the
+    toolchain specifies `CUDA_HOME`, then that path is used, otherwise
+    `/usr/local/cuda` is used for the path.  The default value is
+    True.
+
+    directory: Path to the unpackaged source directory relative to
+    the local build context.  The default value is empty.  If this is
+    defined, the source in the local build context will be used rather
+    than downloading the source from the web.
+
+    gpu_arch: The GPU architecture to use.  Older versions of MVAPICH2
+    (2.3b and previous) were hard-coded to use "sm_20".  This option
+    has no effect on more recent MVAPICH2 versions.  The default value
+    is to use the MVAPICH2 default.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  For Ubuntu, the default values are `byacc`, `file`,
+    `make`, `openssh-client`, and `wget`.  For RHEL-based Linux
+    distributions, the default values are `byacc`, `file`, `make`,
+    `openssh-clients`, and `wget`.
+
+    prefix: The top level install location.  The default value is
+    `/usr/local/mvapich2`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    version: The version of MVAPICH2 source to download.  This value
+    is ignored if `directory` is set.  The default value is `2.3`.
+
+    # Examples
+
+    ```python
+    mvapich2(cuda=False, prefix='/opt/mvapich2/2.3a', version='2.3a')
+    ```
+
+    ```python
+    mvapich2(directory='sources/mvapich2-2.3b')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    mvapich2(toolchain=p.toolchain)
+    ```
+
+    ```python
+    mvapich2(configure_opts=['--disable-fortran', '--disable-mcast'])
+    ```
+    """
 
     def __init__(self, **kwargs):
         """Initialize building block"""
@@ -239,7 +315,17 @@ class mvapich2(ConfigureMake, rm, sed, tar, wget):
             self.__environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
 
     def runtime(self, _from='0'):
-        """Install the runtime from a full build in a previous stage"""
+        """Generate the set of instructions to install the runtime specific
+        components from a build in a previous stage.
+
+        # Examples
+
+        ```python
+        m = mvapich2(...)
+        Stage0 += m
+        Stage1 += m.runtime()
+        ```
+        """
         instructions = []
         instructions.append(comment('MVAPICH2'))
         # TODO: move the definition of runtime ospackages
