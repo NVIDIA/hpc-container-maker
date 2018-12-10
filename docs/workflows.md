@@ -22,12 +22,12 @@ binary and its runtime dependencies are needed when deploying the
 container image, the container image size can potentially be reduced
 significantly.  The second stage uses a runtime version of the CUDA
 base image and copies the application binary and the required runtime
-dependencies from the first stage to generate an optimal size
+dependencies from the first stage to generate a significantly smaller
 container image.  HPCCM building blocks provide a method to easily
 copy the runtime from the first stage into the second stage.
 
 This workflow is the most portable since the HPCCM recipe can be used
-to generate either a Dockerfile or Singularity definition file, and
+to generate either a Dockerfile or Singularity definition file, and is
 the easiest to maintain.
 
 ## Base Image Generation
@@ -35,7 +35,7 @@ the easiest to maintain.
 On a bare metal system using environment modules, the typical workflow
 is to first setup the necessary software environment by loading the
 appropriate modules.  With the proper software environment loaded, an
-application can be built or run.
+application can then be built or run.
 
 This "base" software environment is analogous to the base image used
 when building a container image.  A base image with the proper set of
@@ -43,11 +43,12 @@ HPC software components present can be used as the starting point for
 building an application container image.
 
 HPCCM includes [base recipes](/recipes) for all combinations of the
-GNU and PGI compilers with the OpenMPI and MVAPICH2 MPI libraries,
-plus commonly used software components such as the Mellanox
-OpenFabrics Enterprise Distribution, Python, FFTW, and HDF5.  The
-provided base recipe can be easily customized to change component
-versions or add or subtract building blocks.
+Ubuntu and CentOS Linux distributions, the GNU and PGI compilers, and
+the OpenMPI and MVAPICH2 MPI libraries, plus commonly used software
+components such as the Mellanox OpenFabrics Enterprise Distribution,
+Python, FFTW, and HDF5.  The provided base recipe can be easily
+customized to change component versions or add or subtract building
+blocks.
 
 For example:
 
@@ -64,6 +65,7 @@ for building an application container image.
 ```
 FROM hpcbase
 
+# Application build instructions
 ...
 ```
 
@@ -71,6 +73,7 @@ FROM hpcbase
 BootStrap: docker
 From: hpcbase
 
+# Application build instructions
 ...
 ```
 

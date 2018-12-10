@@ -27,7 +27,7 @@ build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
 size of container images.  This section will not use multi-stage
 builds, so the `Stage0` prefix can be considered boilerplate.  See the
-section on [multi-stage recipe](#multi-stage-recipes) for more
+section on [multi-stage recipes](#multi-stage-recipes) for more
 information.
 
 The `hpccm` command line tool processes recipes and generates the
@@ -43,7 +43,9 @@ RUN yum install -y \
         gcc-c++ \
         gcc-gfortran && \
     rm -rf /var/cache/yum/*
+```
 
+```
 $ hpccm --recipe simple.py --format singularity
 BootStrap: docker
 From: centos:7
@@ -92,14 +94,15 @@ building block will reflect the Linux distribution of the base image.
 Ubuntu and RedHat derived distributions (e.g., CentOS) are supported.
 For example, if the base image is derived from the Ubuntu Linux
 distribution, the apt package manager is used to install any required
-packages.  Whereas, if the base image was derived from CentOS, the yum
-package manager would have been used instead.  The base image Linux
+packages.  However, if the base image is derived from CentOS, the yum
+package manager would be used instead.  The base image Linux
 distribution detection is automatic and normally requires no action by
 the user.
 
 Most building blocks also have [configuration
 options](/docs/building_blocks.md) to enable customization.  For
-instance, the openmpi building block has options to specify the
+instance, the [openmpi building
+block](/docs/building_blocks.md#openmpi) has options to specify the
 version, the installation path, the compiler toolchain to use, whether
 to enable CUDA and InfiniBand support, and so on.  Reasonable defaults
 are set so configuration is usually optional.
@@ -262,9 +265,9 @@ combine HPCCM with other Python modules.
 
 Building blocks and primitives are implemented using the Python
 `__str__` function, so it is possible to simply call a building block
-or primitive in string context, e.g., `print()`.  See
-[/docs/misc_api.md] for additional APIs that are useful for this use
-case.
+or primitive in string context, e.g., `print()`.  There are
+[additional APIs](/docs/misc_api.md) that are useful for this use
+case, e.g., to set the configuration specification output format.
 
 ```python
 #!/usr/bin/env python

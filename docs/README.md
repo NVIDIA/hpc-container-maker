@@ -24,8 +24,7 @@ distinct advantages over "native" container specification formats.
 1. A library of HPC [building blocks](/docs/building_blocks.md) that
    separate the choice of what to include in a container image from
    the details of how it's done.  The building blocks transparently
-   take advantage of the latest component and container best
-   practices.
+   provide the latest component and container best practices.
 
 2. Python provides increased flexibility over static container
    specification formats.  Python-based recipes can branch, validate

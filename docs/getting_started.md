@@ -2,7 +2,7 @@
 
 ## Installation
 
-HPCCM can be installed from PyPi.
+HPCCM can be installed from [PyPi](https://pypi.org/project/hpccm/).
 
 ```
 $ sudo pip install hpccm
@@ -79,7 +79,8 @@ $ hpccm --recipe <recipe.py> --format singularity > Singularity.def
 $ sudo singularity build <image_file.sif> Singularity.def
 ```
 
-Other container builders may also be used.
+Other container builders that understand Dockerfiles or Singularity
+definition files may also be used.
 
 ## Next Steps
 

@@ -19,7 +19,7 @@ $ module load openmpi/1.10.7
 ```
 
 Modules can depend on each other, and in this case, the `openmpi`
-module was built with the gcc compiler with CUDA support enabled.
+module was built with the gcc compiler and with CUDA support enabled.
 
 The Linux distribution and drivers are typically fixed by the system
 administrator, for instance CentOS 7 and Mellanox OFED 3.4.
@@ -115,7 +115,9 @@ $ hpccm --recipe cuda-gcc-openmpi.py --format singularity
 
 Depending on the desired [workflow](/docs/workflows.md), the next step
 might be to use a text editor to add the steps to build an HPC
-application to the Dockerfile or Singularity definition file.
+application to the Dockerfile or Singularity definition file, or it
+might be to extend the HPCCM recipe to add the steps to build an HPC
+application.
 
 ### Extensions
 
@@ -127,7 +129,7 @@ What if instead of the GNU compilers, the bare metal environment was
 based on the PGI compilers?  Change `compiler = gnu()` to `compiler =
 pgi(eula=True)` and see what happens.  _Note_: The [PGI compiler
 EULA](https://www.pgroup.com/doc/LICENSE) must be accepted in order to
-use the building block.
+use the [PGI building block](/docs/building_blocks.md#pgi).
 
 What if the Linux distribution was Ubuntu instead of CentOS?  Change
 the base image from `nvidia/cuda:9.0-devel-centos7` to
@@ -176,15 +178,17 @@ behavior.  [For instance](/recipes/examples/script.py), additional
 command line arguments could be added to specify the compiler version,
 compiler suite, Linux distribution, and so on.  Note it is also
 possible to tailor the behavior of HPCCM recipes with [user
-arguments](/docs/recipes.md#userargs).
+arguments](/docs/recipes.md#userargs).  Another possible enhancement
+would be to write the output to a file instead of printing it to
+standard output.
 
 ## MPI Bandwidth
 
 The [MPI
 Bandwidth](https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c)
 sample program from the Lawrence Livermore National Laboratory (LLNL)
-will be used as a proxy application to illustrate how one can use
-HPCCM recipes to create an application container.
+will be used as a proxy application to illustrate how to use HPCCM
+recipes to create application containers.
 
 The CentOS 7 base image is sufficient for this example.  The Mellanox
 OFED user space libraries, a compiler, and MPI library are also
@@ -352,7 +356,7 @@ from distutils.version import StrictVersion
 
 import argparse
 import hpccm
-from hpccm.building_blocks import gnu, mlnx_ofed, openmpi
+from hpccm.building_blocks import openmpi
 from hpccm.primitives import baseimage
 
 parser = argparse.ArgumentParser(description='HPCCM Tutorial')
