@@ -1,4 +1,4 @@
-# HPC Container Maker Documentation
+# HPC Container Maker
 
 HPC Container Maker (HPCCM - pronounced H-P-see-M) is an open source
 tool to make it easier to generate container specification files.
