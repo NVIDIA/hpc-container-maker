@@ -40,11 +40,11 @@ class Test_CMakeBuild(unittest.TestCase):
 
         # build step
         build = cm.build_step()
-        self.assertEqual(build, 'cmake --build /tmp/src/build --target all -- -j4')
+        self.assertEqual(build, 'cmake --build /tmp/src/build --target all -- -j$(nproc)')
 
         # build some target
         install = cm.build_step(target='foo')
-        self.assertEqual(install, 'cmake --build /tmp/src/build --target foo -- -j4')
+        self.assertEqual(install, 'cmake --build /tmp/src/build --target foo -- -j$(nproc)')
 
     def test_toolchain(self):
         """Toolchain specified"""

@@ -47,8 +47,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
@@ -67,8 +67,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
@@ -88,8 +88,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 --enable-mpi && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
@@ -119,7 +119,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 COPY fftw-3.3.7 /var/tmp/fftw-3.3.7
 RUN cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')

@@ -48,8 +48,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.3.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v3.3.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/CGNS-3.3.1/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/v3.3.1.tar.gz /var/tmp/v3.3.1''')
 
     @centos
@@ -69,8 +69,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.3.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v3.3.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/CGNS-3.3.1/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/v3.3.1.tar.gz /var/tmp/v3.3.1''')
 
     @ubuntu

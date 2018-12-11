@@ -49,7 +49,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
-    ./b2 -j4 -q install && \
+    ./b2 -j$(nproc) -q install && \
     rm -rf /var/tmp/boost_1_68_0.tar.bz2 /var/tmp/boost_1_68_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
@@ -71,7 +71,7 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
-    ./b2 -j4 -q install && \
+    ./b2 -j$(nproc) -q install && \
     rm -rf /var/tmp/boost_1_68_0.tar.bz2 /var/tmp/boost_1_68_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
@@ -93,7 +93,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost  && \
-    ./b2 -j4 -q install && \
+    ./b2 -j$(nproc) -q install && \
     rm -rf /var/tmp/boost_1_68_0.tar.bz2 /var/tmp/boost_1_68_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
@@ -115,7 +115,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_57_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_57_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
-    ./b2 -j4 -q install && \
+    ./b2 -j$(nproc) -q install && \
     rm -rf /var/tmp/boost_1_57_0.tar.bz2 /var/tmp/boost_1_57_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 

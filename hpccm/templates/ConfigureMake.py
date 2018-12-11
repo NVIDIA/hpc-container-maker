@@ -34,7 +34,7 @@ class ConfigureMake(object):
         #super(ConfigureMake, self).__init__()
 
         self.configure_opts = kwargs.get('opts', [])
-        self.parallel = kwargs.get('parallel', 4)
+        self.parallel = kwargs.get('parallel', '$(nproc)')
         self.prefix = kwargs.get('prefix', '/usr/local')
 
         # Some components complain if some compiler variables are
@@ -47,11 +47,11 @@ class ConfigureMake(object):
 
     def build_step(self):
         """Documentation TBD"""
-        return 'make -j{0:d}'.format(self.parallel)
+        return 'make -j{}'.format(self.parallel)
 
     def check_step(self):
         """Documentation TBD"""
-        return 'make -j{0:d} check'.format(self.parallel)
+        return 'make -j{} check'.format(self.parallel)
 
     def configure_step(self, directory=None, environment=[], toolchain=None):
         """Documentation TBD"""
@@ -127,4 +127,4 @@ class ConfigureMake(object):
 
     def install_step(self):
         """Documentation TBD"""
-        return 'make -j{0:d} install'.format(self.parallel)
+        return 'make -j{} install'.format(self.parallel)

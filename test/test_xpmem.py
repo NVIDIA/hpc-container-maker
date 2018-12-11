@@ -51,8 +51,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
     cd /var/tmp/xpmem && autoreconf --install && \
     cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/xpmem
 ENV CPATH=/usr/local/xpmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/xpmem/lib:$LD_LIBRARY_PATH \
@@ -77,8 +77,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
     cd /var/tmp/xpmem && autoreconf --install && \
     cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/xpmem
 ENV CPATH=/usr/local/xpmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/xpmem/lib:$LD_LIBRARY_PATH \
