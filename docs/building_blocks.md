@@ -590,7 +590,7 @@ Intel MPI.  For Ubuntu, the default values are
 the default values are `man-db` and `openssh-clients`.
 
 - __version__: The version of Intel MPI to install.  The default value
-is `2018.3-051`.
+is `2019.1-053`.
 
 __Examples__
 
