@@ -39,7 +39,7 @@ class Test_boost(unittest.TestCase):
         self.assertEqual(str(b),
 r'''# Boost version 1.68.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         libbz2-dev \
         tar \
@@ -83,7 +83,7 @@ ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(str(b),
 r'''# Boost version 1.68.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         libbz2-dev \
         tar \
@@ -105,7 +105,7 @@ ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(str(b),
 r'''# Boost version 1.57.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         libbz2-dev \
         tar \

@@ -39,7 +39,7 @@ class Test_xpmem(unittest.TestCase):
         self.assertEqual(str(x),
 r'''# XPMEM branch master
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         autoconf \
         automake \
         ca-certificates \

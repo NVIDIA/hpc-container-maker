@@ -68,7 +68,7 @@ class mkl(wget):
 
     ospackages: List of OS packages to install prior to installing
     MKL.  For Ubuntu, the default values are `apt-transport-https`,
-    `ca-certificates`, and `wget`.  For RHEL-based Linux
+    `ca-certificates`, `gnupg`, and `wget`.  For RHEL-based Linux
     distributions, the default is an empty list.
 
     version: The version of MKL to install.  The default value is
@@ -148,7 +148,7 @@ class mkl(wget):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
-                                     'wget']
+                                     'gnupg', 'wget']
 
             self.__bashrc = '/etc/bash.bashrc'
 

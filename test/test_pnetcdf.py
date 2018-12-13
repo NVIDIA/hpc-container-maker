@@ -39,7 +39,7 @@ class Test_pnetcdf(unittest.TestCase):
         self.assertEqual(str(p),
 r'''# PnetCDF version 1.10.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         m4 \
         make \
         tar \

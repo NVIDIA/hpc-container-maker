@@ -41,8 +41,9 @@ class Test_openblas(unittest.TestCase):
         self.assertEqual(str(o),
 r'''# OpenBLAS version 0.3.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
+        perl \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*

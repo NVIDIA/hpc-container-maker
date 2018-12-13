@@ -39,7 +39,7 @@ class Test_python(unittest.TestCase):
         self.assertEqual(str(p),
 r'''# Python
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         python \
         python3 && \
     rm -rf /var/lib/apt/lists/*''')
@@ -66,7 +66,7 @@ RUN yum install -y epel-release && \
         self.assertEqual(r,
 r'''# Python
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         python \
         python3 && \
     rm -rf /var/lib/apt/lists/*''')

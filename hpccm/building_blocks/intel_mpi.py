@@ -71,7 +71,7 @@ class intel_mpi(wget):
 
     ospackages: List of OS packages to install prior to installing
     Intel MPI.  For Ubuntu, the default values are
-    `apt-transport-https`, `ca-certificates`, `man-db`,
+    `apt-transport-https`, `ca-certificates`, `gnupg`, `man-db`,
     `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
     the default values are `man-db` and `openssh-clients`.
 
@@ -152,7 +152,8 @@ class intel_mpi(wget):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
-                                     'man-db', 'openssh-client', 'wget']
+                                     'gnupg', 'man-db', 'openssh-client',
+                                     'wget']
 
             self.__bashrc = '/etc/bash.bashrc'
 

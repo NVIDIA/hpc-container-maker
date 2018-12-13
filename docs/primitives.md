@@ -11,11 +11,11 @@ __Parameters__
 value is empty.
 
 - ___distro__: The underlying Linux distribution of the base image.
-Valid values are `centos`, `redhat`, `rhel`, and `ubuntu`.  By
-default, the primitive attempts to figure out the Linux
-distribution by inspecting the image identifier, and falls back to
-`ubuntu` if unable to determine the Linux distribution
-automatically.
+Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,
+and `ubuntu18`.  By default, the primitive attempts to figure out
+the Linux distribution by inspecting the image identifier, and
+falls back to `ubuntu` if unable to determine the Linux
+distribution automatically.
 
 - __image__: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
 

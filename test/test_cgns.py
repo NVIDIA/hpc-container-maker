@@ -39,7 +39,7 @@ class Test_cgns(unittest.TestCase):
         self.assertEqual(str(c),
 r'''# CGNS version 3.3.1
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget \
@@ -82,7 +82,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         self.assertEqual(r,
 r'''# CGNS
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/cgns /usr/local/cgns''')

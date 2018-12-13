@@ -39,7 +39,7 @@ class Test_knem(unittest.TestCase):
         self.assertEqual(str(k),
 r'''# KNEM version 1.1.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
         git && \
     rm -rf /var/lib/apt/lists/*

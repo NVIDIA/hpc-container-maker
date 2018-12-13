@@ -39,7 +39,7 @@ class Test_hdf5(unittest.TestCase):
         self.assertEqual(str(h),
 r'''# HDF5 version 1.10.4
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         make \
@@ -89,7 +89,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
         self.assertEqual(r,
 r'''# HDF5
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/hdf5 /usr/local/hdf5
@@ -105,7 +105,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
         self.assertEqual(str(h),
 r'''# HDF5
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         make \

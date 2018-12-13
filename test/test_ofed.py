@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ubuntu, ubuntu18
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -39,7 +39,7 @@ class Test_ofed(unittest.TestCase):
         self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         dapl2-utils \
         ibutils \
         ibverbs-utils \
@@ -54,6 +54,30 @@ RUN apt-get update -y && \
         libmlx4-dev \
         libmlx5-1 \
         libmlx5-dev \
+        librdmacm1 \
+        librdmacm-dev \
+        opensm \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu18
+    @docker
+    def test_defaults_ubuntu18(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        dapl2-utils \
+        ibutils \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libibmad5 \
+        libibmad-dev \
+        libibverbs1 \
+        libibverbs-dev \
         librdmacm1 \
         librdmacm-dev \
         opensm \
@@ -93,7 +117,7 @@ RUN yum install -y \
         self.assertEqual(r,
 r'''# OFED
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         dapl2-utils \
         ibutils \
         ibverbs-utils \

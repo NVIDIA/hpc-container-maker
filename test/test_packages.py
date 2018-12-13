@@ -38,7 +38,7 @@ class Test_packages(unittest.TestCase):
         p = packages(ospackages=['gcc', 'g++', 'gfortran'])
         self.assertEqual(str(p),
 r'''RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
