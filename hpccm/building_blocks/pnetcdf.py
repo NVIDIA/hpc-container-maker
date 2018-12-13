@@ -143,6 +143,14 @@ class pnetcdf(ConfigureMake, rm, tar, wget):
                 self.__version)),
             toolchain=self.__toolchain))
 
+        # For some compilers, --enable-shared leads to the following error:
+        #   GEN      libpnetcdf.la
+        # /usr/bin/ld: .libs/libpnetcdf.lax/libf77.a/strerrnof.o: relocation R_X86_64_32 against `.data' can not be used when making a shared object; recompile with -fPIC
+        # .libs/libpnetcdf.lax/libf77.a/strerrnof.o: error adding symbols: Bad value
+        # Apply the workaround
+        if '--enable-shared' in self.configure_opts:
+          self.__commands.append('sed -i -e \'s#pic_flag=""#pic_flag=" -fpic -DPIC"#\' -e \'s#wl=""#wl="-Wl,"#\' {}'.format(os.path.join(self.__wd, 'parallel-netcdf-{}'.format(self.__version), 'libtool')))
+
         self.__commands.append(self.build_step())
 
         # Check the build
