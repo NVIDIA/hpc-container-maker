@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import os
 import re
@@ -76,7 +77,7 @@ class intel_mpi(wget):
     the default values are `man-db` and `openssh-clients`.
 
     version: The version of Intel MPI to install.  The default value
-    is `2018.3-051`.
+    is `2019.1-053`.
 
     # Examples
 
@@ -100,7 +101,7 @@ class intel_mpi(wget):
 
         self.__mpivars = kwargs.get('mpivars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2018.3-051')
+        self.version = kwargs.get('version', '2019.1-053')
 
         self.__bashrc = ''      # Filled in by __distro()
 
@@ -138,10 +139,17 @@ class intel_mpi(wget):
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mpivars
             # environment script.
-            instructions.append(environment(variables={
-                'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
-                'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH',
-                'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'}))
+            if LooseVersion(self.version) >= LooseVersion('2019.0'):
+              instructions.append(environment(variables={
+                  'FI_PROVIDER_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov',
+                  'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
+                  'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib:$LD_LIBRARY_PATH',
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/bin:$PATH'}))
+            else:
+              instructions.append(environment(variables={
+                  'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
+                  'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH',
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'}))
 
         return '\n'.join(str(x) for x in instructions)
 
