@@ -60,7 +60,7 @@ class Test_recipe(unittest.TestCase):
 r'''FROM ubuntu:16.04 AS stage0
 
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -79,7 +79,7 @@ From: ubuntu:16.04
 
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran
@@ -95,7 +95,7 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
 
 # GNU compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -103,7 +103,7 @@ RUN apt-get update -y && \
 
 # FFTW version 3.3.8
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
@@ -130,7 +130,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 # GNU compiler
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran
@@ -139,7 +139,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 # FFTW version 3.3.8
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget
@@ -167,7 +167,7 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS stage0
 
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         hwloc \

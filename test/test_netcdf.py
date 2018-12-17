@@ -40,7 +40,7 @@ class Test_netcdf(unittest.TestCase):
 r'''# NetCDF version 4.6.1, NetCDF C++ version 4.3.0, NetCDF Fortran
 # version 4.4.4
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
         file \
         libcurl4-openssl-dev \
@@ -117,7 +117,7 @@ ENV LD_LIBRARY_PATH=/usr/local/netcdf/lib:$LD_LIBRARY_PATH \
         self.assertEqual(r,
 r'''# NetCDF
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/netcdf /usr/local/netcdf

@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import re
 
@@ -37,11 +38,11 @@ class baseimage(object):
     value is empty.
 
     _distro: The underlying Linux distribution of the base image.
-    Valid values are `centos`, `redhat`, `rhel`, and `ubuntu`.  By
-    default, the primitive attempts to figure out the Linux
-    distribution by inspecting the image identifier, and falls back to
-    `ubuntu` if unable to determine the Linux distribution
-    automatically.
+    Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,
+    and `ubuntu18`.  By default, the primitive attempts to figure out
+    the Linux distribution by inspecting the image identifier, and
+    falls back to `ubuntu` if unable to determine the Linux
+    distribution automatically.
 
     image: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
 
@@ -71,16 +72,33 @@ class baseimage(object):
         self.__distro = self.__distro.lower()
         if self.__distro == 'ubuntu':
             hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('16.04')
+        elif self.__distro == 'ubuntu16':
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('16.04')
+        elif self.__distro == 'ubuntu18':
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('18.04')
         elif (self.__distro == 'centos' or self.__distro == 'rhel' or
               self.__distro == 'redhat'):
             hpccm.config.g_linux_distro = linux_distro.CENTOS
+            hpccm.config.g_linux_version = StrictVersion('7.0')
         elif re.search(r'centos|rhel|redhat', self.image):
             hpccm.config.g_linux_distro = linux_distro.CENTOS
+            hpccm.config.g_linux_version = StrictVersion('7.0')
+        elif re.search(r'ubuntu:?16', self.image):
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('16.04')
+        elif re.search(r'ubuntu:?18', self.image):
+            hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('18.04')
         elif re.search(r'ubuntu', self.image):
             hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('16.04')
         else:
             logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
             hpccm.config.g_linux_distro = linux_distro.UBUNTU
+            hpccm.config.g_linux_version = StrictVersion('16.04')
 
     def __str__(self):
         """String representation of the primitive"""

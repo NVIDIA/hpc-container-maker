@@ -47,7 +47,7 @@ class Test_intel_psxe(unittest.TestCase):
         self.assertEqual(str(psxe),
 r'''# Intel Parallel Studio XE
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         cpio && \
     rm -rf /var/lib/apt/lists/*
 COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz
@@ -72,7 +72,7 @@ ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
         self.assertEqual(str(psxe),
 r'''# Intel Parallel Studio XE
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         cpio && \
     rm -rf /var/lib/apt/lists/*
 COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz

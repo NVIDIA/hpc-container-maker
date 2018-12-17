@@ -39,7 +39,7 @@ class Test_fftw(unittest.TestCase):
         self.assertEqual(str(f),
 r'''# FFTW version 3.3.8
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
@@ -80,7 +80,7 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(str(f),
 r'''# FFTW version 3.3.8
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
@@ -112,7 +112,7 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(str(f),
 r'''# FFTW
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \

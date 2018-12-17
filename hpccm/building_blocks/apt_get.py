@@ -88,7 +88,7 @@ class apt_get(object):
         if self.__ppas:
             # Need to install apt-add-repository
             self.__commands.extend(['apt-get update -y',
-                                    'apt-get install -y --no-install-recommends software-properties-common'])
+                                    'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common'])
             for ppa in self.__ppas:
                 self.__commands.append('apt-add-repository {} -y'.format(ppa))
 
@@ -100,7 +100,7 @@ class apt_get(object):
         if self.ospackages:
             self.__commands.append('apt-get update -y')
 
-            install = 'apt-get install -y --no-install-recommends \\\n'
+            install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
             packages = []
             for pkg in self.ospackages:
                 packages.append('        {}'.format(pkg))

@@ -40,7 +40,7 @@ class Test_mvapich2(unittest.TestCase):
         self.assertEqual(str(mv2),
 r'''# MVAPICH2 version 2.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
         file \
         make \
@@ -72,7 +72,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(mv2),
 r'''# MVAPICH2 version 2.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
         file \
         make \
@@ -99,7 +99,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(mv2),
 r'''# MVAPICH2 version 2.3b
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
         file \
         make \
@@ -127,7 +127,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(mv2),
 r'''# MVAPICH2 version 2.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
         file \
         make \
@@ -177,7 +177,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(mv2),
 r'''# MVAPICH2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
         file \
         make \
@@ -204,7 +204,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         self.assertEqual(r,
 r'''# MVAPICH2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/mvapich2 /usr/local/mvapich2

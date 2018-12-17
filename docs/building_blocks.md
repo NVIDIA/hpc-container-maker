@@ -585,7 +585,7 @@ slightly from that set by `mpivars.sh`.  The default value is
 
 - __ospackages__: List of OS packages to install prior to installing
 Intel MPI.  For Ubuntu, the default values are
-`apt-transport-https`, `ca-certificates`, `man-db`,
+`apt-transport-https`, `ca-certificates`, `gnupg`, `man-db`,
 `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
 the default values are `man-db` and `openssh-clients`.
 
@@ -822,7 +822,7 @@ The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing
 MKL.  For Ubuntu, the default values are `apt-transport-https`,
-`ca-certificates`, and `wget`.  For RHEL-based Linux
+`ca-certificates`, `gnupg`, and `wget`.  For RHEL-based Linux
 distributions, the default is an empty list.
 
 - __version__: The version of MKL to install.  The default value is
@@ -884,7 +884,7 @@ RHEL-based Linux distributions, the default values are
 `librdmacm-devel`.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `3.4-1.0.0.0`.
+value is `4.5-1.0.1.0`.
 
 __Examples__
 
@@ -1119,11 +1119,17 @@ ofed(self, **kwargs)
 The `ofed` building block installs the OpenFabrics Enterprise
 Distribution packages that are part of the Linux distribution.
 
-For Ubuntu, the following packages are installed: `dapl2-utils`,
-`ibutils`, `ibverbs-utils`, `infiniband-diags`, `libdapl-dev`,
-`libibcm-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
-`libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`,
-`libmlx5-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
+For Ubuntu 16.04, the following packages are installed:
+`dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
+`libdapl-dev`, `libibcm-dev`, `libibmad5`, `libibmad-dev`,
+`libibverbs1`, `libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`,
+`libmlx5-1`, `libmlx5-dev`, `librdmacm1`, `librdmacm-dev`,
+`opensm`, and `rdmacm-utils`.
+
+For Ubuntu 18.04, the following packages are installed:
+`dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
+`libdapl-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
+`libibverbs-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
 `rdmacm-utils`.
 
 For RHEL-based Linux distributions, the following packages are
@@ -1143,6 +1149,7 @@ __Examples__
 ```python
 ofed()
 ```
+
 
 ## runtime
 ```python
@@ -1177,7 +1184,7 @@ __Parameters__
 is `USE_OPENMP=1`.
 
 - __ospackages__: List of OS packages to install prior to building.  The
-default values are `make`, `tar`, and `wget`.
+default values are `make`, `perl`, `tar`, and `wget`.
 
 - __prefix__: The top level installation location.  The default value is
 `/usr/local/openblas`.

@@ -39,7 +39,7 @@ class Test_ucx(unittest.TestCase):
         self.assertEqual(str(u),
 r'''# UCX version 1.4.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
         file \
         libnuma-dev \
@@ -86,7 +86,7 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(u),
 r'''# UCX version 1.4.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
         file \
         libnuma-dev \
@@ -110,7 +110,7 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(u),
 r'''# UCX version 1.4.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
         file \
         libnuma-dev \
@@ -134,7 +134,7 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(u),
 r'''# UCX version 1.4.0
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
         file \
         libnuma-dev \

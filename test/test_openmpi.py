@@ -39,7 +39,7 @@ class Test_openmpi(unittest.TestCase):
         self.assertEqual(str(ompi),
 r'''# OpenMPI version 3.1.2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         hwloc \
@@ -94,7 +94,7 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(ompi),
 r'''# OpenMPI
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         hwloc \
@@ -122,7 +122,7 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
         self.assertEqual(r,
 r'''# OpenMPI
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         hwloc \
         openssh-client && \
     rm -rf /var/lib/apt/lists/*

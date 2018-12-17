@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import os
 
@@ -61,7 +62,7 @@ class mlnx_ofed(tar, wget):
     `librdmacm-devel`.
 
     version: The version of Mellanox OFED to download.  The default
-    value is `3.4-1.0.0.0`.
+    value is `4.5-1.0.1.0`.
 
     # Examples
 
@@ -84,7 +85,7 @@ class mlnx_ofed(tar, wget):
         self.__oslabel = kwargs.get('oslabel', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__packages = kwargs.get('packages', [])
-        self.__version = kwargs.get('version', '3.4-1.0.0.0')
+        self.__version = kwargs.get('version', '4.5-1.0.1.0')
 
         self.__commands = []
         self.__wd = '/var/tmp'
@@ -121,7 +122,10 @@ class mlnx_ofed(tar, wget):
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
-                self.__oslabel = 'ubuntu16.04'
+                if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                    self.__oslabel = 'ubuntu18.04'
+                else:
+                    self.__oslabel = 'ubuntu16.04'
             if not self.__ospackages:
                 self.__ospackages = ['libnl-3-200', 'libnl-route-3-200',
                                      'libnuma1', 'wget']

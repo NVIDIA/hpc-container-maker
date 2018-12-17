@@ -39,7 +39,7 @@ class Test_pgi(unittest.TestCase):
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -88,7 +88,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -114,7 +114,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 17.10
 COPY pgilinux-2017-1710-x86_64.tar.gz /var/tmp/pgilinux-2017-1710-x86_64.tar.gz
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -138,7 +138,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 COPY pkg/pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -161,7 +161,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 18.4
 COPY pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -184,7 +184,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -210,7 +210,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -235,7 +235,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -267,7 +267,7 @@ ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.10
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         libnuma1 \
@@ -302,7 +302,7 @@ ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
         self.assertEqual(r,
 r'''# PGI compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so /opt/pgi/linux86-64/18.10/lib/
