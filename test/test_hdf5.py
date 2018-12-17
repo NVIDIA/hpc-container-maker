@@ -39,7 +39,7 @@ class Test_hdf5(unittest.TestCase):
         self.assertEqual(str(h),
 r'''# HDF5 version 1.10.4
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         make \
@@ -49,8 +49,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.4/src/hdf5-1.10.4.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.4.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/hdf5-1.10.4 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/hdf5-1.10.4.tar.bz2 /var/tmp/hdf5-1.10.4
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
@@ -73,8 +73,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.4/src/hdf5-1.10.4.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.4.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/hdf5-1.10.4 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/hdf5-1.10.4.tar.bz2 /var/tmp/hdf5-1.10.4
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
@@ -89,7 +89,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
         self.assertEqual(r,
 r'''# HDF5
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/hdf5 /usr/local/hdf5
@@ -105,7 +105,7 @@ ENV HDF5_DIR=/usr/local/hdf5 \
         self.assertEqual(str(h),
 r'''# HDF5
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         make \
@@ -114,8 +114,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 COPY hdf5-1.10.1 /var/tmp/hdf5-1.10.1
 RUN cd /var/tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/hdf5-1.10.1
 ENV HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \

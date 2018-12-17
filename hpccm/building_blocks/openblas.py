@@ -47,7 +47,7 @@ class openblas(rm, tar, wget):
     is `USE_OPENMP=1`.
 
     ospackages: List of OS packages to install prior to building.  The
-    default values are `make`, `tar`, and `wget`.
+    default values are `make`, `perl`, `tar`, and `wget`.
 
     prefix: The top level installation location.  The default value is
     `/usr/local/openblas`.
@@ -83,7 +83,8 @@ class openblas(rm, tar, wget):
 
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/xianyi/OpenBLAS/archive')
         self.__make_opts = kwargs.get('make_opts', ['USE_OPENMP=1'])
-        self.__ospackages = kwargs.get('ospackages', ['make', 'tar', 'wget'])
+        self.__ospackages = kwargs.get('ospackages', ['make', 'perl', 'tar',
+                                                      'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/openblas')
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '0.3.3')

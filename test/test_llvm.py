@@ -39,7 +39,7 @@ class Test_llvm(unittest.TestCase):
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         clang && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -66,7 +66,7 @@ RUN yum install -y \
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         clang-6.0 && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && \
@@ -99,7 +99,7 @@ ENV LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64:$LD_LIBRARY_PATH \
         self.assertEqual(r,
 r'''# LLVM compiler runtime
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libclang1 && \
     rm -rf /var/lib/apt/lists/*''')
 

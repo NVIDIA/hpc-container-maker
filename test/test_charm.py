@@ -39,7 +39,7 @@ class Test_charm(unittest.TestCase):
         self.assertEqual(str(c),
 r'''# Charm++ version 6.8.2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         git \
         make \
         wget && \

@@ -39,7 +39,7 @@ class Test_gdrcopy(unittest.TestCase):
         self.assertEqual(str(g),
 r'''# GDRCOPY version 1.3
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*

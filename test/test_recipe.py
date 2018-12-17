@@ -60,7 +60,7 @@ class Test_recipe(unittest.TestCase):
 r'''FROM ubuntu:16.04 AS stage0
 
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -79,7 +79,7 @@ From: ubuntu:16.04
 
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran
@@ -95,7 +95,7 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
 
 # GNU compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -103,7 +103,7 @@ RUN apt-get update -y && \
 
 # FFTW version 3.3.8
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget && \
@@ -111,8 +111,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
@@ -130,7 +130,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 # GNU compiler
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran
@@ -139,7 +139,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 # FFTW version 3.3.8
 %post
     apt-get update -y
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
         make \
         wget
@@ -149,8 +149,8 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
-    make -j4
-    make -j4 install
+    make -j$(nproc)
+    make -j$(nproc) install
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
@@ -167,7 +167,7 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS stage0
 
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
         file \
         hwloc \
@@ -181,8 +181,8 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-2.1.2.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
-    make -j4 && \
-    make -j4 install && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
     rm -rf /var/tmp/openmpi-2.1.2.tar.bz2 /var/tmp/openmpi-2.1.2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')

@@ -47,15 +47,16 @@ class Test_mkl(unittest.TestCase):
         self.assertEqual(str(m),
 r'''# MKL version 2019.0-045
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2019.0-045 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
@@ -82,15 +83,16 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bashrc''')
         self.assertEqual(str(m),
 r'''# MKL version 2018.2-046
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2018.2-046 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
@@ -103,15 +105,16 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
         self.assertEqual(str(m),
 r'''# MKL version 2019.0-045
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2019.0-045 && \
     rm -rf /var/lib/apt/lists/*
 ENV CPATH=/opt/intel/mkl/include:$CPATH \
@@ -128,15 +131,16 @@ ENV CPATH=/opt/intel/mkl/include:$CPATH \
         self.assertEqual(r,
 r'''# MKL version 2019.0-045
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2019.0-045 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')

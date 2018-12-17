@@ -19,6 +19,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 
 import hpccm.config
@@ -26,9 +27,10 @@ import hpccm.config
 from hpccm.common import container_type, linux_distro
 
 def centos(function):
-    """Decorator to set the Linux distribution to CentOS"""
+    """Decorator to set the Linux distribution to CentOS 7"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.CENTOS
+        hpccm.config.g_linux_version = StrictVersion('7.0')
         return function(*args, **kwargs)
 
     return wrapper
@@ -66,9 +68,19 @@ def singularity(function):
     return wrapper
 
 def ubuntu(function):
-    """Decorator to set the Linux distribution to Ubuntu"""
+    """Decorator to set the Linux distribution to Ubuntu 16.04"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
+        hpccm.config.g_linux_version = StrictVersion('16.04')
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def ubuntu18(function):
+    """Decorator to set the Linux distribution to Ubuntu 18.04"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.UBUNTU
+        hpccm.config.g_linux_version = StrictVersion('18.04')
         return function(*args, **kwargs)
 
     return wrapper

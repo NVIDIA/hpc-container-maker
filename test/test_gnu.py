@@ -39,7 +39,7 @@ class Test_gnu(unittest.TestCase):
         self.assertEqual(str(g),
 r'''# GNU compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -66,10 +66,10 @@ RUN yum install -y \
         self.assertEqual(str(g),
 r'''# GNU compiler
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends software-properties-common && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
     apt-add-repository ppa:ubuntu-toolchain-r/test -y && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc-7 \
         g++-7 \
         gfortran-7 && \
@@ -102,7 +102,7 @@ ENV PATH=/opt/rh/devtoolset-7/root/usr/bin:$PATH''')
         self.assertEqual(r,
 r'''# GNU compiler runtime
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libgomp1 \
         libgfortran3 && \
     rm -rf /var/lib/apt/lists/*''')

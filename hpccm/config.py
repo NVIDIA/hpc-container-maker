@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import
 
+from distutils.version import StrictVersion
 import sys
 
 from hpccm.common import container_type
@@ -30,6 +31,7 @@ from hpccm.common import linux_distro
 # Global variables
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
+g_linux_version = StrictVersion('16.04') # Linux distribution version
 
 def set_container_format(ctype):
   """Set the container format

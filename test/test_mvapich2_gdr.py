@@ -39,7 +39,7 @@ class Test_mvapich2_gdr(unittest.TestCase):
         self.assertEqual(str(mv2),
 r'''# MVAPICH2-GDR version 2.3a
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -86,7 +86,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpi
         self.assertEqual(str(mv2),
 r'''# MVAPICH2-GDR version 2.3a
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -109,7 +109,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda8.0/mofed4.0/mpi
         self.assertEqual(str(mv2),
 r'''# MVAPICH2-GDR
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -133,7 +133,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpi
         self.assertEqual(r,
 r'''# MVAPICH2-GDR
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         openssh-client && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5 /opt/mvapich2/gdr/2.3a/mcast/no-openacc/cuda9.0/mofed3.4/mpirun/gnu4.8.5

@@ -96,7 +96,7 @@ class boost(rm, tar, wget):
                                     'https://dl.bintray.com/boostorg/release/__version__/source')
         self.__bootstrap_opts = kwargs.get('bootstrap_opts', [])
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__parallel = kwargs.get('parallel', 4)
+        self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local/boost')
         self.__python = kwargs.get('python', False)
         self.__sourceforge = kwargs.get('sourceforge', False)

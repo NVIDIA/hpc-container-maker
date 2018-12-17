@@ -47,9 +47,10 @@ class Test_intel_mpi(unittest.TestCase):
         self.assertEqual(str(impi),
 r'''# Intel MPI version 2019.1-053
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         man-db \
         openssh-client \
         wget && \
@@ -57,7 +58,7 @@ RUN apt-get update -y && \
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mpi-2019.1-053 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
@@ -88,9 +89,10 @@ RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivar
         self.assertEqual(str(impi),
 r'''# Intel MPI version 2018.2-046
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         man-db \
         openssh-client \
         wget && \
@@ -98,7 +100,7 @@ RUN apt-get update -y && \
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mpi-2018.2-046 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
@@ -111,9 +113,10 @@ RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivar
         self.assertEqual(str(impi),
 r'''# Intel MPI version 2019.1-053
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         man-db \
         openssh-client \
         wget && \
@@ -121,7 +124,7 @@ RUN apt-get update -y && \
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mpi-2019.1-053 && \
     rm -rf /var/lib/apt/lists/*
 ENV FI_PROVIDER_PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov \
@@ -138,9 +141,10 @@ ENV FI_PROVIDER_PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfab
         self.assertEqual(r,
 r'''# Intel MPI version 2019.1-053
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gnupg \
         man-db \
         openssh-client \
         wget && \
@@ -148,7 +152,7 @@ RUN apt-get update -y && \
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mpi-2019.1-053 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')

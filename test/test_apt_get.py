@@ -38,7 +38,7 @@ class Test_yum(unittest.TestCase):
         a = apt_get(ospackages=['gcc', 'g++', 'gfortran'])
         self.assertEqual(str(a),
 r'''RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran && \
@@ -55,6 +55,6 @@ r'''RUN apt-get update -y && \
 r'''RUN wget -qO - https://www.example.com/key.pub | apt-key add - && \
     echo "deb http://www.example.com all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         example && \
     rm -rf /var/lib/apt/lists/*''')

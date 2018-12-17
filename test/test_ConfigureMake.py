@@ -40,15 +40,15 @@ class Test_ConfigureMake(unittest.TestCase):
 
         # build step
         build = cm.build_step()
-        self.assertEqual(build, 'make -j4')
+        self.assertEqual(build, 'make -j$(nproc)')
 
         # check step
         check = cm.check_step()
-        self.assertEqual(check, 'make -j4 check')
+        self.assertEqual(check, 'make -j$(nproc) check')
 
         # install step
         install = cm.install_step()
-        self.assertEqual(install, 'make -j4 install')
+        self.assertEqual(install, 'make -j$(nproc) install')
 
     def test_toolchain(self):
         """Toolchain specified"""
