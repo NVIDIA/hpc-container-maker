@@ -48,6 +48,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://cucis.ece.northwestern.edu/projects/PnetCDF/Release/parallel-netcdf-1.10.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/parallel-netcdf-1.10.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/parallel-netcdf-1.10.0 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
+    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' /var/tmp/parallel-netcdf-1.10.0/libtool && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/parallel-netcdf-1.10.0.tar.gz /var/tmp/parallel-netcdf-1.10.0
