@@ -1,3 +1,12 @@
+# v18.12.0
+
+- Add support for Ubuntu 18 base images
+- Refresh the documentation
+- Refresh default component version for the Intel MPI (`intel_mpi`)
+  building block
+- Dynamically select the number of build processes
+- Fixes for the PGI (`pgi`) and PnetCDF (`pnetcdf`) building blocks
+
 # v18.11.0
 
 - Adds UCX (`ucx`), gdrcopy (`gdrcopy`), KNEM (`knem`), and XPMEM
