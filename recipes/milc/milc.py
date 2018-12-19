@@ -87,6 +87,14 @@ milc_cmds = ['mkdir -p /milc',
                            r's/CGEOM =.*-DFIX_NODE_GEOM.*/CGEOM = #-DFIX_NODE_GEOM/g']),
              'C_INCLUDE_PATH=/quda/build/include make su3_rhmd_hisq']
 Stage0 += shell(commands=milc_cmds)
+Stage0 += environment(variables={
+    'PATH': '$PATH:/milc/milc_qcd-{}/ks_imp_rhmc'.format(milc_version)})
+
+# Include examples if they exist in the build context
+if os.path.isdir('recipes/milc/examples'):
+    Stage0 += copy(src='recipes/milc/examples', dest='/workspace/examples')
+
+Stage0 += workdir(directory='/workspace')
 
 ###############################################################################
 # Release stage

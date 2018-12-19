@@ -58,6 +58,16 @@ build_cmds = [git().clone_step(
               cm.build_step(target='check')]
 Stage0 += shell(commands=build_cmds)
 
+# Include examples if they exist in the build context
+if os.path.isdir('recipes/gromacs/examples'):
+    Stage0 += copy(src='recipes/gromacs/examples', dest='/workspace/examples')
+
+Stage0 += environment(variables={'PATH': '$PATH:/gromacs/install/bin'})
+
+Stage0 += label(metadata={'com.nvidia.gromacs.version': gromacs_version})
+
+Stage0 += workdir(directory='/workspace')
+
 ######
 # Runtime image stage
 ######
