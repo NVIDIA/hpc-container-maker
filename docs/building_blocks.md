@@ -1490,6 +1490,48 @@ Stage0 += p
 Stage1 += p.runtime()
 ```
 
+# pip
+```python
+pip(self, **kwargs)
+```
+The `pip` building block installs Python packages from PyPi.
+
+__Parameters__
+
+
+- __packages__: List of PyPi packages to install.  The default is
+an empty list.
+
+- __pip__: The name of the `pip` tool to use. The default is `pip`.
+
+__Examples__
+
+
+```python
+pip(packages=['hpccm'])
+```
+
+```python
+pip(packages=['hpccm'], pip='pip3')
+```
+
+
+## runtime
+```python
+pip.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+p = pip(...)
+Stage0 += p
+Stage1 += p.runtime()
+```
+
 # pnetcdf
 ```python
 pnetcdf(self, **kwargs)
