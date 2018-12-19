@@ -1516,22 +1516,6 @@ pip(packages=['hpccm'], pip='pip3')
 ```
 
 
-## runtime
-```python
-pip.runtime(self, _from=u'0')
-```
-Generate the set of instructions to install the runtime specific
-components from a build in a previous stage.
-
-__Examples__
-
-
-```python
-p = pip(...)
-Stage0 += p
-Stage1 += p.runtime()
-```
-
 # pnetcdf
 ```python
 pnetcdf(self, **kwargs)

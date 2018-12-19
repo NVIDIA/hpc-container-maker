@@ -72,7 +72,7 @@ class pip(object):
             self.__epel = True
             self.__debs.extend(['python-pip', 'python-setuptools',
                                 'python-wheel'])
-            self.__rpms.append('python-pip')
+            self.__rpms.append('python-pip')    # EPEL package
 
     def __str__(self):
         """String representation of the building block"""
@@ -85,17 +85,3 @@ class pip(object):
                 '{0} install {1}'.format(self.__pip,
                                          ' '.join(self.__packages))]))
         return '\n'.join([str(x) for x in instructions])
-
-    def runtime(self, _from='0'):
-        """Generate the set of instructions to install the runtime specific
-        components from a build in a previous stage.
-
-        # Examples
-
-        ```python
-        p = pip(...)
-        Stage0 += p
-        Stage1 += p.runtime()
-        ```
-        """
-        return str(self)

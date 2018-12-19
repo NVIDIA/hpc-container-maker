@@ -86,19 +86,3 @@ RUN yum install -y epel-release && \
         python34-pip && \
     rm -rf /var/cache/yum/*
 RUN pip3 install hpccm''')
-
-    @ubuntu
-    @docker
-    def test_runtime(self):
-        """Runtime"""
-        p = pip(packages=['hpccm'])
-        r = p.runtime()
-        self.assertEqual(r,
-r'''# pip
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        python-pip \
-        python-setuptools \
-        python-wheel && \
-    rm -rf /var/lib/apt/lists/*
-RUN pip install hpccm''')
