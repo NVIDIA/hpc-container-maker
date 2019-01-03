@@ -14,53 +14,68 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.runscript import runscript
 from hpccm.primitives.shell import shell
 
-import hpccm
+import hpccm.config
 import logging
 import os
 
-class scif():
+class scif(object):
     """SCIF building block"""
     initialized = False
 
     def __init__(self, **kwargs):
         """Initialize building block"""
         self.name = kwargs.get('name', '')
+        self.scif_version = kwargs.get('scif_version', '0.0.76')
         self.__layers = []
         self.__separator = kwargs.get('separator', '\n\n')
 
         self.__entrypoint = kwargs.get('entrypoint', False)
         self.instructions = [comment("SCIF app {0}".format(self.name))]
-        if hpccm.config.g_ctype == container_type.DOCKER and scif.initialized == False:
+        if hpccm.config.g_ctype == container_type.DOCKER and not scif.initialized:
             # Install the scif-tool on first scif app
             self.instructions.extend([
-                comment("Begin SCI-F installtion"),
+                comment("Begin SCI-F installation"),
                 packages(ospackages=['python-pip', 'python-setuptools']),
                 shell(commands=[
                   'pip install wheel',
-                  'pip install scif==0.0.76'
+                  'pip install scif=={0}'.format(self.scif_version)
                 ]),
-                comment("End SCI-F installtion")
+                comment("End SCI-F installation")
             ])
             scif.initialized = True
+
+        allowed_primitives = ["comment", "copy", "environment", "help",
+                              "label", "runscript", "shell", "test"]
+        self.__primitive_status = {i: False for i in allowed_primitives}
 
     def __iadd__(self, layer):
         """Add the scif layer.  Allows "+=" syntax."""
         if isinstance(layer, list):
             for l in layer:
-                if hasattr(l, '_app'):
-                    l._app = self.name
-                else:
-                    logging.error('You have to use a building block which '
-                                  'supports the _app-parameter!')
+                self.check_layer(l)
             self.__layers.extend(layer)
         else:
-            if hasattr(layer, '_app'):
-                layer._app = self.name
-            else:
-                logging.error('You have to use a building block which '
-                              'supports the _app-parameter!')
+            self.check_layer(layer)
             self.__layers.append(layer)
         return self
+
+    def check_layer(self, layer):
+        class_name = type(layer).__name__
+        if class_name not in self.__primitive_status:
+            logging.exception(
+                'You cannot add `{0}` to a scif! Use primitives which support '
+                'the _app-parameter! I.e.: {1}'.format(class_name,
+                    str(self.__primitive_status.keys())))
+
+        if self.__primitive_status[class_name]:
+            logging.exception(
+                'Duplicate `{0}` primitive given for scif app. '
+                'Each primitive is allowed just once!'.format(class_name))
+            raise()  # TODO: the logging exception is not raised?!
+
+        layer._app = self.name
+        self.__primitive_status[class_name] = True
+
 
     def __str__(self):
         # SCIF recipe is always in Singularity syntax
@@ -79,8 +94,7 @@ class scif():
                 scif_file.close()
 
                 self.instructions.extend([
-                    copy(src=[scif_path], dest='/scif/recipes/',
-                         _mkdir=True),
+                    copy(src=[scif_path], dest='/scif/recipes/'),
                     shell(commands=[
                         'scif install /scif/recipes/{}.scif'.format(self.name)
                     ])
@@ -93,13 +107,16 @@ class scif():
             else:
                 logging.error('No output directory specified but is required '
                               'for using scif() with Docker! Specify with '
-                            'hpccm --out argument.')
+                              'hpccm --out argument.')
         else:
             """String representation of the scif apps"""
-            return "\n".join(str(x) for x in self.instructions) + "\n" + layers_string
+            return "\n".join(str(x) for x in self.instructions) + "\n"\
+                + layers_string
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage.  In this
            case there is no difference between the runtime and the
            full build."""
+        # TODO: this is fine as is, but it be more efficient to pip install scif
+        #       and copy the /scif directory?
         return str(self)

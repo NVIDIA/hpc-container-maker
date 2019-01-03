@@ -19,30 +19,28 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
-import shlex
-from six.moves import shlex_quote
 
-import logging # pylint: disable=unused-import
+import logging  # pylint: disable=unused-import
 
 import hpccm.config
 
 from hpccm.common import container_type
 
-class test(object):
+
+class test(hpccm.primitives.shell):
     """apptest primitive"""
 
     def __init__(self, **kwargs):
         """Initialize primitive"""
 
-        #super(wget, self).__init__()
+        super(test, self).__init__(**kwargs)
 
-        self._app = kwargs.get('_app', '') # Singularity specific
-        self.commands = kwargs.get('commands', [])
+        self._app = kwargs.get('_app', '')  # Singularity specific
 
     def __str__(self):
         if self._app == '':
             logging.error('The test building block has to be used with the '
-                         '_app-argument!')
+                          '_app-argument!')
         if hpccm.config.g_ctype == container_type.DOCKER:
             logging.error('This building block can be used on Singularity or '
                           'as a scif()-layer only!')

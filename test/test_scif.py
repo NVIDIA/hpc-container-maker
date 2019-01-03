@@ -19,7 +19,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
+import logging  # pylint: disable=unused-import
 import tempfile
 import unittest
 
@@ -35,11 +35,13 @@ from hpccm.primitives.runscript import runscript
 from hpccm.primitives.shell import shell
 from hpccm.primitives.test import test
 
-import hpccm
+import hpccm.config
+
 
 class Test_scif(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
+        logging.disable(logging.WARNING)
         logging.disable(logging.ERROR)
         hpccm.config.g_output_directory = tempfile.gettempdir()
 
@@ -53,14 +55,14 @@ class Test_scif(unittest.TestCase):
         app += runscript(commands=['foo'])
         self.assertEqual(str(app),
 r'''# SCIF app foo
-# Begin SCI-F installtion
+# Begin SCI-F installation
 RUN yum install -y \
         python-pip \
         python-setuptools && \
     rm -rf /var/cache/yum/*
 RUN pip install wheel && \
     pip install scif==0.0.76
-# End SCI-F installtion
+# End SCI-F installation
 COPY {0}/foo.scif \
     /scif/recipes/
 RUN scif install /scif/recipes/foo.scif'''.format(tempfile.gettempdir()))
@@ -76,7 +78,7 @@ r'''%appinstall foo
 
     @docker
     def test_basic_second_app(self):
-        """Basic decond scif app without initialization"""
+        """Basic second scif app without initialization"""
         app = scif(name="bar")
         app += shell(commands=['do y'])
         app += runscript(commands=['bar'])
@@ -142,4 +144,18 @@ r'''# SCIF app bar
 
 %apptest bar
     exec bar test''')
+
+    @singularity
+    def test_non_allowed_primitive(self):
+        app = scif(name="bar")
+        with self.assertRaises(Exception):
+            app += packages()
+
+    @singularity
+    def test_duplicate_primitive(self):
+        app = scif(name="bar")
+        app += shell(commands=['gcc bar.c'])
+        with self.assertRaises(Exception):
+            app += shell(commands=['gcc bar.c'])
+
 

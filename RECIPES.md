@@ -1641,7 +1641,7 @@ On Docker the `hpccm`-argument `--out [output_directory]` is required.
 Parameters:
 
 - `name`: The name of the scif app. **Required**
-- `entrypoint`: Boolean flag to specify wheter this scif app should also be the
+- `entrypoint`: Boolean flag to specify whether this scif app should also be the
   global entrypoint of the container.
 
 Example:
