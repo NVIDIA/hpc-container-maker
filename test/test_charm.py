@@ -54,6 +54,27 @@ ENV CHARMBASE=/usr/local/charm-v6.8.2 \
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        c = charm(ldconfig=True, version='6.8.2')
+        self.assertEqual(str(c),
+r'''# Charm++ version 6.8.2
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.8.2.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.8.2.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-v6.8.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j4 && \
+    echo "/usr/local/charm-v6.8.2/lib_so" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/charm-6.8.2.tar.gz
+ENV CHARMBASE=/usr/local/charm-v6.8.2 \
+    PATH=/usr/local/charm-v6.8.2/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         c = charm()

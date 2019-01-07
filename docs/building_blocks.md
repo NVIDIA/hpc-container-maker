@@ -37,14 +37,16 @@ boost(self, **kwargs)
 The `boost` building block downloads and installs the
 [Boost](https://www.boost.org) component.
 
-As a side effect, this building block modifies `LD_LIBRARY_PATH`
-to include the Boost build.
-
 __Parameters__
 
 
 - __bootstrap_opts__: List of options to pass to `bootstrap.sh`.  The
 default is an empty list.
+
+- __ldconfig__: Boolean flag to specify whether the Boost library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the Boost library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to building.  For
 Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
@@ -78,6 +80,7 @@ boost(prefix='/opt/boost/1.67.0', version='1.67.0')
 ```python
 boost(sourceforge=True, version='1.57.0')
 ```
+
 
 ## runtime
 ```python
@@ -160,16 +163,20 @@ charm(self, **kwargs)
 The `charm` building block downloads and install the
 [Charm++](http://charm.cs.illinois.edu/research/charm) component.
 
-As a side effect, this building block modifies `LD_LIBRARY_PATH`
-and `PATH` to include the Charm++ build.  It also sets the
-`CHARMBASE` environment variable to the top level install
-directory.
+As a side effect, this building block modifies `PATH` to include
+the Charm++ build.  It also sets the `CHARMBASE` environment
+variable to the top level install directory.
 
 __Parameters__
 
 
 - __check__: Boolean flag to specify whether the test cases should be
 run.  The default is False.
+
+- __ldconfig__: Boolean flag to specify whether the Charm++ library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the Charm++ library
+directory. The default value is False.
 
 - __options__: List of additional options to use when building Charm++.
 The default values are `--build-shared`, and `--with-production`.
@@ -199,6 +206,7 @@ charm(prefix='/opt', version='6.8.2')
 ```python
 charm(target_architecture='mpi-linux-x86_64')
 ```
+
 
 ## runtime
 ```python
@@ -274,9 +282,6 @@ the parameters, the source will be downloaded from the web
 (default) or copied from a source directory in the local build
 context.
 
-As a side effect, this building block modifies `LD_LIBRARY_PATH`
-to include the FFTW build.
-
 __Parameters__
 
 
@@ -291,6 +296,11 @@ default values are `--enable-shared`, `--enable-openmp`,
 local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
+
+- __ldconfig__: Boolean flag to specify whether the FFTW library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the FFTW library
+directory. The default value is False.
 
 - __mpi__: Boolean flag to specify whether to build with MPI support
 enabled.  The default is False.
@@ -329,6 +339,7 @@ fftw(check=True, configure_opts=['--enable-shared', '--enable-threads',
                                  '--enable-sse2', '--enable-avx'])
 ```
 
+
 ## runtime
 ```python
 fftw.runtime(self, _from=u'0')
@@ -353,11 +364,16 @@ The `gdrcopy` building block builds and installs the user space
 library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
 component.
 
-As a side effect, this building block modifies `CPATH`,
-`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+As a side effect, this building block modifies `CPATH` and
+`LIBRARY_PATH`.
 
 __Parameters__
 
+
+- __ldconfig__: Boolean flag to specify whether the gdrcopy library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the gdrcopy library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
@@ -476,8 +492,8 @@ on the parameters, the source will be downloaded from the web
 (default) or copied from a source directory in the local build
 context.
 
-As a side effect, this building block modifies `PATH`,
-`LD_LIBRARY_PATH` to include the HDF5 build, and sets `HDF5_DIR`.
+As a side effect, this building block modifies `PATH`
+to include the HDF5 build, and sets `HDF5_DIR`.
 
 __Parameters__
 
@@ -492,6 +508,11 @@ default values are `--enable-cxx` and `--enable-fortran`.
 local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
+
+- __ldconfig__: Boolean flag to specify whether the HDF5 library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the HDF5 library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `bzip2`, `file`,
@@ -923,8 +944,8 @@ An InfiniBand building block ([OFED](#ofed) or [Mellanox
 OFED](#mlnx_ofed)) should be installed prior to this building
 block.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the MVAPICH2 build.
+As a side effect, this building block modifies `PATH`
+to include the MVAPICH2 build.
 
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The tool can be passed to other operations
@@ -955,6 +976,11 @@ than downloading the source from the web.
 (2.3b and previous) were hard-coded to use "sm_20".  This option
 has no effect on more recent MVAPICH2 versions.  The default value
 is to use the MVAPICH2 default.
+
+- __ldconfig__: Boolean flag to specify whether the MVAPICH2 library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the MVAPICH2 library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `byacc`, `file`,
@@ -1174,11 +1200,13 @@ openblas(self, **kwargs)
 The `openblas` building block builds and installs the
 [OpenBLAS](https://www.openblas.net) component.
 
-As a side effect, this building block modifies `LD_LIBRARY_PATH`
-to include the OpenBLAS build.
-
 __Parameters__
 
+
+- __ldconfig__: Boolean flag to specify whether the OpenBLAS library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the OpenBLAS library
+directory. The default value is False.
 
 - __make_opts__: List of options to pass to `make`.  The default value
 is `USE_OPENMP=1`.
@@ -1265,6 +1293,11 @@ than downloading the source from the web.
 capabilities are included.  If True, adds `--with-verbs` to the
 list of `configure` options, otherwise adds `--without-verbs`.
 The default value is True.
+
+- __ldconfig__: Boolean flag to specify whether the OpenMPI library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the OpenMPI library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `bzip2`, `file`,
@@ -1499,8 +1532,8 @@ installs the
 [PnetCDF](http://cucis.ece.northwestern.edu/projects/PnetCDF/index.html)
 component.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the PnetCDF build.
+As a side effect, this building block modifies `PATH` to include
+the PnetCDF build.
 
 __Parameters__
 
@@ -1510,6 +1543,11 @@ should be performed.  The default is False.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--enable-shared`.
+
+- __ldconfig__: Boolean flag to specify whether the PnetCDF library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the PnetCDF library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  The default values are `m4`, `make`, `tar`, and
@@ -1609,8 +1647,8 @@ block.  One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
 [XPMEM](#xpmem) building blocks should also be installed prior to
 this building block.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the UCX build.
+As a side effect, this building block modifies `PATH`
+to include the UCX build.
 
 __Parameters__
 
@@ -1644,6 +1682,11 @@ the list of `configure` options.  The default is an empty string,
 i.e., include neither `--with-knem` not `--without-knem` and let
 `configure` try to automatically detect whether KNEM is present or
 not.
+
+- __ldconfig__: Boolean flag to specify whether the UCX library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the UCX library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `binutils-dev`,
@@ -1706,8 +1749,8 @@ The `xpmem` building block builds and installs the user space
 library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
 component.
 
-As a side effect, this building block modifies `CPATH`,
-`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+As a side effect, this building block modifies `CPATH` and
+`LIBRARY_PATH`.
 
 __Parameters__
 
@@ -1717,6 +1760,11 @@ __Parameters__
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--disable-kernel-module`.
+
+- __ldconfig__: Boolean flag to specify whether the XPMEM library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the XPMEM library
+directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  The default value are `autoconf`, `automake`,

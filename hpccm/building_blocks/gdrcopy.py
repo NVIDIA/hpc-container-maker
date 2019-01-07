@@ -29,19 +29,25 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
-class gdrcopy(rm, tar, wget):
+class gdrcopy(ldconfig, rm, tar, wget):
     """The `gdrcopy` building block builds and installs the user space
     library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
     component.
 
-    As a side effect, this building block modifies `CPATH`,
-    `LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+    As a side effect, this building block modifies `CPATH` and
+    `LIBRARY_PATH`.
 
     # Parameters
+
+    ldconfig: Boolean flag to specify whether the gdrcopy library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the gdrcopy library
+    directory. The default value is False.
 
     ospackages: List of OS packages to install prior to building.  The
     default values are `make` and `wget`.
@@ -65,8 +71,9 @@ class gdrcopy(rm, tar, wget):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(gdrcopy, self).__init__(**kwargs)
-        tar.__init__(self, **kwargs)
+        ldconfig.__init__(self, **kwargs)
         rm.__init__(self, **kwargs)
+        tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
 
 
@@ -79,8 +86,6 @@ class gdrcopy(rm, tar, wget):
         self.__environment_variables = {
             'CPATH':
             '{}:$CPATH'.format(os.path.join(self.__prefix, 'include')),
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__prefix, 'lib64')),
             'LIBRARY_PATH':
             '{}:$LIBRARY_PATH'.format(os.path.join(self.__prefix, 'lib64'))}
         self.__wd = '/var/tmp' # working directory
@@ -96,8 +101,9 @@ class gdrcopy(rm, tar, wget):
             'GDRCOPY version {}'.format(self.__version)))
         instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        if self.__environment_variables:
+            instructions.append(
+                environment(variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
 
@@ -121,6 +127,13 @@ class gdrcopy(rm, tar, wget):
 
         self.__commands.append('make PREFIX={} lib lib_install'.format(self.__prefix))
 
+        # Set library path
+        libpath = os.path.join(self.__prefix, 'lib64')
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(directory=libpath))
+        else:
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball),
@@ -143,6 +156,11 @@ class gdrcopy(rm, tar, wget):
         instructions.append(comment('GDRCOPY'))
         instructions.append(copy(_from=_from, src=self.__prefix,
                                  dest=self.__prefix))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        if self.ldconfig:
+            instructions.append(shell(
+                commands=[self.ldcache_step(
+                    directory=os.path.join(self.__prefix, 'lib64'))]))
+        if self.__environment_variables:
+            instructions.append(
+                environment(variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)

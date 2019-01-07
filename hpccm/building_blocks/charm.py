@@ -29,24 +29,29 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
-class charm(rm, sed, tar, wget):
+class charm(ldconfig, rm, sed, tar, wget):
     """The `charm` building block downloads and install the
     [Charm++](http://charm.cs.illinois.edu/research/charm) component.
 
-    As a side effect, this building block modifies `LD_LIBRARY_PATH`
-    and `PATH` to include the Charm++ build.  It also sets the
-    `CHARMBASE` environment variable to the top level install
-    directory.
+    As a side effect, this building block modifies `PATH` to include
+    the Charm++ build.  It also sets the `CHARMBASE` environment
+    variable to the top level install directory.
 
     # Parameters
 
     check: Boolean flag to specify whether the test cases should be
     run.  The default is False.
+
+    ldconfig: Boolean flag to specify whether the Charm++ library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the Charm++ library
+    directory. The default value is False.
 
     options: List of additional options to use when building Charm++.
     The default values are `--build-shared`, and `--with-production`.
@@ -75,6 +80,7 @@ class charm(rm, sed, tar, wget):
     ```python
     charm(target_architecture='mpi-linux-x86_64')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -83,6 +89,7 @@ class charm(rm, sed, tar, wget):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(charm, self).__init__(**kwargs)
+        ldconfig.__init__(self, **kwargs)
         rm.__init__(self, **kwargs)
         sed.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
@@ -108,9 +115,7 @@ class charm(rm, sed, tar, wget):
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
             'CHARMBASE': self.__installdir,
-            'PATH': '{}:$PATH'.format(os.path.join(self.__installdir, 'bin')),
-            'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(self.__installdir, 'lib_so'))}
+            'PATH': '{}:$PATH'.format(os.path.join(self.__installdir, 'bin'))}
 
         # Construct series of steps to execute
         self.__setup()
@@ -122,8 +127,9 @@ class charm(rm, sed, tar, wget):
             comment('Charm++ version {}'.format(self.__version)))
         instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        if self.__environment_variables:
+            instructions.append(
+                environment(variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
 
@@ -160,6 +166,13 @@ class charm(rm, sed, tar, wget):
             self.__installdir, self.__target, self.__target_architecture,
             ' '.join(self.__options), self.__parallel))
 
+        # Set library path
+        libpath = os.path.join(self.__installdir, 'lib_so')
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(directory=libpath))
+        else:
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+
         # Check the build
         if self.__check:
             self.__commands.append('cd {} && make test'.format(
@@ -185,6 +198,11 @@ class charm(rm, sed, tar, wget):
         instructions.append(comment('Charm++'))
         instructions.append(copy(_from=_from, src=self.__installdir,
                                  dest=self.__installdir))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        if self.ldconfig:
+            instructions.append(shell(
+                commands=[self.ldcache_step(
+                    directory=os.path.join(self.__prefix, 'lib_so'))]))
+        if self.__environment_variables:
+            instructions.append(environment(
+                variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)

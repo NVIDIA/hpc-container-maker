@@ -34,20 +34,21 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.templates.ConfigureMake import ConfigureMake
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class hdf5(ConfigureMake, rm, tar, wget):
+class hdf5(ConfigureMake, ldconfig, rm, tar, wget):
     """The `hdf5` building block downloads, configures, builds, and
     installs the [HDF5](http://www.hdfgroup.org) component.  Depending
     on the parameters, the source will be downloaded from the web
     (default) or copied from a source directory in the local build
     context.
 
-    As a side effect, this building block modifies `PATH`,
-    `LD_LIBRARY_PATH` to include the HDF5 build, and sets `HDF5_DIR`.
+    As a side effect, this building block modifies `PATH`
+    to include the HDF5 build, and sets `HDF5_DIR`.
 
     # Parameters
 
@@ -61,6 +62,11 @@ class hdf5(ConfigureMake, rm, tar, wget):
     local build context.  The default value is empty.  If this is
     defined, the source in the local build context will be used rather
     than downloading the source from the web.
+
+    ldconfig: Boolean flag to specify whether the HDF5 library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the HDF5 library
+    directory. The default value is False.
 
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are `bzip2`, `file`,
@@ -106,6 +112,7 @@ class hdf5(ConfigureMake, rm, tar, wget):
         # the parent class constructors manually for now.
         #super(hdf5, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
+        ldconfig.__init__(self, **kwargs)
         rm.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
@@ -126,9 +133,7 @@ class hdf5(ConfigureMake, rm, tar, wget):
         self.__environment_variables = {
             'HDF5_DIR': self.prefix,
             'PATH':
-            '{}:$PATH'.format(os.path.join(self.prefix, 'bin')),
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
+            '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -156,8 +161,9 @@ class hdf5(ConfigureMake, rm, tar, wget):
                      dest=os.path.join(self.__wd, self.__directory)))
 
         instructions.append(shell(commands=self.__commands))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        if self.__environment_variables:
+            instructions.append(environment(
+                variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
 
@@ -217,6 +223,13 @@ class hdf5(ConfigureMake, rm, tar, wget):
 
         self.__commands.append(self.install_step())
 
+        # Set library path
+        libpath = os.path.join(self.prefix, 'lib')
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(directory=libpath))
+        else:
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+
         if self.__directory:
             # Using source from local build context, cleanup directory
             self.__commands.append(self.cleanup_step(
@@ -245,6 +258,11 @@ class hdf5(ConfigureMake, rm, tar, wget):
         instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        if self.ldconfig:
+            instructions.append(shell(
+                commands=[self.ldcache_step(
+                    directory=os.path.join(self.prefix, 'lib'))]))
+        if self.__environment_variables:
+            instructions.append(environment(
+                variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)

@@ -31,17 +31,18 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.templates.ConfigureMake import ConfigureMake
 from hpccm.templates.git import git
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.tar import tar
 from hpccm.toolchain import toolchain
 
-class xpmem(ConfigureMake, git, rm, tar):
+class xpmem(ConfigureMake, ldconfig, git, rm, tar):
     """The `xpmem` building block builds and installs the user space
     library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
     component.
 
-    As a side effect, this building block modifies `CPATH`,
-    `LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
+    As a side effect, this building block modifies `CPATH` and
+    `LIBRARY_PATH`.
 
     # Parameters
 
@@ -50,6 +51,11 @@ class xpmem(ConfigureMake, git, rm, tar):
 
     configure_opts: List of options to pass to `configure`.  The
     default values are `--disable-kernel-module`.
+
+    ldconfig: Boolean flag to specify whether the XPMEM library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the XPMEM library
+    directory. The default value is False.
 
     ospackages: List of OS packages to install prior to configuring
     and building.  The default value are `autoconf`, `automake`,
@@ -77,8 +83,9 @@ class xpmem(ConfigureMake, git, rm, tar):
         #super(xpmem, self).__init__(**kwargs)
         ConfigureMake.__init__(self, **kwargs)
         git.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
+        ldconfig.__init__(self, **kwargs)
         rm.__init__(self, **kwargs)
+        tar.__init__(self, **kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--disable-kernel-module'])
@@ -97,8 +104,6 @@ class xpmem(ConfigureMake, git, rm, tar):
         self.__environment_variables = {
             'CPATH':
             '{}:$CPATH'.format(os.path.join(self.prefix, 'include')),
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib')),
             'LIBRARY_PATH':
             '{}:$LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
@@ -114,8 +119,9 @@ class xpmem(ConfigureMake, git, rm, tar):
             'XPMEM branch {}'.format(self.__branch)))
         instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        if self.__environment_variables:
+            instructions.append(
+                environment(variables=self.__environment_variables))
 
         return '\n'.join(str(x) for x in instructions)
 
@@ -137,6 +143,13 @@ class xpmem(ConfigureMake, git, rm, tar):
         self.__commands.append(self.build_step())
         self.__commands.append(self.install_step())
 
+        # Set library path
+        libpath = os.path.join(self.prefix, 'lib')
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(directory=libpath))
+        else:
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+
         # Cleanup directory
         self.__commands.append(self.cleanup_step(
                    [os.path.join(self.__wd, 'xpmem')]))
@@ -157,6 +170,11 @@ class xpmem(ConfigureMake, git, rm, tar):
         instructions.append(comment('XPMEM'))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        if self.ldconfig:
+            instructions.append(shell(
+                commands=[self.ldcache_step(
+                    directory=os.path.join(self.prefix, 'lib'))]))
+        if self.__environment_variables:
+            instructions.append(
+                environment(variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)

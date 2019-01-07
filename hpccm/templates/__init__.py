@@ -17,6 +17,7 @@ from __future__ import absolute_import
 from hpccm.templates.CMakeBuild import CMakeBuild
 from hpccm.templates.ConfigureMake import ConfigureMake
 from hpccm.templates.git import git
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar

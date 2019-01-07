@@ -86,6 +86,33 @@ ENV CPATH=/usr/local/xpmem/include:$CPATH \
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        x = xpmem(ldconfig=True, branch='master')
+        self.assertEqual(str(x),
+r'''# XPMEM branch master
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        ca-certificates \
+        file \
+        git \
+        libtool \
+        make && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
+    cd /var/tmp/xpmem && autoreconf --install && \
+    cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    echo "/usr/local/xpmem/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/xpmem
+ENV CPATH=/usr/local/xpmem/include:$CPATH \
+    LIBRARY_PATH=/usr/local/xpmem/lib:$LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         x = xpmem()
