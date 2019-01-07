@@ -22,8 +22,9 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker
+from helpers import centos, docker
 
+from hpccm.building_blocks import gnu
 from hpccm.primitives.shell import shell
 from hpccm.Stage import Stage
 
@@ -62,3 +63,19 @@ class Test_Stage(unittest.TestCase):
         s.name = 'bar'
         s.baseimage('foo')
         self.assertEqual(str(s), 'FROM foo AS bar\n\nRUN abc')
+
+    @centos
+    @docker
+    def test_runtime(self):
+        """Runtime from a previous stage"""
+        s0 = Stage()
+        s0 += gnu()
+        s0 += shell(commands=['gcc -o hello hello.c'])
+        s1 = Stage()
+        s1 += s0.runtime()
+        self.assertEqual(str(s1),
+r'''# GNU compiler runtime
+RUN yum install -y \
+        libgomp \
+        libgfortran && \
+    rm -rf /var/cache/yum/*''')

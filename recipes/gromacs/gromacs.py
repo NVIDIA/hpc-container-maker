@@ -20,20 +20,16 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 Stage0.name = 'devel'
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
 
-python = python(python3=False)
-Stage0 += python
+Stage0 += python(python3=False)
 
-gnu = gnu(fortran=False)
-Stage0 += gnu
+Stage0 += gnu(fortran=False)
 
 Stage0 += packages(ospackages=['ca-certificates', 'cmake', 'git'])
 
-ofed = ofed()
-Stage0 += ofed
+Stage0 += ofed()
 
-ompi = openmpi(configure_opts=['--enable-mpi-cxx'], parallel=32,
+Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'], parallel=32,
                prefix="/opt/openmpi", version='3.0.0')
-Stage0 += ompi
 
 cm = CMakeBuild()
 build_cmds = [git().clone_step(
@@ -73,13 +69,7 @@ Stage0 += workdir(directory='/workspace')
 ######
 Stage1.baseimage('nvidia/cuda:9.0-runtime-ubuntu16.04')
 
-Stage1 += python.runtime(_from=Stage0.name)
-
-Stage1 += gnu.runtime(_from=Stage0.name)
-
-Stage1 += ofed.runtime(_from=Stage0.name)
-
-Stage1 += ompi.runtime(_from=Stage0.name)
+Stage1 += Stage0.runtime(_from=Stage0.name)
 
 Stage1 += copy(_from=Stage0.name, src='/gromacs/install',
                dest='/gromacs/install')
