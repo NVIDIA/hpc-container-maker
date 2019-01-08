@@ -27,6 +27,7 @@ generate:
   - hpccm.building_blocks.openmpi+
   - hpccm.building_blocks.packages+
   - hpccm.building_blocks.pgi+
+  - hpccm.building_blocks.pip+
   - hpccm.building_blocks.pnetcdf+
   - hpccm.building_blocks.python+
   - hpccm.building_blocks.ucx+
