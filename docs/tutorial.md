@@ -429,7 +429,7 @@ $ sudo docker build -t milc:single-stage -f Dockerfile.single-stage .
 $ hpccm --recipe milc.py > Dockerfile.multi-stage
 $ sudo docker build -t milc:multi-stage -f Dockerfile.multi-stage .
 
-$ docker images --format "{{.Repository}}:{{.Tag}}: {{.Size}}" | grep milc
+$ docker images --format "{{.Repository}}:{{.Tag}}: {{.Size}}" milc
 milc:multi-stage: 429MB
 milc:single-stage: 5.93GB
 ```
@@ -440,7 +440,7 @@ converted to Singularity images so Singularity can also (indirectly)
 take advantage of multi-stage builds.
 
 ```
-$ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity milc:multi-stage
+$ sudo docker run -t --rm --cap-add SYS_ADMIN -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity milc:multi-stage
 ...
 Singularity container built: /tmp/milc_multi-stage-2018-12-03-c2b47902c8a8.simg
 ...
