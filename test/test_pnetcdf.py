@@ -57,6 +57,30 @@ ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        p = pnetcdf(ldconfig=True, version='1.10.0')
+        self.assertEqual(str(p),
+r'''# PnetCDF version 1.10.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        m4 \
+        make \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://cucis.ece.northwestern.edu/projects/PnetCDF/Release/parallel-netcdf-1.10.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/parallel-netcdf-1.10.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/parallel-netcdf-1.10.0 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
+    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' /var/tmp/parallel-netcdf-1.10.0/libtool && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    echo "/usr/local/pnetcdf/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/parallel-netcdf-1.10.0.tar.gz /var/tmp/parallel-netcdf-1.10.0
+ENV PATH=/usr/local/pnetcdf/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         p = pnetcdf()

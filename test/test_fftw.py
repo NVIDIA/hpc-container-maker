@@ -95,6 +95,27 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        f = fftw(ldconfig=True, version='3.3.8')
+        self.assertEqual(str(f),
+r'''# FFTW version 3.3.8
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2 && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    echo "/usr/local/fftw/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         f = fftw()

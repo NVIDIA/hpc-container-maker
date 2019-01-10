@@ -121,6 +121,28 @@ ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        b = boost(ldconfig=True, version='1.68.0')
+        self.assertEqual(str(b),
+r'''# Boost version 1.68.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        libbz2-dev \
+        tar \
+        wget \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
+    ./b2 -j$(nproc) -q install && \
+    echo "/usr/local/boost/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/boost_1_68_0.tar.bz2 /var/tmp/boost_1_68_0''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         b = boost()

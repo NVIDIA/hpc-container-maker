@@ -56,6 +56,28 @@ ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        tc = toolchain(CC='gcc', FC='gfortran')
+        o = openblas(ldconfig=True, toolchain=tc, version='0.3.3')
+        self.assertEqual(str(o),
+r'''# OpenBLAS version 0.3.3
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/OpenBLAS-0.3.3 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
+    make install PREFIX=/usr/local/openblas && \
+    echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/v0.3.3.tar.gz /var/tmp/OpenBLAS-0.3.3''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         o = openblas()

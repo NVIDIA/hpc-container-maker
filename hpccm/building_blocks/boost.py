@@ -33,21 +33,24 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
+from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
 
-class boost(rm, tar, wget):
+class boost(ldconfig, rm, tar, wget):
     """The `boost` building block downloads and installs the
     [Boost](https://www.boost.org) component.
-
-    As a side effect, this building block modifies `LD_LIBRARY_PATH`
-    to include the Boost build.
 
     # Parameters
 
     bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
     default is an empty list.
+
+    ldconfig: Boolean flag to specify whether the Boost library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the Boost library
+    directory. The default value is False.
 
     ospackages: List of OS packages to install prior to building.  For
     Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
@@ -80,6 +83,7 @@ class boost(rm, tar, wget):
     ```python
     boost(sourceforge=True, version='1.57.0')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -88,6 +92,7 @@ class boost(rm, tar, wget):
         # Trouble getting MRO with kwargs working correctly, so just call
         # the parent class constructors manually for now.
         #super(boost, self).__init__(**kwargs)
+        ldconfig.__init__(self, **kwargs)
         rm.__init__(self, **kwargs)
         tar.__init__(self, **kwargs)
         wget.__init__(self, **kwargs)
@@ -103,9 +108,7 @@ class boost(rm, tar, wget):
         self.__version = kwargs.get('version', '1.68.0')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'LD_LIBRARY_PATH':
-            '{}:$LD_LIBRARY_PATH'.format(os.path.join(self.__prefix, 'lib'))}
+        self.__environment_variables = {} # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
         if self.__sourceforge:
@@ -125,8 +128,9 @@ class boost(rm, tar, wget):
             'Boost version {}'.format(self.__version)))
         instructions.append(packages(ospackages=self.__ospackages))
         instructions.append(shell(commands=self.__commands))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        if self.__environment_variables:
+            instructions.append(environment(
+                variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)
 
     def __distro(self):
@@ -184,6 +188,13 @@ class boost(rm, tar, wget):
         # Build and install
         self.__commands.append('./b2 -j{} -q install'.format(self.__parallel))
 
+        # Set library path
+        libpath = os.path.join(self.__prefix, 'lib')
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(directory=libpath))
+        else:
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball),
@@ -206,6 +217,11 @@ class boost(rm, tar, wget):
         instructions.append(comment('Boost'))
         instructions.append(copy(_from=_from, src=self.__prefix,
                                  dest=self.__prefix))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+        if self.ldconfig:
+            instructions.append(shell(
+                commands=[self.ldcache_step(
+                    directory=os.path.join(self.__prefix, 'lib'))]))
+        if self.__environment_variables:
+            instructions.append(environment(
+                variables=self.__environment_variables))
         return '\n'.join(str(x) for x in instructions)

@@ -115,6 +115,34 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        ompi = openmpi(ldconfig=True, version='3.1.2')
+        self.assertEqual(str(ompi),
+r'''# OpenMPI version 3.1.2
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        file \
+        hwloc \
+        libnuma-dev \
+        make \
+        openssh-client \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.1/downloads/openmpi-3.1.2.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-3.1.2.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-3.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    echo "/usr/local/openmpi/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/openmpi-3.1.2.tar.bz2 /var/tmp/openmpi-3.1.2
+ENV PATH=/usr/local/openmpi/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         ompi = openmpi()

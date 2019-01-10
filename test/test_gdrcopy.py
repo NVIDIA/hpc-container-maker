@@ -76,6 +76,28 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
+    def test_ldconfig(self):
+        """ldconfig option"""
+        g = gdrcopy(ldconfig=True, version='1.3')
+        self.assertEqual(str(g),
+r'''# GDRCOPY version 1.3
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v1.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-1.3 && \
+    mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
+    make PREFIX=/usr/local/gdrcopy lib lib_install && \
+    echo "/usr/local/gdrcopy/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/v1.3.tar.gz /var/tmp/gdrcopy-1.3
+ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         g = gdrcopy()
