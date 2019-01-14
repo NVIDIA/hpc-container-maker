@@ -29,32 +29,23 @@ Stage0 += comment(__doc__, reformat=False)
 Stage0 += baseimage(image=devel_image, _as='devel')
 
 # Python
-python = python()
-Stage0 += python
+Stage0 += python()
 
 # GNU compilers
-gnu = gnu()
-Stage0 += gnu
-
-# Setup the toolchain.  Use the GNU compiler toolchain as the basis.
-tc = gnu.toolchain
-tc.CUDA_HOME = '/usr/local/cuda'
+compiler = gnu()
+Stage0 += compiler
 
 # Mellanox OFED
-ofed = mlnx_ofed(version='3.4-1.0.0.0')
-Stage0 += ofed
+Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
 
 # OpenMPI
-ompi = openmpi(version='3.1.2', toolchain=tc)
-Stage0 += ompi
+Stage0 += openmpi(version='3.1.2', toolchain=compiler.toolchain)
 
 # FFTW
-fftw = fftw(version='3.3.8', mpi=True, toolchain=tc)
-Stage0 += fftw
+Stage0 += fftw(version='3.3.8', mpi=True, toolchain=compiler.toolchain)
 
 # HDF5
-hdf5 = hdf5(version='1.10.4', toolchain=tc)
-Stage0 += hdf5
+Stage0 += hdf5(version='1.10.4', toolchain=compiler.toolchain)
 
 ######
 # Runtime image
@@ -62,20 +53,4 @@ Stage0 += hdf5
 
 Stage1 += baseimage(image=runtime_image)
 
-# Python
-Stage1 += python.runtime()
-
-# GNU compiler
-Stage1 += gnu.runtime()
-
-# Mellanox OFED
-Stage1 += ofed.runtime()
-
-# OpenMPI
-Stage1 += ompi.runtime()
-
-# FFTW
-Stage1 += fftw.runtime()
-
-# HDF5
-Stage1 += hdf5.runtime()
+Stage1 += Stage0.runtime()

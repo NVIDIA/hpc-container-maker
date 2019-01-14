@@ -86,3 +86,26 @@ __Returns__
 
 True if any layers have been added to the stage, otherwise False
 
+## runtime
+```python
+Stage.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a previous stage.
+
+This method invokes the runtime() method for every layer in
+the stage.  If a layer does not have a runtime() method, then
+it is skipped.
+
+__Examples__
+
+```python
+Stage0 += baseimage(image='nvidia/cuda:9.0-devel')
+Stage0 += gnu()
+Stage0 += ofed()
+Stage0 += openmpi()
+...
+Stage1 += baseimage(image='nvidia/cuda:9.0-base')
+Stage1 += Stage0.runtime()
+```
+
