@@ -78,9 +78,8 @@ class mpich(ConfigureMake, ldconfig, rm, tar, wget):
     non-default compilers or other toolchain options are needed.  The
     default is empty.
 
-    version: The version of MPICH source to download.  This
-    value is ignored if `directory` is set.  The default value is
-    `3.3`.
+    version: The version of MPICH source to download.  The default
+    value is `3.3`.
 
     # Examples
 
@@ -92,7 +91,6 @@ class mpich(ConfigureMake, ldconfig, rm, tar, wget):
     p = pgi(eula=True)
     mpich(toolchain=p.toolchain)
     ```
-
     """
 
     def __init__(self, **kwargs):
