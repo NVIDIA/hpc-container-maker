@@ -32,12 +32,10 @@ Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
 Stage0 += packages(ospackages=['autoconf', 'automake', 'ca-certificates',
                                'cmake', 'git'])
 
-ofed = ofed()
-Stage0 += ofed
+Stage0 += ofed()
 
-ompi = openmpi(configure_opts=['--enable-mpi-cxx'], prefix='/opt/openmpi',
-               parallel=32, version='3.0.0')
-Stage0 += ompi
+Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'], prefix='/opt/openmpi',
+                  parallel=32, version='3.0.0')
 
 # build QUDA
 g = git()
@@ -101,9 +99,7 @@ Stage0 += workdir(directory='/workspace')
 ###############################################################################
 Stage1 += baseimage(image='nvidia/cuda:9.0-base-ubuntu16.04')
 
-Stage1 += ofed.runtime()
-
-Stage1 += ompi.runtime()
+Stage1 += Stage0.runtime()
 
 Stage1 += copy(_from=Stage0.name,
                src='/milc/milc_qcd-{}/ks_imp_rhmc/su3_rhmd_hisq'.format(

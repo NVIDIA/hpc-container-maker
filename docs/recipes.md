@@ -208,17 +208,17 @@ automatically created for use in HPCCM recipes.
 
 Most [building blocks](/docs/building_blocks.md) provide a `runtime`
 method to install the corresponding runtime version of a component in
-another stage.  Building block settings defined in the first stage are
-automatically reflected in the second stage using the `runtime`
-method.
+another stage.  The `Stage` class also provides a `runtime` method
+that calls the `runtime` method of every building block.  Building
+block settings defined in the first stage are automatically reflected
+in the second stage using the `runtime` method.
 
 ```python
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-ompi = openmpi(infiniband=False, prefix='/opt/openmpi')
-Stage0 += ompi
+Stage0 += openmpi(infiniband=False, prefix='/opt/openmpi')
 
 Stage1 += baseimage(image='nvidia/cuda:9.0-base-centos7')
-Stage1 += ompi.runtime()
+Stage1 += Stage0.runtime()
 ```
 
 ```
