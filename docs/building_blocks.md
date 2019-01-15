@@ -257,21 +257,6 @@ cmake(eula=True)
 cmake(eula=True, version='3.10.3')
 ```
 
-## runtime
-```python
-cmake.runtime(self, _from=u'0')
-```
-Generate the set of instructions to install the runtime specific
-components from a build in a previous stage.
-
-__Examples__
-
-```python
-cmake = cmake(...)
-Stage0 += cmake
-Stage1 += cmake.runtime()
-```
-
 # fftw
 ```python
 fftw(self, **kwargs)

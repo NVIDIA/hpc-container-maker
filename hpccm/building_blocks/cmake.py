@@ -129,16 +129,3 @@ class cmake(rm, wget):
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, runfile)]))
-
-    def runtime(self, _from='0'):
-        """Generate the set of instructions to install the runtime specific
-        components from a build in a previous stage.
-
-        # Examples
-        ```python
-        cmake = cmake(...)
-        Stage0 += cmake
-        Stage1 += cmake.runtime()
-        ```
-        """
-        return str(self)
