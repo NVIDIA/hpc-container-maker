@@ -930,6 +930,79 @@ Stage0 += m
 Stage1 += m.runtime()
 ```
 
+# mpich
+```python
+mpich(self, **kwargs)
+```
+The `mpich` building block configures, builds, and installs the
+[MPICH](https://www.mpich.org) component.
+
+As a side effect, this building block modifies `PATH` to include
+the MPICH build.
+
+As a side effect, a toolchain is created containing the MPI
+compiler wrappers.  The tool can be passed to other operations
+that want to build using the MPI compiler wrappers.
+
+__Parameters__
+
+
+- __check__: Boolean flag to specify whether the `make check` and `make
+testing` steps should be performed.  The default is False.
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default is an empty list.
+
+- __ldconfig__: Boolean flag to specify whether the MPICH library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the MPICH library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `file`, `gzip`,
+`make`, `openssh-client`, `perl`, `tar`, and `wget`.  For
+RHEL-based Linux distributions, the default values are `file`,
+`gzip`, `make`, `openssh-clients`, `perl`, `tar`, and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/mpich`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __version__: The version of MPICH source to download.  This
+value is ignored if `directory` is set.  The default value is
+`3.3`.
+
+__Examples__
+
+
+```python
+mpich(prefix='/opt/mpich/3.3', version='3.3')
+```
+
+```python
+p = pgi(eula=True)
+mpich(toolchain=p.toolchain)
+```
+
+
+## runtime
+```python
+mpich.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+m = mpich(...)
+Stage0 += m
+Stage1 += m.runtime()
+```
+
 # mvapich2
 ```python
 mvapich2(self, **kwargs)

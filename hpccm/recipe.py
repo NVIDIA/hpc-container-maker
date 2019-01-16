@@ -60,6 +60,7 @@ from hpccm.building_blocks.knem import knem
 from hpccm.building_blocks.llvm import llvm
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 from hpccm.building_blocks.mkl import mkl
+from hpccm.building_blocks.mpich import mpich
 from hpccm.building_blocks.mvapich2 import mvapich2
 from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 from hpccm.building_blocks.netcdf import netcdf
