@@ -17,6 +17,11 @@ the Linux distribution by inspecting the image identifier, and
 falls back to `ubuntu` if unable to determine the Linux
 distribution automatically.
 
+- ___docker_env__: Boolean specifying whether to load the Docker base
+ image environment, i.e., source
+ `/.singularity.d/env/10-docker.sh` (Singularity specific).  The
+ default value is True.
+
 - __image__: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
 
 - __AS__: Name for the build stage (Docker specific).  The default value
@@ -28,6 +33,7 @@ __Examples__
 ```python
 baseimage(image='nvidia/cuda:9.1-devel')
 ```
+
 
 # blob
 ```python
