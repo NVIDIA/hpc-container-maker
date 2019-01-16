@@ -956,9 +956,8 @@ RHEL-based Linux distributions, the default values are `file`,
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __version__: The version of MPICH source to download.  This
-value is ignored if `directory` is set.  The default value is
-`3.3`.
+- __version__: The version of MPICH source to download.  The default
+value is `3.3`.
 
 __Examples__
 
@@ -971,7 +970,6 @@ mpich(prefix='/opt/mpich/3.3', version='3.3')
 p = pgi(eula=True)
 mpich(toolchain=p.toolchain)
 ```
-
 
 ## runtime
 ```python
