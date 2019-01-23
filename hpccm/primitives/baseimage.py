@@ -44,6 +44,11 @@ class baseimage(object):
     falls back to `ubuntu` if unable to determine the Linux
     distribution automatically.
 
+    _docker_env: Boolean specifying whether to load the Docker base
+     image environment, i.e., source
+     `/.singularity.d/env/10-docker.sh` (Singularity specific).  The
+     default value is True.
+
     image: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
 
     AS: Name for the build stage (Docker specific).  The default value
@@ -54,6 +59,7 @@ class baseimage(object):
     ```python
     baseimage(image='nvidia/cuda:9.1-devel')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -65,6 +71,7 @@ class baseimage(object):
         self.__as = kwargs.get('_as', self.__as) # Docker specific
         self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
         self.__distro = kwargs.get('_distro', '')
+        self.__docker_env = kwargs.get('_docker_env', True)
 
         # Set the global Linux distribution.  Use the user specified
         # value if available, otherwise try to figure it out based on
@@ -110,11 +117,16 @@ class baseimage(object):
 
             return image
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
+            image = 'BootStrap: docker\nFrom: {}'.format(self.image)
+
             # Singularity does not inherit the environment from the
             # Docker base image automatically.  Do it manually.
-            docker_env = shell(chdir=False,
-                               commands=['. /.singularity.d/env/10-docker.sh'])
-            return 'BootStrap: docker\nFrom: {0}\n{1}'.format(self.image,
-                                                              str(docker_env))
+            if self.__docker_env:
+                docker_env = shell(
+                    chdir=False,
+                    commands=['. /.singularity.d/env/10-docker.sh'])
+                image = image + '\n' + str(docker_env)
+
+            return image
         else:
             raise RuntimeError('Unknown container type')

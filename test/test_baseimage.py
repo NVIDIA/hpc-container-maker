@@ -70,6 +70,14 @@ From: foo
 %post
     . /.singularity.d/env/10-docker.sh''')
 
+    @singularity
+    def test_false_docker_env_singularity(self):
+        """Docker env is False"""
+        b = baseimage(image='foo', _docker_env=False)
+        self.assertEqual(str(b),
+r'''BootStrap: docker
+From: foo''')
+
     @docker
     def test_as_deprecated_docker(self):
         """Docker specified image naming"""
