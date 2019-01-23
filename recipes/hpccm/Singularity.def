@@ -1,0 +1,22 @@
+# 
+# Recipe to bootstrap HPC Container Maker (HPCCM) as a container
+# 
+# Docker:
+# $ sudo docker build -t hpccm -f Dockerfile .
+# $ sudo docker run --rm -v $(pwd):/recipes hpccm --recipe /recipes/...
+# 
+# Singularity:
+# $ sudo singularity build hpccm.simg Singularity.def
+# $ ./hpccm.simg --recipe ...
+# 
+
+BootStrap: docker
+From: python:3-slim
+
+%post
+    pip install --no-cache-dir hpccm
+
+%runscript
+    exec hpccm $@
+
+
