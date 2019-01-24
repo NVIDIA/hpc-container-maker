@@ -35,7 +35,7 @@ Stage0 += packages(ospackages=['autoconf', 'automake', 'ca-certificates',
 Stage0 += ofed()
 
 Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'], prefix='/opt/openmpi',
-                  parallel=32, version='3.0.0')
+                  version='3.0.0')
 
 # build QUDA
 g = git()
@@ -58,7 +58,7 @@ quda_cmds = [g.clone_step(repository='https://github.com/lattice/quda',
                                    '-DQUDA_INTERFACE_QDP=ON',
                                    '-DQUDA_LINK_HISQ=ON',
                                    '-DQUDA_MPI=ON']),
-             cm.build_step(parallel=32)]
+             cm.build_step()]
 Stage0 += shell(commands=quda_cmds)
 
 # build MILC

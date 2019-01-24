@@ -28,7 +28,7 @@ Stage0 += packages(ospackages=['ca-certificates', 'cmake', 'git'])
 
 Stage0 += ofed()
 
-Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'], parallel=32,
+Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'],
                prefix="/opt/openmpi", version='3.0.0')
 
 cm = CMakeBuild()
