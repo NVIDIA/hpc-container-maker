@@ -88,7 +88,7 @@ True if any layers have been added to the stage, otherwise False
 
 ## runtime
 ```python
-Stage.runtime(self, _from=u'0')
+Stage.runtime(self, _from=u'0', exclude=[])
 ```
 Generate the set of instructions to install the runtime specific
 components from a previous stage.
@@ -97,15 +97,26 @@ This method invokes the runtime() method for every layer in
 the stage.  If a layer does not have a runtime() method, then
 it is skipped.
 
+__Arguments__
+
+
+- ___from__: The name of the stage from which to copy the runtime.
+The default is `0`.
+
+- __exclude__: List of building blocks to exclude when generating
+the runtime. The default is an empty list.
+
 __Examples__
 
 ```python
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel')
 Stage0 += gnu()
+Stage0 += boost()
 Stage0 += ofed()
 Stage0 += openmpi()
 ...
 Stage1 += baseimage(image='nvidia/cuda:9.0-base')
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(exclude=['boost'])
 ```
+
 
