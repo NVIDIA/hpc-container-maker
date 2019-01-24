@@ -15,7 +15,7 @@ with open(os.path.join(here, 'README.md')) as fp:
 
 setup(
     name='hpccm',
-    version='18.12.0',
+    version='19.1.0',
     description='HPC Container Maker',
     long_description=long_description,
     long_description_content_type='text/markdown',

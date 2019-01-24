@@ -1,3 +1,14 @@
+# v19.1.0
+
+- Adds MPICH (`mpich`) and pip (`pip`) building blocks
+- Simplify specifying runtime stages with the `Stage.runtime()` method
+- Add support for configuring library locations with `ldconfig`
+- Add container specification files for building a HPCCM container
+- Remove the CMake (`cmake`) building block runtime method
+- Add an option to specify whether environment variables from the
+  Docker base image should be loaded in Singularity
+- Update the GROMACS and MILC example recipes to use the new capabilities
+
 # v18.12.0
 
 - Add support for Ubuntu 18 base images
