@@ -1104,11 +1104,14 @@ dependencies need to be met and only certain combinations of
 recipe components are supported; please refer to the MVAPICH2-GDR
 documentation for more information.
 
-The [GNU compiler](#gnu) building block should be installed prior
-to this building block.
+The [GNU compiler](#gnu) or [PGI compiler](#pgi) building blocks
+should be installed prior to this building block.
 
 The [Mellanox OFED](#mlnx_ofed) building block should be installed
 prior to this building block.
+
+The [gdrcopy](#gdrcopy) building block should be installed prior
+to this building block.
 
 As a side effect, this building block modifies `PATH` and
 `LD_LIBRARY_PATH` to include the MVAPICH2-GDR build.
@@ -1116,6 +1119,10 @@ As a side effect, this building block modifies `PATH` and
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The toolchain can be passed to other
 operations that want to build using the MPI compiler wrappers.
+
+Note: Using MVAPICH2-GDR on non-RHEL-based Linux distributions has
+several issues, including compiler version mismatches and libnuma
+incompatibilities.
 
 __Parameters__
 
@@ -1125,37 +1132,54 @@ built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This
 value is ignored if `package` is set.  The default value is `9.0`.
 
+- __gnu__: Boolean flag to specify whether a GNU build should be used.
+The default value is True.
+
+- __ldconfig__: Boolean flag to specify whether the MVAPICH2-GDR library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the MVAPICH2-GDR library
+directory. The default value is False.
+
 - __mlnx_ofed_version__: The version of Mellanox OFED the
 MVAPICH2-GDR package was built against.  The version string format
 is X.Y.  The version should match the version of Mellanox OFED
 installed by the `mlnx_ofed` building block.  This value is
-ignored if `package` is set.  The default value is `3.4`.
+ignored if `package` is set.  The default value is `4.2`.
 
-- __ospackages__: List of OS packages to install prior to
-installation.  For Ubuntu, the default values are `openssh-client`
-and `wget`.  For RHEL-based Linux distributions, the default
-values are `openssh-clients`, `perl` and `wget`.
+- __ospackages__: List of OS packages to install prior to installation.
+For Ubuntu, the default values are `cpio`, `libnuma1`,
+`openssh-client`, `rpm2cpio` and `wget`, plus `libgfortran3` if a
+GNU compiled package is selected.  For RHEL-based Linux
+distributions, the default values are `libpciaccess`,
+`numactl-libs`, `openssh-clients`, and `wget`, plus `libgfortran`
+if a GNU compiled package is selected.
 
-- __package__: Path to the package file relative to the local build
-context.  The default value is empty.  If this is defined, the
-package in the local build context will be used rather than
-downloading the package from the web.  The package should
+- __package__: Specify the package name to download.  The package should
 correspond to the other recipe components (e.g., compiler version,
-CUDA version, Mellanox OFED version).
+CUDA version, Mellanox OFED version).  If specified, this option
+overrides all other building block options (e.g., compiler family,
+compiler version, CUDA version, Mellanox OFED version,
+MVAPICH2-GDR version).
+
+- __pgi__: Boolean flag to specify whether a PGI build should be used.
+The default value is False.
 
 - __version__: The version of MVAPICH2-GDR to download.  The value is
-ignored if `package` is set.  The default value is `2.3a`.
+ignored if `package` is set.  The default value is `2.3`.  Due to
+differences in the packaging scheme, versions prior to 2.3 are not
+supported.
 
 __Examples__
 
 
 ```python
-mvapich2_gdr(version='2.3a')
+mvapich2_gdr(version='2.3')
 ```
 
 ```python
-mvapich2_gdr(package='mvapich2-gdr-mcast.cuda9.0.mofed3.4.gnu4.8.5_2.3a-1.el7.centos_amd64.deb')
+mvapich2_gdr(package='mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm')
 ```
+
 
 ## runtime
 ```python
