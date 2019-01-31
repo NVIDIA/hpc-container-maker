@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.boost import boost
+from hpccm.building_blocks.catalyst import catalyst
 from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
