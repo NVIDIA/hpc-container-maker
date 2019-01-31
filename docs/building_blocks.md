@@ -105,6 +105,12 @@ catalyst(self, **kwargs)
 The `catalyst` building block configures, builds, and installs the
 [ParaView Catalyst](https://www.paraview.org/in-situ/) component.
 
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+A MPI building block should be installed prior to this building
+block.
+
 As a side effect, this building block modifies `PATH` to include
 the Catalyst build.
 
