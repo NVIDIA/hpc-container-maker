@@ -1707,6 +1707,9 @@ distribution.
 __Parameters__
 
 
+- __devel__: Boolean flag to specify whether to also install the Python
+development headers and libraries.  The default is False.
+
 - __python2__: Boolean flag to specify whether to install Python version
 2.  The default is True.
 
@@ -1723,6 +1726,7 @@ python()
 ```python
 python(python3=False)
 ```
+
 
 ## runtime
 ```python
