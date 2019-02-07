@@ -32,6 +32,9 @@ class python(object):
 
     # Parameters
 
+    devel: Boolean flag to specify whether to also install the Python
+    development headers and libraries.  The default is False.
+
     python2: Boolean flag to specify whether to install Python version
     2.  The default is True.
 
@@ -47,6 +50,7 @@ class python(object):
     ```python
     python(python3=False)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -56,6 +60,7 @@ class python(object):
         # the parent class constructors manually for now.
         #super(python, self).__init__(**kwargs)
 
+        self.__devel = kwargs.get('devel', False)
         self.__epel = False
         self.__python2 = kwargs.get('python2', True)
         self.__python3 = kwargs.get('python3', True)
@@ -66,11 +71,17 @@ class python(object):
         if self.__python2:
             self.__debs.append('python')
             self.__rpms.append('python')
+            if self.__devel:
+                self.__debs.append('libpython-dev')
+                self.__rpms.append('python-devel')
 
         if self.__python3:
             self.__debs.append('python3')
             self.__rpms.append('python34')  # EPEL package
             self.__epel = True
+            if self.__devel:
+                self.__debs.append('libpython3-dev')
+                self.__rpms.append('python34-devel')  # EPEL package
 
     def __str__(self):
         """String representation of the building block"""
