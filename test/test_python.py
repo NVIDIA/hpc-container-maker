@@ -59,6 +59,21 @@ RUN yum install -y epel-release && \
 
     @ubuntu
     @docker
+    def test_devel(self):
+        """devel option"""
+        p = python(devel=True)
+        self.assertEqual(str(p),
+r'''# Python
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python \
+        libpython-dev \
+        python3 \
+        libpython3-dev && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         p = python()

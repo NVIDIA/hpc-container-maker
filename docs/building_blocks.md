@@ -1691,10 +1691,22 @@ The `pip` building block installs Python packages from PyPi.
 __Parameters__
 
 
+- __ospackages__: List of OS packages to install prior to installing
+PyPi packages.  For Ubuntu, the default values are `python-pip`,
+`python-setuptools`, and `python-wheel` for Python 2.x and
+`python3-pip`, `python3-setuptools`, and `python3-wheel` for
+Python 3.x.  For RHEL-based Linux distributions, the default
+values are `python-pip` for Python 2.x and `python34-pip` for
+Python 3.x.
+
 - __packages__: List of PyPi packages to install.  The default is
 an empty list.
 
 - __pip__: The name of the `pip` tool to use. The default is `pip`.
+
+- __upgrade__: Boolean flag to control whether pip itself should be
+upgraded prior to installing any PyPi packages.  The default is
+False.
 
 __Examples__
 
@@ -1786,6 +1798,9 @@ distribution.
 __Parameters__
 
 
+- __devel__: Boolean flag to specify whether to also install the Python
+development headers and libraries.  The default is False.
+
 - __python2__: Boolean flag to specify whether to install Python version
 2.  The default is True.
 
@@ -1802,6 +1817,7 @@ python()
 ```python
 python(python3=False)
 ```
+
 
 ## runtime
 ```python
