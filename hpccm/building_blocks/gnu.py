@@ -159,6 +159,7 @@ class gnu(object):
                     self.__commands.append('update-alternatives --install /usr/bin/g++ g++ $(which g++-{}) 30'.format(self.__version))
                 if self.__fortran:
                     self.__commands.append('update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-{}) 30'.format(self.__version))
+                self.__commands.append('update-alternatives --install /usr/bin/gcov gcov $(which gcov-{}) 30'.format(self.__version))
             elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
                 self.__environment = {'PATH': '/opt/rh/devtoolset-{}/root/usr/bin:$PATH'.format(self.__version)}
             else: # pragma: no cover

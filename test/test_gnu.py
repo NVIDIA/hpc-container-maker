@@ -76,7 +76,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-7) 30 && \
     update-alternatives --install /usr/bin/g++ g++ $(which g++-7) 30 && \
-    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-7) 30''')
+    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-7) 30 && \
+    update-alternatives --install /usr/bin/gcov gcov $(which gcov-7) 30''')
 
     @centos
     @docker
