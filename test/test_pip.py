@@ -86,3 +86,41 @@ RUN yum install -y epel-release && \
         python34-pip && \
     rm -rf /var/cache/yum/*
 RUN pip3 install hpccm''')
+
+    @ubuntu
+    @docker
+    def test_no_ospackages(self):
+        """empty ospackages option"""
+        p = pip(ospackages=[], packages=['hpccm'])
+        self.assertEqual(str(p),
+r'''# pip
+RUN pip install hpccm''')
+
+    @ubuntu
+    @docker
+    def test_ospackages(self):
+        """specify ospackages option"""
+        p = pip(ospackages=['foo'], packages=['hpccm'])
+        self.assertEqual(str(p),
+r'''# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        foo && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install hpccm''')
+
+    @ubuntu
+    @docker
+    def test_upgrade(self):
+        """upgrade option"""
+        p = pip(packages=['hpccm'], upgrade=True)
+        self.assertEqual(str(p),
+r'''# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python-pip \
+        python-setuptools \
+        python-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install --upgrade pip && \
+    pip install hpccm''')

@@ -32,10 +32,22 @@ class pip(object):
 
     # Parameters
 
+    ospackages: List of OS packages to install prior to installing
+    PyPi packages.  For Ubuntu, the default values are `python-pip`,
+    `python-setuptools`, and `python-wheel` for Python 2.x and
+    `python3-pip`, `python3-setuptools`, and `python3-wheel` for
+    Python 3.x.  For RHEL-based Linux distributions, the default
+    values are `python-pip` for Python 2.x and `python34-pip` for
+    Python 3.x.
+
     packages: List of PyPi packages to install.  The default is
     an empty list.
 
     pip: The name of the `pip` tool to use. The default is `pip`.
+
+    upgrade: Boolean flag to control whether pip itself should be
+    upgraded prior to installing any PyPi packages.  The default is
+    False.
 
     # Examples
 
@@ -57,31 +69,44 @@ class pip(object):
         #super(pip, self).__init__(**kwargs)
 
         self.__epel = False
+        self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])
         self.__pip = kwargs.get('pip', 'pip')
+        self.__upgrade = kwargs.get('upgrade', False)
 
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below
 
-        if self.__pip.startswith('pip3'):
-            self.__epel = True
-            self.__debs.extend(['python3-pip', 'python3-setuptools',
-                                'python3-wheel'])
-            self.__rpms.append('python34-pip')  # EPEL package
-        else:
-            self.__epel = True
-            self.__debs.extend(['python-pip', 'python-setuptools',
-                                'python-wheel'])
-            self.__rpms.append('python-pip')    # EPEL package
+        if self.__ospackages == None:
+            if self.__pip.startswith('pip3'):
+                self.__epel = True
+                self.__debs.extend(['python3-pip', 'python3-setuptools',
+                                    'python3-wheel'])
+                self.__rpms.append('python34-pip')  # EPEL package
+            else:
+                self.__epel = True
+                self.__debs.extend(['python-pip', 'python-setuptools',
+                                    'python-wheel'])
+                self.__rpms.append('python-pip')    # EPEL package
+        elif self.__ospackages:
+            self.__debs = self.__ospackages
+            self.__rpms = self.__ospackages
 
     def __str__(self):
         """String representation of the building block"""
         instructions = []
         instructions.append(comment('pip'))
-        instructions.append(packages(apt=self.__debs, epel=self.__epel,
-                                     yum=self.__rpms))
+        if self.__debs or self.__rpms:
+            instructions.append(packages(apt=self.__debs, epel=self.__epel,
+                                         yum=self.__rpms))
+
         if self.__pip:
-            instructions.append(shell(commands=[
-                '{0} install {1}'.format(self.__pip,
-                                         ' '.join(self.__packages))]))
+            cmds = []
+
+            if self.__upgrade:
+                cmds.append('{0} install --upgrade pip'.format(self.__pip))
+
+            cmds.append('{0} install {1}'.format(self.__pip,
+                                                 ' '.join(self.__packages)))
+            instructions.append(shell(commands=cmds))
         return '\n'.join([str(x) for x in instructions])
