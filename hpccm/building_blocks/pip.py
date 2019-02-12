@@ -106,7 +106,8 @@ class pip(object):
             if self.__upgrade:
                 cmds.append('{0} install --upgrade pip'.format(self.__pip))
 
-            cmds.append('{0} install {1}'.format(self.__pip,
-                                                 ' '.join(self.__packages)))
+            if self.__packages:
+                cmds.append('{0} install {1}'.format(self.__pip,
+                                                     ' '.join(self.__packages)))
             instructions.append(shell(commands=cmds))
         return '\n'.join([str(x) for x in instructions])
