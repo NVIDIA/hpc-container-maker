@@ -63,8 +63,11 @@ class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
     `Base-Essentials-Extras-Rendering-Base`, `Base-Enable-Python`,
     `Base-Enable-Python-Essentials`,
     `Base-Enable-Python-Essentials-Extras`, and
-    `Base-Enable-Python-Essentials-Extras-Rendering-Base`.  The
-    default value is `Base-Essentials-Extras-Rendering-Base`.
+    `Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
+    Python edition is selected, then the [Python](#python) building
+    block should be isntalled with development libraries prior to this
+    building block. The default value is
+    `Base-Enable-Python-Essentials-Extras-Rendering-Base`.
 
     ldconfig: Boolean flag to specify whether the Catalyst library
     directory should be added dynamic linker cache.  If False, then
@@ -113,8 +116,7 @@ class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
         wget.__init__(self, **kwargs)
 
         self.cmake_opts = kwargs.get('cmake_opts', [])
-        self.__edition = kwargs.get('edition',
-                                    'Base-Essentials-Extras-Rendering-Base')
+        self.__edition = kwargs.get('edition', 'Base-Enable-Python-Essentials-Extras-Rendering-Base')
         self.__ospackages = kwargs.get('ospackages', [])
         self.prefix = kwargs.get('prefix', '/usr/local/catalyst')
         self.__runtime_ospackages = [] # Filled in by __distro()

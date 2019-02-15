@@ -125,8 +125,11 @@ empty list.
 `Base-Essentials-Extras-Rendering-Base`, `Base-Enable-Python`,
 `Base-Enable-Python-Essentials`,
 `Base-Enable-Python-Essentials-Extras`, and
-`Base-Enable-Python-Essentials-Extras-Rendering-Base`.  The
-default value is `Base-Essentials-Extras-Rendering-Base`.
+`Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
+Python edition is selected, then the [Python](#python) building
+block should be isntalled with development libraries prior to this
+building block. The default value is
+`Base-Enable-Python-Essentials-Extras-Rendering-Base`.
 
 - __ldconfig__: Boolean flag to specify whether the Catalyst library
 directory should be added dynamic linker cache.  If False, then
