@@ -114,7 +114,8 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     try:
         with open(recipe_file) as f:
             # pylint: disable=exec-used
-            exec(compile(f.read(), recipe_file, 'exec'))
+            exec(compile(f.read(), recipe_file, 'exec'),
+                 dict(locals(), **globals()))
     except Exception as e:
         if raise_exceptions:
             raise_from(e, e)
