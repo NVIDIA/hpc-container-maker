@@ -72,7 +72,7 @@ class python(object):
             self.__debs.append('python')
             self.__rpms.append('python')
             if self.__devel:
-                self.__debs.append('libpython-dev')
+                self.__debs.append('python-dev')
                 self.__rpms.append('python-devel')
 
         if self.__python3:
@@ -80,7 +80,7 @@ class python(object):
             self.__rpms.append('python34')  # EPEL package
             self.__epel = True
             if self.__devel:
-                self.__debs.append('libpython3-dev')
+                self.__debs.append('python3-dev')
                 self.__rpms.append('python34-devel')  # EPEL package
 
     def __str__(self):

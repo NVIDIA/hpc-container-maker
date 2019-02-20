@@ -25,6 +25,7 @@ from hpccm.building_blocks.gnu import gnu
 from hpccm.building_blocks.hdf5 import hdf5
 from hpccm.building_blocks.intel_mpi import intel_mpi
 from hpccm.building_blocks.intel_psxe import intel_psxe
+from hpccm.building_blocks.libsim import libsim
 from hpccm.building_blocks.llvm import llvm
 from hpccm.building_blocks.knem import knem
 from hpccm.building_blocks.mkl import mkl

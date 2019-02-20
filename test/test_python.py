@@ -67,9 +67,9 @@ r'''# Python
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         python \
-        libpython-dev \
+        python-dev \
         python3 \
-        libpython3-dev && \
+        python3-dev && \
     rm -rf /var/lib/apt/lists/*''')
 
     @ubuntu
