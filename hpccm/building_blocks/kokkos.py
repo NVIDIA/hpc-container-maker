@@ -78,7 +78,7 @@ class kokkos(rm, tar, wget):
     # Examples
 
     ```python
-    boost(prefix='/opt/kokkos/2.8.00', version='2.8.00')
+    kokkos(prefix='/opt/kokkos/2.8.00', version='2.8.00')
     ```
 
     """
