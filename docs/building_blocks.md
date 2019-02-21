@@ -729,6 +729,71 @@ Stage0 += k
 Stage1 += k.runtime()
 ```
 
+# kokkos
+```python
+kokkos(self, **kwargs)
+```
+The `kokkos` building block downloads and installs the
+[Kokkos](https://github.com/kokkos/kokkos) component.
+
+__Parameters__
+
+
+- __arch__: Flag to set the target architecture. If set adds
+`--arch=value` to the list of `generate_makefile.bash` options.
+The default value is `Pascal60`, i.e., sm_60.  If a cuda aware
+build is not selected, then a non-default value should be used.
+
+- __cuda__: Flag to control whether a CUDA aware build is performed.  If
+True, adds `--with-cuda` to the list of `generate_makefile.bash`
+options.  If a string, uses the value of the string as the CUDA
+path.  If False, does nothing.  The default value is True.
+
+- __hwloc__: Flag to control whether a hwloc aware build is performed.
+If True, adds `--with-hwloc` to the list of
+`generate_makefile.bash` options.  If a string, uses the value of
+the string as the hwloc path.  If False, does nothing.  The
+default value is True.
+
+- __opts__: List of options to pass to `generate_makefile.bash`.  The
+default is an empty list.
+
+- __ospackages__: List of OS packages to install prior to building.  For
+Ubuntu, the default values are `bc`, `gzip`, `libhwloc-dev`,
+`make`, `tar`, and `wget`.  For RHEL-based Linux distributions the
+default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
+`wget`, and `which`.
+
+- __prefix__: The top level installation location.  The default value
+is `/usr/local/kokkos`.
+
+- __version__: The version of Kokkos source to download.  The default
+value is `2.8.00`.
+
+__Examples__
+
+
+```python
+boost(prefix='/opt/kokkos/2.8.00', version='2.8.00')
+```
+
+
+## runtime
+```python
+kokkos.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+k = kokkos(...)
+Stage0 += k
+Stage1 += k.runtime()
+```
+
 # llvm
 ```python
 llvm(self, **kwargs)
