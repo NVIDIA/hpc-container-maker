@@ -127,7 +127,7 @@ empty list.
 `Base-Enable-Python-Essentials-Extras`, and
 `Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
 Python edition is selected, then the [Python](#python) building
-block should be isntalled with development libraries prior to this
+block should be installed with development libraries prior to this
 building block. The default value is
 `Base-Enable-Python-Essentials-Extras-Rendering-Base`.
 
