@@ -759,12 +759,6 @@ value is True.
 - __opts__: List of VisIt build script options. The default values are
 `--xdb` and `--server-components-only`.
 
-`Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
-Python edition is selected, then the [Python](#python) building
-block should be isntalled with development libraries prior to this
-building block. The default value is
-`Base-Enable-Python-Essentials-Extras-Rendering-Base`.
-
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `gzip`, `make`,
 `patch`, `tar`, `wget`, `zlib1g-dev`, `libxt-dev`,
