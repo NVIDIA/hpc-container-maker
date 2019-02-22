@@ -198,9 +198,8 @@ class libsim(ldconfig, rm, wget):
             opts.append('--system-python')
 
         # Build
-        self.__commands.append('{0} bash {1} {2}'.format(
-            ' '.join(env), os.path.join(self.__wd, buildscript),
-            ' '.join(opts)))
+        self.__commands.append('cd {0} && {1} bash {2} {3}'.format(
+            self.__wd, ' '.join(env), buildscript, ' '.join(opts)))
 
         # Set library path
         libpath = os.path.join(self.__prefix, self.__version, 'linux-x86_64')

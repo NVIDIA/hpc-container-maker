@@ -51,7 +51,7 @@ RUN apt-get update -y && \
         libglu1-mesa-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    PAR_COMPILER=mpicc bash /var/tmp/visit/build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
@@ -77,7 +77,7 @@ RUN yum install -y \
         mesa-libGLU-devel && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    PAR_COMPILER=mpicc bash /var/tmp/visit/build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
@@ -102,7 +102,7 @@ RUN apt-get update -y && \
         libglu1-mesa-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    PAR_COMPILER=mpicc bash /var/tmp/visit/build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
     echo "/usr/local/visit/2.13.3/linux-x86_64/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     echo "/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/visit
@@ -127,7 +127,7 @@ RUN apt-get update -y && \
         libglu1-mesa-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-     bash /var/tmp/visit/build_visit2_13_3 --xdb --server-components-only --makeflags -j$(nproc) --prefix /usr/local/visit && \
+    cd /var/tmp/visit &&  bash build_visit2_13_3 --xdb --server-components-only --makeflags -j$(nproc) --prefix /usr/local/visit && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
