@@ -87,6 +87,11 @@ class libsim(ldconfig, rm, wget):
     building block should be installed with development libraries
     prior to this building block.  The default is True.
 
+    thirdparty: Boolean flag to specify whether third-party components
+    included by the build script should be retained.  If True, then
+    the build script option `--thirdparty-path` is added and set to
+    `<prefix>/third-party`.  The default is True.
+
     version: The version of Libsim source to download.  The default
     value is `2.13.3`.
 
@@ -117,6 +122,7 @@ class libsim(ldconfig, rm, wget):
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__system_cmake = kwargs.get('system_cmake', True)
         self.__system_python = kwargs.get('system_python', True)
+        self.__thirdparty = kwargs.get('thirdparty', True)
         self.__version = kwargs.get('version', '2.13.3')
         self.__url = r'http://portal.nersc.gov/project/visit/releases/{0}/{1}'
 
@@ -196,6 +202,10 @@ class libsim(ldconfig, rm, wget):
             opts.append('--system-cmake')
         if self.__system_python:
             opts.append('--system-python')
+        if self.__thirdparty:
+            thirdparty_path = os.path.join(self.__prefix, 'third-party')
+            opts.append('--thirdparty-path {}'.format(thirdparty_path))
+            self.__commands.append('mkdir -p {}'.format(thirdparty_path))
 
         # Build
         self.__commands.append('cd {0} && {1} bash {2} {3}'.format(

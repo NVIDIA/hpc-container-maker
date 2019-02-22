@@ -51,7 +51,8 @@ RUN apt-get update -y && \
         libglu1-mesa-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    mkdir -p /usr/local/visit/third-party && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
@@ -77,7 +78,8 @@ RUN yum install -y \
         mesa-libGLU-devel && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    mkdir -p /usr/local/visit/third-party && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
@@ -102,7 +104,8 @@ RUN apt-get update -y && \
         libglu1-mesa-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
-    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python && \
+    mkdir -p /usr/local/visit/third-party && \
+    cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     echo "/usr/local/visit/2.13.3/linux-x86_64/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     echo "/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/visit
@@ -111,7 +114,7 @@ ENV PATH=/usr/local/visit/bin:$PATH''')
     def test_non_default_opts(self):
         """non-default options"""
         l = libsim(mpi=False, system_cmake=False, system_python=False,
-                   version='2.13.3')
+                   thirdparty=False, version='2.13.3')
         self.assertEqual(str(l),
 r'''# VisIt libsim version 2.13.3
 RUN apt-get update -y && \

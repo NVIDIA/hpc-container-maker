@@ -784,6 +784,11 @@ a private copy of python.  If True, then the build script option
 building block should be installed with development libraries
 prior to this building block.  The default is True.
 
+- __thirdparty__: Boolean flag to specify whether third-party components
+included by the build script should be retained.  If True, then
+the build script option `--thirdparty-path` is added and set to
+`<prefix>/third-party`.  The default is True.
+
 - __version__: The version of Libsim source to download.  The default
 value is `2.13.3`.
 
