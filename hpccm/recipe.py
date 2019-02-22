@@ -47,6 +47,7 @@ from hpccm.primitives.workdir import workdir
 # Building blocks
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.boost import boost
+from hpccm.building_blocks.catalyst import catalyst
 from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
@@ -56,6 +57,7 @@ from hpccm.building_blocks.gnu import gnu
 from hpccm.building_blocks.hdf5 import hdf5
 from hpccm.building_blocks.intel_mpi import intel_mpi
 from hpccm.building_blocks.intel_psxe import intel_psxe
+from hpccm.building_blocks.kokkos import kokkos
 from hpccm.building_blocks.knem import knem
 from hpccm.building_blocks.libsim import libsim
 from hpccm.building_blocks.llvm import llvm

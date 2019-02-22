@@ -98,6 +98,88 @@ Stage0 += b
 Stage1 += b.runtime()
 ```
 
+# catalyst
+```python
+catalyst(self, **kwargs)
+```
+The `catalyst` building block configures, builds, and installs the
+[ParaView Catalyst](https://www.paraview.org/in-situ/) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+A MPI building block should be installed prior to this building
+block.
+
+As a side effect, this building block modifies `PATH` to include
+the Catalyst build.
+
+__Parameters__
+
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default is an
+empty list.
+
+- __edition__: The Catalyst edition to use. Valid choices are `Base`,
+`Base-Essentials`, `Base-Essentials-Extras`,
+`Base-Essentials-Extras-Rendering-Base`, `Base-Enable-Python`,
+`Base-Enable-Python-Essentials`,
+`Base-Enable-Python-Essentials-Extras`, and
+`Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
+Python edition is selected, then the [Python](#python) building
+block should be installed with development libraries prior to this
+building block. The default value is
+`Base-Enable-Python-Essentials-Extras-Rendering-Base`.
+
+- __ldconfig__: Boolean flag to specify whether the Catalyst library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the Catalyst library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `git`, `gzip`,
+`make`, `tar`, and `wget`.  If a rendering edition is selected
+then `libxau-dev`, `libxext-dev`, `libxt-dev`, `libice-dev`,
+`libsm-dev`, `libx11-dev`, `libgl1-mesa-dev` are also included.
+For RHEL-based Linux distributions, the default values are `git`,
+`gzip`, `make`, `tar`, `wget`, and `which`.  If a rendering
+edition is selected then `libX11-devel`, `libXau-devel`,
+`libXext-devel`, `libXt-devel`, `libICE-devel`, `libSM-devel`,
+`libglvnd-devel`, `mesa-libGL-devel` are also included.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/catalyst`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __version__: The version of Catalyst source to download.  The default
+value is `5.6.0`.
+
+__Examples__
+
+
+```python
+catalyst(prefix='/opt/catalyst/5.6.0', version='5.6.0')
+```
+
+
+## runtime
+```python
+catalyst.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+c = catalyst(...)
+Stage0 += c
+Stage1 += c.runtime()
+```
+
 # cgns
 ```python
 cgns(self, **kwargs)
@@ -725,6 +807,71 @@ __Examples__
 
 ```python
 k = knem(...)
+Stage0 += k
+Stage1 += k.runtime()
+```
+
+# kokkos
+```python
+kokkos(self, **kwargs)
+```
+The `kokkos` building block downloads and installs the
+[Kokkos](https://github.com/kokkos/kokkos) component.
+
+__Parameters__
+
+
+- __arch__: Flag to set the target architecture. If set adds
+`--arch=value` to the list of `generate_makefile.bash` options.
+The default value is `Pascal60`, i.e., sm_60.  If a cuda aware
+build is not selected, then a non-default value should be used.
+
+- __cuda__: Flag to control whether a CUDA aware build is performed.  If
+True, adds `--with-cuda` to the list of `generate_makefile.bash`
+options.  If a string, uses the value of the string as the CUDA
+path.  If False, does nothing.  The default value is True.
+
+- __hwloc__: Flag to control whether a hwloc aware build is performed.
+If True, adds `--with-hwloc` to the list of
+`generate_makefile.bash` options.  If a string, uses the value of
+the string as the hwloc path.  If False, does nothing.  The
+default value is True.
+
+- __opts__: List of options to pass to `generate_makefile.bash`.  The
+default is an empty list.
+
+- __ospackages__: List of OS packages to install prior to building.  For
+Ubuntu, the default values are `bc`, `gzip`, `libhwloc-dev`,
+`make`, `tar`, and `wget`.  For RHEL-based Linux distributions the
+default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
+`wget`, and `which`.
+
+- __prefix__: The top level installation location.  The default value
+is `/usr/local/kokkos`.
+
+- __version__: The version of Kokkos source to download.  The default
+value is `2.8.00`.
+
+__Examples__
+
+
+```python
+kokkos(prefix='/opt/kokkos/2.8.00', version='2.8.00')
+```
+
+
+## runtime
+```python
+kokkos.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+k = kokkos(...)
 Stage0 += k
 Stage1 += k.runtime()
 ```

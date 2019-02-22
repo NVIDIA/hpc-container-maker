@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.boost import boost
+from hpccm.building_blocks.catalyst import catalyst
 from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
@@ -28,6 +29,7 @@ from hpccm.building_blocks.intel_psxe import intel_psxe
 from hpccm.building_blocks.libsim import libsim
 from hpccm.building_blocks.llvm import llvm
 from hpccm.building_blocks.knem import knem
+from hpccm.building_blocks.kokkos import kokkos
 from hpccm.building_blocks.mkl import mkl
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 from hpccm.building_blocks.mpich import mpich

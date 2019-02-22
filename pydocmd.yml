@@ -6,6 +6,7 @@ generate:
 - building_blocks.md:
   - hpccm.building_blocks.apt_get+
   - hpccm.building_blocks.boost+
+  - hpccm.building_blocks.catalyst+
   - hpccm.building_blocks.cgns+
   - hpccm.building_blocks.charm+
   - hpccm.building_blocks.cmake+
@@ -16,6 +17,7 @@ generate:
   - hpccm.building_blocks.intel_mpi+
   - hpccm.building_blocks.intel_psxe+
   - hpccm.building_blocks.knem+
+  - hpccm.building_blocks.kokkos+
   - hpccm.building_blocks.libsim+
   - hpccm.building_blocks.llvm+
   - hpccm.building_blocks.mkl+
