@@ -221,9 +221,6 @@ class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
         # Configure
         # Catalyst has a cmake.sh shell script that sets configuration
         # options.  Use that in place of cmake.
-        if self.prefix:
-            self.cmake_opts.append(
-                '-DCMAKE_INSTALL_PREFIX={}'.format(self.prefix))
         configure = self.configure_step(
             directory=os.path.join(self.__wd, self.__basename),
             opts=self.cmake_opts, toolchain=self.__toolchain)
