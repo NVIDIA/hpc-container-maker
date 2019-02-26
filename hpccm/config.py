@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 from distutils.version import StrictVersion
+import logging
 import sys
 
 from hpccm.common import container_type
@@ -52,3 +53,37 @@ def set_container_format(ctype):
     this.g_ctype = container_type.SINGULARITY
   else:
     raise RuntimeError('Unrecognized container format: {}'.format(ctype))
+
+def set_linux_distro(distro):
+  """Set the Linux distribution and version
+
+  In most cases, the `baseimage` primitive should be relied upon to
+  set the Linux distribution.  Only use this function if you really
+  know what you are doing.
+
+  # Arguments
+
+  distro (string): Valid values are `centos7`, `ubuntu16`, and
+  `ubuntu18`.  `ubuntu` is an alias for `ubuntu16` and `centos` is an
+  alias for `centos7`.
+  """
+  this = sys.modules[__name__]
+  if distro == 'centos':
+    this.g_linux_distro = linux_distro.CENTOS
+    this.g_linux_version = StrictVersion('7.0')
+  elif distro == 'centos7':
+    this.g_linux_distro = linux_distro.CENTOS
+    this.g_linux_version = StrictVersion('7.0')
+  elif distro == 'ubuntu':
+    this.g_linux_distro = linux_distro.UBUNTU
+    this.g_linux_version = StrictVersion('16.04')
+  elif distro == 'ubuntu16':
+    this.g_linux_distro = linux_distro.UBUNTU
+    this.g_linux_version = StrictVersion('16.04')
+  elif distro == 'ubuntu18':
+    this.g_linux_distro = linux_distro.UBUNTU
+    this.g_linux_version = StrictVersion('18.04')
+  else:
+    logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
+    this.g_linux_distro = linux_distro.UBUNTU
+    this.g_linux_version = StrictVersion('16.04')

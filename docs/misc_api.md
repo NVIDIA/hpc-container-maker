@@ -17,6 +17,23 @@ __Raises__
 
 - `RuntimeError`: invalid container type argument
 
+## set_linux_distro
+```python
+set_linux_distro(distro)
+```
+Set the Linux distribution and version
+
+In most cases, the `baseimage` primitive should be relied upon to
+set the Linux distribution.  Only use this function if you really
+know what you are doing.
+
+__Arguments__
+
+
+- __distro (string)__: Valid values are `centos7`, `ubuntu16`, and
+`ubuntu18`.  `ubuntu` is an alias for `ubuntu16` and `centos` is an
+alias for `centos7`.
+
 # recipe
 ```python
 recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, userarg=None)
