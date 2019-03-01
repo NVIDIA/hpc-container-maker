@@ -14,6 +14,8 @@
 
 from __future__ import absolute_import
 
+from hpccm.base_object import base_object
+
 from hpccm.common import container_type
 from hpccm.common import linux_distro
 

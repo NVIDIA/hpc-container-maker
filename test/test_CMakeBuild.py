@@ -36,7 +36,7 @@ class Test_CMakeBuild(unittest.TestCase):
 
         # configure step
         configure = cm.configure_step(directory='/tmp/src')
-        self.assertEqual(configure, 'mkdir -p /tmp/src/build && cd /tmp/src/build && cmake /tmp/src')
+        self.assertEqual(configure, 'mkdir -p /tmp/src/build && cd /tmp/src/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /tmp/src')
 
         # build step
         build = cm.build_step()
@@ -59,36 +59,57 @@ class Test_CMakeBuild(unittest.TestCase):
 
         configure = cm.configure_step(directory='/tmp/src', toolchain=tc)
         self.assertEqual(configure,
-                         '''mkdir -p /tmp/src/build && cd /tmp/src/build && CC=mycc CFLAGS='-g -O3' CPPFLAGS='-DFOO -DBAR' CXX=mycxx CXXFLAGS='-g -O3' F77=myf77 F90=myf90 FC=myfc FCFLAGS='-g -O3' FFLAGS='-g -O3' FLIBS=-ldl LD_LIBRARY_PATH=/opt/mysw/lib:/opt/yoursw/lib LDFLAGS='-Wl,--start-group foo.o bar.o -Wl,--endgroup' LIBS='-ldl -lpthread' cmake /tmp/src''')
+                         '''mkdir -p /tmp/src/build && cd /tmp/src/build && CC=mycc CFLAGS='-g -O3' CPPFLAGS='-DFOO -DBAR' CXX=mycxx CXXFLAGS='-g -O3' F77=myf77 F90=myf90 FC=myfc FCFLAGS='-g -O3' FFLAGS='-g -O3' FLIBS=-ldl LD_LIBRARY_PATH=/opt/mysw/lib:/opt/yoursw/lib LDFLAGS='-Wl,--start-group foo.o bar.o -Wl,--endgroup' LIBS='-ldl -lpthread' cmake -DCMAKE_INSTALL_PREFIX=/usr/local /tmp/src''')
 
     def test_directory(self):
         """Build directory specified"""
         cm = CMakeBuild()
 
         # Relative build dir
-        configure = cm.configure_step(directory='/tmp/src', build_directory='../build')
+        configure = cm.configure_step(directory='/tmp/src',
+                                      build_directory='../build')
         self.assertEqual(configure,
-                         'mkdir -p /tmp/src/../build && cd /tmp/src/../build && cmake /tmp/src')
+                         'mkdir -p /tmp/src/../build && cd /tmp/src/../build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /tmp/src')
         
         # Absolute build dir
-        configure = cm.configure_step(directory='/tmp/src', build_directory='/tmp/build')
+        configure = cm.configure_step(directory='/tmp/src',
+                                      build_directory='/tmp/build')
         self.assertEqual(configure,
-                         'mkdir -p /tmp/build && cd /tmp/build && cmake /tmp/src')
+                         'mkdir -p /tmp/build && cd /tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /tmp/src')
+
+        # No build directory
+        configure = cm.configure_step()
+        self.assertEqual(configure,
+                         'cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..')
 
     def test_parallel(self):
         """Parallel count specified"""
-        cm = CMakeBuild()
+        cm = CMakeBuild(parallel=4)
         cm.configure_step(directory='/tmp/src')
+
+        # Function arguments override constructor
         build = cm.build_step(parallel=7)
-        self.assertEqual(build, 'cmake --build /tmp/src/build --target all -- -j7')
+        self.assertEqual(build,
+                         'cmake --build /tmp/src/build --target all -- -j7')
+
+        # Use constructor arguments
+        build = cm.build_step()
+        self.assertEqual(build,
+                         'cmake --build /tmp/src/build --target all -- -j4')
 
     def test_configure_opts(self):
         """Configure options specified"""
-        cm = CMakeBuild()
+        cm = CMakeBuild(opts=['-DWITH_BAR=ON'], prefix='')
 
+        # Function arguments override constructor
         configure = cm.configure_step(
             directory='/tmp/src',
             opts=['-DCMAKE_BUILD_TYPE=Debug', '-DWITH_FOO=ON']
         )
         self.assertEqual(configure,
                          'mkdir -p /tmp/src/build && cd /tmp/src/build && cmake -DCMAKE_BUILD_TYPE=Debug -DWITH_FOO=ON /tmp/src')
+
+        # Use constructor arguments
+        configure = cm.configure_step(directory='/tmp/src')
+        self.assertEqual(configure,
+                         'mkdir -p /tmp/src/build && cd /tmp/src/build && cmake -DWITH_BAR=ON /tmp/src')

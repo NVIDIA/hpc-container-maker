@@ -1,3 +1,13 @@
+# v19.2.0
+
+- Adds Kokkos (`kokkos`) and ParaView/Catalyst (`catalyst`) building
+  blocks
+- Update the MVAPICH2-GDR (`mvapich2_gdr`) building block for
+  upstream changes
+- Add option to install Python development packages (`python`)
+- Fixes and enhancements for the GNU (`gnu`) and pip (`pip`) building
+  blocks
+
 # v19.1.0
 
 - Adds MPICH (`mpich`) and pip (`pip`) building blocks

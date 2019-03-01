@@ -25,15 +25,15 @@ import logging # pylint: disable=unused-import
 import os
 
 import hpccm.config
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 
-class mlnx_ofed(tar, wget):
+class mlnx_ofed(hpccm.templates.tar, hpccm.templates.wget):
     """The `mlnx_ofed` building block downloads and installs the [Mellanox
     OpenFabrics Enterprise Distribution for
     Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
@@ -74,11 +74,7 @@ class mlnx_ofed(tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(mlnx_ofed, self).__init__(**kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(mlnx_ofed, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://content.mellanox.com/ofed')

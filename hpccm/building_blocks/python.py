@@ -56,10 +56,6 @@ class python(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(python, self).__init__(**kwargs)
-
         self.__devel = kwargs.get('devel', False)
         self.__epel = False
         self.__python2 = kwargs.get('python2', True)

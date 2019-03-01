@@ -23,13 +23,15 @@ from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
 
-class sed(object):
+import hpccm.base_object
+
+class sed(hpccm.base_object):
     """sed template"""
 
     def __init__(self, **kwargs):
         """Initialize sed template"""
 
-        #super(sed, self).__init__()
+        super(sed, self).__init__(**kwargs)
 
         self.sed_opts = kwargs.get('opts', [])
 

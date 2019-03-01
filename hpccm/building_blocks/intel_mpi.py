@@ -27,6 +27,7 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -34,10 +35,9 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class intel_mpi(wget):
+class intel_mpi(hpccm.templates.wget):
     """The `intel_mpi` building block downloads and installs the [Intel
     MPI Library](https://software.intel.com/en-us/intel-mpi-library).
 
@@ -89,10 +89,7 @@ class intel_mpi(wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(intel_mpi, self).__init__(**kwargs)
-        wget.__init__(self, **kwargs)
+        super(intel_mpi, self).__init__(**kwargs)
 
         # By setting this value to True, you agree to the
         # corresponding Intel End User License Agreement

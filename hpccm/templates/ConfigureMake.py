@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""ConfigureMake template"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -23,15 +23,17 @@ from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
 
+import hpccm.base_object
+
 from hpccm.toolchain import toolchain
 
-class ConfigureMake(object):
-    """Documentation TBD"""
+class ConfigureMake(hpccm.base_object):
+    """Template for autotools configure / make / make install workflow"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize ConfigureMake template"""
 
-        #super(ConfigureMake, self).__init__()
+        super(ConfigureMake, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('opts', [])
         self.parallel = kwargs.get('parallel', '$(nproc)')
@@ -45,16 +47,21 @@ class ConfigureMake(object):
                                              'F77': True, 'F90': True,
                                              'FC': True})
 
-    def build_step(self):
-        """Documentation TBD"""
-        return 'make -j{}'.format(self.parallel)
+    def build_step(self, parallel=None):
+        """Generate make command line string"""
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{}'.format(parallel)
 
-    def check_step(self):
-        """Documentation TBD"""
-        return 'make -j{} check'.format(self.parallel)
+    def check_step(self, parallel=None):
+        """Generate make check command line string"""
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{} check'.format(parallel)
 
-    def configure_step(self, directory=None, environment=[], toolchain=None):
-        """Documentation TBD"""
+    def configure_step(self, directory=None, environment=[], opts=[],
+                       toolchain=None):
+        """Generate configure command line string"""
 
         change_directory = ''
         if directory:
@@ -116,15 +123,20 @@ class ConfigureMake(object):
 
         configure_env = ' '.join(e)
 
-        opts = ' '.join(self.configure_opts)
+        if not opts and self.configure_opts:
+            opts = self.configure_opts
+        configure_opts = ' '.join(opts)
         if self.prefix:
-            opts = '--prefix={0:s} {1}'.format(self.prefix, opts)
+            configure_opts = '--prefix={0:s} {1}'.format(self.prefix,
+                                                         configure_opts)
 
         cmd = '{0} {1} ./configure {2}'.format(change_directory,
-                                               configure_env, opts)
+                                               configure_env, configure_opts)
 
         return cmd.strip() # trim whitespace
 
-    def install_step(self):
-        """Documentation TBD"""
-        return 'make -j{} install'.format(self.parallel)
+    def install_step(self, parallel=None):
+        """Generate make install command line string"""
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{} install'.format(parallel)

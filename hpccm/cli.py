@@ -24,6 +24,7 @@ import argparse
 import logging
 
 import hpccm
+from hpccm.version import __version__
 
 class KeyValue(argparse.Action): # pylint: disable=too-few-public-methods
     """Extend argparse to handle key value pair options"""
@@ -54,6 +55,7 @@ def main(): # pragma: no cover
                         help='generate a container spec for the RECIPE file')
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
                         nargs='+', help='specify user parameters')
+    parser.add_argument('--version', action='version', version=__version__)
     args = parser.parse_args()
 
     # configure logger

@@ -26,6 +26,11 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.CMakeBuild
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -33,14 +38,10 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.CMakeBuild import CMakeBuild
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
+class catalyst(hpccm.templates.CMakeBuild, hpccm.templates.ldconfig,
+               hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `catalyst` building block configures, builds, and installs the
     [ParaView Catalyst](https://www.paraview.org/in-situ/) component.
 
@@ -106,14 +107,7 @@ class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(catalyst, self).__init__(**kwargs)
-        CMakeBuild.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(catalyst, self).__init__(**kwargs)
 
         self.cmake_opts = kwargs.get('cmake_opts', [])
         self.__edition = kwargs.get('edition', 'Base-Enable-Python-Essentials-Extras-Rendering-Base')
@@ -221,9 +215,6 @@ class catalyst(CMakeBuild, ldconfig, rm, tar, wget):
         # Configure
         # Catalyst has a cmake.sh shell script that sets configuration
         # options.  Use that in place of cmake.
-        if self.prefix:
-            self.cmake_opts.append(
-                '-DCMAKE_INSTALL_PREFIX={}'.format(self.prefix))
         configure = self.configure_step(
             directory=os.path.join(self.__wd, self.__basename),
             opts=self.cmake_opts, toolchain=self.__toolchain)

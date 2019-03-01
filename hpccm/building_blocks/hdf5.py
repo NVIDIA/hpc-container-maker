@@ -26,6 +26,11 @@ import re
 import os
 
 import hpccm.config
+import hpccm.templates.ConfigureMake
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -33,14 +38,10 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class hdf5(ConfigureMake, ldconfig, rm, tar, wget):
+class hdf5(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+           hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `hdf5` building block downloads, configures, builds, and
     installs the [HDF5](http://www.hdfgroup.org) component.  Depending
     on the parameters, the source will be downloaded from the web
@@ -108,14 +109,7 @@ class hdf5(ConfigureMake, ldconfig, rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(hdf5, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(hdf5, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--enable-cxx', '--enable-fortran'])

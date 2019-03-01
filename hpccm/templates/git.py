@@ -25,13 +25,15 @@ import os
 import re
 import subprocess
 
-class git(object):
+import hpccm.base_object
+
+class git(hpccm.base_object):
     """Template for working with git repositories"""
 
     def __init__(self, **kwargs):
         """Initialize template"""
 
-        #super(git, self).__init__()
+        super(git, self).__init__(**kwargs)
 
         self.git_opts = kwargs.get('opts', ['--depth=1'])
 

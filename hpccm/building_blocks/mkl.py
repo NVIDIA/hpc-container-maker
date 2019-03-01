@@ -26,6 +26,7 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -33,10 +34,9 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class mkl(wget):
+class mkl(hpccm.templates.wget):
     """The `mkl` building block downloads and installs the [Intel Math
     Kernel Library](http://software.intel.com/mkl).
 
@@ -84,10 +84,7 @@ class mkl(wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(mkl, self).__init__(**kwargs)
-        wget.__init__(self, **kwargs)
+        super(mkl, self).__init__(**kwargs)
 
         # By setting this value to True, you agree to the
         # corresponding Intel End User License Agreement

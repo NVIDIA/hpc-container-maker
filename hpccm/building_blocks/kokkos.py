@@ -27,6 +27,9 @@ import logging # pylint: disable=unused-import
 import os
 
 import hpccm.config
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -34,11 +37,8 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 
-class kokkos(rm, tar, wget):
+class kokkos(hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `kokkos` building block downloads and installs the
     [Kokkos](https://github.com/kokkos/kokkos) component.
 
@@ -86,12 +86,7 @@ class kokkos(rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(kokkos, self).__init__(**kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(kokkos, self).__init__(**kwargs)
 
         self.__arch = kwargs.get('arch', 'Pascal60')
         self.__baseurl = kwargs.get('baseurl',

@@ -7,6 +7,8 @@ import os
 from setuptools import find_packages
 from setuptools import setup
 
+from hpccm.version import __version__
+
 here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the README file
@@ -15,7 +17,7 @@ with open(os.path.join(here, 'README.md')) as fp:
 
 setup(
     name='hpccm',
-    version='19.1.0',
+    version=__version__,
     description='HPC Container Maker',
     long_description=long_description,
     long_description_content_type='text/markdown',
