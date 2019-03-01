@@ -24,18 +24,20 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.sed
+import hpccm.templates.tar
+import hpccm.templates.wget
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 
-class charm(ldconfig, rm, sed, tar, wget):
+class charm(hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.sed,
+            hpccm.templates.tar, hpccm.templates.wget):
     """The `charm` building block downloads and install the
     [Charm++](http://charm.cs.illinois.edu/research/charm) component.
 
@@ -86,14 +88,7 @@ class charm(ldconfig, rm, sed, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(charm, self).__init__(**kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        sed.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(charm, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://charm.cs.illinois.edu/distrib')

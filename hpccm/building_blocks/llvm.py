@@ -77,10 +77,6 @@ class llvm(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(llvm, self).__init__(**kwargs)
-
         self.__extra_repo = kwargs.get('extra_repository', False)
         self.__version = kwargs.get('version', None)
 

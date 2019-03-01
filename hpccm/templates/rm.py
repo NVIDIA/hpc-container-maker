@@ -22,14 +22,15 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-class rm(object):
+import hpccm.base_object
+
+class rm(hpccm.base_object):
     """Template for cleaning up files and directories"""
 
     def __init__(self, **kwargs):
         """Initialize template"""
 
-        #super(rm, self).__init__()
-        pass
+        super(rm, self).__init__(**kwargs)
 
     def cleanup_step(self, items=None):
         """Cleanup files and directories"""

@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""ConfigureMake template"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -23,15 +23,17 @@ from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
 
+import hpccm.base_object
+
 from hpccm.toolchain import toolchain
 
-class ConfigureMake(object):
-    """Documentation TBD"""
+class ConfigureMake(hpccm.base_object):
+    """Template for autotools configure / make / make install workflow"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize ConfigureMake template"""
 
-        #super(ConfigureMake, self).__init__()
+        super(ConfigureMake, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('opts', [])
         self.parallel = kwargs.get('parallel', '$(nproc)')
@@ -46,20 +48,20 @@ class ConfigureMake(object):
                                              'FC': True})
 
     def build_step(self, parallel=None):
-        """Documentation TBD"""
+        """Generate make command line string"""
         if not parallel:
             parallel = self.parallel
         return 'make -j{}'.format(parallel)
 
     def check_step(self, parallel=None):
-        """Documentation TBD"""
+        """Generate make check command line string"""
         if not parallel:
             parallel = self.parallel
         return 'make -j{} check'.format(parallel)
 
     def configure_step(self, directory=None, environment=[], opts=[],
                        toolchain=None):
-        """Documentation TBD"""
+        """Generate configure command line string"""
 
         change_directory = ''
         if directory:
@@ -134,7 +136,7 @@ class ConfigureMake(object):
         return cmd.strip() # trim whitespace
 
     def install_step(self, parallel=None):
-        """Documentation TBD"""
+        """Generate make install command line string"""
         if not parallel:
             parallel = self.parallel
         return 'make -j{} install'.format(parallel)

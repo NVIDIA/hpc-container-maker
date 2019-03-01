@@ -89,10 +89,6 @@ class gnu(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(gnu, self).__init__(**kwargs)
-
         self.__cc = kwargs.get('cc', True)
         self.__cxx = kwargs.get('cxx', True)
         self.__extra_repo = kwargs.get('extra_repository', False)

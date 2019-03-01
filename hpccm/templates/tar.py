@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""tar template"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -23,16 +23,18 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import re
 
-class tar(object):
-    """Documentation TBD"""
+import hpccm.base_object
+
+class tar(hpccm.base_object):
+    """tar template"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize tar template"""
 
-        #super(tar, self).__init__()
+        super(tar, self).__init__(**kwargs)
 
     def untar_step(self, tarball=None, directory=None, args=None):
-        """Documentation TBD"""
+        """Generate untar command line string"""
 
         if not tarball:
             logging.error('tarball is not defined')

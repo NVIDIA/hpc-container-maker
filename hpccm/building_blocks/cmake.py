@@ -25,13 +25,14 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
+import hpccm.templates.rm
+import hpccm.templates.wget
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
-from hpccm.templates.rm import rm
-from hpccm.templates.wget import wget
 
-class cmake(rm, wget):
+class cmake(hpccm.templates.rm, hpccm.templates.wget):
     """The `cmake` building block downloads and installs the
     [CMake](https://cmake.org) component.
 
@@ -63,11 +64,7 @@ class cmake(rm, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(cmake, self).__init__(**kwargs)
-        rm.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(cmake, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl', 'https://cmake.org/files')
 

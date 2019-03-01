@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""wget template"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -22,27 +22,29 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
-class wget(object):
-    """Documentation TBD"""
+import hpccm.base_object
+
+class wget(hpccm.base_object):
+    """wget template"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize wget template"""
 
-        #super(wget, self).__init__()
+        super(wget, self).__init__(**kwargs)
 
-        self._opts = kwargs.get('opts', ['-q', '-nc',
-                                         '--no-check-certificate'])
+        self.wget_opts = kwargs.get('opts', ['-q', '-nc',
+                                             '--no-check-certificate'])
 
     def download_step(self, outfile=None, referer=None, url=None,
                       directory='/tmp'):
-        """Documentation TBD"""
+        """Generate wget command line string"""
 
         if not url:
             logging.error('url is not defined')
             return ''
 
         # Copy so not to modify the member variable
-        opts = self._opts
+        opts = self.wget_opts
 
         if outfile:
             opts.append('-O {}'.format(outfile))
@@ -50,7 +52,7 @@ class wget(object):
         if referer:
             opts.append('--referer {}'.format(referer))
 
-        opt_string = ' '.join(self._opts)
+        opt_string = ' '.join(self.wget_opts)
 
         # Ensure the directory exists
         return 'mkdir -p {1} && wget {0} -P {1} {2}'.format(opt_string,

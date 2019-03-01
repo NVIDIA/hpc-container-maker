@@ -24,19 +24,21 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.templates.ConfigureMake
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class fftw(ConfigureMake, ldconfig, rm, tar, wget):
+class fftw(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+           hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `fftw` building block downloads, configures, builds, and
     installs the [FFTW](http://www.fftw.org) component.  Depending on
     the parameters, the source will be downloaded from the web
@@ -103,14 +105,7 @@ class fftw(ConfigureMake, ldconfig, rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(fftw, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(fftw, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--enable-shared', '--enable-openmp',

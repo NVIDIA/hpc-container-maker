@@ -64,10 +64,6 @@ class pip(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(pip, self).__init__(**kwargs)
-
         self.__epel = False
         self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])

@@ -67,10 +67,6 @@ class ofed(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(ofed, self).__init__(**kwargs)
-
         if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
             hpccm.config.g_linux_version >= StrictVersion('18.0')):
             self.__ospackages_deb = ['dapl2-utils', 'ibutils', 'ibverbs-utils',

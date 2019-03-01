@@ -23,13 +23,16 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
-class ldconfig(object):
+import hpccm.base_object
+
+class ldconfig(hpccm.base_object):
     """Template for manipulating the dynamic linker"""
 
     def __init__(self, **kwargs):
         """Initialize template"""
 
-        #super(ldconfig, self).__init__()
+        super(ldconfig, self).__init__(**kwargs)
+
         self.ldconfig = kwargs.get('ldconfig', False)
 
     def ldcache_step(self, conf='hpccm.conf', directory=None):

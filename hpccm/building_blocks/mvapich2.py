@@ -27,6 +27,12 @@ import re
 from copy import copy as _copy
 
 import hpccm.config
+import hpccm.templates.ConfigureMake
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.sed
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -34,15 +40,11 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class mvapich2(ConfigureMake, ldconfig, rm, sed, tar, wget):
+class mvapich2(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+               hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar,
+               hpccm.templates.wget):
     """The `mvapich2` building block configures, builds, and installs the
     [MVAPICH2](http://mvapich.cse.ohio-state.edu) component.
     Depending on the parameters, the source will be downloaded from
@@ -129,15 +131,7 @@ class mvapich2(ConfigureMake, ldconfig, rm, sed, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(mvapich2, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        sed.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(mvapich2, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
