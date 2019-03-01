@@ -26,6 +26,11 @@ import os
 from copy import copy as _copy
 
 import hpccm.config
+import hpccm.templates.ConfigureMake
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -33,94 +38,82 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class netcdf(ConfigureMake, ldconfig, rm, tar, wget):
-    """NetCDF building block"""
+class netcdf(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+             hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+    """The `netcdf` building block downloads, configures, builds, and
+    installs the
+    [NetCDF](https://www.unidata.ucar.edu/software/netcdf/) component.
+
+    The [HDF5](#hdf5) building block should be installed prior to this
+    building block.
+
+    As a side effect, this building block modifies `PATH` to include
+    the NetCDF build.
+
+    # Parameters
+
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    configure_opts: List of options to pass to `configure`.  The
+    default value is an empty list.
+
+    cxx: Boolean flag to specify whether the NetCDF C++ library should
+    be installed.  The default is True.
+
+    fortran: Boolean flag to specify whether the NetCDF Fortran
+    library should be installed.  The default is True.
+
+    hdf5_dir: Path to the location where HDF5 is installed in the
+    container image.  The default value is `/usr/local/hdf5`.
+
+    ldconfig: Boolean flag to specify whether the NetCDF library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the NetCDF library
+    directory. The default value is False.
+
+    ospackages: List of OS packages to install prior to configuring
+    and building.  For Ubuntu, the default values are
+    `ca-certificates`, `file`, `libcurl4-openssl-dev`, `m4`, `make`,
+    `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+    default values are `ca-certificates`, `file`, `libcurl-devel`
+    `m4`, `make`, `wget`, and `zlib-devel`.
+
+    prefix: The top level install location.  The default location is
+    `/usr/local/netcdf`.
+
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
+    version: The version of NetCDF to download.  The default value is
+    `4.6.1`.
+
+    version_cxx: The version of NetCDF C++ to download.  The default
+    value is `4.3.0`.
+
+    version_fortran: The version of NetCDF Fortran to download.  The
+    default value is `4.4.4`.
+
+    # Examples
+
+    ```python
+    netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
+    ```
+
+    ```python
+    p = pgi(eula=True)
+    netcdf(toolchain=p.toolchain)
+    ```
+
+    """
 
     def __init__(self, **kwargs):
-        """The `netcdf` building block downloads, configures, builds, and
-        installs the
-        [NetCDF](https://www.unidata.ucar.edu/software/netcdf/)
-        component.
+        """Initialize building block"""
 
-        The [HDF5](#hdf5) building block should be installed prior to
-        this building block.
-
-        As a side effect, this building block modifies `PATH`
-        to include the NetCDF build.
-
-        # Parameters
-
-        check: Boolean flag to specify whether the `make check` step
-        should be performed.  The default is False.
-
-        configure_opts: List of options to pass to `configure`.  The
-        default value is an empty list.
-
-        cxx: Boolean flag to specify whether the NetCDF C++ library
-        should be installed.  The default is True.
-
-        fortran: Boolean flag to specify whether the NetCDF Fortran
-        library should be installed.  The default is True.
-
-        hdf5_dir: Path to the location where HDF5 is installed in the
-        container image.  The default value is `/usr/local/hdf5`.
-
-        ldconfig: Boolean flag to specify whether the NetCDF library
-        directory should be added dynamic linker cache.  If False, then
-        `LD_LIBRARY_PATH` is modified to include the NetCDF library
-        directory. The default value is False.
-
-        ospackages: List of OS packages to install prior to
-        configuring and building.  For Ubuntu, the default values are
-        `ca-certificates`, `file`, `libcurl4-openssl-dev`, `m4`,
-        `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux
-        distributions the default values are `ca-certificates`,
-        `file`, `libcurl-devel` `m4`, `make`, `wget`, and
-        `zlib-devel`.
-
-        prefix: The top level install location.  The default location
-        is `/usr/local/netcdf`.
-
-        toolchain: The toolchain object.  This should be used if
-        non-default compilers or other toolchain options are needed.
-        The default is empty.
-
-        version: The version of NetCDF to download.  The default value
-        is `4.6.1`.
-
-        version_cxx: The version of NetCDF C++ to download.  The
-        default value is `4.3.0`.
-
-        version_fortran: The version of NetCDF Fortran to download.
-        The default value is `4.4.4`.
-
-        # Examples
-
-        ```python
-        netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
-        ```
-
-        ```python
-        p = pgi(eula=True)
-        netcdf(toolchain=p.toolchain)
-        ```
-        """
-
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(netcdf, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(netcdf, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('configure_opts', [])
 

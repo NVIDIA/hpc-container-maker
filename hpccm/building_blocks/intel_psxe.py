@@ -25,17 +25,18 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
+import hpccm.templates.rm
+import hpccm.templates.sed
+import hpccm.templates.tar
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.rm import rm
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
 from hpccm.toolchain import toolchain
 
-class intel_psxe(rm, sed, tar):
+class intel_psxe(hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar):
     """The `intel_psxe` building block installs [Intel Parallel Studio
     XE](https://software.intel.com/en-us/parallel-studio-xe).
 
@@ -92,12 +93,7 @@ class intel_psxe(rm, sed, tar):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(intel_psxe, self).__init__(**kwargs)
-        rm.__init__(self, **kwargs)
-        sed.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
+        super(intel_psxe, self).__init__(**kwargs)
 
         # By setting this value to True, you agree to the
         # corresponding Intel End User License Agreement

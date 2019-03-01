@@ -24,17 +24,19 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 
-class gdrcopy(ldconfig, rm, tar, wget):
+class gdrcopy(hpccm.templates.ldconfig, hpccm.templates.rm,
+              hpccm.templates.tar, hpccm.templates.wget):
     """The `gdrcopy` building block builds and installs the user space
     library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
     component.
@@ -68,14 +70,7 @@ class gdrcopy(ldconfig, rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(gdrcopy, self).__init__(**kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
-
+        super(gdrcopy, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])

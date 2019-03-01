@@ -27,6 +27,8 @@ import re
 from copy import copy as _copy
 
 import hpccm.config
+import hpccm.templates.git
+import hpccm.templates.rm
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -34,10 +36,8 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.git import git
-from hpccm.templates.rm import rm
 
-class knem(git, rm):
+class knem(hpccm.templates.git, hpccm.templates.rm):
     """The `knem` building block install the headers from the
     [KNEM](http://knem.gforge.inria.fr) component.
 
@@ -65,11 +65,7 @@ class knem(git, rm):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(knem, self).__init__(**kwargs)
-        git.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
+        super(knem, self).__init__(**kwargs)
 
         self.__ospackages = kwargs.get('ospackages', ['ca-certificates', 'git'])
         self.__prefix = kwargs.get('prefix', '/usr/local/knem')

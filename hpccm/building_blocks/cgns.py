@@ -27,19 +27,20 @@ import re
 from copy import copy as _copy
 
 import hpccm.config
+import hpccm.templates.ConfigureMake
+import hpccm.templates.rm
+import hpccm.templates.tar
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class cgns(ConfigureMake, rm, tar, wget):
+class cgns(hpccm.templates.ConfigureMake, hpccm.templates.rm,
+           hpccm.templates.tar, hpccm.templates.wget):
     """The `cgns` building block downloads and installs the
     [CGNS](https://cgns.github.io/index.html) component.
 
@@ -80,13 +81,7 @@ class cgns(ConfigureMake, rm, tar, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(cgns, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(cgns, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--with-hdf5=/usr/local/hdf5',

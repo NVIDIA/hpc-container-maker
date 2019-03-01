@@ -24,19 +24,21 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.templates.ConfigureMake
+import hpccm.templates.git
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.tar
+
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ConfigureMake import ConfigureMake
-from hpccm.templates.git import git
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.tar import tar
 from hpccm.toolchain import toolchain
 
-class xpmem(ConfigureMake, ldconfig, git, rm, tar):
+class xpmem(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+            hpccm.templates.git, hpccm.templates.rm, hpccm.templates.tar):
     """The `xpmem` building block builds and installs the user space
     library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
     component.
@@ -78,14 +80,7 @@ class xpmem(ConfigureMake, ldconfig, git, rm, tar):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(xpmem, self).__init__(**kwargs)
-        ConfigureMake.__init__(self, **kwargs)
-        git.__init__(self, **kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        tar.__init__(self, **kwargs)
+        super(xpmem, self).__init__(**kwargs)
 
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--disable-kernel-module'])

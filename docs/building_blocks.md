@@ -1348,7 +1348,75 @@ Stage1 += m.runtime()
 ```python
 netcdf(self, **kwargs)
 ```
-NetCDF building block
+The `netcdf` building block downloads, configures, builds, and
+installs the
+[NetCDF](https://www.unidata.ucar.edu/software/netcdf/) component.
+
+The [HDF5](#hdf5) building block should be installed prior to this
+building block.
+
+As a side effect, this building block modifies `PATH` to include
+the NetCDF build.
+
+__Parameters__
+
+
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default value is an empty list.
+
+- __cxx__: Boolean flag to specify whether the NetCDF C++ library should
+be installed.  The default is True.
+
+- __fortran__: Boolean flag to specify whether the NetCDF Fortran
+library should be installed.  The default is True.
+
+- __hdf5_dir__: Path to the location where HDF5 is installed in the
+container image.  The default value is `/usr/local/hdf5`.
+
+- __ldconfig__: Boolean flag to specify whether the NetCDF library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the NetCDF library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are
+`ca-certificates`, `file`, `libcurl4-openssl-dev`, `m4`, `make`,
+`wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+default values are `ca-certificates`, `file`, `libcurl-devel`
+`m4`, `make`, `wget`, and `zlib-devel`.
+
+- __prefix__: The top level install location.  The default location is
+`/usr/local/netcdf`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __version__: The version of NetCDF to download.  The default value is
+`4.6.1`.
+
+- __version_cxx__: The version of NetCDF C++ to download.  The default
+value is `4.3.0`.
+
+- __version_fortran__: The version of NetCDF Fortran to download.  The
+default value is `4.4.4`.
+
+__Examples__
+
+
+```python
+netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
+```
+
+```python
+p = pgi(eula=True)
+netcdf(toolchain=p.toolchain)
+```
+
+
 ## runtime
 ```python
 netcdf.runtime(self, _from=u'0')

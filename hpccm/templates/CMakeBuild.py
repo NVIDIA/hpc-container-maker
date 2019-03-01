@@ -15,7 +15,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""CMakeBuild template"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -25,14 +25,15 @@ from six.moves import shlex_quote
 import logging  # pylint: disable=unused-import
 import os
 
+import hpccm.base_object
 
-class CMakeBuild(object):
-    """Documentation TBD"""
+class CMakeBuild(hpccm.base_object):
+    """Template for cmake workflows"""
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize CMakeBuild template"""
 
-        #super(ConfigureMake, self).__init__()
+        super(CMakeBuild, self).__init__(**kwargs)
 
         self.__build_directory = None
         self.cmake_opts = kwargs.get('opts', [])
@@ -48,7 +49,7 @@ class CMakeBuild(object):
                                              'FC': True})
 
     def build_step(self, target='all', parallel=None):
-        """Documentation TBD"""
+        """Generate cmake build command line string"""
         if not parallel:
             parallel = self.parallel
         return 'cmake --build {0} --target {1} -- -j{2}'.format(
@@ -56,7 +57,7 @@ class CMakeBuild(object):
 
     def configure_step(self, build_directory='build', directory=None,
                        environment=[], opts=None, toolchain=None):
-        """Documentation TBD"""
+        """Generate cmake command line string"""
 
         change_directory = ''
         if directory:

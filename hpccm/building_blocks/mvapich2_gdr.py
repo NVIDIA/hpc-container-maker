@@ -26,6 +26,9 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -33,12 +36,10 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.wget import wget
 from hpccm.toolchain import toolchain
 
-class mvapich2_gdr(ldconfig, rm, wget):
+class mvapich2_gdr(hpccm.templates.ldconfig, hpccm.templates.rm,
+                   hpccm.templates.wget):
     """The `mvapich2_gdr` building blocks installs the
     [MVAPICH2-GDR](http://mvapich.cse.ohio-state.edu) component.
     Depending on the parameters, the package will be downloaded from
@@ -128,12 +129,7 @@ class mvapich2_gdr(ldconfig, rm, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(mvapich2_gdr, self).__init__(**kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(mvapich2_gdr, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://mvapich.cse.ohio-state.edu/download/mvapich/gdr')
