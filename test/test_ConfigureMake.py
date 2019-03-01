@@ -77,6 +77,11 @@ class Test_ConfigureMake(unittest.TestCase):
         """Parallel count specified"""
         cm = ConfigureMake(parallel=7)
 
+        # Function arguments override constructor
+        build = cm.build_step(parallel=11)
+        self.assertEqual(build, 'make -j11')
+
+        # Use constructor arguments
         build = cm.build_step()
         self.assertEqual(build, 'make -j7')
 
@@ -91,5 +96,10 @@ class Test_ConfigureMake(unittest.TestCase):
         """Configure options specified"""
         cm = ConfigureMake(opts=['--with-foo', '--without-bar'])
 
+        # Function arguments override constructor
+        configure = cm.configure_step(opts=['--without-foo', '--with-bar'])
+        self.assertEqual(configure, './configure --prefix=/usr/local --without-foo --with-bar')
+
+        # Use constructor arguments
         configure = cm.configure_step()
         self.assertEqual(configure, './configure --prefix=/usr/local --with-foo --without-bar')

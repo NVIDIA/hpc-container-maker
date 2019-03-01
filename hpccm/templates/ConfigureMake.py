@@ -45,15 +45,20 @@ class ConfigureMake(object):
                                              'F77': True, 'F90': True,
                                              'FC': True})
 
-    def build_step(self):
+    def build_step(self, parallel=None):
         """Documentation TBD"""
-        return 'make -j{}'.format(self.parallel)
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{}'.format(parallel)
 
-    def check_step(self):
+    def check_step(self, parallel=None):
         """Documentation TBD"""
-        return 'make -j{} check'.format(self.parallel)
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{} check'.format(parallel)
 
-    def configure_step(self, directory=None, environment=[], toolchain=None):
+    def configure_step(self, directory=None, environment=[], opts=[],
+                       toolchain=None):
         """Documentation TBD"""
 
         change_directory = ''
@@ -116,15 +121,20 @@ class ConfigureMake(object):
 
         configure_env = ' '.join(e)
 
-        opts = ' '.join(self.configure_opts)
+        if not opts and self.configure_opts:
+            opts = self.configure_opts
+        configure_opts = ' '.join(opts)
         if self.prefix:
-            opts = '--prefix={0:s} {1}'.format(self.prefix, opts)
+            configure_opts = '--prefix={0:s} {1}'.format(self.prefix,
+                                                         configure_opts)
 
         cmd = '{0} {1} ./configure {2}'.format(change_directory,
-                                               configure_env, opts)
+                                               configure_env, configure_opts)
 
         return cmd.strip() # trim whitespace
 
-    def install_step(self):
+    def install_step(self, parallel=None):
         """Documentation TBD"""
-        return 'make -j{} install'.format(self.parallel)
+        if not parallel:
+            parallel = self.parallel
+        return 'make -j{} install'.format(parallel)
