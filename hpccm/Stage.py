@@ -55,6 +55,10 @@ class Stage(object):
             self.__layers.append(layer)
         return self
 
+    def __len__(self):
+        """Return number of layers"""
+        return len(self.__layers)
+
     def __str__(self):
         """String representation of the stage"""
         return self.__separator.join(str(x) for x in self.__layers)
@@ -73,15 +77,6 @@ class Stage(object):
         if image:
             self.__layers.insert(0, baseimage(image=image, _as=self.name,
                                               _distro=_distro))
-
-    def is_defined(self):
-        """Check if any layers have been added to the Stage
-
-        # Returns
-
-        True if any layers have been added to the stage, otherwise False
-        """
-        return bool(self.__layers)
 
     def runtime(self, _from='0', exclude=[]):
         """Generate the set of instructions to install the runtime specific

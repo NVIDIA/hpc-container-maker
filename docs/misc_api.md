@@ -75,17 +75,6 @@ The value is passed to the `baseimage` primitive.
 - ___distro__: The underlying Linux distribution of the base image.
 The value is passed to the `baseimage` primitive.
 
-## is_defined
-```python
-Stage.is_defined(self)
-```
-Check if any layers have been added to the Stage
-
-__Returns__
-
-
-True if any layers have been added to the stage, otherwise False
-
 ## runtime
 ```python
 Stage.runtime(self, _from=u'0', exclude=[])
