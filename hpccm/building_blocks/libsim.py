@@ -25,6 +25,9 @@ import logging # pylint: disable=unused-import
 import os
 
 import hpccm.config
+import hpccm.templates.ldconfig
+import hpccm.templates.rm
+import hpccm.templates.wget
 
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
@@ -32,11 +35,9 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.templates.ldconfig import ldconfig
-from hpccm.templates.rm import rm
-from hpccm.templates.wget import wget
 
-class libsim(ldconfig, rm, wget):
+class libsim(hpccm.templates.ldconfig, hpccm.templates.rm,
+             hpccm.templates.wget):
     """The `libsim` building block configures, builds, and installs the
     [VisIt
     Libsim](http://www.visitusers.org/index.php?title=Libsim_Batch)
@@ -106,12 +107,7 @@ class libsim(ldconfig, rm, wget):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        # Trouble getting MRO with kwargs working correctly, so just call
-        # the parent class constructors manually for now.
-        #super(libsim, self).__init__(**kwargs)
-        ldconfig.__init__(self, **kwargs)
-        rm.__init__(self, **kwargs)
-        wget.__init__(self, **kwargs)
+        super(libsim, self).__init__(**kwargs)
 
         self.__buildscript = r'build_visit{0}'
         self.__mpi = kwargs.get('mpi', True)
