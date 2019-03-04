@@ -30,6 +30,7 @@ import hpccm.config
 import hpccm.templates.git
 import hpccm.templates.rm
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -37,7 +38,7 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class knem(hpccm.templates.git, hpccm.templates.rm):
+class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
     """The `knem` building block install the headers from the
     [KNEM](http://knem.gforge.inria.fr) component.
 
@@ -81,18 +82,16 @@ class knem(hpccm.templates.git, hpccm.templates.rm):
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment(
-            'KNEM version {}'.format(self.__version)))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(shell(commands=self.__commands))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+    def __instructions(self):
+        """Fill in container instructions"""
 
-        return '\n'.join(str(x) for x in instructions)
+        self += comment('KNEM version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
+        self += environment(variables=self.__environment_variables)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

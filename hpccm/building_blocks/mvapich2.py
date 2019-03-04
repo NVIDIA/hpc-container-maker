@@ -34,6 +34,7 @@ import hpccm.templates.sed
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -42,9 +43,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mvapich2(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-               hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar,
-               hpccm.templates.wget):
+class mvapich2(bb_base, hpccm.templates.ConfigureMake,
+               hpccm.templates.ldconfig, hpccm.templates.rm,
+               hpccm.templates.sed, hpccm.templates.tar, hpccm.templates.wget):
     """The `mvapich2` building block configures, builds, and installs the
     [MVAPICH2](http://mvapich.cse.ohio-state.edu) component.
     Depending on the parameters, the source will be downloaded from
@@ -166,27 +167,24 @@ class mvapich2(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
+    def __instructions(self):
+        """Fill in container instructions"""
+
         if self.directory:
-            instructions.append(comment('MVAPICH2'))
+            self += comment('MVAPICH2')
         else:
-            instructions.append(comment(
-                'MVAPICH2 version {}'.format(self.version)))
-        instructions.append(packages(ospackages=self.__ospackages))
+            self += comment('MVAPICH2 version {}'.format(self.version))
+        self += packages(ospackages=self.__ospackages)
         if self.directory:
             # Use source from local build context
-            instructions.append(
-                copy(src=self.directory,
-                     dest=os.path.join(self.__wd, self.directory)))
-        instructions.append(shell(commands=self.__commands))
+            self += copy(src=self.directory,
+                         dest=os.path.join(self.__wd, self.directory))
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

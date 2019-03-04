@@ -23,10 +23,11 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 
-class python(object):
+class python(bb_base):
     """The `python` building block installs Python from the upstream Linux
     distribution.
 
@@ -56,6 +57,8 @@ class python(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
+        super(python, self).__init__(**kwargs)
+
         self.__devel = kwargs.get('devel', False)
         self.__epel = False
         self.__python2 = kwargs.get('python2', True)
@@ -79,13 +82,14 @@ class python(object):
                 self.__debs.append('libpython3-dev')
                 self.__rpms.append('python34-devel')  # EPEL package
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('Python'))
-        instructions.append(packages(apt=self.__debs, epel=self.__epel,
-                                     yum=self.__rpms))
-        return '\n'.join([str(x) for x in instructions])
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('Python')
+        self += packages(apt=self.__debs, epel=self.__epel, yum=self.__rpms)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
