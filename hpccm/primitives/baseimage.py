@@ -78,34 +78,25 @@ class baseimage(object):
         # the image name.
         self.__distro = self.__distro.lower()
         if self.__distro == 'ubuntu':
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('16.04')
+            hpccm.config.set_linux_distro('ubuntu')
         elif self.__distro == 'ubuntu16':
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('16.04')
+            hpccm.config.set_linux_distro('ubuntu16')
         elif self.__distro == 'ubuntu18':
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('18.04')
+            hpccm.config.set_linux_distro('ubuntu18')
         elif (self.__distro == 'centos' or self.__distro == 'rhel' or
               self.__distro == 'redhat'):
-            hpccm.config.g_linux_distro = linux_distro.CENTOS
-            hpccm.config.g_linux_version = StrictVersion('7.0')
+            hpccm.config.set_linux_distro('centos')
         elif re.search(r'centos|rhel|redhat', self.image):
-            hpccm.config.g_linux_distro = linux_distro.CENTOS
-            hpccm.config.g_linux_version = StrictVersion('7.0')
+            hpccm.config.set_linux_distro('centos')
         elif re.search(r'ubuntu:?16', self.image):
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('16.04')
+            hpccm.config.set_linux_distro('ubuntu16')
         elif re.search(r'ubuntu:?18', self.image):
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('18.04')
+            hpccm.config.set_linux_distro('ubuntu18')
         elif re.search(r'ubuntu', self.image):
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('16.04')
+            hpccm.config.set_linux_distro('ubuntu')
         else:
             logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
-            hpccm.config.g_linux_distro = linux_distro.UBUNTU
-            hpccm.config.g_linux_version = StrictVersion('16.04')
+            hpccm.config.set_linux_distro('ubuntu')
 
     def __str__(self):
         """String representation of the primitive"""
