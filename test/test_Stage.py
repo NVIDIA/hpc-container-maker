@@ -37,16 +37,16 @@ class Test_Stage(unittest.TestCase):
     def test_value(self):
         """Single layer"""
         s = Stage()
-        self.assertFalse(s.is_defined())
+        self.assertFalse(len(s))
         s += 1
-        self.assertTrue(s.is_defined())
+        self.assertTrue(len(s))
 
     def test_list(self):
         """List of layers"""
         s = Stage()
-        self.assertFalse(s.is_defined())
+        self.assertEqual(len(s), 0)
         s += [1, 2]
-        self.assertTrue(s.is_defined())
+        self.assertEqual(len(s), 2)
 
     @docker
     def test_baseimage(self):
