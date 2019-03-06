@@ -29,6 +29,7 @@ import hpccm.templates.rm
 import hpccm.templates.sed
 import hpccm.templates.tar
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
@@ -36,7 +37,8 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class intel_psxe(hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar):
+class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
+                 hpccm.templates.tar):
     """The `intel_psxe` building block installs [Intel Parallel Studio
     XE](https://software.intel.com/en-us/parallel-studio-xe).
 
@@ -120,23 +122,22 @@ class intel_psxe(hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar):
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('Intel Parallel Studio XE'))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(copy(src=self.__tarball,
-                                 dest=os.path.join(self.__wd, self.__tarball)))
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('Intel Parallel Studio XE')
+        self += packages(ospackages=self.__ospackages)
+        self += copy(src=self.__tarball,
+                     dest=os.path.join(self.__wd, self.__tarball))
         if self.__license and not '@' in self.__license:
             # License file
-            instructions.append(
-                copy(src=self.__license,
-                     dest=os.path.join(self.__wd, 'license.lic')))
-        instructions.append(shell(commands=self.__commands))
-        instructions.append(
-            environment(variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += copy(src=self.__license,
+                         dest=os.path.join(self.__wd, 'license.lic'))
+        self += shell(commands=self.__commands)
+        self += environment(variables=self.__environment_variables)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

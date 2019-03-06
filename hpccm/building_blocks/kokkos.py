@@ -31,6 +31,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -38,7 +39,8 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class kokkos(hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
+             hpccm.templates.wget):
     """The `kokkos` building block downloads and installs the
     [Kokkos](https://github.com/kokkos/kokkos) component.
 
@@ -111,18 +113,17 @@ class kokkos(hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment(
-            'Kokkos version {}'.format(self.__version)))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(shell(commands=self.__commands))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('Kokkos version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

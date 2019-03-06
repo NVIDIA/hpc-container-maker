@@ -25,11 +25,12 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 
-class ofed(object):
+class ofed(bb_base):
     """The `ofed` building block installs the OpenFabrics Enterprise
     Distribution packages that are part of the Linux distribution.
 
@@ -67,6 +68,8 @@ class ofed(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
+        super(ofed, self).__init__(**kwargs)
+
         if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
             hpccm.config.g_linux_version >= StrictVersion('18.0')):
             self.__ospackages_deb = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
@@ -92,13 +95,13 @@ class ofed(object):
                                  'librdmacm', 'opensm', 'rdma-core',
                                  'rdma-core-devel']
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('OFED'))
-        instructions.append(packages(apt=self.__ospackages_deb,
-                                     yum=self.__ospackages_rpm))
-        return '\n'.join(str(x) for x in instructions)
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+        self += comment('OFED')
+        self += packages(apt=self.__ospackages_deb, yum=self.__ospackages_rpm)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

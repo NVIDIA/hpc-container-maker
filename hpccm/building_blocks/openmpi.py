@@ -33,6 +33,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -41,7 +42,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class openmpi(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
               hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `openmpi` building block configures, builds, and installs the
     [OpenMPI](https://www.open-mpi.org) component.  Depending on the
@@ -169,27 +170,24 @@ class openmpi(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
+    def __instructions(self):
+        """Fill in container instructions"""
+
         if self.directory:
-            instructions.append(comment('OpenMPI'))
+            self += comment('OpenMPI')
         else:
-            instructions.append(comment(
-                'OpenMPI version {}'.format(self.version)))
-        instructions.append(packages(ospackages=self.__ospackages))
+            self += comment('OpenMPI version {}'.format(self.version))
+        self += packages(ospackages=self.__ospackages)
         if self.directory:
             # Use source from local build context
-            instructions.append(
-                copy(src=self.directory,
-                     dest=os.path.join(self.__wd, self.directory)))
-        instructions.append(shell(commands=self.__commands))
+            self += copy(src=self.directory,
+                         dest=os.path.join(self.__wd, self.directory))
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

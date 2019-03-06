@@ -23,11 +23,12 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
-class pip(object):
+class pip(bb_base):
     """The `pip` building block installs Python packages from PyPi.
 
     # Parameters
@@ -64,6 +65,8 @@ class pip(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
+        super(pip, self).__init__(**kwargs)
+
         self.__epel = False
         self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])
@@ -88,13 +91,16 @@ class pip(object):
             self.__debs = self.__ospackages
             self.__rpms = self.__ospackages
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('pip'))
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('pip')
         if self.__debs or self.__rpms:
-            instructions.append(packages(apt=self.__debs, epel=self.__epel,
-                                         yum=self.__rpms))
+            self += packages(apt=self.__debs, epel=self.__epel,
+                             yum=self.__rpms)
 
         if self.__pip:
             cmds = []
@@ -105,5 +111,4 @@ class pip(object):
             if self.__packages:
                 cmds.append('{0} install {1}'.format(self.__pip,
                                                      ' '.join(self.__packages)))
-            instructions.append(shell(commands=cmds))
-        return '\n'.join([str(x) for x in instructions])
+            self += shell(commands=cmds)

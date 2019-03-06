@@ -29,13 +29,14 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class gdrcopy(hpccm.templates.ldconfig, hpccm.templates.rm,
+class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
               hpccm.templates.tar, hpccm.templates.wget):
     """The `gdrcopy` building block builds and installs the user space
     library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
@@ -88,19 +89,17 @@ class gdrcopy(hpccm.templates.ldconfig, hpccm.templates.rm,
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment(
-            'GDRCOPY version {}'.format(self.__version)))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(shell(commands=self.__commands))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('GDRCOPY version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

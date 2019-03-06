@@ -30,6 +30,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
@@ -37,7 +38,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class fftw(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
            hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `fftw` building block downloads, configures, builds, and
     installs the [FFTW](http://www.fftw.org) component.  Depending on
@@ -127,27 +128,25 @@ class fftw(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # Construct series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+
         if self.__directory:
-            instructions.append(comment('FFTW'))
+            self += comment('FFTW')
         else:
-            instructions.append(
-                comment('FFTW version {}'.format(self.__version)))
-        instructions.append(packages(ospackages=self.__ospackages))
+            self += comment('FFTW version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
         if self.__directory:
             # Use source from local build context
-            instructions.append(
-                copy(src=self.__directory,
-                     dest=os.path.join(self.__wd,
-                                       self.__directory)))
-        instructions.append(shell(commands=self.__commands))
+            self += copy(src=self.__directory,
+                         dest=os.path.join(self.__wd,
+                                           self.__directory))
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

@@ -25,10 +25,11 @@ import logging # pylint: disable=unused-import
 import hpccm.config
 
 from hpccm.building_blocks.apt_get import apt_get
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.yum import yum
 from hpccm.common import linux_distro
 
-class packages(object):
+class packages(bb_base):
     """The `packages` building block specifies the set of operating system
     packages to install.  Based on the Linux distribution, the
     building block invokes either `apt-get` (Ubuntu) or `yum`
@@ -93,7 +94,7 @@ class packages(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        #super(packages, self).__init__()
+        super(packages, self).__init__()
 
         self.__apt = kwargs.get('apt', [])
         self.__apt_keys = kwargs.get('apt_keys', [])
@@ -106,26 +107,29 @@ class packages(object):
         self.__yum_keys = kwargs.get('yum_keys', [])
         self.__yum_repositories = kwargs.get('yum_repositories', [])
 
-    def __str__(self):
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
         """String representation of the building block"""
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if self.__apt:
-                return str(apt_get(keys=self.__apt_keys, ospackages=self.__apt,
-                                   ppas=self.__apt_ppas,
-                                   repositories=self.__apt_repositories))
+                self += apt_get(keys=self.__apt_keys, ospackages=self.__apt,
+                                ppas=self.__apt_ppas,
+                                repositories=self.__apt_repositories)
             else:
-                return str(apt_get(keys=self.__apt_keys,
-                                   ospackages=self.__ospackages,
-                                   ppas=self.__apt_ppas,
-                                   repositories=self.__apt_repositories))
+                self += apt_get(keys=self.__apt_keys,
+                                ospackages=self.__ospackages,
+                                ppas=self.__apt_ppas,
+                                repositories=self.__apt_repositories)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if self.__yum:
-                return str(yum(epel=self.__epel, keys=self.__yum_keys,
-                               ospackages=self.__yum, scl=self.__scl,
-                               repositories=self.__yum_repositories))
+                self += yum(epel=self.__epel, keys=self.__yum_keys,
+                            ospackages=self.__yum, scl=self.__scl,
+                            repositories=self.__yum_repositories)
             else:
-                return str(yum(epel=self.__epel, keys=self.__yum_keys,
-                               ospackages=self.__ospackages, scl=self.__scl,
-                               repositories=self.__yum_repositories))
+                self += yum(epel=self.__epel, keys=self.__yum_keys,
+                            ospackages=self.__ospackages, scl=self.__scl,
+                            repositories=self.__yum_repositories)
         else:
             raise RuntimeError('Unknown Linux distribution')

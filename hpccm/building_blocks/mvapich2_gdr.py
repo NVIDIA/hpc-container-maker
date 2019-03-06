@@ -30,6 +30,7 @@ import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -38,7 +39,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mvapich2_gdr(hpccm.templates.ldconfig, hpccm.templates.rm,
+class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
                    hpccm.templates.wget):
     """The `mvapich2_gdr` building blocks installs the
     [MVAPICH2-GDR](http://mvapich.cse.ohio-state.edu) component.
@@ -168,18 +169,16 @@ class mvapich2_gdr(hpccm.templates.ldconfig, hpccm.templates.rm,
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment(
-            'MVAPICH2-GDR version {}'.format(self.version)))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(shell(commands=self.__commands))
-        instructions.append(environment(
-            variables=self.__environment_variables))
+    def __instructions(self):
+        """Fill in container instructions"""
 
-        return '\n'.join(str(x) for x in instructions)
+        self += comment('MVAPICH2-GDR version {}'.format(self.version))
+        self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
+        self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

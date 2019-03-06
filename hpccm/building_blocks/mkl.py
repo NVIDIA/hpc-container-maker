@@ -28,6 +28,7 @@ import re
 import hpccm.config
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -36,7 +37,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mkl(hpccm.templates.wget):
+class mkl(bb_base, hpccm.templates.wget):
     """The `mkl` building block downloads and installs the [Intel Math
     Kernel Library](http://software.intel.com/mkl).
 
@@ -100,43 +101,43 @@ class mkl(hpccm.templates.wget):
         # Set the Linux distribution specific parameters
         self.__distro()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment('MKL version {}'.format(self.version)))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('MKL version {}'.format(self.version))
 
         if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
+            self += packages(ospackages=self.__ospackages)
 
         if not self.__eula:
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
-        instructions.append(packages(
+        self += packages(
             apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
             apt_repositories=['deb https://apt.repos.intel.com/mkl all main'],
             ospackages=['intel-mkl-64bit-{}'.format(self.version)],
             yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
-            yum_repositories=['https://yum.repos.intel.com/mkl/setup/intel-mkl.repo']))
+            yum_repositories=['https://yum.repos.intel.com/mkl/setup/intel-mkl.repo'])
 
         # Set the environment
         if self.__mklvars:
             # Source the mklvars environment script when starting the
             # container, but the variables not be available for any
             # subsequent build steps.
-            instructions.append(shell(commands=['echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> {}'.format(self.__bashrc)]))
+            self += shell(commands=['echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> {}'.format(self.__bashrc)])
         else:
             # Set the environment so that it will be available to
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mklvars
             # environment script.
-            instructions.append(environment(variables={
+            self += environment(variables={
                 'CPATH': '/opt/intel/mkl/include:$CPATH',
                 'LD_LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LD_LIBRARY_PATH',
                 'LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LIBRARY_PATH',
-                'MKLROOT': '/opt/intel/mkl'}))
-
-        return '\n'.join(str(x) for x in instructions)
+                'MKLROOT': '/opt/intel/mkl'})
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

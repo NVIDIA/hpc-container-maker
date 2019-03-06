@@ -29,6 +29,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -37,7 +38,8 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class pgi(hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
+          hpccm.templates.wget):
     """The `pgi` building block downloads and installs the PGI compiler.
     Currently, the only option is to install the latest community
     edition.
@@ -152,30 +154,25 @@ class pgi(hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(comment(
-            'PGI compiler version {}'.format(self.__version)))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('PGI compiler version {}'.format(self.__version))
         if self.__tarball:
             # Use tarball from local build context
-            instructions.append(
-                copy(src=self.__tarball,
-                     dest=os.path.join(self.__wd,
-                                       os.path.basename(self.__tarball))))
+            self += copy(src=self.__tarball,
+                         dest=os.path.join(self.__wd,
+                                           os.path.basename(self.__tarball)))
         else:
             # Downloading, so need wget
             self.__ospackages.append('wget')
-
         if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
-
-        instructions.append(shell(commands=self.__commands))
-
-        instructions.append(environment(variables=self.__environment()))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
+        self += environment(variables=self.__environment())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

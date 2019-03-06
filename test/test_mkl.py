@@ -35,9 +35,8 @@ class Test_mkl(unittest.TestCase):
     @docker
     def test_defaults(self):
         """Default mkl building block, no eula agreement"""
-        m = mkl()
         with self.assertRaises(RuntimeError):
-            str(m)
+            mkl()
 
     @ubuntu
     @docker

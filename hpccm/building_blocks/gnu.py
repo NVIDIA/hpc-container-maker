@@ -24,6 +24,7 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -31,7 +32,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class gnu(object):
+class gnu(bb_base):
     """The `gnu` building block installs the GNU compilers from the
     upstream Linux distribution.
 
@@ -89,6 +90,8 @@ class gnu(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
+        super(gnu, self).__init__(**kwargs)
+
         self.__cc = kwargs.get('cc', True)
         self.__cxx = kwargs.get('cxx', True)
         self.__extra_repo = kwargs.get('extra_repository', False)
@@ -139,7 +142,11 @@ class gnu(object):
                 'devtoolset-{1}-{0}'.format(x, self.__version)
                 for x in self.__compiler_rpms]
 
+        # Set the Linux distribution specific parameters
         self.__distro()
+
+        # Fill in container instructions
+        self.__instructions()
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -161,19 +168,17 @@ class gnu(object):
             else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('GNU compiler'))
-        instructions.append(packages(apt=self.__compiler_debs,
-                                     apt_ppas=self.__extra_repo_apt,
-                                     scl=bool(self.__version), # True / False
-                                     yum=self.__compiler_rpms))
+    def __instructions(self):
+        """Fill in container instructions"""
+        self += comment('GNU compiler')
+        self += packages(apt=self.__compiler_debs,
+                         apt_ppas=self.__extra_repo_apt,
+                         scl=bool(self.__version), # True / False
+                         yum=self.__compiler_rpms)
         if self.__commands:
-            instructions.append(shell(commands=self.__commands))
+            self += shell(commands=self.__commands)
         if self.__environment:
-            instructions.append(environment(variables=self.__environment))
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

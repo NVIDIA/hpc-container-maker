@@ -29,6 +29,7 @@ import re
 import hpccm.config
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -37,7 +38,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class intel_mpi(hpccm.templates.wget):
+class intel_mpi(bb_base, hpccm.templates.wget):
     """The `intel_mpi` building block downloads and installs the [Intel
     MPI Library](https://software.intel.com/en-us/intel-mpi-library).
 
@@ -105,50 +106,49 @@ class intel_mpi(hpccm.templates.wget):
         # Set the Linux distribution specific parameters
         self.__distro()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
-        instructions.append(
-            comment('Intel MPI version {}'.format(self.version)))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('Intel MPI version {}'.format(self.version))
 
         if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
+            self += packages(ospackages=self.__ospackages)
 
         if not self.__eula:
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
-        instructions.append(packages(
+        self += packages(
             apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
             apt_repositories=['deb https://apt.repos.intel.com/mpi all main'],
             ospackages=['intel-mpi-{}'.format(self.version)],
             yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
-            yum_repositories=['https://yum.repos.intel.com/mpi/setup/intel-mpi.repo']))
+            yum_repositories=['https://yum.repos.intel.com/mpi/setup/intel-mpi.repo'])
 
         # Set the environment
         if self.__mpivars:
             # Source the mpivars environment script when starting the
             # container, but the variables not be available for any
             # subsequent build steps.
-            instructions.append(shell(commands=['echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> {}'.format(self.__bashrc)]))
+            self += shell(commands=['echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> {}'.format(self.__bashrc)])
         else:
             # Set the environment so that it will be available to
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mpivars
             # environment script.
             if LooseVersion(self.version) >= LooseVersion('2019.0'):
-              instructions.append(environment(variables={
+              self += environment(variables={
                   'FI_PROVIDER_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov',
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
                   'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib:$LD_LIBRARY_PATH',
-                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/bin:$PATH'}))
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/bin:$PATH'})
             else:
-              instructions.append(environment(variables={
+              self += environment(variables={
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
                   'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH',
-                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'}))
-
-        return '\n'.join(str(x) for x in instructions)
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'})
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

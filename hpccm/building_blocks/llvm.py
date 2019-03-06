@@ -24,6 +24,7 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -31,7 +32,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class llvm(object):
+class llvm(bb_base):
     """The `llvm` building block installs the LLVM compilers (clang and
     clang++) from the upstream Linux distribution.
 
@@ -77,6 +78,8 @@ class llvm(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
+        super(llvm, self).__init__(**kwargs)
+
         self.__extra_repo = kwargs.get('extra_repository', False)
         self.__version = kwargs.get('version', None)
 
@@ -110,6 +113,9 @@ class llvm(object):
 
         self.__distro()
 
+        # Fill in container instructions
+        self.__instructions()
+
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
         specified value overrides any defaults."""
@@ -133,20 +139,19 @@ class llvm(object):
         else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment('LLVM compiler'))
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('LLVM compiler')
         if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(packages(apt=self.__compiler_debs,
-                                     scl=bool(self.__version), # True / False
-                                     yum=self.__compiler_rpms))
+            self += packages(ospackages=self.__ospackages)
+        self += packages(apt=self.__compiler_debs,
+                         scl=bool(self.__version), # True / False
+                         yum=self.__compiler_rpms)
         if self.__commands:
-            instructions.append(shell(commands=self.__commands))
+            self += shell(commands=self.__commands)
         if self.__environment:
-            instructions.append(environment(variables=self.__environment))
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
