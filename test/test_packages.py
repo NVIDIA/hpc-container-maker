@@ -59,6 +59,5 @@ r'''RUN yum install -y \
     @invalid_distro
     def test_invalid_distro(self):
         """Invalid package type specified"""
-        p = packages(ospackages=['gcc', 'g++', 'gfortran'])
         with self.assertRaises(RuntimeError):
-            str(p)
+            packages(ospackages=['gcc', 'g++', 'gfortran'])

@@ -32,6 +32,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -40,7 +41,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class netcdf(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
              hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `netcdf` building block downloads, configures, builds, and
     installs the
@@ -151,28 +152,26 @@ class netcdf(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             self.__setup_optional(pkg='netcdf-fortran',
                                   version=self.__version_fortran)
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
+    def __instructions(self):
+        """Fill in container instructions"""
 
         comments = ['NetCDF version {}'.format(self.__version)]
         if self.__cxx:
             comments.append('NetCDF C++ version {}'.format(self.__version_cxx))
         if self.__fortran:
             comments.append('NetCDF Fortran version {}'.format(self.__version_fortran))
-        instructions.append(comment(', '.join(comments)))
+        self += comment(', '.join(comments))
 
         if self.__ospackages:
-            instructions.append(packages(ospackages=self.__ospackages))
+            self += packages(ospackages=self.__ospackages)
 
-        instructions.append(shell(commands=self.__commands))
+        self += shell(commands=self.__commands)
 
         if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

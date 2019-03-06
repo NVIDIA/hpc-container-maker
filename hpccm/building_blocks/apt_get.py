@@ -24,10 +24,11 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.common import linux_distro
 from hpccm.primitives.shell import shell
 
-class apt_get(object):
+class apt_get(bb_base):
     """The `apt_get` building block specifies the set of operating system
     packages to install.  This building block should only be used on
     images that use the Debian package manager (e.g., Ubuntu).
@@ -58,7 +59,7 @@ class apt_get(object):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        #super(apt_get, self).__init__()
+        super(apt_get, self).__init__()
 
         self.__commands = []
         self.__keys = kwargs.get('keys', [])
@@ -73,9 +74,12 @@ class apt_get(object):
         # block
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
-        return str(shell(chdir=False, commands=self.__commands))
+        # Fill in container instructions
+        self.__instructions()
+
+    def __instructions(self):
+        """Fill in container instructions"""
+        self += shell(chdir=False, commands=self.__commands)
 
     def __setup(self):
         """Construct the series of commands to execute"""

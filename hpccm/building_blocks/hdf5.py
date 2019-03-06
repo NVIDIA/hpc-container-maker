@@ -32,6 +32,7 @@ import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
@@ -40,7 +41,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class hdf5(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
+class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
            hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `hdf5` building block downloads, configures, builds, and
     installs the [HDF5](http://www.hdfgroup.org) component.  Depending
@@ -136,30 +137,27 @@ class hdf5(hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
+        # Fill in container instructions
+        self.__instructions()
 
-        instructions = []
+    def __instructions(self):
+        """Fill in container instructions"""
+
         if self.__directory:
-            instructions.append(comment('HDF5'))
+            self += comment('HDF5')
         else:
-            instructions.append(comment(
-                'HDF5 version {}'.format(self.__version)))
+            self += comment('HDF5 version {}'.format(self.__version))
 
-        instructions.append(packages(ospackages=self.__ospackages))
+        self += packages(ospackages=self.__ospackages)
 
         if self.__directory:
             # Use source from local build context
-            instructions.append(
-                copy(src=self.__directory,
-                     dest=os.path.join(self.__wd, self.__directory)))
+            self += copy(src=self.__directory,
+                         dest=os.path.join(self.__wd, self.__directory))
 
-        instructions.append(shell(commands=self.__commands))
+        self += shell(commands=self.__commands)
         if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
-
-        return '\n'.join(str(x) for x in instructions)
+            self += environment(variables=self.__environment_variables)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

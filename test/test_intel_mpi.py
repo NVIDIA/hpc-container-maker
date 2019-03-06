@@ -35,9 +35,8 @@ class Test_intel_mpi(unittest.TestCase):
     @docker
     def test_defaults(self):
         """Default intel_mpi building block, no eula agreement"""
-        impi = intel_mpi()
         with self.assertRaises(RuntimeError):
-            str(impi)
+            intel_mpi()
 
     @ubuntu
     @docker

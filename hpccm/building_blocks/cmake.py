@@ -28,11 +28,12 @@ import re
 import hpccm.templates.rm
 import hpccm.templates.wget
 
+from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
-class cmake(hpccm.templates.rm, hpccm.templates.wget):
+class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     """The `cmake` building block downloads and installs the
     [CMake](https://cmake.org) component.
 
@@ -83,15 +84,15 @@ class cmake(hpccm.templates.rm, hpccm.templates.wget):
         # Construct the series of steps to execute
         self.__setup()
 
-    def __str__(self):
-        """String representation of the building block"""
-        instructions = []
-        instructions.append(comment(
-            'CMake version {}'.format(self.__version)))
-        instructions.append(packages(ospackages=self.__ospackages))
-        instructions.append(shell(commands=self.__commands))
+        # Fill in container instructions
+        self.__instructions()
 
-        return '\n'.join(str(x) for x in instructions)
+    def __instructions(self):
+        """Fill in container instructions"""
+
+        self += comment('CMake version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += shell(commands=self.__commands)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
