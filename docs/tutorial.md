@@ -449,10 +449,11 @@ Singularity container built: /tmp/milc_multi-stage-2018-12-03-c2b47902c8a8.simg
 
 # Scientific Filesystem (SCI-F)
 
-The Scientific Filesystem (SCI-F) provides internal modularity of
-containers.  For example, a single container may need to include
-multiple builds of an application workload, each tuned for a
-particular hardware configuration, for the widest possible deployment.
+The [Scientific Filesystem (SCI-F)](https://sci-f.github.io) provides
+internal modularity of containers.  For example, a single container
+may need to include multiple builds of an application workload, each
+tuned for a particular hardware configuration, for the widest possible
+deployment.
 
 The `scif` building block provides an interface to SCI-F that is
 syntactically similar to Stages.  Other building blocks or primitives
