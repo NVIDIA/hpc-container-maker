@@ -40,6 +40,10 @@ class copy(object):
 
     dest: Path in the container image to copy the file(s)
 
+    files: A dictionary of file pairs, source and destination, to copy
+    into the container image.  If specified, has precedence over
+    `dest` and `src`.
+
     _from: Set the source location to a previous build stage rather
     than the host filesystem (Docker specific).
 
@@ -68,6 +72,10 @@ class copy(object):
     copy(src=['a', 'b', 'c'], dest='/tmp')
     ```
 
+    ```python
+    copy(files={'a': '/tmp/a', 'b': '/opt/b'})
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -77,93 +85,177 @@ class copy(object):
 
         self._app = kwargs.get('_app', '')  # Singularity specific
         self.__dest = kwargs.get('dest', '')
+        self.__files = kwargs.get('files', {})
         self.__from = kwargs.get('_from', '')  # Docker specific
         self._mkdir = kwargs.get('_mkdir', '')  # Singularity specific
         self._post = kwargs.get('_post', '')  # Singularity specific
         self.__src = kwargs.get('src', '')
 
+        if self._mkdir and self._post:
+            logging.error('_mkdir and _post are mutually exclusive!')
+            self._post = False # prefer _mkdir
+
+        if self._app and (self._mkdir or self._post):
+            logging.error('_app cannot be used with _mkdir or _post!')
+            self._mkdir = False # prefer _app
+            self._post = False
+
     def __str__(self):
         """String representation of the primitive"""
-        if self.__dest and self.__src:
-            if hpccm.config.g_ctype == container_type.DOCKER:
-                if self._app:
-                    logging.warning('The Singularity specific %app.. syntax '
-                                    'was requested. Docker does not have an '
-                                    'equivalent: using regular COPY!')
 
-                # Format:
-                # COPY src1 \
-                #     src2 \
-                #     src3 \
-                #     dest/
-                # COPY src dest
-                c = ['COPY ']
-
-                if self.__from:
-                    c[0] = c[0] + '--from={} '.format(self.__from)
-
-                if isinstance(self.__src, list):
-                    c[0] = c[0] + self.__src[0]
-                    c.extend(['    {}'.format(x) for x in self.__src[1:]])
-                    # Docker requires a trailing slash.  Add one if missing.
-                    c.append('    {}'.format(os.path.join(self.__dest, '')))
-                else:
-                    c[0] = c[0] + '{0} {1}'.format(self.__src, self.__dest)
-
-                return ' \\\n'.join(c)
-            if hpccm.config.g_ctype == container_type.SINGULARITY:
-                # Format:
-                # %files
-                #     src1 dest
-                #     src2 dest
-                #     src3 dest
-                if self.__from:
-                    logging.warning('The Docker specific "COPY --from" '
-                                    'syntax was requested.  Singularity does '
-                                    'not have an equivalent, so this is '
-                                    'probably not going to do what you want.')
-
-                if self._mkdir and self._post:
-                    logging.error('_mkdir and _post are mutually exclusive!')
-
-                if self._app and (self._mkdir or self._post):
-                    logging.error('_app cannot be used with _mkdir or _post!')
-
-                if self._post and isinstance(self.__src, list):
-                    logging.error('_post cannot be used with multiple files!')
-
-                # Note: if the source is a file and the destination
-                # path does not already exist in the container, this
-                # will likely error.  Probably need a '%setup' step to
-                # first create the directory.
-                files_directive = '%files'
-                if self._app:
-                    files_directive = '%appfiles {0}'.format(self._app)
-                if isinstance(self.__src, list):
-                    multiple_files_str = '{0}\n'.format(files_directive) + '\n'.join(
-                        ['    {0} {1}'.format(x, self.__dest)
-                         for x in self.__src])
-                    if self._mkdir:
-                        return '%setup\n    mkdir -p ${{SINGULARITY_ROOTFS}}{0}\n{1}'.format(
-                            self.__dest, multiple_files_str)
-                    return multiple_files_str
-                else:
-                    single_file_str = '{0}\n    {1} {2}'.format(files_directive,
-                                                                self.__src,
-                                                                self.__dest)
-                    if self._post:
-                        basename = os.path.basename(self.__src)
-                        return '%files\n    {0} /\n%post\n    mv /{1} {2}'.format(
-                            self.__src,
-                            basename,
-                            self.__dest)
-                    elif self._mkdir:
-                        dirname = os.path.dirname(self.__dest)
-                        return '%setup\n    mkdir -p ${{SINGULARITY_ROOTFS}}{0}\n{1}'.format(
-                            dirname, single_file_str)
-                    else:
-                        return single_file_str
-            else:
-                raise RuntimeError('Unknown container type')
+        # Build a list of files to make the logic a bit simpler below.
+        # The items in the files list are dictionaries with keys 'src'
+        # and 'dest'.
+        files = []
+        if self.__files:
+            # Sort to make it deterministic
+            files.extend([{'dest': dest, 'src': src}
+                          for src, dest in sorted(self.__files.items())])
+        elif self.__dest and self.__src:
+            files.append({'dest': self.__dest, 'src': self.__src})
         else:
+            # No files!
             return ''
+
+        if hpccm.config.g_ctype == container_type.DOCKER:
+            if self._app:
+                logging.warning('The Singularity specific SCI-F syntax '
+                                'was requested. Docker does not have an '
+                                'equivalent: using regular COPY!')
+
+            # Format:
+            # COPY src1 \
+            #     src2 \
+            #     src3 \
+            #     dest/
+            # COPY src1 dest1
+            # COPY src2 dest2
+            # COPY src3 dest3
+            base_inst = 'COPY '
+            if self.__from:
+                base_inst = base_inst + '--from={} '.format(self.__from)
+
+            # Docker does not have the notion of copying a set of
+            # files to different locations inside the container in a
+            # single instruction.  So generate multiple COPY
+            # instructions in that case.
+            instructions = []
+            for pair in files:
+                dest = pair['dest']
+                src = pair['src']
+                c = [base_inst]
+
+                if isinstance(src, list):
+                    c[0] = c[0] + src[0]
+                    c.extend(['    {}'.format(x) for x in src[1:]])
+                    # Docker requires a trailing slash.  Add one if missing.
+                    c.append('    {}'.format(os.path.join(dest, '')))
+                else:
+                    c[0] = c[0] + '{0} {1}'.format(src, dest)
+
+                instructions.append(' \\\n'.join(c))
+
+            return '\n'.join(instructions)
+
+        if hpccm.config.g_ctype == container_type.SINGULARITY:
+            # Format:
+            # %files
+            #     src1 dest
+            #     src2 dest
+            #     src3 dest
+            # %files
+            #     src1 dest1
+            #     src2 dest2
+            #     src3 dest3
+            if self.__from:
+                logging.warning('The Docker specific "COPY --from" '
+                                'syntax was requested.  Singularity does '
+                                'not have an equivalent, so this is '
+                                'probably not going to do what you want.')
+
+            section = '%files'
+            if self._app:
+                section = '%appfiles {0}'.format(self._app)
+
+            # Singularity will error if the destination does not
+            # already exist in the container.  The workarounds are to
+            # either 1) prior to copying the files, create the
+            # destination directories with %setup or 2) copy the files
+            # to a path guaranteed to exist, "/", and then move them
+            # later with %post.  Option 1 is the "pre" approach,
+            # option 2 is the "post" approach.
+            flat_files = []
+            post = [] # post actions if _post is enabled
+            pre = [] # pre actions if _mkdir is enabled
+            for pair in files:
+                dest = pair['dest']
+                src = pair['src']
+
+                if self._post:
+                    dest = '/'
+
+                if isinstance(src, list):
+                    for s in src:
+                        flat_files.append('    {0} {1}'.format(s, dest))
+
+                        if self._post:
+                            post.append('    mv /{0} {1}'.format(os.path.basename(s), os.path.join(pair['dest'], s)))
+                    if (self._mkdir and
+                        os.path.dirname(dest) != '/' and
+                        os.path.basename(dest) != dest):
+                        # When multiple files are to be copied to the
+                        # same destination, assume the destination is
+                        # a directory
+                        pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(dest))
+                else:
+                    flat_files.append('    {0} {1}'.format(src, dest))
+                    if (self._mkdir and
+                        os.path.dirname(dest) != '/' and
+                        os.path.basename(dest) != dest):
+                        # When a single file is to be copied to a
+                        # destination, assume the destination is a
+                        # file.
+                        pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(os.path.dirname(dest)))
+                    elif self._post:
+                        post.append('    mv /{0} {1}'.format(os.path.basename(src), pair['dest']))
+
+            s = ''
+            if pre:
+                s += '%setup\n' + '\n'.join(pre) + '\n'
+            s += section + '\n' + '\n'.join(flat_files)
+            if post:
+                s += '\n%post\n' + '\n'.join(post)
+
+            return s
+
+        else:
+            raise RuntimeError('Unknown container type')
+
+    def merge(self, lst, _app=None):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact merger.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        files = {}
+        for item in lst:
+            if not item.__class__.__name__ == 'copy': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            if item._copy__files:
+                files.update(item._copy__files)
+            elif isinstance(item._copy__src, list):
+                # Build a files dictionary from src / dest options.
+                # src is a list.
+                for s in item._copy__src:
+                    files.update({s: item._copy__dest})
+            else:
+                # Build a files dictionary from src / dest options.
+                files.update({item._copy__src: item._copy__dest})
+
+        return copy(files=files, _app=_app)

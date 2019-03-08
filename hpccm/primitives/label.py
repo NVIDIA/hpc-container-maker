@@ -94,3 +94,23 @@ class label(object):
                 raise RuntimeError('Unknown container type')
         else:
             return ''
+
+    def merge(self, lst, _app=None):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        labels = {}
+        for item in lst:
+            if not item.__class__.__name__ == 'label': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            labels.update(item._label__metadata)
+
+        return label(metadata=labels, _app=_app)

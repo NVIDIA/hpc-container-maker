@@ -76,6 +76,11 @@ place in the container specification file.
 __Parameters__
 
 
+- ___app__: String containing the
+- __[SCI-F](https__://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+identifier.  This also causes the comment to be enclosed in a
+Singularity block to named `%apphelp` (Singularity specific).
+
 - __reformat__: Boolean flag to specify whether the comment string
 should be wrapped to fit into lines not exceeding 80 characters.
 The default is True.
@@ -86,6 +91,7 @@ __Examples__
 ```python
 comment('libfoo version X.Y')
 ```
+
 
 # copy
 ```python
@@ -102,6 +108,10 @@ identifier.  This also causes the Singularity block to named
 `%appfiles` rather than `%files` (Singularity specific).
 
 - __dest__: Path in the container image to copy the file(s)
+
+- __files__: A dictionary of file pairs, source and destination, to copy
+into the container image.  If specified, has precedence over
+`dest` and `src`.
 
 - ___from__: Set the source location to a previous build stage rather
 than the host filesystem (Docker specific).
@@ -130,6 +140,10 @@ copy(src='component', dest='/opt/component')
 
 ```python
 copy(src=['a', 'b', 'c'], dest='/tmp')
+```
+
+```python
+copy(files={'a': '/tmp/a', 'b': '/opt/b'})
 ```
 
 
@@ -243,6 +257,10 @@ rather than `%runscript` (Singularity specific).
 - __commands__: A list of commands to execute.  The default is an empty
 list.
 
+- ___exec__: Boolean flag to specify whether `exec` should be inserted
+to preface the final command.  The default is True (Singularity
+specific).
+
 __Examples__
 
 
@@ -282,6 +300,10 @@ True.
 
 - __commands__: A list of commands to execute.  The default is an empty
 list.
+
+- ___test__: Boolean flag to specify whether to use `%test` instead of
+`%post` and `%apptest` instead of `%appinstall` as the Singularity
+section headings (Singularity specific).
 
 __Examples__
 
