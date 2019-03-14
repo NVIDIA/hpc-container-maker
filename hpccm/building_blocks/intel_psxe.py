@@ -108,7 +108,6 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         self.__ospackages = kwargs.get('ospackages', ['cpio'])
         self.__prefix = kwargs.get('prefix', '/opt/intel')
         self.__tarball = kwargs.get('tarball', None)
-        self.__tarball_name = os.path.basename(self.__tarball)
         self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='icc', CXX='icpc', F77='ifort',
@@ -151,6 +150,7 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         # Get the name of the directory that created when the tarball
         # is extracted.  Assume it is the same as the basename of the
         # tarball.
+        self.__tarball_name = os.path.basename(self.__tarball)
         basedir = os.path.splitext(self.__tarball_name)[0]
 
         # Untar
