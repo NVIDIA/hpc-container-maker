@@ -876,6 +876,92 @@ Stage0 += k
 Stage1 += k.runtime()
 ```
 
+# libsim
+```python
+libsim(self, **kwargs)
+```
+The `libsim` building block configures, builds, and installs the
+[VisIt
+Libsim](http://www.visitusers.org/index.php?title=Libsim_Batch)
+component.
+
+As a side effect, this building block modifies `PATH` to include
+the Libsim build.
+
+__Parameters__
+
+
+- __ldconfig__: Boolean flag to specify whether the Libsim library
+directories should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the Libsim library
+directories. The default value is False.
+
+- __mpi__: Boolean flag to specify whether Libsim should be built with
+MPI support.  If True, then the build script options `--parallel`
+and `--no-icet` are added and the environment variable
+`PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
+block should be installed prior this building block.  The default
+value is True.
+
+- __opts__: List of VisIt build script options. The default values are
+`--xdb` and `--server-components-only`.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `gzip`, `make`,
+`patch`, `tar`, `wget`, `zlib1g-dev`, `libxt-dev`,
+`libgl1-mesa-dev`, and `libglu1-mesa-dev`.  For RHEL-based Linux
+distributions, the default values are `gzip`, `make`, `patch`,
+`tar`, `wget`, `which`, `zlib-devel`, `libXt-devel`,
+`libglvnd-devel`, `mesa-libGL-devel`, and `mesa-libGLU-devel`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/visit`.
+
+- __system_cmake__: Boolean flag to specify whether the system provided
+cmake should be used.  If False, then the build script downloads a
+private copy of cmake.  If True, then the build script option
+`--system-cmake` is added.  If True, then the [cmake](#cmake)
+building block should be installed prior to this building block.
+The default is True.
+
+- __system_python__: Boolean flag to specify whether the system provided
+python should be used.  If False, then the build script downloads
+a private copy of python.  If True, then the build script option
+`--system-python` is added.  If True, then the [Python](#python)
+building block should be installed with development libraries
+prior to this building block.  The default is True.
+
+- __thirdparty__: Boolean flag to specify whether third-party components
+included by the build script should be retained.  If True, then
+the build script option `--thirdparty-path` is added and set to
+`<prefix>/third-party`.  The default is True.
+
+- __version__: The version of Libsim source to download.  The default
+value is `2.13.3`.
+
+__Examples__
+
+
+```python
+libsim(prefix='/opt/libsim', version='2.13.3')
+```
+
+
+## runtime
+```python
+libsim.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+l = libsim(...)
+Stage0 += l
+Stage1 += l.runtime()
+```
+
 # llvm
 ```python
 llvm(self, **kwargs)
