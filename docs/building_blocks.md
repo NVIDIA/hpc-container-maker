@@ -2020,6 +2020,9 @@ scif.runtime(self, _from=u'0')
 Generate the set of instructions to install the runtime specific
 components from a build in a previous stage.
 
+The entire `/scif` directory is copied into the runtime stage
+on the first call.  Subsequent calls do nothing.
+
 __Examples__
 
 ```python
@@ -2027,6 +2030,7 @@ s = scif(...)
 Stage0 += s
 Stage1 += s.runtime()
 ```
+
 
 # ucx
 ```python

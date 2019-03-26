@@ -53,7 +53,7 @@ class Test_scif(unittest.TestCase):
         # The scif module generates a SCI-F recipe file.  Use a
         # temporary file location for it rather than polluting the
         # test environment.  This is slightly unrealistic since the
-        # Docker build wold fail since the file is outside the Docker
+        # Docker build would fail since the file is outside the Docker
         # build environment, but go with it.
         scif_file = tempfile.NamedTemporaryFile(delete=False, suffix='.scif')
         s = scif(name='foo', file=scif_file.name)

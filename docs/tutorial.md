@@ -563,6 +563,16 @@ $ singularity run --nv --app cc60 cuda-stream.simg
  ...
 ```
 
+If the `scif` PyPi package is installed (optional for Singularity),
+then the `scif` program may also be used for equivalent functionality.
+
+```
+$ singularity run cuda-stream.simg scif apps
+...
+$ singularity run --nv cuda-stream.simg scif run cc60
+...
+```
+
 The HPCCM `scif` module is not limited to applications.  Building
 blocks may also be installed inside SCI-F applications.  The following
 installs two versions of OpenMPI inside the container, one built with

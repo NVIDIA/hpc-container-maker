@@ -240,12 +240,16 @@ class scif(hpccm.base_object):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
+        The entire `/scif` directory is copied into the runtime stage
+        on the first call.  Subsequent calls do nothing.
+
         # Examples
         ```python
         s = scif(...)
         Stage0 += s
         Stage1 += s.runtime()
         ```
+
         """
 
         if not scif.__runtime_called:
