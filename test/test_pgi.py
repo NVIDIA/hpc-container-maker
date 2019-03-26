@@ -307,8 +307,10 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so /opt/pgi/linux86-64/18.10/lib/
+COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
 COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH''')
 
     @centos
@@ -322,9 +324,31 @@ r'''# PGI compiler
 RUN yum install -y \
         numactl-libs && \
     rm -rf /var/cache/yum/*
-COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so /opt/pgi/linux86-64/18.10/lib/
+COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
 COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
+RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH''')
+
+    @centos
+    @docker
+    def test_runtime_mpi_centos(self):
+        """Runtime"""
+        p = pgi(mpi=True)
+        r = p.runtime()
+        self.assertEqual(r,
+r'''# PGI compiler
+RUN yum install -y \
+        numactl-libs \
+        openssh-clients && \
+    rm -rf /var/cache/yum/*
+COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
+COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
+COPY --from=0 /opt/pgi/linux86-64/18.10/mpi/openmpi /opt/pgi/linux86-64/18.10/mpi/openmpi
+RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/bin:$PATH''')
 
     def test_toolchain(self):
         """Toolchain"""
