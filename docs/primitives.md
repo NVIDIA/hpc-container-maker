@@ -250,6 +250,11 @@ when the container starts.
 __Parameters__
 
 
+- ___args__: Boolean flag to specify whether `"$@"` should be appended
+to the command.  If more than one command is specified, nothing is
+appended regardless of the value of this flag.  The default is
+True (Singularity specific).
+
 - ___app__: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
 identifier.  This also causes the Singularity block to named `%apprun`
 rather than `%runscript` (Singularity specific).

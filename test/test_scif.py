@@ -94,7 +94,7 @@ My app
 %applabels foo
     A B
 %apprun foo
-    exec default_program
+    exec default_program "$@"
 %apptest foo
     test_program''')
 
@@ -136,7 +136,7 @@ My app
     A B
 
 %apprun foo
-    exec default_program
+    exec default_program "$@"
 
 %apptest foo
     test_program''')

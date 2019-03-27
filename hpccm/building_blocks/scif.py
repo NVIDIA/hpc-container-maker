@@ -169,7 +169,7 @@ class scif(hpccm.base_object):
         else:
             # Shell one liner to run a command if specified,
             # otherwise start a shell
-            recipe.append(runscript(commands=['eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"'], _app=self.__name, _exec=False))
+            recipe.append(runscript(commands=['eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"'], _args=False, _app=self.__name, _exec=False))
 
         if self.__apptest:
             apptest = self.__apptest[0].merge(self.__apptest,

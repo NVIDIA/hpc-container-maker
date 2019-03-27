@@ -34,6 +34,11 @@ class runscript(object):
 
     # Parameters
 
+    _args: Boolean flag to specify whether `"$@"` should be appended
+    to the command.  If more than one command is specified, nothing is
+    appended regardless of the value of this flag.  The default is
+    True (Singularity specific).
+
     _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
     identifier.  This also causes the Singularity block to named `%apprun`
     rather than `%runscript` (Singularity specific).
@@ -62,6 +67,7 @@ class runscript(object):
 
         #super(wget, self).__init__()
 
+        self._args = kwargs.get('_args', True) # Singularity specific
         self._app = kwargs.get('_app', '') # Singularity specific
         self._exec = kwargs.get('_exec', True) # Singularity specific
         self.commands = kwargs.get('commands', [])
@@ -90,6 +96,9 @@ class runscript(object):
                 if self._exec:
                     # prepend last command with exec
                     self.commands[-1] = 'exec {0}'.format(self.commands[-1])
+                if len(self.commands) == 1 and self._args:
+                    # append "$@" to singleton command
+                    self.commands[0] = '{} "$@"'.format(self.commands[0])
                 # Format:
                 # %runscript
                 #     cmd1

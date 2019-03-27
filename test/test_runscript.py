@@ -56,7 +56,7 @@ class Test_runscript(unittest.TestCase):
         """Single command specified"""
         cmd = ['z']
         s = runscript(commands=cmd)
-        self.assertEqual(str(s), '%runscript\n    exec z')
+        self.assertEqual(str(s), '%runscript\n    exec z "$@"')
 
     @docker
     def test_multiple_docker(self):
