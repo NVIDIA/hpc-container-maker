@@ -93,3 +93,43 @@ class Test_label(unittest.TestCase):
 '''LABEL ONE=1 \\
     THREE=3 \\
     TWO=2''')
+
+    @docker
+    def test_merge_docker(self):
+        """merge primitives"""
+        l = []
+        l.append(label(metadata={'ONE': 1, 'TWO': 2}))
+        l.append(label(metadata={'THREE': 3}))
+        merged = l[0].merge(l)
+        self.assertEqual(str(merged),
+'''LABEL ONE=1 \\
+    THREE=3 \\
+    TWO=2''')
+
+        l.append(label(metadata={'ONE': 'uno'}))
+        key_overwrite = l[0].merge(l)
+        self.assertEqual(str(key_overwrite),
+'''LABEL ONE=uno \\
+    THREE=3 \\
+    TWO=2''')
+
+    @singularity
+    def test_merge_singularity(self):
+        """merge primitives"""
+        l = []
+        l.append(label(metadata={'ONE': 1, 'TWO': 2}))
+        l.append(label(metadata={'THREE': 3}))
+        merged = l[0].merge(l)
+        self.assertEqual(str(merged),
+'''%labels
+    ONE 1
+    THREE 3
+    TWO 2''')
+
+        l.append(label(metadata={'ONE': 'uno'}))
+        key_overwrite = l[0].merge(l)
+        self.assertEqual(str(key_overwrite),
+'''%labels
+    ONE uno
+    THREE 3
+    TWO 2''')

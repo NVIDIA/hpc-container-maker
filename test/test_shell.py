@@ -108,3 +108,33 @@ class Test_shell(unittest.TestCase):
         self.assertEqual(str(s), '%appinstall foo\n'
             '    for f in /.singularity.d/env/*; do . $f; done\n'
             '    a\n    b\n    c')
+
+    @singularity
+    def test_test_singularity(self):
+        """test option"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds, chdir=False, _test=True)
+        self.assertEqual(str(s), '%test\n    a\n    b\n    c')
+
+    @singularity
+    def test_apptest_singularity(self):
+        """test option"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds, _app='foo', chdir=False, _test=True)
+        self.assertEqual(str(s), '%apptest foo\n    a\n    b\n    c')
+
+    @docker
+    def test_merge_docker(self):
+        s = []
+        s.append(shell(commands=['a', 'b']))
+        s.append(shell(commands=['c']))
+        merged = s[0].merge(s)
+        self.assertEqual(str(merged), 'RUN a && \\\n    b && \\\n    c')
+
+    @singularity
+    def test_merge_singularity(self):
+        s = []
+        s.append(shell(commands=['a', 'b']))
+        s.append(shell(commands=['c']))
+        merged = s[0].merge(s)
+        self.assertEqual(str(merged), '%post\n    cd /\n    a\n    b\n    c')

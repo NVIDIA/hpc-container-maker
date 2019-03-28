@@ -34,12 +34,21 @@ class runscript(object):
 
     # Parameters
 
+    _args: Boolean flag to specify whether `"$@"` should be appended
+    to the command.  If more than one command is specified, nothing is
+    appended regardless of the value of this flag.  The default is
+    True (Singularity specific).
+
     _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
     identifier.  This also causes the Singularity block to named `%apprun`
     rather than `%runscript` (Singularity specific).
 
     commands: A list of commands to execute.  The default is an empty
     list.
+
+    _exec: Boolean flag to specify whether `exec` should be inserted
+    to preface the final command.  The default is True (Singularity
+    specific).
 
     # Examples
 
@@ -58,7 +67,9 @@ class runscript(object):
 
         #super(wget, self).__init__()
 
+        self._args = kwargs.get('_args', True) # Singularity specific
         self._app = kwargs.get('_app', '') # Singularity specific
+        self._exec = kwargs.get('_exec', True) # Singularity specific
         self.commands = kwargs.get('commands', [])
 
     def __str__(self):
@@ -82,8 +93,12 @@ class runscript(object):
                 return 'ENTRYPOINT [' + ', '.join(s) + ']'
 
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
-                # prepend last command with exec
-                self.commands[-1] = 'exec {0}'.format(self.commands[-1])
+                if self._exec:
+                    # prepend last command with exec
+                    self.commands[-1] = 'exec {0}'.format(self.commands[-1])
+                if len(self.commands) == 1 and self._args:
+                    # append "$@" to singleton command
+                    self.commands[0] = '{} "$@"'.format(self.commands[0])
                 # Format:
                 # %runscript
                 #     cmd1
@@ -99,3 +114,23 @@ class runscript(object):
                 raise RuntimeError('Unknown container type')
         else:
             return ''
+
+    def merge(self, lst, _app=None):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        cmds = []
+        for item in lst:
+            if not item.__class__.__name__ == 'runscript': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            cmds.extend(item.commands)
+
+        return runscript(commands=cmds, _app=_app)

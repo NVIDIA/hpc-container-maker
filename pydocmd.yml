@@ -34,21 +34,22 @@ generate:
   - hpccm.building_blocks.pip+
   - hpccm.building_blocks.pnetcdf+
   - hpccm.building_blocks.python+
+  - hpccm.building_blocks.scif+
   - hpccm.building_blocks.ucx+
   - hpccm.building_blocks.xpmem+
   - hpccm.building_blocks.yum+
 - primitives.md:
-  - hpccm.primitives.baseimage+
-  - hpccm.primitives.blob+
-  - hpccm.primitives.comment+
-  - hpccm.primitives.copy+
-  - hpccm.primitives.environment+
-  - hpccm.primitives.label+
-  - hpccm.primitives.raw+
-  - hpccm.primitives.runscript+
-  - hpccm.primitives.shell+
-  - hpccm.primitives.user+
-  - hpccm.primitives.workdir+
+  - hpccm.primitives.baseimage
+  - hpccm.primitives.blob
+  - hpccm.primitives.comment
+  - hpccm.primitives.copy
+  - hpccm.primitives.environment
+  - hpccm.primitives.label
+  - hpccm.primitives.raw
+  - hpccm.primitives.runscript
+  - hpccm.primitives.shell
+  - hpccm.primitives.user
+  - hpccm.primitives.workdir
 - misc_api.md:
   - hpccm.config+
   - hpccm.recipe+

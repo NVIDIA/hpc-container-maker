@@ -50,6 +50,10 @@ class shell(object):
     commands: A list of commands to execute.  The default is an empty
     list.
 
+    _test: Boolean flag to specify whether to use `%test` instead of
+    `%post` and `%apptest` instead of `%appinstall` as the Singularity
+    section headings (Singularity specific).
+
     # Examples
 
     ```python
@@ -67,6 +71,7 @@ class shell(object):
         self._appenv = kwargs.get('_appenv', False) # Singularity specific
         self.chdir = kwargs.get('chdir', True)
         self.commands = kwargs.get('commands', [])
+        self._test = kwargs.get('_test', False) # Singularity specific
 
     def __str__(self):
         """String representation of the primitive"""
@@ -95,6 +100,8 @@ class shell(object):
                 #     cmd3
                 if self._app:
                     s = ['%appinstall {0}'.format(self._app)]
+                    if self._test:
+                        s = ['%apptest {0}'.format(self._app)]
                     # Do not `cd /` here: Singularity %appinstall is already
                     # run in its own working directory at /scif/apps/[appname].
 
@@ -109,6 +116,8 @@ class shell(object):
                                         'together with the _app argument: '
                                         'ignoring argument!')
                     s = ['%post']
+                    if self._test:
+                        s = ['%test']
                     # For consistency with Docker. Docker resets the
                     # working directory to '/' at the beginning of each
                     # 'RUN' instruction.
@@ -121,3 +130,23 @@ class shell(object):
                 raise RuntimeError('Unknown container type')
         else:
             return ''
+
+    def merge(self, lst, _app=None, _appenv=False, _test=False):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact merger.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        cmds = []
+        for item in lst:
+            if not item.__class__.__name__ == 'shell': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            cmds.extend(item.commands)
+
+        return shell(commands=cmds, _app=_app, _appenv=_appenv, _test=_test)

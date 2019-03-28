@@ -60,15 +60,25 @@ class Test_copy(unittest.TestCase):
     def test_multiple_docker(self):
         """Multiple source files specified"""
         c = copy(src=['a1', 'a2', 'a3'], dest='b')
-        self.assertEqual(str(c),
-                         'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')
+        self.assertEqual(str(c), 'COPY a1 \\\n    a2 \\\n    a3 \\\n    b/')
 
     @singularity
     def test_multiple_singularity(self):
         """Multiple source files specified"""
         c = copy(src=['a1', 'a2', 'a3'], dest='b')
-        self.assertEqual(str(c),
-                         '%files\n    a1 b\n    a2 b\n    a3 b')
+        self.assertEqual(str(c), '%files\n    a1 b\n    a2 b\n    a3 b')
+
+    @docker
+    def test_files_docker(self):
+        """Pairs of files specified"""
+        c = copy(files={'a1': 'b1', 'a2': 'b2', 'a3': 'b3'})
+        self.assertEqual(str(c), 'COPY a1 b1\nCOPY a2 b2\nCOPY a3 b3')
+
+    @singularity
+    def test_files_singularity(self):
+        """Pairs of files specified"""
+        c = copy(files={'a1': 'b1', 'a2': 'b2', 'a3': 'b3'})
+        self.assertEqual(str(c), '%files\n    a1 b1\n    a2 b2\n    a3 b3')
 
     @docker
     def test_from_docker(self):
@@ -89,6 +99,13 @@ class Test_copy(unittest.TestCase):
         self.assertEqual(str(c),
                          '%appfiles foo\n    a1 b\n    a2 b\n    a3 b')
 
+    @singularity
+    def test_appfiles_files_singularity(self):
+        """Pairs of app-specific files specified"""
+        c = copy(files={'a1': 'b1', 'a2': 'b2', 'a3': 'b3'}, _app='foo')
+        self.assertEqual(str(c),
+                         '%appfiles foo\n    a1 b1\n    a2 b2\n    a3 b3')
+
     @docker
     def test_appfiles_docker(self):
         """app-parameter is ignored in Docker"""
@@ -107,6 +124,13 @@ class Test_copy(unittest.TestCase):
                          '%files\n    a /\n%post\n    mv /a /opt/')
 
     @singularity
+    def test_post_multiple_singularity(self):
+        """move file during post"""
+        c = copy(src=['a', 'b'], dest='/opt', _post=True)
+        self.assertEqual(str(c),
+                         '%files\n    a /\n    b /\n%post\n    mv /a /opt/a\n    mv /b /opt/b')
+
+    @singularity
     def test_mkdir_file_singularity(self):
         """mkdir folder with setup, single file"""
         c = copy(src='a', dest='/opt/foo/a', _mkdir=True)
@@ -119,3 +143,78 @@ class Test_copy(unittest.TestCase):
         c = copy(src=['a', 'b'], dest='/opt/foo', _mkdir=True)
         self.assertEqual(str(c),
                          '%setup\n    mkdir -p ${SINGULARITY_ROOTFS}/opt/foo\n%files\n    a /opt/foo\n    b /opt/foo')
+
+    @docker
+    def test_merge_file_docker(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src='a', dest='A'))
+        c.append(copy(src='b', dest='B'))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), 'COPY a A\nCOPY b B')
+
+    @singularity
+    def test_merge_file_singularity(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src='a', dest='A'))
+        c.append(copy(src='b', dest='B'))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), '%files\n    a A\n    b B')
+
+    @docker
+    def test_merge_multiple_docker(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src=['a1', 'a2'], dest='A'))
+        c.append(copy(src='b', dest='B'))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), 'COPY a1 A\nCOPY a2 A\nCOPY b B')
+
+    @singularity
+    def test_merge_multiple_singularity(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src=['a1', 'a2'], dest='A'))
+        c.append(copy(src='b', dest='B'))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), '%files\n    a1 A\n    a2 A\n    b B')
+
+    @docker
+    def test_merge_mixed_docker(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src='foo', dest='bar'))
+        c.append(copy(src=['1', '2', '3'], dest='/infinity'))
+        c.append(copy(files={'a': '/A', 'b': '/B'}))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged),
+r'''COPY 1 /infinity
+COPY 2 /infinity
+COPY 3 /infinity
+COPY a /A
+COPY b /B
+COPY foo bar''')
+
+    @singularity
+    def test_merge_mixed_singularity(self):
+        """merge primitives"""
+        c = []
+        c.append(copy(src='foo', dest='bar'))
+        c.append(copy(src=['1', '2', '3'], dest='/infinity'))
+        c.append(copy(files={'a': '/A', 'b': '/B'}))
+
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged),
+r'''%files
+    1 /infinity
+    2 /infinity
+    3 /infinity
+    a /A
+    b /B
+    foo bar''')

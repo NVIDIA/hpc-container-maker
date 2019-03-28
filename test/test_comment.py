@@ -73,3 +73,24 @@ class Test_comment(unittest.TestCase):
         """Comment wrapping"""
         c = comment('foo\nbar')
         self.assertEqual(str(c), '# foo bar')
+
+    @docker
+    def test_merge_docker(self):
+        """Comment merge"""
+        c = []
+        c.append(comment('a'))
+        c.append(comment('b'))
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), '# a\n# b')
+
+    @singularity
+    def test_merge_singularity(self):
+        """Comment merge"""
+        c = []
+        c.append(comment('a'))
+        c.append(comment('b'))
+        merged = c[0].merge(c)
+        self.assertEqual(str(merged), '# a\n# b')
+
+        apphelp = c[0].merge(c, _app='foo')
+        self.assertEqual(str(apphelp), '%apphelp foo\na\nb')

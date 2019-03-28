@@ -56,7 +56,7 @@ class Test_runscript(unittest.TestCase):
         """Single command specified"""
         cmd = ['z']
         s = runscript(commands=cmd)
-        self.assertEqual(str(s), '%runscript\n    exec z')
+        self.assertEqual(str(s), '%runscript\n    exec z "$@"')
 
     @docker
     def test_multiple_docker(self):
@@ -86,3 +86,27 @@ class Test_runscript(unittest.TestCase):
         s = runscript(commands=cmds, _app='foo')
         self.assertEqual(str(s), 'ENTRYPOINT ["a"]')
 
+    @singularity
+    def test_multiple_noexec_singularity(self):
+        """exec option"""
+        cmds = ['a', 'b', 'c']
+        s = runscript(commands=cmds, _exec=False)
+        self.assertEqual(str(s), '%runscript\n    a\n    b\n    c')
+
+    @docker
+    def test_merge_docker(self):
+        """merge primitives"""
+        r = []
+        r.append(runscript(commands=['a', 'b']))
+        r.append(runscript(commands=['c']))
+        merged = r[0].merge(r)
+        self.assertEqual(str(merged), 'ENTRYPOINT ["a"]')
+
+    @singularity
+    def test_merge_singularity(self):
+        """merge primitives"""
+        r = []
+        r.append(runscript(commands=['a', 'b']))
+        r.append(runscript(commands=['c']))
+        merged = r[0].merge(r)
+        self.assertEqual(str(merged), '%runscript\n    a\n    b\n    exec c')
