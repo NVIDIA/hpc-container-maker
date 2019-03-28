@@ -1,3 +1,13 @@
+# v19.3.0
+
+- Adds Scientific Filesystem (`scif`) and VisIt/Libsim (`libsim`)
+  building blocks
+- Consistent interfaces for the `ConfigureMake` and `CMake` templates
+- New `files` parameter in the `copy` primitive
+- Fix for the Intel Parallel Studio XE building block (`intel_psxe`)
+- Internal refactoring including a building block base class and MRO
+  inheritance
+
 # v19.2.0
 
 - Adds Kokkos (`kokkos`) and ParaView/Catalyst (`catalyst`) building
