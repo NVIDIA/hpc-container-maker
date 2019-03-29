@@ -48,21 +48,42 @@ class Test_intel_psxe(unittest.TestCase):
 r'''# Intel Parallel Studio XE
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential \
         cpio && \
     rm -rf /var/lib/apt/lists/*
 COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz
 COPY XXXXXXXX.lic /var/tmp/license.lic
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz -C /var/tmp -z && \
-    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=intel-icc__x86_64;intel-ifort__x86_64/g' \
+    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=DEFAULTS/g' \
         -e 's|^#\?\(PSET_INSTALL_DIR\)=.*|\1=/opt/intel|g' \
         -e 's/^#\?\(ACCEPT_EULA\)=.*/\1=accept/g' \
         -e 's/^#\?\(ACTIVATION_TYPE\)=.*/\1=license_file/g' \
         -e 's|^#\?\(ACTIVATION_LICENSE_FILE\)=.*|\1=/var/tmp/license.lic|g' /var/tmp/parallel_studio_xe_2018_update1_professional_edition/silent.cfg && \
     cd /var/tmp/parallel_studio_xe_2018_update1_professional_edition && ./install.sh --silent=silent.cfg && \
-    mkdir -p /var/tmp/intel_psxe_runtime && cp -a /opt/intel/lib/intel64/*.so* /var/tmp/intel_psxe_runtime && \
     rm -rf /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition
-ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
-    PATH=/opt/intel/bin:$PATH''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh intel64" >> /etc/bash.bashrc''')
+
+    @centos
+    @docker
+    def test_centos(self):
+        """centos"""
+        psxe = intel_psxe(eula=True, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
+        self.assertEqual(str(psxe),
+r'''# Intel Parallel Studio XE
+RUN yum install -y \
+        gcc \
+        gcc-c++ \
+        make \
+        which && \
+    rm -rf /var/cache/yum/*
+COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz -C /var/tmp -z && \
+    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=DEFAULTS/g' \
+        -e 's|^#\?\(PSET_INSTALL_DIR\)=.*|\1=/opt/intel|g' \
+        -e 's/^#\?\(ACCEPT_EULA\)=.*/\1=accept/g' /var/tmp/parallel_studio_xe_2018_update1_professional_edition/silent.cfg && \
+    cd /var/tmp/parallel_studio_xe_2018_update1_professional_edition && ./install.sh --silent=silent.cfg && \
+    rm -rf /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition
+RUN echo "source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh intel64" >> /etc/bashrc''')
 
     @ubuntu
     @docker
@@ -73,20 +94,47 @@ ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
 r'''# Intel Parallel Studio XE
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential \
         cpio && \
     rm -rf /var/lib/apt/lists/*
 COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz -C /var/tmp -z && \
-    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=intel-icc__x86_64;intel-ifort__x86_64/g' \
+    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=DEFAULTS/g' \
         -e 's|^#\?\(PSET_INSTALL_DIR\)=.*|\1=/opt/intel|g' \
         -e 's/^#\?\(ACCEPT_EULA\)=.*/\1=accept/g' \
         -e 's/^#\?\(ACTIVATION_TYPE\)=.*/\1=license_server/g' \
         -e 's/^#\?\(ACTIVATION_LICENSE_FILE\)=.*/\1=12345@server-lic/g' /var/tmp/parallel_studio_xe_2018_update1_professional_edition/silent.cfg && \
     cd /var/tmp/parallel_studio_xe_2018_update1_professional_edition && ./install.sh --silent=silent.cfg && \
-    mkdir -p /var/tmp/intel_psxe_runtime && cp -a /opt/intel/lib/intel64/*.so* /var/tmp/intel_psxe_runtime && \
     rm -rf /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition
-ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
-    PATH=/opt/intel/bin:$PATH''')
+RUN echo "source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh intel64" >> /etc/bash.bashrc''')
+
+    @ubuntu
+    @docker
+    def test_psxevars_false(self):
+        """psxevars is false"""
+        psxe = intel_psxe(eula=True, psxevars=False, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
+        self.assertEqual(str(psxe),
+r'''# Intel Parallel Studio XE
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential \
+        cpio && \
+    rm -rf /var/lib/apt/lists/*
+COPY parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz -C /var/tmp -z && \
+    sed -i -e 's/^#\?\(COMPONENTS\)=.*/\1=DEFAULTS/g' \
+        -e 's|^#\?\(PSET_INSTALL_DIR\)=.*|\1=/opt/intel|g' \
+        -e 's/^#\?\(ACCEPT_EULA\)=.*/\1=accept/g' /var/tmp/parallel_studio_xe_2018_update1_professional_edition/silent.cfg && \
+    cd /var/tmp/parallel_studio_xe_2018_update1_professional_edition && ./install.sh --silent=silent.cfg && \
+    rm -rf /var/tmp/parallel_studio_xe_2018_update1_professional_edition.tgz /var/tmp/parallel_studio_xe_2018_update1_professional_edition
+ENV CPATH=/opt/intel/compilers_and_libraries/linux/daal/include:/opt/intel/compilers_and_libraries/linux/pstl/include:/opt/intel/compilers_and_libraries/linux/ipp/include:/opt/intel/compilers_and_libraries/linux/mkl/include:/opt/intel/compilers_and_libraries/linux/mpi/include:/opt/intel/compilers_and_libraries/linux/tbb/include:$CPATH \
+    DAALROOT=/opt/intel/compilers_and_libraries/linux/daal \
+    IPPROOT=/opt/intel/compilers_and_libraries/linux/ipp \
+    I_MPI_ROOT=/opt/intel/compilers_and_libraries/linux/mpi \
+    LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/daal/lib/intel64:/opt/intel/compilers_and_libraries/linux/compiler/lib/intel64:/opt/intel/compilers_and_libraries/linux/compiler/lib/intel64:/opt/intel/compilers_and_libraries/linux/ipp/lib/intel64:/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64:/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries/linux/tbb/lib/intel64/gcc4.7:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/daal/lib/intel64:/opt/intel/compilers_and_libraries/linux/ipp/lib/intel64:/opt/intel/compilers_and_libraries/linux/mkl/lib/intel64:/opt/intel/compilers_and_libraries/linux/tbb/lib/intel64/gcc4.7:$LIBRARY_PATH \
+    MKLROOT=/opt/intel/compilers_and_libraries/linux/mkl \
+    PATH=/opt/intel/compilers_and_libraries/linux/bin/intel64:/opt/intel/compilers_and_libraries/linux/bin/intel64:/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -95,9 +143,23 @@ ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH \
         psxe = intel_psxe(eula=True, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
         r = psxe.runtime()
         self.assertEqual(r,
-r'''# Intel Parallel Studio XE
-COPY --from=0 /var/tmp/intel_psxe_runtime/* /opt/intel/lib/intel64/
-ENV LD_LIBRARY_PATH=/opt/intel/lib/intel64:$LD_LIBRARY_PATH''')
+r'''# Intel Parallel Studio XE runtime version 2019
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        man-db \
+        openssh-client \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://apt.repos.intel.com/2019/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2019 | apt-key add - && \
+    echo "deb https://apt.repos.intel.com/2019 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        intel-psxe-runtime && \
+    rm -rf /var/lib/apt/lists/*
+RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bash.bashrc''')
 
     def test_toolchain(self):
         """Toolchain"""

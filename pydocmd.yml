@@ -16,6 +16,7 @@ generate:
   - hpccm.building_blocks.hdf5+
   - hpccm.building_blocks.intel_mpi+
   - hpccm.building_blocks.intel_psxe+
+  - hpccm.building_blocks.intel_psxe_runtime+
   - hpccm.building_blocks.knem+
   - hpccm.building_blocks.kokkos+
   - hpccm.building_blocks.libsim+
