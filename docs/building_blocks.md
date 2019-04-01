@@ -2057,6 +2057,67 @@ Stage0 += p
 Stage1 += p.runtime()
 ```
 
+# scif
+```python
+scif(self, **kwargs)
+```
+The `scif` building blocks installs components using the
+[Scientific Filesystem (SCI-F)](https://sci-f.github.io).
+
+Other building blocks and / or primitives should be added to
+the `scif` building block using the `+=` syntax.
+
+If not generating a Singularity definition file, SCI-F should be
+installed using the [`pip`](#pip) building block prior to this
+building block.
+
+If not generating a Singularity definition file, this module
+creates SCI-F recipe files in the current directory (see also the
+`file` parameter).
+
+__Parameters__
+
+
+- __file__: The SCI-F recipe file name.  The default value is the name
+parameter with the `.scif` suffix.
+
+- __name__: The name to use to label the SCI-F application.  This
+parameter is required.
+
+- ___native__: Boolean flag to specify whether to use the native
+Singularity support for SCI-F when generating Singularity
+definition files.  The default is True (Singularity specific).
+
+__Examples__
+
+
+```python
+pip(packages=['scif'])
+s = scif(name='example')
+s += openmpi(prefix='/scif/apps/example')
+s += shell(commands=[...])
+```
+
+
+## runtime
+```python
+scif.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+The entire `/scif` directory is copied into the runtime stage
+on the first call.  Subsequent calls do nothing.
+
+__Examples__
+
+```python
+s = scif(...)
+Stage0 += s
+Stage1 += s.runtime()
+```
+
+
 # sensei
 ```python
 sensei(self, **kwargs)

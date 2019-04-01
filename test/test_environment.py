@@ -110,3 +110,51 @@ class Test_environment(unittest.TestCase):
 '''ENV ONE=1 \\
     THREE=3 \\
     TWO=2''')
+
+    @docker
+    def test_merge_docker(self):
+        """merge primitives"""
+        e = []
+        e.append(environment(variables={'ONE': 1, 'TWO': 2}))
+        e.append(environment(variables={'THREE': 3}))
+        merged = e[0].merge(e)
+        self.assertEqual(str(merged),
+'''ENV ONE=1 \\
+    THREE=3 \\
+    TWO=2''')
+
+        e.append(environment(variables={'ONE': 'uno'}))
+        key_overwrite = e[0].merge(e)
+        self.assertEqual(str(key_overwrite),
+'''ENV ONE=uno \\
+    THREE=3 \\
+    TWO=2''')
+
+    @singularity
+    def test_merge_singularity(self):
+        """merge primitives"""
+        e = []
+        e.append(environment(variables={'ONE': 1, 'TWO': 2}))
+        e.append(environment(variables={'THREE': 3}))
+        merged = e[0].merge(e)
+        self.assertEqual(str(merged),
+'''%environment
+    export ONE=1
+    export THREE=3
+    export TWO=2
+%post
+    export ONE=1
+    export THREE=3
+    export TWO=2''')
+
+        e.append(environment(variables={'ONE': 'uno'}))
+        key_overwrite = e[0].merge(e)
+        self.assertEqual(str(key_overwrite),
+'''%environment
+    export ONE=uno
+    export THREE=3
+    export TWO=2
+%post
+    export ONE=uno
+    export THREE=3
+    export TWO=2''')

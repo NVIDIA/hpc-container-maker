@@ -119,3 +119,23 @@ class environment(object):
                 raise RuntimeError('Unknown container type')
         else:
             return ''
+
+    def merge(self, lst, _app=None):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact merger.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        envs = {}
+        for item in lst:
+            if not item.__class__.__name__ == 'environment': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            envs.update(item._environment__variables)
+
+        return environment(variables=envs, _app=_app)

@@ -24,11 +24,20 @@ import logging  # pylint: disable=unused-import
 import re
 import textwrap
 
+import hpccm.config
+
+from hpccm.common import container_type
+
 class comment(object):
     """The `comment` primitive inserts a comment into the corresponding
     place in the container specification file.
 
     # Parameters
+
+    _app: String containing the
+    [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+    identifier.  This also causes the comment to be enclosed in a
+    Singularity block to named `%apphelp` (Singularity specific).
 
     reformat: Boolean flag to specify whether the comment string
     should be wrapped to fit into lines not exceeding 80 characters.
@@ -39,6 +48,7 @@ class comment(object):
     ```python
     comment('libfoo version X.Y')
     ```
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -51,12 +61,18 @@ class comment(object):
         except IndexError:
             self.__string = ''
 
+        self._app = kwargs.get('_app', False) # Singularity specific
         self.__reformat = kwargs.get('reformat', True)
 
     def __str__(self):
         """String representation of the primitive"""
         if self.__string:
             # Comments are universal (so far...)
+            if (self._app and
+                hpccm.config.g_ctype == container_type.SINGULARITY):
+                return '%apphelp {0}\n{1}'.format(self._app,
+                                                  self.__string)
+
             if self.__reformat:
                 # Wrap comments
                 return textwrap.fill(self.__string, initial_indent='# ',
@@ -66,3 +82,23 @@ class comment(object):
                 return re.sub('^', '# ', self.__string, flags=re.MULTILINE)
         else:
             return ''
+
+    def merge(self, lst, _app=None):
+        """Merge one or more instances of the primitive into a single
+        instance.  Due to conflicts or option differences the merged
+        primitive may not be exact merger.
+
+        """
+
+        if not lst: # pragma: nocover
+            raise RuntimeError('no items provided to merge')
+
+        s = []
+        for item in lst:
+            if not item.__class__.__name__ == 'comment': # pragma: nocover
+                logging.warning('item is not the correct type, skipping...')
+                continue
+
+            s.append(item._comment__string)
+
+        return comment('\n'.join(s), reformat=False, _app=_app)

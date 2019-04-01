@@ -4,6 +4,7 @@
 - [MPI Bandwidth](#mpi-bandwidth)
 - [User Arguments](#user-arguments)
 - [Multi-stage Recipes](#multi-stage-recipes)
+- [Scientific Filesystem (SCI-F)](#scientific-filesystem)
 
 ## Reproducing a bare metal environment
 
@@ -445,3 +446,179 @@ $ sudo docker run -t --rm --cap-add SYS_ADMIN -v /var/run/docker.sock:/var/run/d
 Singularity container built: /tmp/milc_multi-stage-2018-12-03-c2b47902c8a8.simg
 ...
 ```
+
+# Scientific Filesystem (SCI-F)
+
+The [Scientific Filesystem (SCI-F)](https://sci-f.github.io) provides
+internal modularity of containers.  For example, a single container
+may need to include multiple builds of an application workload, each
+tuned for a particular hardware configuration, for the widest possible
+deployment.
+
+The `scif` building block provides an interface to SCI-F that is
+syntactically similar to Stages.  Other building blocks or primitives
+can be added to the SCI-F recipe using the `+=` syntax.
+
+To help understand where it can be useful to include multiple
+application binaries in the same container, consider the GPU [compute
+capability](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#compute-capabilities).
+The compute capability of a GPU specifies its available features.  A
+GPU cannot run code compiled for a higher compute capability, yet many
+optimizations and other advanced features are only available with
+higher compute capabilities.  Generally speaking, a GPU can run code
+built with an lower compute capability, but that would mean not being
+able to take advantage of some capabilities on more recent GPUs.
+
+One approach to resolve this tension is to build multiple versions of
+the binary, each for a specific compute capability, and choose the
+best version based on the available hardware when running the
+container.  (Better approaches are to build a single "fat" binary or
+to use PTX to enable just-in-time compilation, but some application
+build systems may not support those techniques.)
+
+The [CUDA-STREAM](https://github.com/bcumming/cuda-stream) benchmark
+will be used to illustrate how to use SCI-F with HPCCM.
+
+The following [recipe](/recipes/examples/scif.py) builds CUDA-STREAM
+for 3 different CUDA compute capabilities.
+
+```python
+Stage0 += baseimage(image='nvidia/cuda:9.1-devel-centos7')
+
+# Install the GNU compiler
+Stage0 += gnu(fortran=False)
+
+# Install SCI-F
+Stage0 += pip(packages=['scif'])
+
+# Download a single copy of the source code
+Stage0 += packages(ospackages=['ca-certificates', 'git'])
+Stage0 += shell(commands=['cd /var/tmp',
+                          'git clone --depth=1 https://github.com/bcumming/cuda-stream.git cuda-stream'])
+
+# Build CUDA-STREAM as a SCI-F application for each CUDA compute capability
+for cc in ['35', '60', '70']:
+  binpath = '/scif/apps/cc{}/bin'.format(cc)
+
+  stream = scif(name='cc{}'.format(cc))
+  stream += comment('CUDA-STREAM built for CUDA compute capability {}'.format(cc))
+  stream += shell(commands=['nvcc -std=c++11 -ccbin=g++ -gencode arch=compute_{0},code=\\"sm_{0},compute_{0}\\" -o {1}/stream /var/tmp/cuda-stream/stream.cu'.format(cc, binpath)])
+  stream += environment(variables={'PATH': '{}:$PATH'.format(binpath)})
+  stream += label(metadata={'COMPUTE_CAPABILITY': cc})
+  stream += runscript(commands=['stream'])
+
+  Stage0 += stream
+```
+
+When generating a Dockerfile for this recipe, HPCCM will also create 3
+SCI-F recipe files in the current directory.
+
+```
+$ hpccm --recipe scif.py --format docker > Dockerfile
+$ sudo docker build -t cuda-stream -f Dockerfile .
+```
+
+The CUDA-STREAM binary can be selected by specifying the SCI-F
+application, e.g.:
+
+```
+$ sudo nvidia-docker run --rm -it cuda-stream scif apps
+      cc35
+      cc60
+      cc70
+$ sudo nvidia-docker run --rm -it cuda-stream scif run cc60
+[cc60] executing /bin/bash /scif/apps/cc60/scif/runscript
+ STREAM Benchmark implementation in CUDA
+ Array size (double precision) = 536.87 MB
+ using 192 threads per block, 349526 blocks
+ output in IEC units (KiB = 1024 B)
+
+Function      Rate (GiB/s)  Avg time(s)  Min time(s)  Max time(s)
+-----------------------------------------------------------------
+Copy:         500.6928      0.00200073   0.00199723   0.00200891
+Scale:        501.2314      0.00200056   0.00199509   0.00200891
+Add:          514.9334      0.00291573   0.00291300   0.00291705
+Triad:        517.2619      0.00290324   0.00289989   0.00290990
+```
+
+Singularity has native support for SCI-F.  It is not necessary to
+install the `scif` PyPi package in this case, but is also okay to do
+so.
+
+```
+$ hpccm --recipe scif.py --format singularity > Singularity.def
+$ sudo singularity build cuda-stream.simg Singularity.def
+```
+
+The SCI-F application can be selected by using the `--app` command
+line option.
+
+```
+$ singularity apps cuda-stream.simg
+cc35
+cc60
+cc70
+$ singularity run --nv --app cc60 cuda-stream.simg
+ STREAM Benchmark implementation in CUDA
+ ...
+```
+
+If the `scif` PyPi package is installed (optional for Singularity),
+then the `scif` program may also be used for equivalent functionality.
+
+```
+$ singularity run cuda-stream.simg scif apps
+...
+$ singularity run --nv cuda-stream.simg scif run cc60
+...
+```
+
+The HPCCM `scif` module is not limited to applications.  Building
+blocks may also be installed inside SCI-F applications.  The following
+installs two versions of OpenMPI inside the container, one built with
+InfiniBand verbs and the other with UCX, and for each builds the MPI
+Bandwidth program.
+
+```python
+# CentOS base image
+Stage0 += baseimage(image='nvidia/cuda:9.1-devel-centos7')
+
+# GNU compilers
+Stage0 += gnu(fortran=False)
+
+# Mellanox OFED
+Stage0 += mlnx_ofed()
+
+# SCI-F
+Stage0 += pip(packages=['scif'])
+
+# Download MPI Bandwidth source code
+Stage0 += shell(commands=[
+    'wget --user-agent "" -q -nc --no-check-certificate -P /var/tmp https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c'])
+
+# OpenMPI 3.1 w/ InfiniBand verbs
+ompi31 = scif(name='ompi-3.1-ibverbs')
+ompi31 += comment('MPI Bandwidth built with OpenMPI 3.1 using InfiniBand verbs')
+ompi31 += openmpi(infiniband=True, prefix='/scif/apps/ompi-3.1-ibverbs',
+                  ucx=False, version='3.1.3')
+ompi31 += shell(commands=['cd /scif/apps/ompi-3.1-ibverbs/bin',
+                          './mpicc -o mpi_bandwidth /var/tmp/mpi_bandwidth.c'])
+Stage0 += ompi31
+
+# OpenMPI 4.0 w/ UCX
+ompi40 = scif(name='ompi-4.0-ucx')
+ompi40 += comment('MPI Bandwidth built with OpenMPI 4.0 using UCX')
+ompi40 += gdrcopy()
+ompi40 += knem()
+ompi40 += xpmem()
+ompi40 += ucx(knem='/usr/local/knem')
+ompi40 += openmpi(infiniband=False, prefix='/scif/apps/ompi-4.0-ucx',
+                  ucx='/usr/local/ucx', version='4.0.0')
+ompi40 += shell(commands=['cd /scif/apps/ompi-4.0-ucx/bin',
+                          './mpicc -o mpi_bandwidth /var/tmp/mpi_bandwidth.c'])
+Stage0 += ompi40
+```
+
+A more sophisticated container might include an entry point that
+detects the hardware configuration and automatically uses the most
+appropriate SCI-F application environment.
