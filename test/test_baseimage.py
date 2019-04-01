@@ -68,7 +68,7 @@ class Test_baseimage(unittest.TestCase):
 r'''BootStrap: docker
 From: foo
 %post
-    . /.singularity.d/env/10-docker.sh''')
+    . /.singularity.d/env/10-docker*.sh''')
 
     @singularity
     def test_false_docker_env_singularity(self):
@@ -92,7 +92,7 @@ From: foo''')
 r'''BootStrap: docker
 From: foo
 %post
-    . /.singularity.d/env/10-docker.sh''')
+    . /.singularity.d/env/10-docker*.sh''')
 
     @docker
     def test_as_docker(self):
@@ -108,7 +108,7 @@ From: foo
 r'''BootStrap: docker
 From: foo
 %post
-    . /.singularity.d/env/10-docker.sh''')
+    . /.singularity.d/env/10-docker*.sh''')
 
     @docker
     def test_detect_ubuntu(self):
