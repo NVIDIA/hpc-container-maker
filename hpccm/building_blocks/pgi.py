@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import re
 import os
@@ -122,6 +123,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         super(pgi, self).__init__(**kwargs)
 
         self.__commands = [] # Filled in by __setup()
+        self.__libnuma_path = '' # Filled in __distro()
         self.__runtime_commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the PGI End-User
@@ -181,11 +183,21 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['gcc', 'g++', 'libnuma1', 'perl']
-                self.__runtime_ospackages = ['libnuma1']
+                if self.__mpi:
+                    self.__ospackages.append('openssh-client')
+            self.__runtime_ospackages = ['libnuma1']
+            if self.__mpi:
+                self.__runtime_ospackages.append('openssh-client')
+            self.__libnuma_path = '/usr/lib/x86_64-linux-gnu'
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['gcc', 'gcc-c++', 'numactl-libs', 'perl']
-                self.__runtime_ospackages = ['numactl-libs']
+                if self.__mpi:
+                    self.__ospackages.append('openssh-clients')
+            self.__runtime_ospackages = ['numactl-libs']
+            if self.__mpi:
+                self.__runtime_ospackages.append('openssh-clients')
+            self.__libnuma_path = '/usr/lib64'
         else:
             raise RuntimeError('Unknown Linux distribution')
 
@@ -198,8 +210,17 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         if runtime:
             # Runtime environment
-            e = {'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(pgi_path, 'lib'))}
+            if self.__mpi:
+                # PGI MPI component is selected
+                e['LD_LIBRARY_PATH'] = '{}:{}:$LD_LIBRARY_PATH'.format(
+                    os.path.join(mpi_path, 'lib'),
+                    os.path.join(pgi_path, 'lib'))
+                e['PATH'] = '{}:$PATH'.format(
+                    os.path.join(mpi_path, 'bin'))
+            else:
+                # PGI MPI component is not selected
+                e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
+                    os.path.join(pgi_path, 'lib'))
         else:
             # Development environment
             if self.__extended_environment:
@@ -232,9 +253,19 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                         os.path.join(pgi_path, 'bin'))
             else:
                 # Basic environment only
-                e = {'PATH': '{}:$PATH'.format(os.path.join(pgi_path, 'bin')),
-                     'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                         os.path.join(pgi_path, 'lib'))}
+                if self.__mpi:
+                    e['LD_LIBRARY_PATH'] = '{}:{}:$LD_LIBRARY_PATH'.format(
+                        os.path.join(mpi_path, 'lib'),
+                        os.path.join(pgi_path, 'lib'))
+                    e['PATH'] = '{}:{}:$PATH'.format(
+                        os.path.join(mpi_path, 'bin'),
+                        os.path.join(pgi_path, 'bin'))
+                else:
+                    # PGI MPI component is not selected
+                    e = {'PATH': '{}:$PATH'.format(os.path.join(pgi_path,
+                                                                'bin')),
+                         'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
+                             os.path.join(pgi_path, 'lib'))}
 
         return e
 
@@ -301,19 +332,23 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__commands.append(r'echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> {}'.format(siterc))
         self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
 
+        # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball),
                    os.path.join(self.__wd, 'pgi')]))
 
-        # Runtime workaround for libnuma issue impacting version 18.4
-        # on Ubuntu
-        if (self.__version == '18.4' and
-            hpccm.config.g_linux_distro == linux_distro.UBUNTU):
-            self.__runtime_commands.append('ln -s {0} {1}'.format(
-                '/usr/lib/x86_64-linux-gnu/libnuma.so.1',
-                os.path.join(self.__basepath, self.__version, 'lib',
-                             'libnuma.so')))
-
+        # libnuma.so and libnuma.so.1 must be symlinks to the system
+        # libnuma library.  They are originally symlinks, but Docker
+        # "COPY -from" copies the file pointed to by the symlink,
+        # converting them to files, so recreate the symlinks.
+        self.__runtime_commands.append('ln -sf {0} {1}'.format(
+            os.path.join(self.__libnuma_path, 'libnuma.so.1'),
+            os.path.join(self.__basepath, self.__version, 'lib',
+                         'libnuma.so')))
+        self.__runtime_commands.append('ln -sf {0} {1}'.format(
+            os.path.join(self.__libnuma_path, 'libnuma.so.1'),
+            os.path.join(self.__basepath, self.__version, 'lib',
+                         'libnuma.so.1')))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -334,10 +369,29 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         instructions.append(copy(_from=_from,
                                  src=os.path.join(self.__basepath,
                                                   self.__version,
-                                                  'REDIST', '*.so'),
+                                                  'REDIST', '*.so*'),
                                  dest=os.path.join(self.__basepath,
                                                    self.__version,
                                                    'lib', '')))
+
+        # REDIST workaround for incorrect libcudaforwrapblas.so
+        # symlink
+        if LooseVersion(self.__version) >= LooseVersion('18.10'):
+            instructions.append(
+                copy(_from=_from,
+                     src=os.path.join(self.__basepath, self.__version,
+                                      'lib', 'libcudaforwrapblas.so'),
+                     dest=os.path.join(self.__basepath, self.__version,
+                                       'lib', 'libcudaforwrapblas.so')))
+
+        if self.__mpi:
+            instructions.append(copy(_from=_from,
+                                     src=os.path.join(self.__basepath,
+                                                      self.__version,
+                                                      'mpi', 'openmpi'),
+                                     dest=os.path.join(self.__basepath,
+                                                       self.__version,
+                                                       'mpi', 'openmpi')))
         if self.__runtime_commands:
             instructions.append(shell(commands=self.__runtime_commands))
 
