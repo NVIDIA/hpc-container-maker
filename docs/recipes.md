@@ -50,7 +50,7 @@ $ hpccm --recipe simple.py --format singularity
 BootStrap: docker
 From: centos:7
 %post
-    . /.singularity.d/env/10-docker.sh
+    . /.singularity.d/env/10-docker*.sh
 
 # GNU compiler
 %post

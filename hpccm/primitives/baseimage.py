@@ -46,7 +46,7 @@ class baseimage(object):
 
     _docker_env: Boolean specifying whether to load the Docker base
      image environment, i.e., source
-     `/.singularity.d/env/10-docker.sh` (Singularity specific).  The
+     `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
      default value is True.
 
     image: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
@@ -115,7 +115,7 @@ class baseimage(object):
             if self.__docker_env:
                 docker_env = shell(
                     chdir=False,
-                    commands=['. /.singularity.d/env/10-docker.sh'])
+                    commands=['. /.singularity.d/env/10-docker*.sh'])
                 image = image + '\n' + str(docker_env)
 
             return image
