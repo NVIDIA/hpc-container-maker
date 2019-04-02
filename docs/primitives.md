@@ -19,7 +19,7 @@ distribution automatically.
 
 - ___docker_env__: Boolean specifying whether to load the Docker base
  image environment, i.e., source
- `/.singularity.d/env/10-docker.sh` (Singularity specific).  The
+ `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
  default value is True.
 
 - __image__: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
