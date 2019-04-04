@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.user import user
 
@@ -52,6 +52,12 @@ class Test_user(unittest.TestCase):
 
     @singularity
     def test_singularity(self):
+        """User specified"""
+        u = user(user='root')
+        self.assertEqual(str(u), '')
+
+    @bash
+    def test_bash(self):
         """User specified"""
         u = user(user='root')
         self.assertEqual(str(u), '')

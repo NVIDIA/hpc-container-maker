@@ -82,6 +82,12 @@ $ sudo singularity build <image_file.sif> Singularity.def
 Other container builders that understand Dockerfiles or Singularity
 definition files may also be used.
 
+A bash script can also be generated from a recipe:
+
+```
+$ hpccm --recipe <recipe.py> --format bash > script.sh
+```
+
 ## Next Steps
 
 Go through the [tutorial](/docs/tutorial.md) for some more in depth

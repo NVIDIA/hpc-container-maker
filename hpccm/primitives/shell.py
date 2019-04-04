@@ -126,6 +126,12 @@ class shell(object):
 
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)
+            elif hpccm.config.g_ctype == container_type.BASH:
+                s = []
+                if self.chdir:
+                    s.insert(0, 'cd /')
+                s.extend(self.commands)
+                return '\n'.join(s)
             else:
                 raise RuntimeError('Unknown container type')
         else:

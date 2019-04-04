@@ -90,6 +90,9 @@ class label(object):
                     l = ['%labels']
                 l.extend(['    {}'.format(x) for x in keyvals])
                 return '\n'.join(l)
+            elif hpccm.config.g_ctype == container_type.BASH:
+                logging.warning('label primitive does not map into bash')
+                return ''
             else:
                 raise RuntimeError('Unknown container type')
         else:

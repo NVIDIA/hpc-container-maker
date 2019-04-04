@@ -22,6 +22,7 @@ class container_type(Enum):
     """Supported container types"""
     DOCKER = 1
     SINGULARITY = 2
+    BASH = 3
 
 class linux_distro(Enum):
     """Supported Linux distribution types"""

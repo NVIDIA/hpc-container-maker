@@ -55,6 +55,8 @@ class user(object):
                 return 'USER {}'.format(self.user)
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
                 return ''
+            elif hpccm.config.g_ctype == container_type.BASH:
+                return ''
             else:
                 raise RuntimeError('Unknown container type')
         else:
