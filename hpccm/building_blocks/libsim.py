@@ -47,6 +47,10 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     As a side effect, this building block modifies `PATH` to include
     the Libsim build.
 
+    If GPU rendering will be used then a
+    [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+    recommended.
+
     # Parameters
 
     ldconfig: Boolean flag to specify whether the Libsim library

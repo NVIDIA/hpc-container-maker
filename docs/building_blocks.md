@@ -114,6 +114,10 @@ block.
 As a side effect, this building block modifies `PATH` to include
 the Catalyst build.
 
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
+
 __Parameters__
 
 
@@ -887,6 +891,10 @@ component.
 
 As a side effect, this building block modifies `PATH` to include
 the Libsim build.
+
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
 
 __Parameters__
 
@@ -2131,6 +2139,10 @@ this building block.
 In most cases, one or both of the [Catalyst](#catalyst) or
 [Libsim](#libsim) building blocks should be installed.
 
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
+
 __Parameters__
 
 
@@ -2139,7 +2151,7 @@ __Parameters__
 
 - __catalyst__: Flag to specify the location of the ParaView/Catalyst
 installation, e.g., `/usr/local/catalyst`.  If set, then the
-[Catalyst](#catalyst) building block should be install prior to
+[Catalyst](#catalyst) building block should be installed prior to
 this building block.  The default value is empty.
 
 - __cmake_opts__: List of options to pass to `cmake`.  The default value
@@ -2168,8 +2180,11 @@ default is empty.
 - __vtk__: Flag to specify the location of the VTK installation.  If
 `libsim` is defined, this option must be set to the Libsim VTK
 location, e.g.,
-`/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. The
-default value is empty.
+`/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. Note
+that the compiler version is embedded in the Libsim VTK path.  The
+compiler version may differ depending on which base image is used;
+version 5.4 corresponds to Ubuntu 16.04. The default value is
+empty.
 
 __Examples__
 
