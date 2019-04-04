@@ -47,6 +47,10 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
     In most cases, one or both of the [Catalyst](#catalyst) or
     [Libsim](#libsim) building blocks should be installed.
 
+    If GPU rendering will be used then a
+    [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+    recommended.
+
     # Parameters
 
     branch: The branch of SENSEI to use.  The default value is
@@ -54,7 +58,7 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
 
     catalyst: Flag to specify the location of the ParaView/Catalyst
     installation, e.g., `/usr/local/catalyst`.  If set, then the
-    [Catalyst](#catalyst) building block should be install prior to
+    [Catalyst](#catalyst) building block should be installed prior to
     this building block.  The default value is empty.
 
     cmake_opts: List of options to pass to `cmake`.  The default value
@@ -83,8 +87,11 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
     vtk: Flag to specify the location of the VTK installation.  If
     `libsim` is defined, this option must be set to the Libsim VTK
     location, e.g.,
-    `/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. The
-    default value is empty.
+    `/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. Note
+    that the compiler version is embedded in the Libsim VTK path.  The
+    compiler version may differ depending on which base image is used;
+    version 5.4 corresponds to Ubuntu 16.04. The default value is
+    empty.
 
     # Examples
 
@@ -155,6 +162,8 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
         if not self.__miniapps:
             self.cmake_opts.extend(
                 ['-DENABLE_PARALLEL3D=OFF', '-DENABLE_OSCILLATORS=OFF'])
+        else:
+            self.cmake_opts.append('-DCMAKE_C_STANDARD=99')
         if self.__vtk:
             self.cmake_opts.append(
                 '-DVTK_DIR={}'.format(self.__vtk))
