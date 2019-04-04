@@ -55,6 +55,10 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.ldconfig,
     As a side effect, this building block modifies `PATH` to include
     the Catalyst build.
 
+    If GPU rendering will be used then a
+    [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+    recommended.
+
     # Parameters
 
     cmake_opts: List of options to pass to `cmake`.  The default is an

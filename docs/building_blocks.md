@@ -114,6 +114,10 @@ block.
 As a side effect, this building block modifies `PATH` to include
 the Catalyst build.
 
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
+
 __Parameters__
 
 
@@ -887,6 +891,10 @@ component.
 
 As a side effect, this building block modifies `PATH` to include
 the Libsim build.
+
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
 
 __Parameters__
 
@@ -2117,6 +2125,95 @@ Stage0 += s
 Stage1 += s.runtime()
 ```
 
+
+# sensei
+```python
+sensei(self, **kwargs)
+```
+The `sensei` building block configures, builds, and installs the
+[SENSEI](https://sensei-insitu.org) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+In most cases, one or both of the [Catalyst](#catalyst) or
+[Libsim](#libsim) building blocks should be installed.
+
+If GPU rendering will be used then a
+[cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
+recommended.
+
+__Parameters__
+
+
+- __branch__: The branch of SENSEI to use.  The default value is
+`v2.1.1`.
+
+- __catalyst__: Flag to specify the location of the ParaView/Catalyst
+installation, e.g., `/usr/local/catalyst`.  If set, then the
+[Catalyst](#catalyst) building block should be installed prior to
+this building block.  The default value is empty.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default value
+is `-DENABLE_SENSEI=ON`.
+
+- __libsim__: Flag to specify the location of the VisIt/Libsim
+installation, e.g., `/usr/local/visit`.  If set, then the
+[Libsim](#libsim) building block should be installed prior to this
+building block.  The `vtk` option should also be set.  The default
+value is empty.
+
+- __miniapps__: Boolean flag to specify whether the SENSEI mini-apps
+should be built and installed.  The default is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  The default values are `ca-certificates`, `git`,
+and `make`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/sensei`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __vtk__: Flag to specify the location of the VTK installation.  If
+`libsim` is defined, this option must be set to the Libsim VTK
+location, e.g.,
+`/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. Note
+that the compiler version is embedded in the Libsim VTK path.  The
+compiler version may differ depending on which base image is used;
+version 5.4 corresponds to Ubuntu 16.04. The default value is
+empty.
+
+__Examples__
+
+
+```python
+sensei(branch='v2.1.1', catalyst='/usr/local/catalyst',
+       prefix='/opt/sensei')
+```
+
+```python
+sensei(libsim='/usr/local/visit',
+       vtk='/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1')
+```
+
+
+## runtime
+```python
+sensei.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+s = sensei(...)
+Stage0 += s
+Stage1 += s.runtime()
+```
 
 # ucx
 ```python

@@ -35,6 +35,7 @@ generate:
   - hpccm.building_blocks.pnetcdf+
   - hpccm.building_blocks.python+
   - hpccm.building_blocks.scif+
+  - hpccm.building_blocks.sensei+
   - hpccm.building_blocks.ucx+
   - hpccm.building_blocks.xpmem+
   - hpccm.building_blocks.yum+
