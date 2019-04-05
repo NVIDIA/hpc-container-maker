@@ -1371,7 +1371,7 @@ __Parameters__
 - __cuda_version__: The version of CUDA the MVAPICH2-GDR package was
 built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This
-value is ignored if `package` is set.  The default value is `9.0`.
+value is ignored if `package` is set.  The default value is `9.2`.
 
 - __gnu__: Boolean flag to specify whether a GNU build should be used.
 The default value is True.
@@ -1385,7 +1385,7 @@ directory. The default value is False.
 MVAPICH2-GDR package was built against.  The version string format
 is X.Y.  The version should match the version of Mellanox OFED
 installed by the `mlnx_ofed` building block.  This value is
-ignored if `package` is set.  The default value is `4.2`.
+ignored if `package` is set.  The default value is `4.5`.
 
 - __ospackages__: List of OS packages to install prior to installation.
 For Ubuntu, the default values are `cpio`, `libnuma1`,
@@ -1406,15 +1406,15 @@ MVAPICH2-GDR version).
 The default value is False.
 
 - __version__: The version of MVAPICH2-GDR to download.  The value is
-ignored if `package` is set.  The default value is `2.3`.  Due to
-differences in the packaging scheme, versions prior to 2.3 are not
-supported.
+ignored if `package` is set.  The default value is `2.3.1`.  Due
+to differences in the packaging scheme, versions prior to 2.3 are
+not supported.
 
 __Examples__
 
 
 ```python
-mvapich2_gdr(version='2.3')
+mvapich2_gdr(version='2.3.1')
 ```
 
 ```python
