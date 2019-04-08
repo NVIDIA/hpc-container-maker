@@ -137,6 +137,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__prefix = kwargs.get('prefix', '/opt/pgi')
         self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
+        self.__system_libnuma = kwargs.get('system_libnuma', True)
         self.__tarball = kwargs.get('tarball', '')
         self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
 
@@ -331,6 +332,18 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__commands.append(r'echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> {}'.format(siterc))
         self.__commands.append(r'echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> {}'.format(siterc))
         self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
+
+        # Override the installer behavior and force the use of the
+        # system libnuma library
+        if self.__system_libnuma:
+            self.__commands.append('ln -sf {0} {1}'.format(
+                os.path.join(self.__libnuma_path, 'libnuma.so.1'),
+                os.path.join(self.__basepath, self.__version, 'lib',
+                             'libnuma.so')))
+            self.__commands.append('ln -sf {0} {1}'.format(
+                os.path.join(self.__libnuma_path, 'libnuma.so.1'),
+                os.path.join(self.__basepath, self.__version, 'lib',
+                             'libnuma.so.1')))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
