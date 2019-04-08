@@ -52,6 +52,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
@@ -76,6 +78,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
@@ -101,6 +105,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
@@ -125,6 +131,8 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2017-1710-x86_64.tar.gz
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/17.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/17.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/17.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgilinux-2017-1710-x86_64.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/17.10/bin:$PATH''')
@@ -149,9 +157,12 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
+
     @ubuntu
     @docker
     def test_tarball_leading_zero(self):
@@ -172,6 +183,8 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
@@ -198,6 +211,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
@@ -224,6 +239,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/bin:/opt/pgi/linux86-64/18.10/bin:$PATH''')
@@ -249,6 +266,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
     CPP="/opt/pgi/linux86-64/18.10/bin/pgcc -Mcpp" \
@@ -282,6 +301,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
 ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
     CPP="/opt/pgi/linux86-64/18.10/bin/pgcc -Mcpp" \
