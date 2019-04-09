@@ -1130,6 +1130,14 @@ RHEL-based Linux distributions, the default values are
 `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
 `librdmacm-devel`.
 
+- __prefix__: The top level install location.  Instead of installing the
+packages via the package manager, they will be extracted to this
+location.  This option is useful if multiple versions of Mellanox
+OFED need to be installed.  The environment must be manually
+configured to recognize the Mellanox OFED location, e.g., in the
+container entry point.  The default value is empty, i.e., install
+via the package manager to the standard system locations.
+
 - __version__: The version of Mellanox OFED to download.  The default
 value is `4.5-1.0.1.0`.
 
@@ -1139,6 +1147,7 @@ __Examples__
 ```python
 mlnx_ofed(version='4.2-1.0.0.0')
 ```
+
 
 ## runtime
 ```python

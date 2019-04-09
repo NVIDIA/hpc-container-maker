@@ -64,6 +64,14 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
     `librdmacm-devel`.
 
+    prefix: The top level install location.  Instead of installing the
+    packages via the package manager, they will be extracted to this
+    location.  This option is useful if multiple versions of Mellanox
+    OFED need to be installed.  The environment must be manually
+    configured to recognize the Mellanox OFED location, e.g., in the
+    container entry point.  The default value is empty, i.e., install
+    via the package manager to the standard system locations.
+
     version: The version of Mellanox OFED to download.  The default
     value is `4.5-1.0.1.0`.
 
@@ -72,6 +80,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     ```python
     mlnx_ofed(version='4.2-1.0.0.0')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -81,9 +90,11 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         self.__baseurl = kwargs.get('baseurl',
                                     'http://content.mellanox.com/ofed')
+        self.__label = None  # Filled in by __setup()
         self.__oslabel = kwargs.get('oslabel', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__packages = kwargs.get('packages', [])
+        self.__prefix = kwargs.get('prefix', None)
         self.__version = kwargs.get('version', '4.5-1.0.1.0')
 
         self.__commands = []
@@ -127,13 +138,14 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5-1', 'libmlx5-dev',
                                    'librdmacm-dev', 'librdmacm1']
 
-            self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
+            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)
 
             self.__installer = 'dpkg --install'
+            self.__extractor_template = 'dpkg --extract {0} {1}'
 
             self.__pkglist = ' '.join('{}_*_amd64.deb'.format(
-                os.path.join(self.__wd, self.__prefix, 'DEBS', x))
+                os.path.join(self.__wd, self.__label, 'DEBS', x))
                                       for x in self.__packages)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
@@ -149,13 +161,14 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5', 'libmlx5-devel',
                                    'librdmacm-devel', 'librdmacm']
 
-            self.__prefix = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
+            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
                 self.__version, self.__oslabel)
 
             self.__installer = 'rpm --install'
+            self.__extractor_template = 'rpm2cpio {0} | cpio -idm'
 
             self.__pkglist = ' '.join('{}-*.x86_64.rpm'.format(
-                os.path.join(self.__wd, self.__prefix, 'RPMS', x))
+                os.path.join(self.__wd, self.__label, 'RPMS', x))
                                       for x in self.__packages)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
@@ -164,7 +177,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        tarball = '{}.tgz'.format(self.__prefix)
+        tarball = '{}.tgz'.format(self.__label)
         url = '{0}/MLNX_OFED-{1}/{2}'.format(self.__baseurl, self.__version,
                                              tarball)
 
@@ -175,13 +188,23 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
 
         # Install packages
-        self.__commands.append('{0} {1}'.format(self.__installer,
-                                                self.__pkglist))
+        if self.__prefix:
+            # Extract to a directory
+            # Suppress warnings from libibverbs
+            self.__commands.append('mkdir -p /etc/libibverbs.d')
+            self.__commands.append('mkdir -p {0} && cd {0}'.format(
+                self.__prefix))
+            self.__commands.extend([self.__extractor_template.format(
+                x, self.__prefix) for x in self.__pkglist.split()])
+        else:
+            # Install in the normal system locations
+            self.__commands.append('{0} {1}'.format(self.__installer,
+                                                    self.__pkglist))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd, self.__prefix)]))
+                   os.path.join(self.__wd, self.__label)]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
