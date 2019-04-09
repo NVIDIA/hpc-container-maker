@@ -138,7 +138,7 @@ class intel_psxe_runtime(bb_base):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2019.1-144')
+        self.__version = kwargs.get('version', '2019.3-199')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()
