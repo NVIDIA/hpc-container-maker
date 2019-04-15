@@ -25,12 +25,15 @@ import logging # pylint: disable=unused-import
 import os
 import re
 
+import hpccm.config
 import hpccm.templates.rm
 import hpccm.templates.sed
 import hpccm.templates.tar
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.intel_psxe_runtime import intel_psxe_runtime
 from hpccm.building_blocks.packages import packages
+from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -51,15 +54,42 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
     # Parameters
 
     components: List of Intel Parallel Studio XE components to
-    install.  The default values are `intel-icc__x86_64` and
-    `intel-ifort__x86_64`, i.e., install the Intel C++ and Fortran
-    compilers only.  Please note that the values are not consistent
-    between versions; for a list of components, extract
-    `pset/mediaconfig.xml` from the tarball and grep for `Abbr`.  The
-    default values correspond to Intel Parallel Studio XE 2018.
+    install.  The default values is `DEFAULTS`.  If only the Intel C++
+    and Fortran compilers are desired, then use `intel-icc__x86_64`
+    and `intel-ifort__x86_64`.  Please note that the values are not
+    consistent between versions; for a list of components, extract
+    `pset/mediaconfig.xml` from the tarball and grep for `Abbr`.
+
+    daal: Boolean flag to specify whether the Intel Data Analytics
+    Acceleration Library environment should be configured when
+    `psxevars` is False.  This flag also controls whether to install
+    the corresponding runtime in the `runtime` method.  Note: this
+    flag does not control whether the developer environment is
+    installed; see `components`.  The default is True.
 
     eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
     The default value is `False`.
+
+    icc: Boolean flag to specify whether the Intel C++ Compiler
+    environment should be configured when `psxevars` is False.  This
+    flag also controls whether to install the corresponding runtime in
+    the `runtime` method.  Note: this flag does not control whether
+    the developer environment is installed; see `components`.  The
+    default is True.
+
+    ifort: Boolean flag to specify whether the Intel Fortran Compiler
+    environment should be configured when `psxevars` is False.  This
+    flag also controls whether to install the corresponding runtime in
+    the `runtime` method.  Note: this flag does not control whether
+    the developer environment is installed; see `components`.  The
+    default is True.
+
+    ipp: Boolean flag to specify whether the Intel Integrated
+    Performance Primitives environment should be configured when
+    `psxevars` is False.  This flag also controls whether to install
+    the corresponding runtime in the `runtime` method.  Note: this
+    flag does not control whether the developer environment is
+    installed; see `components`.  The default is True.
 
     license: The license to use to activate Intel Parallel Studio XE.
     If the string contains a `@` the license is interpreted as a
@@ -69,15 +99,61 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
     value is not required, the installation is unlikely to be
     successful without a valid license.
 
+    mkl: Boolean flag to specify whether the Intel Math Kernel Library
+    environment should be configured when `psxevars` is False.  This
+    flag also controls whether to install the corresponding runtime in
+    the `runtime` method.  Note: this flag does not control whether
+    the developer environment is installed; see `components`.  The
+    default is True.
+
+    mpi: Boolean flag to specify whether the Intel MPI Library
+    environment should be configured when `psxevars` is False.  This
+    flag also controls whether to install the corresponding runtime in
+    the `runtime` method.  Note: this flag does not control whether
+    the developer environment is installed; see `components`.  The
+    default is True.
+
     ospackages: List of OS packages to install prior to installing
-    Intel Parallel Studio XE.  The default value is `cpio`.
+    Intel MPI.  For Ubuntu, the default values are `build-essential`
+    and `cpio`.  For RHEL-based Linux distributions, the default
+    values are `gcc`, `gcc-c++`, `make`, and `which`.
 
     prefix: The top level install location.  The default value is
     `/opt/intel`.
 
+    psxevars: Intel Parallel Studio XE provides an environment script
+    (`compilervars.sh`) to setup the environment.  If this value is
+    `True`, the bashrc is modified to automatically source this
+    environment script.  However, the Intel runtime environment is not
+    automatically available to subsequent container image build steps;
+    the environment is available when the container image is run.  To
+    set the Intel Parallel Studio XE environment in subsequent build
+    steps you can explicitly call `source
+    /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh
+    intel64` in each build step.  If this value is to set `False`,
+    then the environment is set such that the environment is visible
+    to both subsequent container image build steps and when the
+    container image is run.  However, the environment may differ
+    slightly from that set by `compilervars.sh`.  The default value is
+    `True`.
+
+    runtime_version: The version of Intel Parallel Studio XE runtime
+    to install via the `runtime` method.  The runtime is installed
+    using the [intel_psxe_runtime](#intel_psxe_runtime) building
+    block.  This value is passed as its `version` parameter.  In
+    general, the major version of the runtime should correspond to the
+    tarball version.
+
     tarball: Path to the Intel Parallel Studio XE tarball relative to
     the local build context.  The default value is empty.  This
     parameter is required.
+
+    tbb: Boolean flag to specify whether the Intel Threading Building
+    Blocks environment should be configured when `psxevars` is False.
+    This flag also controls whether to install the corresponding
+    runtime in the `runtime` method.  Note: this flag does not control
+    whether the developer environment is installed; see `components`.
+    The default is True.
 
     # Examples
 
@@ -90,6 +166,7 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
     i = intel_psxe(...)
     openmpi(..., toolchain=i.toolchain, ...)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -102,22 +179,30 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         # (https://software.intel.com/en-us/articles/end-user-license-agreement)
         self.__eula = kwargs.get('eula', False)
 
-        self.__components = kwargs.get('components', ['intel-icc__x86_64',
-                                                      'intel-ifort__x86_64'])
+        self.__components = kwargs.get('components', ['DEFAULTS'])
+        self.__daal = kwargs.get('daal', True)
+        self.__icc = kwargs.get('icc', True)
+        self.__ifort = kwargs.get('ifort', True)
+        self.__ipp = kwargs.get('ipp', True)
         self.__license = kwargs.get('license', None)
-        self.__ospackages = kwargs.get('ospackages', ['cpio'])
+        self.__mkl = kwargs.get('mkl', True)
+        self.__mpi = kwargs.get('mpi', True)
+        self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/opt/intel')
+        self.__psxevars = kwargs.get('psxevars', True)
+        self.__runtime_version = kwargs.get('runtime_version', '2019.1-144')
         self.__tarball = kwargs.get('tarball', None)
+        self.__tbb = kwargs.get('tbb', True)
         self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='icc', CXX='icpc', F77='ifort',
                                    F90='ifort', FC='ifort')
 
+        self.__bashrc = ''   # Filled in by __distro()
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.__prefix, 'bin')),
-            'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(self.__prefix, 'lib', 'intel64'))}
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -137,7 +222,106 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
             self += copy(src=self.__license,
                          dest=os.path.join(self.__wd, 'license.lic'))
         self += shell(commands=self.__commands)
-        self += environment(variables=self.__environment_variables)
+
+        if self.__psxevars:
+            # Source the mpivars environment script when starting the
+            # container, but the variables not be available for any
+            # subsequent build steps.
+            self += shell(commands=['echo "source {0}/compilers_and_libraries/linux/bin/compilervars.sh intel64" >> {1}'.format(self.__prefix, self.__bashrc)])
+        else:
+            self += environment(variables=self.__environment())
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                self.__ospackages = ['build-essential', 'cpio']
+            self.__bashrc = '/etc/bash.bashrc'
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                self.__ospackages = ['gcc', 'gcc-c++', 'make', 'which']
+            self.__bashrc = '/etc/bashrc'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
+    def __environment(self):
+        basepath = os.path.join(self.__prefix, 'compilers_and_libraries',
+                                'linux')
+        cpath = []
+        ld_library_path = []
+        library_path = []
+        path = []
+        env = {}
+
+        if self.__daal:
+            env['DAALROOT'] = os.path.join(basepath, 'daal')
+            cpath.append(os.path.join(basepath, 'daal', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'daal', 'lib',
+                                                'intel64'))
+            library_path.append(os.path.join(basepath, 'daal', 'lib',
+                                             'intel64'))
+
+        if self.__icc:
+            cpath.append(os.path.join(basepath, 'pstl', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
+                                                'intel64'))
+            path.append(os.path.join(basepath, 'bin', 'intel64'))
+
+        if self.__ifort:
+            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
+                                                'intel64'))
+            path.append(os.path.join(basepath, 'bin', 'intel64'))
+
+        if self.__ipp:
+            env['IPPROOT' ] = os.path.join(basepath, 'ipp')
+            cpath.append(os.path.join(basepath, 'ipp', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'ipp', 'lib',
+                                                'intel64'))
+            library_path.append(os.path.join(basepath, 'ipp', 'lib',
+                                             'intel64'))
+
+        if self.__mkl:
+            env['MKLROOT'] = os.path.join(basepath, 'mkl')
+            cpath.append(os.path.join(basepath, 'mkl', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'mkl', 'lib',
+                                                'intel64'))
+            library_path.append(os.path.join(basepath, 'mkl', 'lib',
+                                             'intel64'))
+
+        if self.__mpi:
+            # Handle libfabics case
+            env['I_MPI_ROOT' ] = os.path.join(basepath, 'mpi')
+            cpath.append(os.path.join(basepath, 'mpi', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'mpi', 'intel64',
+                                                'lib'))
+            path.append(os.path.join(basepath, 'mpi', 'intel64', 'bin'))
+
+        if self.__tbb:
+            cpath.append(os.path.join(basepath, 'tbb', 'include'))
+            ld_library_path.append(os.path.join(basepath, 'tbb', 'lib',
+                                                'intel64', 'gcc4.7'))
+            library_path.append(os.path.join(basepath, 'tbb', 'lib',
+                                             'intel64', 'gcc4.7'))
+
+        if cpath:
+            cpath.append('$CPATH')
+            env['CPATH'] = ':'.join(cpath)
+
+        if library_path:
+            library_path.append('$LIBRARY_PATH')
+            env['LIBRARY_PATH'] = ':'.join(library_path)
+
+        if ld_library_path:
+            ld_library_path.append('$LD_LIBRARY_PATH')
+            env['LD_LIBRARY_PATH'] = ':'.join(ld_library_path)
+
+        if path:
+            path.append('$PATH')
+            env['PATH'] = ':'.join(path)
+
+        return env
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -159,10 +343,10 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
             directory=(self.__wd)))
 
         # Configure silent install
-        silent_cfg=[r's/^#\?\(COMPONENTS\)=.*/\1={}/g'.format(
-            ';'.join(self.__components)),
-                    r's|^#\?\(PSET_INSTALL_DIR\)=.*|\1={}|g'.format(
-                        self.__prefix)]
+        silent_cfg=[
+            r's/^#\?\(COMPONENTS\)=.*/\1={}/g'.format(
+                ';'.join(self.__components)),
+            r's|^#\?\(PSET_INSTALL_DIR\)=.*|\1={}|g'.format(self.__prefix)]
 
         # EULA acceptance
         if self.__eula:
@@ -191,15 +375,6 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
             'cd {} && ./install.sh --silent=silent.cfg'.format(
                 os.path.join(self.__wd, basedir)))
 
-        # Extract the redistributable runtime libraries so they can be
-        # copied later into the runtime container layer.  Docker
-        # cannot handle the combination of symlink directories and
-        # wildcards, so cannot copy this directly from
-        # /opt/intel/lib/intel64.
-        self.__commands.append('mkdir -p {0} && cp -a {1} {0}'.format(
-            os.path.join(self.__wd, 'intel_psxe_runtime'),
-            os.path.join(self.__prefix, 'lib', 'intel64', '*.so*')))
-
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
             items=[os.path.join(self.__wd, self.__tarball_name),
@@ -207,13 +382,12 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""
-        instructions = []
-        instructions.append(comment('Intel Parallel Studio XE'))
-        instructions.append(
-            copy(_from=_from,
-                 src=os.path.join(self.__wd, 'intel_psxe_runtime/*'),
-                 dest=os.path.join(self.__prefix, 'lib', 'intel64', '')))
-        instructions.append(environment(
-            variables={'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                os.path.join(self.__prefix, 'lib', 'intel64'))}))
-        return '\n'.join(str(x) for x in instructions)
+        return str(intel_psxe_runtime(daal=self.__daal,
+                                      eula=self.__eula,
+                                      icc=self.__icc,
+                                      ifort=self.__ifort,
+                                      ipp=self.__ipp,
+                                      mkl=self.__mkl,
+                                      mpi=self.__mpi,
+                                      tbb=self.__tbb,
+                                      version=self.__runtime_version))
