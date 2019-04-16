@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import docker, invalid_ctype, singularity, singularity26, singularity32
 
 from hpccm.primitives.copy import copy
 
@@ -86,11 +86,17 @@ class Test_copy(unittest.TestCase):
         c = copy(src='a', dest='b', _from='dev')
         self.assertEqual(str(c), 'COPY --from=dev a b')
 
-    @singularity
-    def test_from_singularity(self):
-        """Docker --from syntax"""
+    @singularity26
+    def test_from_singularity26(self):
+        """Singularity from syntax"""
         c = copy(src='a', dest='b', _from='dev')
         self.assertEqual(str(c), '%files\n    a b')
+
+    @singularity32
+    def test_from_singularity32(self):
+        """Singularity from syntax"""
+        c = copy(src='a', dest='b', _from='dev')
+        self.assertEqual(str(c), '%files from dev\n    a b')
 
     @singularity
     def test_appfiles_multiple_singularity(self):

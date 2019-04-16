@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging  # pylint: disable=unused-import
 import os
 
@@ -167,14 +168,13 @@ class copy(object):
             #     src1 dest1
             #     src2 dest2
             #     src3 dest3
-            if self.__from:
-                logging.warning('The Docker specific "COPY --from" '
-                                'syntax was requested.  Singularity does '
-                                'not have an equivalent, so this is '
-                                'probably not going to do what you want.')
-
             section = '%files'
+            if (self.__from and
+                hpccm.config.g_singularity_version >= StrictVersion('3.2')):
+                section = section + ' from {}'.format(self.__from)
+
             if self._app:
+                # SCIF appfiles does not support "from"
                 section = '%appfiles {0}'.format(self._app)
 
             # Singularity will error if the destination does not

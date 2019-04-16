@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from six import raise_from
 
+from distutils.version import StrictVersion
 import logging
 
 import hpccm
@@ -83,7 +84,7 @@ from hpccm.building_blocks.xpmem import xpmem
 from hpccm.building_blocks.yum import yum
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
-           single_stage=False, userarg=None):
+           single_stage=False, singularity_version='2.6', userarg=None):
     """Recipe builder
 
     # Arguments
@@ -98,6 +99,11 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
 
     single_stage: If True, only print the first stage of a multi-stage
     recipe.  The default is False.
+
+    singularity_version: Version of the Singularity definition file
+    format to use.  Multi-stage support was added in version 3.2, but
+    the changes are incompatible with earlier versions of Singularity.
+    The default is '2.6'.
 
     userarg: A dictionary of key / value pairs provided to the recipe
     as the `USERARG` dictionary.
@@ -117,6 +123,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     # Set the global container type
     hpccm.config.g_ctype = ctype
 
+    # Set the global Singularity version
+    hpccm.config.g_singularity_version = StrictVersion(singularity_version)
+
     try:
         with open(recipe_file) as f:
             # pylint: disable=exec-used
@@ -133,14 +142,20 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     if single_stage:
         del stages[1:]
     else:
-        # Singularity does not support multi-stage builds.  Ignore
-        # anything beyond the first stage.
         if ctype == container_type.SINGULARITY and len(Stage1) > 0:
-            logging.warning('This looks like a multi-stage recipe, but '
-                            'Singularity does not support multi-stage builds. '
-                            'Use --single-stage to get rid of this warning. '
-                            'Only processing the first stage...')
-            del stages[1:]
+            # Singularity prior to version 3.2 did not support
+            # multi-stage builds.  If the Singularity version is not
+            # sufficient to support multi-stage, provide advice to
+            # specific a sufficient Singularity version or disable
+            # multi-stage.
+            if hpccm.config.g_singularity_version < StrictVersion('3.2'):
+                logging.warning('This looks like a multi-stage recipe. '
+                                'Singularity 3.2 or later is required for '
+                                'multi-stage builds.  Use '
+                                '--singularity-version=3.2 to enable this '
+                                'feature or --single-stage to get rid of this '
+                                'warning.  Only processing the first stage...')
+                del stages[1:]
 
     r = []
     for index, stage in enumerate(stages):

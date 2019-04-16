@@ -34,9 +34,25 @@ __Arguments__
 `ubuntu18`.  `ubuntu` is an alias for `ubuntu16` and `centos` is an
 alias for `centos7`.
 
+## set_singularity_version
+```python
+set_singularity_version(ver)
+```
+Set the Singularity definition file format version
+
+The Singularity definition file format was extended in version 3.2
+to enable multi-stage builds.  However, these changes are not
+backwards compatible.
+
+__Arguments__
+
+
+- __ver (string)__: Singularity definition file format version.
+
+
 # recipe
 ```python
-recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, userarg=None)
+recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None)
 ```
 Recipe builder
 
@@ -53,6 +69,11 @@ exception is raised.  The default value is False.
 
 - __single_stage__: If True, only print the first stage of a multi-stage
 recipe.  The default is False.
+
+- __singularity_version__: Version of the Singularity definition file
+format to use.  Multi-stage support was added in version 3.2, but
+the changes are incompatible with earlier versions of Singularity.
+The default is '2.6'.
 
 - __userarg__: A dictionary of key / value pairs provided to the recipe
 as the `USERARG` dictionary.

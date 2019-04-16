@@ -88,3 +88,10 @@ class Test_config(unittest.TestCase):
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+
+    @singularity
+    def test_set_singularity_version(self):
+        """Set Singularity version"""
+        hpccm.config.set_singularity_version('10.0')
+        self.assertEqual(hpccm.config.g_singularity_version,
+                         StrictVersion('10.0'))

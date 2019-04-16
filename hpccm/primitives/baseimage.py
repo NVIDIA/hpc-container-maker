@@ -27,6 +27,7 @@ import re
 import hpccm.config
 
 from hpccm.common import container_type, linux_distro
+from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
 class baseimage(object):
@@ -34,8 +35,9 @@ class baseimage(object):
 
     # Parameters
 
-    _as: Name for the build stage (Docker specific).  The default
-    value is empty.
+    _as: Name for the stage.  When using Singularity multi-stage
+    recipes, this value must be specified.  The default value is
+    empty.
 
     _distro: The underlying Linux distribution of the base image.
     Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,
@@ -67,11 +69,11 @@ class baseimage(object):
 
         #super(baseimage, self).__init__()
 
-        self.__as = kwargs.get('AS', '') # Docker specific
-        self.__as = kwargs.get('_as', self.__as) # Docker specific
+        self.__as = kwargs.get('AS', '') # Deprecated
+        self.__as = kwargs.get('_as', self.__as)
         self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
         self.__distro = kwargs.get('_distro', '')
-        self.__docker_env = kwargs.get('_docker_env', True)
+        self.__docker_env = kwargs.get('_docker_env', True) # Singularity specific
 
         # Set the global Linux distribution.  Use the user specified
         # value if available, otherwise try to figure it out based on
@@ -109,6 +111,12 @@ class baseimage(object):
             return image
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
             image = 'BootStrap: docker\nFrom: {}'.format(self.image)
+
+            if (self.__as and
+                hpccm.config.g_singularity_version >= StrictVersion('3.2')):
+                image = image + '\nStage: {}'.format(self.__as)
+
+                image = str(comment('NOTE: this definition file depends on features only available in Singularity 3.2 and later.')) + '\n' + image
 
             # Singularity does not inherit the environment from the
             # Docker base image automatically.  Do it manually.

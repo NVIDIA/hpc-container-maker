@@ -53,6 +53,8 @@ def main(): # pragma: no cover
                         'recipe')
     parser.add_argument('--recipe', required=True,
                         help='generate a container spec for the RECIPE file')
+    parser.add_argument('--singularity-version', type=str, default='2.6',
+                        help='set Singularity definition file format version')
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
                         nargs='+', help='specify user parameters')
     parser.add_argument('--version', action='version', version=__version__)
@@ -65,6 +67,7 @@ def main(): # pragma: no cover
                           ctype=hpccm.container_type[args.format.upper()],
                           raise_exceptions=args.print_exceptions,
                           single_stage=args.single_stage,
+                          singularity_version=args.singularity_version,
                           userarg=args.userarg)
     print(recipe)
 
