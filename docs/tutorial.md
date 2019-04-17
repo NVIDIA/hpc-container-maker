@@ -44,7 +44,7 @@ recipe is:
 Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
 ```
 
-_Note_: `Stage0` refers to the first stage of a [multi-stage Docker
+_Note_: `Stage0` refers to the first stage of a [multi-stage
 build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
 size of container images.  This tutorial section will not use
@@ -203,7 +203,7 @@ Stage0 += mlnx_ofed()
 Stage0 += openmpi(cuda=False)
 ```
 
-_Note_: `Stage0` refers to the first stage of a [multi-stage Docker
+_Note_: `Stage0` refers to the first stage of a [multi-stage
 build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
 size of container images.  This tutorial section will not use
@@ -243,7 +243,7 @@ Stage0 += shell(commands=[
 
 _Note_: In a production container image, a cleanup step would
 typically also be performed to remove the source code and any other
-build artifacts.  That step is skipped here.  [Multi-stage Docker
+build artifacts.  That step is skipped here.  [Multi-stage
 builds](https://docs.docker.com/develop/develop-images/multistage-build/)
 are another approach that separates the application build process from
 the application deployment.
@@ -390,7 +390,7 @@ surface of this powerful HPCCM capability.
 
 ## Multi-stage Recipes
 
-[Multi-stage Docker
+[Multi-stage
 builds](https://docs.docker.com/develop/develop-images/multistage-build/)
 are a very useful capability that separates the application build step
 from the deployment step.  The development toolchain, application
@@ -435,10 +435,33 @@ milc:multi-stage: 429MB
 milc:single-stage: 5.93GB
 ```
 
-The Singularity definition file format and image builder do not
-support multi-stage builds.  However, Docker images can be easily
-converted to Singularity images so Singularity can also (indirectly)
-take advantage of multi-stage builds.
+Singularity version 3.2 and later supports multi-stage Singularity
+definition files.  However, the multi-stage definition file syntax is
+incompatible with earlier versions of Singularity.  Use the HPCCM
+`--singularity-version <version>` command line option to specify the
+Singularity definition file version to generate.  A `version` of 3.2
+or later will generate a multi-stage definition file that will only
+build with Singularity version 3.2 or later.  A `version` less than
+3.2 will generate a portable definition file that works with any
+version of Singularity, but will not support multi-stage builds.
+
+```
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
+$ hpccm --recipe milc.py --format singularity --single-stage > Singularity.single-stage
+$ sudo singularity build milc-single-stage.sif Singularity.single-stage
+
+$ hpccm --recipe milc.py --format singularity --singularity-version 3.2 > Singularity.multi-stage
+$ sudo singularity build milc-multi-stage.sif Singularity.multi-stage
+
+$ ls -1sh milc*.sif
+143M milc-multi-stage.sif
+2.4G milc-single-stage.sif
+```
+
+If Singularity version 3.2 or later is not an option, Docker images
+can be easily converted to Singularity images so older versions of
+Singularity can also (indirectly) take advantage of multi-stage
+builds.
 
 ```
 $ sudo docker run -t --rm --cap-add SYS_ADMIN -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity milc:multi-stage

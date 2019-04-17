@@ -146,7 +146,7 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
             # Singularity prior to version 3.2 did not support
             # multi-stage builds.  If the Singularity version is not
             # sufficient to support multi-stage, provide advice to
-            # specific a sufficient Singularity version or disable
+            # specify a sufficient Singularity version or disable
             # multi-stage.
             if hpccm.config.g_singularity_version < StrictVersion('3.2'):
                 logging.warning('This looks like a multi-stage recipe. '
