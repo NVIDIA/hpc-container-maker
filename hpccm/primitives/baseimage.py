@@ -127,5 +127,7 @@ class baseimage(object):
                 image = image + '\n' + str(docker_env)
 
             return image
+        elif hpccm.config.g_ctype == container_type.BASH:
+            return '#!/bin/bash -ex'
         else:
             raise RuntimeError('Unknown container type')

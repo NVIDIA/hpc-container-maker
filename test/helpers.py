@@ -26,6 +26,14 @@ import hpccm.config
 
 from hpccm.common import container_type, linux_distro
 
+def bash(function):
+    """Decorator to set the global container type to bash"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_ctype = container_type.BASH
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def centos(function):
     """Decorator to set the Linux distribution to CentOS 7"""
     def wrapper(*args, **kwargs):

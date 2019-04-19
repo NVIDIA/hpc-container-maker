@@ -141,21 +141,27 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     # Only process the first stage of a recipe
     if single_stage:
         del stages[1:]
-    else:
-        if ctype == container_type.SINGULARITY and len(Stage1) > 0:
+    elif len(Stage1) > 0:
+        if (ctype == container_type.SINGULARITY and
+            hpccm.config.g_singularity_version < StrictVersion('3.2')):
             # Singularity prior to version 3.2 did not support
             # multi-stage builds.  If the Singularity version is not
             # sufficient to support multi-stage, provide advice to
             # specify a sufficient Singularity version or disable
             # multi-stage.
-            if hpccm.config.g_singularity_version < StrictVersion('3.2'):
-                logging.warning('This looks like a multi-stage recipe. '
-                                'Singularity 3.2 or later is required for '
-                                'multi-stage builds.  Use '
-                                '--singularity-version=3.2 to enable this '
-                                'feature or --single-stage to get rid of this '
-                                'warning.  Only processing the first stage...')
-                del stages[1:]
+            logging.warning('This looks like a multi-stage recipe. '
+                            'Singularity 3.2 or later is required for '
+                            'multi-stage builds.  Use '
+                            '--singularity-version=3.2 to enable this '
+                            'feature or --single-stage to get rid of this '
+                            'warning.  Only processing the first stage...')
+            del stages[1:]
+        elif ctype == container_type.BASH:
+            logging.warning('This looks like a multi-stage recipe, but '
+                            'bash does not support multi-stage builds. '
+                            'Use --single-stage to get rid of this warning. '
+                            'Only processing the first stage...')
+            del stages[1:]
 
     r = []
     for index, stage in enumerate(stages):

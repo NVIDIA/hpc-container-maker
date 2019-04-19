@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.raw import raw
 
@@ -79,3 +79,9 @@ class Test_raw(unittest.TestCase):
         """Both Docker and Singularity strings specified"""
         r = raw(docker='RAW string', singularity='%raw\n    string')
         self.assertEqual(str(r), '%raw\n    string')
+
+    @bash
+    def test_all_bash(self):
+        """Both Docker and Singularity strings specified"""
+        r = raw(docker='RAW string', singularity='%raw\n    string')
+        self.assertEqual(str(r), '')

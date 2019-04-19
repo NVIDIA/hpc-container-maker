@@ -23,7 +23,7 @@ import logging # pylint: disable=unused-import
 import os
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.blob import blob
 
@@ -106,3 +106,11 @@ class Test_blob(unittest.TestCase):
 %post
     bar
 ''')
+
+    @bash
+    def test_all_bash(self):
+        """Both Docker and Singularity blobs specified"""
+        path = os.path.dirname(__file__)
+        b = blob(docker=os.path.join(path, 'docker.blob'),
+                 singularity=os.path.join(path, 'singularity.blob'))
+        self.assertEqual(str(b), '')

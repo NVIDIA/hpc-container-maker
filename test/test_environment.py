@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.environment import environment
 
@@ -56,6 +56,12 @@ class Test_environment(unittest.TestCase):
         e = environment(variables={'A': 'B'}, _export=False)
         self.assertEqual(str(e), '%environment\n    export A=B')
 
+    @bash
+    def test_single_bash(self):
+        """Single environment variable specified"""
+        e = environment(variables={'A': 'B'}, _export=False)
+        self.assertEqual(str(e), 'export A=B')
+
     @docker
     def test_single_export_docker(self):
         """Single environment variable specified"""
@@ -68,6 +74,12 @@ class Test_environment(unittest.TestCase):
         e = environment(variables={'A': 'B'})
         self.assertEqual(str(e),
                          '%environment\n    export A=B\n%post\n    export A=B')
+
+    @bash
+    def test_single_export_bash(self):
+        """Single environment variable specified"""
+        e = environment(variables={'A': 'B'})
+        self.assertEqual(str(e), 'export A=B')
 
     @docker
     def test_multiple_docker(self):
@@ -89,6 +101,16 @@ class Test_environment(unittest.TestCase):
     export ONE=1
     export THREE=3
     export TWO=2''')
+
+    @bash
+    def test_multiple_bash(self):
+        """Multiple environment variables specified"""
+        e = environment(variables={'ONE': 1, 'TWO': 2, 'THREE': 3},
+                        _export=False)
+        self.assertEqual(str(e),
+'''export ONE=1
+export THREE=3
+export TWO=2''')
 
     @singularity
     def test_appenv_multiple_singularity(self):

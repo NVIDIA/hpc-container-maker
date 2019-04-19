@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity, singularity26, singularity32
+from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32
 
 from distutils.version import StrictVersion
 import hpccm.config
@@ -69,6 +69,12 @@ r'''BootStrap: docker
 From: foo
 %post
     . /.singularity.d/env/10-docker*.sh''')
+
+    @bash
+    def test_value_bash(self):
+        """Image name is specified"""
+        b = baseimage(image='foo')
+        self.assertEqual(str(b), '#!/bin/bash -ex')
 
     @singularity
     def test_false_docker_env_singularity(self):

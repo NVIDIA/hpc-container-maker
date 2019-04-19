@@ -907,9 +907,10 @@ However, the environment may differ slightly from that set by
 
 - __ospackages__: List of OS packages to install prior to installing
 Intel MPI.  For Ubuntu, the default values are
-`apt-transport-https`, `ca-certificates`, `gnupg`, `man-db`,
-`openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-the default values are `man-db`, `openssh-clients`, and `which`.
+`apt-transport-https`, `ca-certificates`, `gcc`, `gnupg`,
+`man-db`, `openssh-client`, and `wget`.  For RHEL-based Linux
+distributions, the default values are `man-db`, `openssh-clients`,
+and `which`.
 
 - __version__: The version of the Intel Parallel Studio XE runtime to
 install.  Due to issues in the Intel apt / yum repositories, only

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.shell import shell
 
@@ -58,6 +58,13 @@ class Test_shell(unittest.TestCase):
         s = shell(commands=cmd)
         self.assertEqual(str(s), '%post\n    cd /\n    z')
 
+    @bash
+    def test_single_bash(self):
+        """Single command specified"""
+        cmd = ['z']
+        s = shell(commands=cmd)
+        self.assertEqual(str(s), 'cd /\nz')
+
     @docker
     def test_nochdir_docker(self):
         """chdir disable"""
@@ -72,6 +79,13 @@ class Test_shell(unittest.TestCase):
         s = shell(chdir=False, commands=cmd)
         self.assertEqual(str(s), '%post\n    z')
 
+    @bash
+    def test_nochdir_bash(self):
+        """chdir disable"""
+        cmd = ['z']
+        s = shell(chdir=False, commands=cmd)
+        self.assertEqual(str(s), 'z')
+
     @docker
     def test_multiple_docker(self):
         """List of commands specified"""
@@ -85,6 +99,13 @@ class Test_shell(unittest.TestCase):
         cmds = ['a', 'b', 'c']
         s = shell(commands=cmds)
         self.assertEqual(str(s), '%post\n    cd /\n    a\n    b\n    c')
+
+    @bash
+    def test_multiple_bash(self):
+        """List of commands specified"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds)
+        self.assertEqual(str(s), 'cd /\na\nb\nc')
 
     @singularity
     def test_appinstall_multiple_singularity(self):

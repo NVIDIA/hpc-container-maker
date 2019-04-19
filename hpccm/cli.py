@@ -44,7 +44,7 @@ def main(): # pragma: no cover
     parser = argparse.ArgumentParser(description='HPC Container Maker')
     parser.add_argument('--format', type=str, default='docker',
                         choices=[i.name.lower() for i in hpccm.container_type],
-                        help='select container format')
+                        help='select output format')
     parser.add_argument('--print-exceptions', action='store_true',
                         default=False,
                         help='print exceptions (stack traces)')

@@ -115,6 +115,8 @@ class environment(object):
                     environ.extend(['    export {}'.format(x)
                                     for x in keyvals])
                 return '\n'.join(environ)
+            elif hpccm.config.g_ctype == container_type.BASH:
+                return '\n'.join(['export {}'.format(x) for x in keyvals])
             else:
                 raise RuntimeError('Unknown container type')
         else:

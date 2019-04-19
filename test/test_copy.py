@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity, singularity26, singularity32
+from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32
 
 from hpccm.primitives.copy import copy
 
@@ -55,6 +55,12 @@ class Test_copy(unittest.TestCase):
         """Single source file specified"""
         c = copy(src='a', dest='b')
         self.assertEqual(str(c), '%files\n    a b')
+
+    @bash
+    def test_single_bash(self):
+        """Single source file specified"""
+        c = copy(src='a', dest='b')
+        self.assertEqual(str(c), '')
 
     @docker
     def test_multiple_docker(self):

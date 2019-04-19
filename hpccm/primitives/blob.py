@@ -68,6 +68,8 @@ class blob(object):
             return self.__read_blob(self.__docker)
         if hpccm.config.g_ctype == container_type.SINGULARITY:
             return self.__read_blob(self.__singularity)
+        elif hpccm.config.g_ctype == container_type.BASH:
+            return ''
         else:
             raise RuntimeError('Unknown container type')
 

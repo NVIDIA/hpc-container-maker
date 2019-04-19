@@ -50,6 +50,7 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gcc \
         gnupg \
         man-db \
         openssh-client \
@@ -74,6 +75,7 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        gcc \
         gnupg \
         man-db \
         openssh-client \

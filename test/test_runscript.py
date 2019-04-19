@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.runscript import runscript
 
@@ -110,3 +110,10 @@ class Test_runscript(unittest.TestCase):
         r.append(runscript(commands=['c']))
         merged = r[0].merge(r)
         self.assertEqual(str(merged), '%runscript\n    a\n    b\n    exec c')
+
+    @bash
+    def test_bash(self):
+        """Single command specified"""
+        cmd = ['z']
+        s = runscript(commands=cmd)
+        self.assertEqual(str(s), '')
