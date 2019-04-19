@@ -94,9 +94,10 @@ class intel_psxe_runtime(bb_base):
 
     ospackages: List of OS packages to install prior to installing
     Intel MPI.  For Ubuntu, the default values are
-    `apt-transport-https`, `ca-certificates`, `gnupg`, `man-db`,
-    `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-    the default values are `man-db`, `openssh-clients`, and `which`.
+    `apt-transport-https`, `ca-certificates`, `gcc`, `gnupg`,
+    `man-db`, `openssh-client`, and `wget`.  For RHEL-based Linux
+    distributions, the default values are `man-db`, `openssh-clients`,
+    and `which`.
 
     version: The version of the Intel Parallel Studio XE runtime to
     install.  Due to issues in the Intel apt / yum repositories, only
@@ -191,8 +192,8 @@ class intel_psxe_runtime(bb_base):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
-                                     'gnupg', 'man-db', 'openssh-client',
-                                     'wget']
+                                     'gcc', 'gnupg', 'man-db',
+                                     'openssh-client', 'wget']
 
             self.__bashrc = '/etc/bash.bashrc'
 
