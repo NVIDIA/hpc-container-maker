@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.label import label
 
@@ -55,6 +55,12 @@ class Test_label(unittest.TestCase):
         """Single label specified"""
         l = label(metadata={'A': 'B'})
         self.assertEqual(str(l), '%labels\n    A B')
+
+    @bash
+    def test_single_bash(self):
+        """Single label specified"""
+        l = label(metadata={'A': 'B'})
+        self.assertEqual(str(l), '')
 
     @docker
     def test_multiple_docker(self):

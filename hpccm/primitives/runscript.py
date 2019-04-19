@@ -110,6 +110,9 @@ class runscript(object):
                     s = ['%runscript']
                 s.extend(['    {}'.format(x) for x in self.commands])
                 return '\n'.join(s)
+            elif hpccm.config.g_ctype == container_type.BASH:
+                logging.warning('runscript primitive does not map into bash')
+                return ''
             else:
                 raise RuntimeError('Unknown container type')
         else:

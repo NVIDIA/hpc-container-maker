@@ -157,7 +157,7 @@ class copy(object):
 
             return '\n'.join(instructions)
 
-        if hpccm.config.g_ctype == container_type.SINGULARITY:
+        elif hpccm.config.g_ctype == container_type.SINGULARITY:
             # Format:
             # %files
             #     src1 dest
@@ -228,6 +228,9 @@ class copy(object):
 
             return s
 
+        elif hpccm.config.g_ctype == container_type.BASH:
+            logging.warning('copy primitive does not map into bash')
+            return ''
         else:
             raise RuntimeError('Unknown container type')
 

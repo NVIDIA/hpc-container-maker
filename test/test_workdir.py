@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity
 
 from hpccm.primitives.workdir import workdir
 
@@ -55,3 +55,9 @@ class Test_workdir(unittest.TestCase):
         """Working directory specified"""
         w = workdir(directory='foo')
         self.assertEqual(str(w), '%post\n    cd /\n    mkdir -p foo\n    cd foo')
+
+    @bash
+    def test_dir_bash(self):
+        """Working directory specified"""
+        w = workdir(directory='foo')
+        self.assertEqual(str(w), '')

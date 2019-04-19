@@ -59,6 +59,9 @@ class workdir(object):
                 s = shell(commands=['mkdir -p {}'.format(self.directory),
                                     'cd {}'.format(self.directory)])
                 return str(s)
+            elif hpccm.config.g_ctype == container_type.BASH:
+                logging.warning('workdir primitive does not map into bash')
+                return ''
             else:
                 raise RuntimeError('Unknown container type')
         else:

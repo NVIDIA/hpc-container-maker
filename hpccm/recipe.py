@@ -135,9 +135,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     else:
         # Singularity does not support multi-stage builds.  Ignore
         # anything beyond the first stage.
-        if ctype == container_type.SINGULARITY and len(Stage1) > 0:
+        if ctype != container_type.DOCKER and len(Stage1) > 0:
             logging.warning('This looks like a multi-stage recipe, but '
-                            'Singularity does not support multi-stage builds. '
+                            'only Docker supports multi-stage builds. '
                             'Use --single-stage to get rid of this warning. '
                             'Only processing the first stage...')
             del stages[1:]
