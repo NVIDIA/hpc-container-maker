@@ -99,7 +99,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     version: The version of the PGI compiler to use.  Note this value
     is currently only used when setting the environment and does not
     control the version of the compiler downloaded.  The default value
-    is `18.10`.
+    is `19.4`.
 
     # Examples
 
@@ -143,10 +143,11 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '18.10')
+        self.__version = kwargs.get('version', '19.4')
         self.__wd = '/var/tmp' # working directory
 
         self.__basepath = os.path.join(self.__prefix, 'linux86-64')
+        self.__basepath_llvm = os.path.join(self.__prefix, 'linux86-64-llvm')
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
@@ -208,6 +209,8 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         pgi_path = os.path.join(self.__basepath, self.__version)
         mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi')
+        if LooseVersion(self.__version) >= LooseVersion('19.4'):
+            mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi-3.1.3')
 
         if runtime:
             # Runtime environment
@@ -377,14 +380,20 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         """
         instructions = []
         instructions.append(comment('PGI compiler'))
+
         if self.__runtime_ospackages:
             instructions.append(packages(ospackages=self.__runtime_ospackages))
+
+        pgi_path = os.path.join(self.__basepath, self.__version)
+        src_path = pgi_path
+        if LooseVersion(self.__version) >= LooseVersion('19.4'):
+            # Too many levels of symlinks for the Docker builder to
+            # handle, so use the real path
+            src_path = os.path.join(self.__basepath_llvm, self.__version)
         instructions.append(copy(_from=_from,
-                                 src=os.path.join(self.__basepath,
-                                                  self.__version,
+                                 src=os.path.join(src_path,
                                                   'REDIST', '*.so*'),
-                                 dest=os.path.join(self.__basepath,
-                                                   self.__version,
+                                 dest=os.path.join(pgi_path,
                                                    'lib', '')))
 
         # REDIST workaround for incorrect libcudaforwrapblas.so
@@ -392,19 +401,18 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if LooseVersion(self.__version) >= LooseVersion('18.10'):
             instructions.append(
                 copy(_from=_from,
-                     src=os.path.join(self.__basepath, self.__version,
-                                      'lib', 'libcudaforwrapblas.so'),
-                     dest=os.path.join(self.__basepath, self.__version,
-                                       'lib', 'libcudaforwrapblas.so')))
+                     src=os.path.join(pgi_path, 'lib',
+                                      'libcudaforwrapblas.so'),
+                     dest=os.path.join(pgi_path, 'lib',
+                                       'libcudaforwrapblas.so')))
 
         if self.__mpi:
+            mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi')
+            if LooseVersion(self.__version) >= LooseVersion('19.4'):
+                mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi-3.1.3')
             instructions.append(copy(_from=_from,
-                                     src=os.path.join(self.__basepath,
-                                                      self.__version,
-                                                      'mpi', 'openmpi'),
-                                     dest=os.path.join(self.__basepath,
-                                                       self.__version,
-                                                       'mpi', 'openmpi')))
+                                     src=mpi_path, dest=mpi_path))
+
         if self.__runtime_commands:
             instructions.append(shell(commands=self.__runtime_commands))
 

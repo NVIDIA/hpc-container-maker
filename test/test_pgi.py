@@ -37,7 +37,7 @@ class Test_pgi(unittest.TestCase):
         """Default pgi building block"""
         p = pgi()
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -49,14 +49,14 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @centos
     @docker
@@ -64,7 +64,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         """Default pgi building block"""
         p = pgi()
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN yum install -y \
         gcc \
         gcc-c++ \
@@ -75,14 +75,14 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=decline PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=false ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -90,7 +90,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         """Accept EULA"""
         p = pgi(eula=True)
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -102,14 +102,14 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -165,12 +165,12 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
-    def test_tarball_leading_zero(self):
+    def test_tarball_no_leading_zero(self):
         """tarball"""
-        p = pgi(eula=True, tarball='pgilinux-2018-1804-x86_64.tar.gz')
+        p = pgi(eula=True, tarball='pgilinux-2018-184-x86_64.tar.gz')
         self.assertEqual(str(p),
 r'''# PGI compiler version 18.4
-COPY pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
+COPY pgilinux-2018-184-x86_64.tar.gz /var/tmp/pgilinux-2018-184-x86_64.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -178,14 +178,14 @@ RUN apt-get update -y && \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-1804-x86_64.tar.gz -C /var/tmp/pgi -z && \
+RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-184-x86_64.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
     echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.4/bin/siterc && \
     ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so && \
     ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.4/lib/libnuma.so.1 && \
-    rm -rf /var/tmp/pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgi
+    rm -rf /var/tmp/pgilinux-2018-184-x86_64.tar.gz /var/tmp/pgi
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
@@ -195,7 +195,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
         """System CUDA"""
         p = pgi(eula=True, system_cuda=True)
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -207,15 +207,15 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=false PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
-    echo "set CUDAROOT=/usr/local/cuda;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "set CUDAROOT=/usr/local/cuda;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -223,7 +223,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
         """System CUDA"""
         p = pgi(eula=True, mpi=True)
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -236,14 +236,14 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=true PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=true PGI_SILENT=true ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/bin:/opt/pgi/linux86-64/18.10/bin:$PATH''')
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib:/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/bin:/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -251,7 +251,7 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-6
         """Extended environment without MPI"""
         p = pgi(eula=True, extended_environment=True, mpi=False)
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -263,21 +263,21 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
-    CPP="/opt/pgi/linux86-64/18.10/bin/pgcc -Mcpp" \
-    CXX=/opt/pgi/linux86-64/18.10/bin/pgc++ \
-    F77=/opt/pgi/linux86-64/18.10/bin/pgf77 \
-    F90=/opt/pgi/linux86-64/18.10/bin/pgf90 \
-    FC=/opt/pgi/linux86-64/18.10/bin/pgfortran \
-    LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
+ENV CC=/opt/pgi/linux86-64/19.4/bin/pgcc \
+    CPP="/opt/pgi/linux86-64/19.4/bin/pgcc -Mcpp" \
+    CXX=/opt/pgi/linux86-64/19.4/bin/pgc++ \
+    F77=/opt/pgi/linux86-64/19.4/bin/pgf77 \
+    F90=/opt/pgi/linux86-64/19.4/bin/pgf90 \
+    FC=/opt/pgi/linux86-64/19.4/bin/pgfortran \
+    LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     MODULEPATH=/opt/pgi/modulefiles:$MODULEPATH \
-    PATH=/opt/pgi/linux86-64/18.10/bin:$PATH''')
+    PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -285,7 +285,7 @@ ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
         """Extended environment with MPI"""
         p = pgi(eula=True, extended_environment=True, mpi=True)
         self.assertEqual(str(p),
-r'''# PGI compiler version 18.10
+r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gcc \
@@ -298,23 +298,23 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
     mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-x64-latest.tar.gz -C /var/tmp/pgi -z && \
     cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=true PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=true PGI_SILENT=true ./install && \
-    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/18.10/bin/siterc && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1 && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linux86-64/19.4/bin/siterc && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1 && \
     rm -rf /var/tmp/pgi-community-linux-x64-latest.tar.gz /var/tmp/pgi
-ENV CC=/opt/pgi/linux86-64/18.10/bin/pgcc \
-    CPP="/opt/pgi/linux86-64/18.10/bin/pgcc -Mcpp" \
-    CXX=/opt/pgi/linux86-64/18.10/bin/pgc++ \
-    F77=/opt/pgi/linux86-64/18.10/bin/pgf77 \
-    F90=/opt/pgi/linux86-64/18.10/bin/pgf90 \
-    FC=/opt/pgi/linux86-64/18.10/bin/pgfortran \
-    LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
+ENV CC=/opt/pgi/linux86-64/19.4/bin/pgcc \
+    CPP="/opt/pgi/linux86-64/19.4/bin/pgcc -Mcpp" \
+    CXX=/opt/pgi/linux86-64/19.4/bin/pgc++ \
+    F77=/opt/pgi/linux86-64/19.4/bin/pgf77 \
+    F90=/opt/pgi/linux86-64/19.4/bin/pgf90 \
+    FC=/opt/pgi/linux86-64/19.4/bin/pgfortran \
+    LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib:/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     MODULEPATH=/opt/pgi/modulefiles:$MODULEPATH \
-    PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/bin:/opt/pgi/linux86-64/18.10/bin:$PATH \
-    PGI_OPTL_INCLUDE_DIRS=/opt/pgi/linux86-64/18.10/mpi/openmpi/include \
-    PGI_OPTL_LIB_DIRS=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib''')
+    PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/bin:/opt/pgi/linux86-64/19.4/bin:$PATH \
+    PGI_OPTL_INCLUDE_DIRS=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/include \
+    PGI_OPTL_LIB_DIRS=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib''')
 
     @ubuntu
     @docker
@@ -328,11 +328,11 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
-RUN ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH''')
+COPY --from=0 /opt/pgi/linux86-64-llvm/19.4/REDIST/*.so* /opt/pgi/linux86-64/19.4/lib/
+COPY --from=0 /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH''')
 
     @centos
     @docker
@@ -345,11 +345,11 @@ r'''# PGI compiler
 RUN yum install -y \
         numactl-libs && \
     rm -rf /var/cache/yum/*
-COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
-RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH''')
+COPY --from=0 /opt/pgi/linux86-64-llvm/19.4/REDIST/*.so* /opt/pgi/linux86-64/19.4/lib/
+COPY --from=0 /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so
+RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH''')
 
     @centos
     @docker
@@ -363,13 +363,13 @@ RUN yum install -y \
         numactl-libs \
         openssh-clients && \
     rm -rf /var/cache/yum/*
-COPY --from=0 /opt/pgi/linux86-64/18.10/REDIST/*.so* /opt/pgi/linux86-64/18.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/18.10/lib/libcudaforwrapblas.so
-COPY --from=0 /opt/pgi/linux86-64/18.10/mpi/openmpi /opt/pgi/linux86-64/18.10/mpi/openmpi
-RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so && \
-    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/18.10/lib/libnuma.so.1
-ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/lib:/opt/pgi/linux86-64/18.10/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/pgi/linux86-64/18.10/mpi/openmpi/bin:$PATH''')
+COPY --from=0 /opt/pgi/linux86-64-llvm/19.4/REDIST/*.so* /opt/pgi/linux86-64/19.4/lib/
+COPY --from=0 /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.4/lib/libcudaforwrapblas.so
+COPY --from=0 /opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3 /opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3
+RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1
+ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib:/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/bin:$PATH''')
 
     def test_toolchain(self):
         """Toolchain"""
