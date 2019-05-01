@@ -1,3 +1,17 @@
+# v19.4.0
+
+- Adds Intel Parallel Studio XE runtime (`intel_psxe_runtime`) and SENSEI
+  (`sensei`) building blocks
+- Updates and enhacements to the Intel Parallel Studio XE (`intel_psxe`)
+  and PGI (`pgi`) building blocks
+- Refresh default component versions for the MVAPICH2-GDR (`mvapich2_gdr`)
+  and PGI (`pgi`) building blocks
+- Enhance the Mellanox OFED (`mlnx_ofed`) building block to support
+  installing multiple versions in the same container image
+- Fix issue with setting the environment when using Docker images as
+  Singularity base images
+- Adds support for bash script output format
+
 # v19.3.0
 
 - Adds Scientific Filesystem (`scif`) and VisIt/Libsim (`libsim`)
