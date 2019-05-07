@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import os
 
+import hpccm.config
 import hpccm.templates.ConfigureMake
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -32,6 +33,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -99,6 +101,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__check = kwargs.get('check', False)
         self.__ospackages = kwargs.get('ospackages', ['m4', 'make', 'tar',
                                                       'wget'])
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain',
                                       toolchain(CC='mpicc', CXX='mpicxx',
                                                 F77='mpif77', F90='mpif90',
@@ -109,6 +112,9 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__environment_variables = {
             'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -124,6 +130,17 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self += shell(commands=self.__commands)
         if self.__environment_variables:
             self += environment(variables=self.__environment_variables)
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            self.__runtime_ospackages = ['libatomic1']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            pass
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -185,6 +202,8 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         """
         instructions = []
         instructions.append(comment('PnetCDF'))
+        if self.__runtime_ospackages:
+            instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         if self.ldconfig:

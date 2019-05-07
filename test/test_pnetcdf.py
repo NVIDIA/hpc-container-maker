@@ -87,6 +87,10 @@ ENV PATH=/usr/local/pnetcdf/bin:$PATH''')
         r = p.runtime()
         self.assertEqual(r,
 r'''# PnetCDF
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libatomic1 && \
+    rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/pnetcdf /usr/local/pnetcdf
 ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/pnetcdf/bin:$PATH''')
