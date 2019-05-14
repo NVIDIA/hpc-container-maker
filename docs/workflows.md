@@ -12,7 +12,7 @@ expressed as a HPCCM recipe.  Examples are also included for
 [MILC](/recipes/milc/milc.py).
 
 The GROMACS and MILC recipes demonstrate how to use [multi-stage
-Docker builds](/docs/recipes.md#multi-stage-recipes) to minimize the
+builds](/docs/recipes.md#multi-stage-recipes) to minimize the
 size of the resulting container image.  The first stage includes the
 required building blocks and GROMACS source code and then builds the
 application binary.  Build artifacts such as the application source

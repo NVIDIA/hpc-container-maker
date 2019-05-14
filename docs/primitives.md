@@ -7,8 +7,9 @@ The `baseimage` primitive defines the base image to be used.
 __Parameters__
 
 
-- ___as__: Name for the build stage (Docker specific).  The default
-value is empty.
+- ___as__: Name for the stage.  When using Singularity multi-stage
+recipes, this value must be specified.  The default value is
+empty.
 
 - ___distro__: The underlying Linux distribution of the base image.
 Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,

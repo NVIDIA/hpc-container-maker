@@ -22,7 +22,7 @@ Stage0 += baseimage(image='centos:7')
 Stage0 += gnu()
 ```
 
-_Note_: `Stage0` refers to the first stage of a [multi-stage Docker
+_Note_: `Stage0` refers to the first stage of a [multi-stage
 build](https://docs.docker.com/develop/develop-images/multistage-build/).
 Multi-stage builds are a technique that can significantly reduce the
 size of container images.  This section will not use multi-stage
@@ -197,10 +197,10 @@ $ hpccm --recipe userargs.py --userarg ompi=3.0.0
 
 [Multi-stage
 builds](https://docs.docker.com/develop/develop-images/multistage-build/)
-are a Docker specific technique that can significantly reduce the size
-of container images.  Multi-stage recipes can also be used with
-licensed software to build an application without needing to
-redistribute the licensed development software or source code.
+are a technique that can significantly reduce the size of container
+images.  Multi-stage recipes can also be used with licensed software
+to build an application without needing to redistribute the licensed
+development software or source code.
 
 A recipe consists of one or more stages, although many recipes will
 only contain a single stage.  The `Stage0` and `Stage1` variables are
@@ -214,16 +214,16 @@ block settings defined in the first stage are automatically reflected
 in the second stage using the `runtime` method.
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
+Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7', _as='devel')
 Stage0 += openmpi(infiniband=False, prefix='/opt/openmpi')
 
 Stage1 += baseimage(image='nvidia/cuda:9.0-base-centos7')
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(_from='devel')
 ```
 
 ```
 $ hpccm --recipe multi-stage.py
-FROM nvidia/cuda:9.0-devel-centos7
+FROM nvidia/cuda:9.0-devel-centos7 AS devel
 
 ...
 
@@ -234,15 +234,54 @@ RUN yum install -y \
         hwloc \
         openssh-clients && \
     rm -rf /var/cache/yum/*
-COPY --from=0 /opt/openmpi /opt/openmpi
+COPY --from=devel /opt/openmpi /opt/openmpi
 ENV LD_LIBRARY_PATH=/opt/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/opt/openmpi/bin:$PATH
 ```
 
-The Singularity definition file format and image builder do not
-support multi-stage builds.  However, Docker images can be easily
-converted to Singularity images so Singularity can also (indirectly)
-take advantage of multi-stage builds.
+Singularity version 3.2 and later supports multi-stage Singularity
+definition files.  However, the multi-stage definition file syntax is
+incompatible with earlier versions of Singularity.  Use the HPCCM
+`--singularity-version <version>` command line option to specify the
+Singularity definition file version to generate.  A `version` of 3.2
+or later will generate a multi-stage definition file that will only
+build with Singularity version 3.2 or later.  A `version` less than
+3.2 will generate a portable definition file that works with any
+version of Singularity, but will not support multi-stage builds.
+
+```
+$ hpccm --recipe multi-stage.py --format singularity --singularity-version 3.2
+# NOTE: this definition file depends on features only available in
+# Singularity 3.2 and later.
+BootStrap: docker
+From: nvidia/cuda:9.0-devel-centos7
+Stage: devel
+
+...
+
+BootStrap: docker
+From: nvidia/cuda:9.0-base-centos7
+
+# OpenMPI
+%post
+    yum install -y \
+        hwloc \
+        openssh-clients
+    rm -rf /var/cache/yum/*
+%files from devel
+    /opt/openmpi /opt/openmpi
+%environment
+    export LD_LIBRARY_PATH=/opt/openmpi/lib:$LD_LIBRARY_PATH
+    export PATH=/opt/openmpi/bin:$PATH
+%post
+    export LD_LIBRARY_PATH=/opt/openmpi/lib:$LD_LIBRARY_PATH
+    export PATH=/opt/openmpi/bin:$PATH
+```
+
+If Singularity version 3.2 or later is not an option, Docker images
+can be easily converted to Singularity images so older versions of
+Singularity can also (indirectly) take advantage of multi-stage
+builds.
 
 ```
 $ sudo docker run -t --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/output singularityware/docker2singularity <docker-tag>

@@ -61,4 +61,4 @@ Stage0 += hdf5(version='1.10.4', toolchain=compiler.toolchain)
 
 Stage1 += baseimage(image=runtime_image)
 
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(_from='devel')

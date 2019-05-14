@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import bash, docker, invalid_ctype, singularity
+from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32
 
 from distutils.version import StrictVersion
 import hpccm.config
@@ -90,7 +90,7 @@ From: foo''')
         b = baseimage(image='foo', AS='dev')
         self.assertEqual(str(b), 'FROM foo AS dev')
 
-    @singularity
+    @singularity26
     def test_as_deprecated_singularity(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', AS='dev')
@@ -106,13 +106,24 @@ From: foo
         b = baseimage(image='foo', _as='dev')
         self.assertEqual(str(b), 'FROM foo AS dev')
 
-    @singularity
-    def test_as_singularity(self):
+    @singularity26
+    def test_as_singularity26(self):
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
         self.assertEqual(str(b),
 r'''BootStrap: docker
 From: foo
+%post
+    . /.singularity.d/env/10-docker*.sh''')
+
+    @singularity32
+    def test_as_singularity32(self):
+        """Docker specified image naming"""
+        b = baseimage(image='foo', _as='dev')
+        self.assertEqual(str(b),
+r'''BootStrap: docker
+From: foo
+Stage: dev
 %post
     . /.singularity.d/env/10-docker*.sh''')
 

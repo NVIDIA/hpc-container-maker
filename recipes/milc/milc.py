@@ -99,7 +99,7 @@ Stage0 += workdir(directory='/workspace')
 ###############################################################################
 Stage1 += baseimage(image='nvidia/cuda:9.0-base-ubuntu16.04')
 
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(_from=Stage0.name)
 
 Stage1 += copy(_from=Stage0.name,
                src='/milc/milc_qcd-{}/ks_imp_rhmc/su3_rhmd_hisq'.format(

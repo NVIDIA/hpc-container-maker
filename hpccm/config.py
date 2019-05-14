@@ -33,6 +33,7 @@ from hpccm.common import linux_distro
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
+g_singularity_version = StrictVersion('2.6') # Singularity version
 
 def set_container_format(ctype):
   """Set the container format
@@ -87,3 +88,18 @@ def set_linux_distro(distro):
     logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
     this.g_linux_distro = linux_distro.UBUNTU
     this.g_linux_version = StrictVersion('16.04')
+
+def set_singularity_version(ver):
+  """Set the Singularity definition file format version
+
+  The Singularity definition file format was extended in version 3.2
+  to enable multi-stage builds.  However, these changes are not
+  backwards compatible.
+
+  # Arguments
+
+  ver (string): Singularity definition file format version.
+
+  """
+  this = sys.modules[__name__]
+  this.g_singularity_version = StrictVersion(ver)

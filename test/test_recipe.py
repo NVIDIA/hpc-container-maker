@@ -116,11 +116,12 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
-    def test_multistage_example_singularity(self):
+    def test_multistage_example_singularity26(self):
         """Multi-stage recipe with Singularity container type"""
         path = os.path.dirname(__file__)
         rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
-        r = recipe(rf, ctype=container_type.SINGULARITY)
+        r = recipe(rf, ctype=container_type.SINGULARITY,
+                   singularity_version='2.6')
         self.assertEqual(r.strip(),
 r'''BootStrap: docker
 From: nvidia/cuda:9.0-devel-ubuntu16.04
@@ -152,6 +153,72 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     make -j$(nproc)
     make -j$(nproc) install
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+%environment
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    def test_multistage_example_singularity32(self):
+        """Multi-stage recipe with Singularity container type"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
+        r = recipe(rf, ctype=container_type.SINGULARITY,
+                   singularity_version='3.2')
+        self.assertEqual(r.strip(),
+r'''# NOTE: this definition file depends on features only available in
+# Singularity 3.2 and later.
+BootStrap: docker
+From: nvidia/cuda:9.0-devel-ubuntu16.04
+Stage: devel
+%post
+    . /.singularity.d/env/10-docker*.sh
+
+# GNU compiler
+%post
+    apt-get update -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        gcc \
+        g++ \
+        gfortran
+    rm -rf /var/lib/apt/lists/*
+
+# FFTW version 3.3.8
+%post
+    apt-get update -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget
+    rm -rf /var/lib/apt/lists/*
+%post
+    cd /
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads --enable-sse2
+    make -j$(nproc)
+    make -j$(nproc) install
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+%environment
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
+
+BootStrap: docker
+From: nvidia/cuda:9.0-runtime-ubuntu16.04
+%post
+    . /.singularity.d/env/10-docker*.sh
+
+# GNU compiler runtime
+%post
+    apt-get update -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libgomp1 \
+        libgfortran3
+    rm -rf /var/lib/apt/lists/*
+
+# FFTW
+%files from devel
+    /usr/local/fftw /usr/local/fftw
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 %post
