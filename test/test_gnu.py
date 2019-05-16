@@ -40,8 +40,8 @@ class Test_gnu(unittest.TestCase):
 r'''# GNU compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -70,8 +70,8 @@ RUN apt-get update -y && \
     apt-add-repository ppa:ubuntu-toolchain-r/test -y && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc-7 \
         g++-7 \
+        gcc-7 \
         gfortran-7 && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-7) 30 && \
@@ -104,8 +104,8 @@ ENV PATH=/opt/rh/devtoolset-7/root/usr/bin:$PATH''')
 r'''# GNU compiler runtime
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libgomp1 \
-        libgfortran3 && \
+        libgfortran3 \
+        libgomp1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     def test_toolchain(self):

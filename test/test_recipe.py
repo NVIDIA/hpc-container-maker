@@ -61,8 +61,8 @@ r'''FROM ubuntu:16.04 AS stage0
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -80,8 +80,8 @@ From: ubuntu:16.04
 %post
     apt-get update -y
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran
     rm -rf /var/lib/apt/lists/*''')
 
@@ -96,8 +96,8 @@ r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
 # GNU compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran && \
     rm -rf /var/lib/apt/lists/*
 
@@ -132,8 +132,8 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 %post
     apt-get update -y
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran
     rm -rf /var/lib/apt/lists/*
 
@@ -177,8 +177,8 @@ Stage: devel
 %post
     apt-get update -y
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran
     rm -rf /var/lib/apt/lists/*
 
@@ -212,8 +212,8 @@ From: nvidia/cuda:9.0-runtime-ubuntu16.04
 %post
     apt-get update -y
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libgomp1 \
-        libgfortran3
+        libgfortran3 \
+        libgomp1
     rm -rf /var/lib/apt/lists/*
 
 # FFTW

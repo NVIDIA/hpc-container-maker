@@ -26,7 +26,7 @@ from helpers import docker, ubuntu
 
 from hpccm.building_blocks.apt_get import apt_get
 
-class Test_yum(unittest.TestCase):
+class Test_apt_get(unittest.TestCase):
     def setUp(self):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
@@ -39,8 +39,8 @@ class Test_yum(unittest.TestCase):
         self.assertEqual(str(a),
 r'''RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 

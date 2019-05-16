@@ -40,8 +40,8 @@ class Test_pgi(unittest.TestCase):
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl \
         wget && \
@@ -93,8 +93,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl \
         wget && \
@@ -121,8 +121,8 @@ r'''# PGI compiler version 17.10
 COPY pgilinux-2017-1710-x86_64.tar.gz /var/tmp/pgilinux-2017-1710-x86_64.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
@@ -147,8 +147,8 @@ r'''# PGI compiler version 18.4
 COPY pkg/pgilinux-2018-1804-x86_64.tar.gz /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
@@ -173,8 +173,8 @@ r'''# PGI compiler version 18.4
 COPY pgilinux-2018-184-x86_64.tar.gz /var/tmp/pgilinux-2018-184-x86_64.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl && \
     rm -rf /var/lib/apt/lists/*
@@ -198,8 +198,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl \
         wget && \
@@ -226,11 +226,11 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
-        perl \
         openssh-client \
+        perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
@@ -254,8 +254,8 @@ ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib:/opt/pgi/linu
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
         perl \
         wget && \
@@ -288,11 +288,11 @@ ENV CC=/opt/pgi/linux86-64/19.4/bin/pgcc \
 r'''# PGI compiler version 19.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         libnuma1 \
-        perl \
         openssh-client \
+        perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-x64-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64 && \
