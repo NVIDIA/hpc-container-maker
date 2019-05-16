@@ -77,8 +77,8 @@ class Test_Stage(unittest.TestCase):
         self.assertEqual(str(s1),
 r'''# GNU compiler runtime
 RUN yum install -y \
-        libgomp \
-        libgfortran && \
+        libgfortran \
+        libgomp && \
     rm -rf /var/cache/yum/*''')
 
     @centos
@@ -93,6 +93,6 @@ RUN yum install -y \
         self.assertEqual(str(s1),
 r'''# GNU compiler runtime
 RUN yum install -y \
-        libgomp \
-        libgfortran && \
+        libgfortran \
+        libgomp && \
     rm -rf /var/cache/yum/*''')

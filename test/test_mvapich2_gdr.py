@@ -41,12 +41,12 @@ r'''# MVAPICH2-GDR version 2.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         cpio \
+        libgfortran3 \
         libnuma1 \
         libpciaccess0 \
         openssh-client \
         rpm2cpio \
-        wget \
-        libgfortran3 && \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.1/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm | cpio -id && \
@@ -65,11 +65,11 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3.1/mcast/no-openacc/cuda9.2/mofed4.5/mp
         self.assertEqual(str(mv2),
 r'''# MVAPICH2-GDR version 2.3.1
 RUN yum install -y \
+        libgfortran \
         libpciaccess \
         numactl-libs \
         openssh-clients \
-        wget \
-        libgfortran && \
+        wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.1/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm && \
     rpm --install --nodeps /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm && \
@@ -90,12 +90,12 @@ r'''# MVAPICH2-GDR version 2.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         cpio \
+        libgfortran3 \
         libnuma1 \
         libpciaccess0 \
         openssh-client \
         rpm2cpio \
-        wget \
-        libgfortran3 && \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.1/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.1-1.el7.x86_64.rpm | cpio -id && \
@@ -143,12 +143,12 @@ r'''# MVAPICH2-GDR version 2.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         cpio \
+        libgfortran3 \
         libnuma1 \
         libpciaccess0 \
         openssh-client \
         rpm2cpio \
-        wget \
-        libgfortran3 && \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3/mofed4.3/mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm | cpio -id && \
@@ -169,10 +169,10 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3/mcast/no-openacc/cuda10.0/mofed4.3/mpi
 r'''# MVAPICH2-GDR
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libgfortran3 \
         libnuma1 \
         libpciaccess0 \
-        openssh-client \
-        libgfortran3 && \
+        openssh-client && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/mvapich2/gdr/2.3.1/mcast/no-openacc/cuda9.2/mofed4.5/mpirun/gnu4.8.5 /opt/mvapich2/gdr/2.3.1/mcast/no-openacc/cuda9.2/mofed4.5/mpirun/gnu4.8.5
 ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3.1/mcast/no-openacc/cuda9.2/mofed4.5/mpirun/gnu4.8.5/lib64:$LD_LIBRARY_PATH \

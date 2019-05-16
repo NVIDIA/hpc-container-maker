@@ -41,14 +41,14 @@ r'''# VisIt libsim version 2.13.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gzip \
+        libgl1-mesa-dev \
+        libglu1-mesa-dev \
+        libxt-dev \
         make \
         patch \
         tar \
         wget \
-        zlib1g-dev \
-        libxt-dev \
-        libgl1-mesa-dev \
-        libglu1-mesa-dev && \
+        zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
@@ -66,16 +66,16 @@ ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.
 r'''# VisIt libsim version 2.13.3
 RUN yum install -y \
         gzip \
+        libXt-devel \
+        libglvnd-devel \
         make \
+        mesa-libGL-devel \
+        mesa-libGLU-devel \
         patch \
         tar \
         wget \
         which \
-        zlib-devel \
-        libXt-devel \
-        libglvnd-devel \
-        mesa-libGL-devel \
-        mesa-libGLU-devel && \
+        zlib-devel && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
@@ -94,14 +94,14 @@ r'''# VisIt libsim version 2.13.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gzip \
+        libgl1-mesa-dev \
+        libglu1-mesa-dev \
+        libxt-dev \
         make \
         patch \
         tar \
         wget \
-        zlib1g-dev \
-        libxt-dev \
-        libgl1-mesa-dev \
-        libglu1-mesa-dev && \
+        zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
@@ -120,14 +120,14 @@ r'''# VisIt libsim version 2.13.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gzip \
+        libgl1-mesa-dev \
+        libglu1-mesa-dev \
+        libxt-dev \
         make \
         patch \
         tar \
         wget \
-        zlib1g-dev \
-        libxt-dev \
-        libgl1-mesa-dev \
-        libglu1-mesa-dev && \
+        zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     cd /var/tmp/visit &&  bash build_visit2_13_3 --xdb --server-components-only --makeflags -j$(nproc) --prefix /usr/local/visit && \
@@ -145,9 +145,9 @@ ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.
 r'''# VisIt libsim
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libxt6 \
         libgl1-mesa-glx \
         libglu1-mesa \
+        libxt6 \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/visit /usr/local/visit

@@ -106,7 +106,7 @@ class apt_get(bb_base):
 
             install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
             packages = []
-            for pkg in self.ospackages:
+            for pkg in sorted(self.ospackages):
                 packages.append('        {}'.format(pkg))
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)

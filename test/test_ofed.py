@@ -46,16 +46,16 @@ RUN apt-get update -y && \
         infiniband-diags \
         libdapl-dev \
         libibcm-dev \
-        libibmad5 \
         libibmad-dev \
-        libibverbs1 \
+        libibmad5 \
         libibverbs-dev \
+        libibverbs1 \
         libmlx4-1 \
         libmlx4-dev \
         libmlx5-1 \
         libmlx5-dev \
-        librdmacm1 \
         librdmacm-dev \
+        librdmacm1 \
         opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
@@ -74,12 +74,12 @@ RUN apt-get update -y && \
         ibverbs-utils \
         infiniband-diags \
         libdapl-dev \
-        libibmad5 \
         libibmad-dev \
-        libibverbs1 \
+        libibmad5 \
         libibverbs-dev \
-        librdmacm1 \
+        libibverbs1 \
         librdmacm-dev \
+        librdmacm1 \
         opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
@@ -98,10 +98,10 @@ RUN yum install -y \
         libibcm \
         libibmad \
         libibmad-devel \
-        libmlx5 \
         libibumad \
         libibverbs \
         libibverbs-utils \
+        libmlx5 \
         librdmacm \
         opensm \
         rdma-core \
@@ -124,16 +124,16 @@ RUN apt-get update -y && \
         infiniband-diags \
         libdapl-dev \
         libibcm-dev \
-        libibmad5 \
         libibmad-dev \
-        libibverbs1 \
+        libibmad5 \
         libibverbs-dev \
+        libibverbs1 \
         libmlx4-1 \
         libmlx4-dev \
         libmlx5-1 \
         libmlx5-dev \
-        librdmacm1 \
         librdmacm-dev \
+        librdmacm1 \
         opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')

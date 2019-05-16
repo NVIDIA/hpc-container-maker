@@ -39,8 +39,8 @@ class Test_packages(unittest.TestCase):
         self.assertEqual(str(p),
 r'''RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        gcc \
         g++ \
+        gcc \
         gfortran && \
     rm -rf /var/lib/apt/lists/*''')
 

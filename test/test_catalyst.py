@@ -43,16 +43,16 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         git \
         gzip \
-        make \
-        tar \
-        wget \
-        libxau-dev \
-        libxext-dev \
-        libxt-dev \
+        libgl1-mesa-dev \
         libice-dev \
         libsm-dev \
         libx11-dev \
-        libgl1-mesa-dev && \
+        libxau-dev \
+        libxext-dev \
+        libxt-dev \
+        make \
+        tar \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
@@ -73,18 +73,18 @@ r'''# ParaView Catalyst version 5.6.0
 RUN yum install -y \
         git \
         gzip \
-        make \
-        tar \
-        wget \
-        which \
+        libICE-devel \
+        libSM-devel \
         libX11-devel \
         libXau-devel \
         libXext-devel \
         libXt-devel \
-        libICE-devel \
-        libSM-devel \
         libglvnd-devel \
-        mesa-libGL-devel && \
+        make \
+        mesa-libGL-devel \
+        tar \
+        wget \
+        which && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
@@ -130,16 +130,16 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         git \
         gzip \
-        make \
-        tar \
-        wget \
-        libxau-dev \
-        libxext-dev \
-        libxt-dev \
+        libgl1-mesa-dev \
         libice-dev \
         libsm-dev \
         libx11-dev \
-        libgl1-mesa-dev && \
+        libxau-dev \
+        libxext-dev \
+        libxt-dev \
+        make \
+        tar \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
@@ -160,13 +160,13 @@ ENV PATH=/usr/local/catalyst/bin:$PATH''')
 r'''# ParaView Catalyst
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libxau6 \
-        libxext6 \
-        libxt6 \
+        libgl1-mesa-glx \
         libice6 \
         libsm6 \
         libx11-6 \
-        libgl1-mesa-glx && \
+        libxau6 \
+        libxext6 \
+        libxt6 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/catalyst /usr/local/catalyst
 ENV LD_LIBRARY_PATH=/usr/local/catalyst/lib:$LD_LIBRARY_PATH \

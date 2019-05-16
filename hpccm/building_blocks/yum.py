@@ -111,7 +111,7 @@ class yum(bb_base):
         if self.ospackages:
             install = 'yum install -y \\\n'
             packages = []
-            for pkg in self.ospackages:
+            for pkg in sorted(self.ospackages):
                 packages.append('        {}'.format(pkg))
             install = install + ' \\\n'.join(packages)
             self.__commands.append(install)
