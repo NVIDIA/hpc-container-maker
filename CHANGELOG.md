@@ -1,3 +1,11 @@
+# v19.5.0
+
+- Adds support for Singularity multi-stage builds (Singularity version 3.2
+  or later)
+- Fix for the PnetCDF building block (`pnetcdf`)
+- Sort packages by name
+- Internal refactoring to simplify importing building blocks
+
 # v19.4.0
 
 - Adds Intel Parallel Studio XE runtime (`intel_psxe_runtime`) and SENSEI
