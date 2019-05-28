@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -120,7 +120,7 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         compilers = []
         if self.__toolchain.CC:
@@ -131,14 +131,15 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         # Build
         self.__commands.append(
             'cd {} && make {} {}'.format(
-                os.path.join(self.__wd, 'OpenBLAS-{}'.format(self.__version)),
+                posixpath.join(self.__wd,
+                               'OpenBLAS-{}'.format(self.__version)),
                 ' '.join(compilers), ' '.join(self.__make_opts)))
 
         # Install
         self.__commands.append('make install PREFIX={}'.format(self.__prefix))
 
         # Set library path
-        libpath = os.path.join(self.__prefix, 'lib')
+        libpath = posixpath.join(self.__prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -146,9 +147,9 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'OpenBLAS-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'OpenBLAS-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -169,7 +170,7 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.__prefix, 'lib'))]))
+                    directory=posixpath.join(self.__prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

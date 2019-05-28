@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.base_object
 
@@ -43,4 +43,4 @@ class ldconfig(hpccm.base_object):
             return ''
 
         return 'echo "{0}" >> {1} && ldconfig'.format(
-            directory, os.path.join('/etc/ld.so.conf.d', conf))
+            directory, posixpath.join('/etc/ld.so.conf.d', conf))

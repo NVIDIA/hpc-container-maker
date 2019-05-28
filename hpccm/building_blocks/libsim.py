@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.ldconfig
@@ -129,7 +129,7 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.__prefix, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.__prefix, 'bin'))}
         self.__wd = '/var/tmp/visit' # working directory
 
         # Set the Linux distribution specific parameters
@@ -202,7 +202,7 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.__system_python:
             opts.append('--system-python')
         if self.__thirdparty:
-            thirdparty_path = os.path.join(self.__prefix, 'third-party')
+            thirdparty_path = posixpath.join(self.__prefix, 'third-party')
             opts.append('--thirdparty-path {}'.format(thirdparty_path))
             self.__commands.append('mkdir -p {}'.format(thirdparty_path))
 
@@ -211,20 +211,20 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             self.__wd, ' '.join(env), buildscript, ' '.join(opts)))
 
         # Set library path
-        libpath = os.path.join(self.__prefix, self.__version, 'linux-x86_64')
+        libpath = posixpath.join(self.__prefix, self.__version, 'linux-x86_64')
         suffix1 = 'lib'
-        suffix2 = os.path.join('libsim', 'V2', 'lib')
+        suffix2 = posixpath.join('libsim', 'V2', 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(
-                directory=os.path.join(libpath, suffix1)))
+                directory=posixpath.join(libpath, suffix1)))
             self.__commands.append(self.ldcache_step(
-                directory=os.path.join(libpath, suffix2)))
+                directory=posixpath.join(libpath, suffix2)))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{0}:{1}:$LD_LIBRARY_PATH'.format(os.path.join(libpath, suffix1), os.path.join(libpath, suffix2))
+            self.__environment_variables['LD_LIBRARY_PATH'] = '{0}:{1}:$LD_LIBRARY_PATH'.format(posixpath.join(libpath, suffix1), posixpath.join(libpath, suffix2))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd)]))
+            items=[posixpath.join(self.__wd)]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -244,15 +244,15 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         instructions.append(copy(_from=_from, src=self.__prefix,
                                  dest=self.__prefix))
         if self.ldconfig:
-            libpath = os.path.join(self.__prefix, self.__version,
-                                   'linux-x86_64')
+            libpath = posixpath.join(self.__prefix, self.__version,
+                                     'linux-x86_64')
             suffix1 = 'lib'
-            suffix2 = os.path.join('libsim', 'V2', 'lib')
+            suffix2 = posixpath.join('libsim', 'V2', 'lib')
             instructions.append(shell(
-                commands=[self.ldcache_step(directory=os.path.join(libpath,
-                                                                   suffix1)),
-                          self.ldcache_step(directory=os.path.join(libpath,
-                                                                   suffix2))]))
+                commands=[self.ldcache_step(directory=posixpath.join(libpath,
+                                                                     suffix1)),
+                          self.ldcache_step(
+                              directory=posixpath.join(libpath, suffix2))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

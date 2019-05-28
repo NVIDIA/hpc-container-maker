@@ -22,7 +22,7 @@ from __future__ import print_function
 
 from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.rm
@@ -145,7 +145,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__extractor_template = 'dpkg --extract {0} {1}'
 
             self.__pkglist = ' '.join('{}_*_amd64.deb'.format(
-                os.path.join(self.__wd, self.__label, 'DEBS', x))
+                posixpath.join(self.__wd, self.__label, 'DEBS', x))
                                       for x in self.__packages)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
@@ -168,7 +168,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__extractor_template = 'rpm2cpio {0} | cpio -idm'
 
             self.__pkglist = ' '.join('{}-*.x86_64.rpm'.format(
-                os.path.join(self.__wd, self.__label, 'RPMS', x))
+                posixpath.join(self.__wd, self.__label, 'RPMS', x))
                                       for x in self.__packages)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
@@ -185,7 +185,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         # Install packages
         if self.__prefix:
@@ -203,8 +203,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd, self.__label)]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd, self.__label)]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

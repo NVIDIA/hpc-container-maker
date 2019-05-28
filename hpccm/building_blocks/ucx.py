@@ -24,7 +24,7 @@ from __future__ import print_function
 from six import string_types
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
@@ -155,7 +155,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -253,18 +253,18 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         # Configure and build
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd, 'ucx-{}'.format(
+            directory=posixpath.join(self.__wd, 'ucx-{}'.format(
                 self.__version)),
             toolchain=self.__toolchain))
         self.__commands.append(self.build_step())
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -272,9 +272,9 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'ucx-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'ucx-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -295,7 +295,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(
                 environment(variables=self.__environment_variables))

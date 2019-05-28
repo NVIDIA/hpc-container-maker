@@ -23,7 +23,7 @@ from __future__ import print_function
 from six.moves import shlex_quote
 
 import logging  # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.base_object
 
@@ -62,7 +62,7 @@ class CMakeBuild(hpccm.base_object):
         change_directory = ''
         if directory:
             src_directory = directory
-            build_directory = os.path.join(directory, build_directory)
+            build_directory = posixpath.join(directory, build_directory)
             change_directory = "mkdir -p {0} && cd {0} && ".format(
                 build_directory)
         else:

@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 from copy import copy as _copy
 
 import hpccm.config
@@ -134,7 +134,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -213,11 +213,11 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd,
-                                   'netcdf-{}'.format(self.__version)),
+            directory=posixpath.join(self.__wd,
+                                     'netcdf-{}'.format(self.__version)),
             toolchain=toolchain))
 
         self.__commands.append(self.build_step())
@@ -229,16 +229,16 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
             self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'netcdf-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'netcdf-{}'.format(self.__version))]))
 
     def __setup_optional(self, pkg='', version=''):
         # Create a copy of the toolchain so that it can be modified
@@ -260,11 +260,11 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd,
-                                   '{0}-{1}'.format(pkg, version)),
+            directory=posixpath.join(self.__wd,
+                                     '{0}-{1}'.format(pkg, version)),
             toolchain=toolchain))
 
         self.__commands.append(self.build_step())
@@ -281,9 +281,9 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.install_step())
 
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                '{0}-{1}'.format(pkg, version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  '{0}-{1}'.format(pkg, version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -305,7 +305,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

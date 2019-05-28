@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -104,14 +104,15 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
                                                 'multicore-linux-x86_64')
         self.__version = kwargs.get('version', '6.8.2')
 
-        self.__installdir = os.path.join(self.__prefix,
-                                         'charm-v{}'.format(self.__version))
+        self.__installdir = posixpath.join(self.__prefix,
+                                           'charm-v{}'.format(self.__version))
         self.__wd = '/var/tmp' # working directory
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
             'CHARMBASE': self.__installdir,
-            'PATH': '{}:$PATH'.format(os.path.join(self.__installdir, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.__installdir,
+                                                     'bin'))}
 
         # Construct series of steps to execute
         self.__setup()
@@ -143,7 +144,8 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         # even with "--destination".  So just untar it into the
         # destination directory prefix.
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__prefix))
+            tarball=posixpath.join(self.__wd, tarball),
+            directory=self.__prefix))
 
         # Charm++ is hard-coded to use pgCC rather than pgc++ when the
         # PGI compiler is selected.  Replace pgCC with pgc++.
@@ -152,8 +154,8 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if 'pgcc' in self.__options:
             self.__commands.append(
                 self.sed_step(
-                    file=os.path.join(self.__installdir, 'src', 'arch',
-                                      'common', 'cc-pgcc.sh'),
+                    file=posixpath.join(self.__installdir, 'src', 'arch',
+                                        'common', 'cc-pgcc.sh'),
                     patterns=[r's/pgCC/pgc++/g']))
 
         # Build
@@ -162,7 +164,7 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             ' '.join(self.__options), self.__parallel))
 
         # Set library path
-        libpath = os.path.join(self.__installdir, 'lib_so')
+        libpath = posixpath.join(self.__installdir, 'lib_so')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -171,11 +173,11 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         # Check the build
         if self.__check:
             self.__commands.append('cd {} && make test'.format(
-                os.path.join(self.__installdir, 'tests', 'charm++')))
+                posixpath.join(self.__installdir, 'tests', 'charm++')))
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball)]))
+            items=[posixpath.join(self.__wd, tarball)]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -196,7 +198,7 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.__prefix, 'lib_so'))]))
+                    directory=posixpath.join(self.__prefix, 'lib_so'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

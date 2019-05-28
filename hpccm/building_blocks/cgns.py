@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 from copy import copy as _copy
 
@@ -155,9 +155,9 @@ class cgns(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.rm,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd, 'CGNS-{}'.format(
+            directory=posixpath.join(self.__wd, 'CGNS-{}'.format(
                 self.__version), 'src'),
             toolchain=toolchain))
 
@@ -171,9 +171,9 @@ class cgns(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.rm,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'v{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'v{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
