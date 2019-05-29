@@ -64,8 +64,10 @@ RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
                                              os.path.basename(scif_file.name)))
         try:
             os.unlink(scif_file.name)
-        except OSError:
-            pass # Windows
+        except WindowsError:
+            # WindowsError: [Error 32] The process cannot access the file
+            # because it is being used by another process
+            pass
 
     @singularity
     def test_defaults_singularity(self):
