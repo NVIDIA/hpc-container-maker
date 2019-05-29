@@ -13,6 +13,14 @@ matrix:
     - name: "Python 3.6 on Linux"
       os: linux
       python: 3.6
+    - name: "Python 2.7 on Windows"
+      os: windows
+      language: shell
+      python: 2.7
+      before_install:
+        - choco install python --version 2.7 --params "PrependPath=1"
+        - python -m pip install --upgrade pip six
+      env: PATH=/c/Python27:/c/Python27/Scripts:$PATH
     - name: "Python 3.6 on Windows"
       os: windows
       language: shell
