@@ -4,6 +4,8 @@ matrix:
     - name: "Python 2.7 on Linux"
       os: linux
       python: 2.7
+      before_install:
+        - python -m pip install enum34
     - name: "Python 3.4 on Linux"
       os: linux
       python: 3.4
@@ -19,7 +21,7 @@ matrix:
       python: 2.7
       before_install:
         - choco install python --version 2.7.11 --params "PrependPath=1"
-        - python -m pip install --upgrade pip six
+        - python -m pip install --upgrade pip six enum34
       env: PATH=/c/tools/python:/c/tools/python/Scripts:$PATH
     - name: "Python 3.6 on Windows"
       os: windows
@@ -29,7 +31,5 @@ matrix:
         - choco install python --version 3.6.8 --params "PrependPath=1"
         - python -m pip install --upgrade pip six
       env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
-install:
-    - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then travis_retry pip install enum34; fi
 script:
   - bash ./runtests.sh
