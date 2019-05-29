@@ -55,16 +55,17 @@ class Test_scif(unittest.TestCase):
         # test environment.  This is slightly unrealistic since the
         # Docker build would fail since the file is outside the Docker
         # build environment, but go with it.
-        fd = tempfile.NamedTemporaryFile(suffix='.scif')
-        scif_file = fd.name
-        fd.close() # required for Windows
-        s = scif(name='foo', file=scif_file)
+        scif_file = tempfile.NamedTemporaryFile(delete=False, suffix='.scif')
+        s = scif(name='foo', file=scif_file.name)
         self.assertEqual(str(s),
 r'''# SCI-F "foo"
 COPY {0} /scif/recipes/{1}
-RUN scif install /scif/recipes/{1}'''.format(scif_file,
-                                             os.path.basename(scif_file)))
-        os.unlink(scif_file)
+RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
+                                             os.path.basename(scif_file.name)))
+        try:
+            os.unlink(scif_file.name)
+        except OSError:
+            pass # Windows
 
     @singularity
     def test_defaults_singularity(self):
