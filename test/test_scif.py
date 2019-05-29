@@ -62,6 +62,7 @@ r'''# SCI-F "foo"
 COPY {0} /scif/recipes/{1}
 RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
                                              os.path.basename(scif_file.name)))
+        scif_file.close()
         os.unlink(scif_file.name)
 
     @singularity
