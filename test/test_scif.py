@@ -55,7 +55,9 @@ class Test_scif(unittest.TestCase):
         # test environment.  This is slightly unrealistic since the
         # Docker build would fail since the file is outside the Docker
         # build environment, but go with it.
-        scif_file = tempfile.NamedTemporaryFile(suffix='.scif').name
+        fd = tempfile.NamedTemporaryFile(suffix='.scif')
+        scif_file = fd.name
+        fd.close() # required for Windows
         s = scif(name='foo', file=scif_file)
         self.assertEqual(str(s),
 r'''# SCI-F "foo"
