@@ -1,3 +1,7 @@
+# v19.5.1
+
+- Fix issue with installs from PyPi
+
 # v19.5.0
 
 - Adds support for Singularity multi-stage builds (Singularity version 3.2
