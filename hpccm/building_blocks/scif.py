@@ -225,7 +225,7 @@ class scif(hpccm.base_object):
             # Container instructions to copy the SCI-F recipe file
             # into the container and then run scif
             c_scif_file = posixpath.join('/scif/recipes',
-                                         posixpath.basename(self.__scif_file))
+                                         os.path.basename(self.__scif_file))
             instructions = []
             instructions.append(comment('SCI-F "{}"'.format(self.__name)))
             instructions.append(
