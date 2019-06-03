@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 
 import hpccm.templates.CMakeBuild
@@ -168,7 +168,7 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
             self.cmake_opts.append(
                 '-DVTK_DIR={}'.format(self.__vtk))
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd, 'sensei'),
+            directory=posixpath.join(self.__wd, 'sensei'),
             opts=self.cmake_opts, toolchain=self.__toolchain))
 
         # Build
@@ -179,7 +179,7 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, 'sensei')]))
+            items=[posixpath.join(self.__wd, 'sensei')]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

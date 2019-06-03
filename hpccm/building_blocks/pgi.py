@@ -23,7 +23,7 @@ from __future__ import print_function
 from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import re
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.rm
@@ -146,8 +146,8 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__version = kwargs.get('version', '19.4')
         self.__wd = '/var/tmp' # working directory
 
-        self.__basepath = os.path.join(self.__prefix, 'linux86-64')
-        self.__basepath_llvm = os.path.join(self.__prefix, 'linux86-64-llvm')
+        self.__basepath = posixpath.join(self.__prefix, 'linux86-64')
+        self.__basepath_llvm = posixpath.join(self.__prefix, 'linux86-64-llvm')
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
@@ -168,8 +168,8 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if self.__tarball:
             # Use tarball from local build context
             self += copy(src=self.__tarball,
-                         dest=os.path.join(self.__wd,
-                                           os.path.basename(self.__tarball)))
+                         dest=posixpath.join(self.__wd,
+                                             posixpath.basename(self.__tarball)))
         else:
             # Downloading, so need wget
             self.__ospackages.append('wget')
@@ -207,69 +207,69 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         """Define environment variables"""
         e = {}
 
-        pgi_path = os.path.join(self.__basepath, self.__version)
-        mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi')
+        pgi_path = posixpath.join(self.__basepath, self.__version)
+        mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi')
         if LooseVersion(self.__version) >= LooseVersion('19.4'):
-            mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi-3.1.3')
+            mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi-3.1.3')
 
         if runtime:
             # Runtime environment
             if self.__mpi:
                 # PGI MPI component is selected
                 e['LD_LIBRARY_PATH'] = '{}:{}:$LD_LIBRARY_PATH'.format(
-                    os.path.join(mpi_path, 'lib'),
-                    os.path.join(pgi_path, 'lib'))
+                    posixpath.join(mpi_path, 'lib'),
+                    posixpath.join(pgi_path, 'lib'))
                 e['PATH'] = '{}:$PATH'.format(
-                    os.path.join(mpi_path, 'bin'))
+                    posixpath.join(mpi_path, 'bin'))
             else:
                 # PGI MPI component is not selected
                 e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
-                    os.path.join(pgi_path, 'lib'))
+                    posixpath.join(pgi_path, 'lib'))
         else:
             # Development environment
             if self.__extended_environment:
                 # Mirror the environment defined by the pgi environment module
-                e = {'CC': os.path.join(pgi_path, 'bin', 'pgcc'),
+                e = {'CC': posixpath.join(pgi_path, 'bin', 'pgcc'),
                      'CPP': '"{} -Mcpp"'.format(
-                         os.path.join(pgi_path, 'bin', 'pgcc')),
-                     'CXX': os.path.join(pgi_path, 'bin', 'pgc++'),
-                     'F77': os.path.join(pgi_path, 'bin', 'pgf77'),
-                     'F90': os.path.join(pgi_path, 'bin', 'pgf90'),
-                     'FC': os.path.join(pgi_path, 'bin', 'pgfortran'),
+                         posixpath.join(pgi_path, 'bin', 'pgcc')),
+                     'CXX': posixpath.join(pgi_path, 'bin', 'pgc++'),
+                     'F77': posixpath.join(pgi_path, 'bin', 'pgf77'),
+                     'F90': posixpath.join(pgi_path, 'bin', 'pgf90'),
+                     'FC': posixpath.join(pgi_path, 'bin', 'pgfortran'),
                      'MODULEPATH': '{}:$MODULEPATH'.format(
-                         os.path.join(self.__prefix, 'modulefiles'))}
+                         posixpath.join(self.__prefix, 'modulefiles'))}
                 if self.__mpi:
                     # PGI MPI component is selected
                     e['LD_LIBRARY_PATH'] = '{}:{}:$LD_LIBRARY_PATH'.format(
-                        os.path.join(mpi_path, 'lib'),
-                        os.path.join(pgi_path, 'lib'))
+                        posixpath.join(mpi_path, 'lib'),
+                        posixpath.join(pgi_path, 'lib'))
                     e['PATH'] = '{}:{}:$PATH'.format(
-                        os.path.join(mpi_path, 'bin'),
-                        os.path.join(pgi_path, 'bin'))
-                    e['PGI_OPTL_INCLUDE_DIRS'] = os.path.join(
+                        posixpath.join(mpi_path, 'bin'),
+                        posixpath.join(pgi_path, 'bin'))
+                    e['PGI_OPTL_INCLUDE_DIRS'] = posixpath.join(
                         mpi_path, 'include')
-                    e['PGI_OPTL_LIB_DIRS'] = os.path.join(mpi_path, 'lib')
+                    e['PGI_OPTL_LIB_DIRS'] = posixpath.join(mpi_path, 'lib')
                 else:
                     # PGI MPI component is not selected
                     e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
-                        os.path.join(pgi_path, 'lib'))
+                        posixpath.join(pgi_path, 'lib'))
                     e['PATH'] = '{}:$PATH'.format(
-                        os.path.join(pgi_path, 'bin'))
+                        posixpath.join(pgi_path, 'bin'))
             else:
                 # Basic environment only
                 if self.__mpi:
                     e['LD_LIBRARY_PATH'] = '{}:{}:$LD_LIBRARY_PATH'.format(
-                        os.path.join(mpi_path, 'lib'),
-                        os.path.join(pgi_path, 'lib'))
+                        posixpath.join(mpi_path, 'lib'),
+                        posixpath.join(pgi_path, 'lib'))
                     e['PATH'] = '{}:{}:$PATH'.format(
-                        os.path.join(mpi_path, 'bin'),
-                        os.path.join(pgi_path, 'bin'))
+                        posixpath.join(mpi_path, 'bin'),
+                        posixpath.join(pgi_path, 'bin'))
                 else:
                     # PGI MPI component is not selected
-                    e = {'PATH': '{}:$PATH'.format(os.path.join(pgi_path,
+                    e = {'PATH': '{}:$PATH'.format(posixpath.join(pgi_path,
                                                                 'bin')),
                          'LD_LIBRARY_PATH': '{}:$LD_LIBRARY_PATH'.format(
-                             os.path.join(pgi_path, 'lib'))}
+                             posixpath.join(pgi_path, 'lib'))}
 
         return e
 
@@ -279,7 +279,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         if self.__tarball:
             # Use tarball from local build context
-            tarball = os.path.basename(self.__tarball)
+            tarball = posixpath.basename(self.__tarball)
 
             # Figure out the version from the tarball name
             match = re.match(r'pgilinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
@@ -296,12 +296,12 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             tarball = 'pgi-community-linux-x64-latest.tar.gz'
 
             self.__commands.append(self.download_step(
-                url=self.__url, outfile=os.path.join(self.__wd, tarball),
+                url=self.__url, outfile=posixpath.join(self.__wd, tarball),
                 referer=self.__referer, directory=self.__wd))
 
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball),
-            directory=os.path.join(self.__wd, 'pgi')))
+            tarball=posixpath.join(self.__wd, tarball),
+            directory=posixpath.join(self.__wd, 'pgi')))
 
         flags = {'PGI_ACCEPT_EULA': 'accept',
                  'PGI_INSTALL_DIR': self.__prefix,
@@ -323,10 +323,10 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                for key, val in sorted(flags.items()))
 
         self.__commands.append('cd {0} && {1} ./install'.format(
-            os.path.join(self.__wd, 'pgi'), flag_string))
+            posixpath.join(self.__wd, 'pgi'), flag_string))
 
         # Create siterc to specify use of the system CUDA
-        siterc = os.path.join(self.__basepath, self.__version, 'bin', 'siterc')
+        siterc = posixpath.join(self.__basepath, self.__version, 'bin', 'siterc')
         if self.__system_cuda:
             self.__commands.append('echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(siterc))
 
@@ -340,31 +340,31 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         # system libnuma library
         if self.__system_libnuma:
             self.__commands.append('ln -sf {0} {1}'.format(
-                os.path.join(self.__libnuma_path, 'libnuma.so.1'),
-                os.path.join(self.__basepath, self.__version, 'lib',
-                             'libnuma.so')))
+                posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
+                posixpath.join(self.__basepath, self.__version, 'lib',
+                               'libnuma.so')))
             self.__commands.append('ln -sf {0} {1}'.format(
-                os.path.join(self.__libnuma_path, 'libnuma.so.1'),
-                os.path.join(self.__basepath, self.__version, 'lib',
-                             'libnuma.so.1')))
+                posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
+                posixpath.join(self.__basepath, self.__version, 'lib',
+                               'libnuma.so.1')))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd, 'pgi')]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd, 'pgi')]))
 
         # libnuma.so and libnuma.so.1 must be symlinks to the system
         # libnuma library.  They are originally symlinks, but Docker
         # "COPY -from" copies the file pointed to by the symlink,
         # converting them to files, so recreate the symlinks.
         self.__runtime_commands.append('ln -sf {0} {1}'.format(
-            os.path.join(self.__libnuma_path, 'libnuma.so.1'),
-            os.path.join(self.__basepath, self.__version, 'lib',
-                         'libnuma.so')))
+            posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
+            posixpath.join(self.__basepath, self.__version, 'lib',
+                           'libnuma.so')))
         self.__runtime_commands.append('ln -sf {0} {1}'.format(
-            os.path.join(self.__libnuma_path, 'libnuma.so.1'),
-            os.path.join(self.__basepath, self.__version, 'lib',
-                         'libnuma.so.1')))
+            posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
+            posixpath.join(self.__basepath, self.__version, 'lib',
+                           'libnuma.so.1')))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -384,32 +384,32 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if self.__runtime_ospackages:
             instructions.append(packages(ospackages=self.__runtime_ospackages))
 
-        pgi_path = os.path.join(self.__basepath, self.__version)
+        pgi_path = posixpath.join(self.__basepath, self.__version)
         src_path = pgi_path
         if LooseVersion(self.__version) >= LooseVersion('19.4'):
             # Too many levels of symlinks for the Docker builder to
             # handle, so use the real path
-            src_path = os.path.join(self.__basepath_llvm, self.__version)
+            src_path = posixpath.join(self.__basepath_llvm, self.__version)
         instructions.append(copy(_from=_from,
-                                 src=os.path.join(src_path,
-                                                  'REDIST', '*.so*'),
-                                 dest=os.path.join(pgi_path,
-                                                   'lib', '')))
+                                 src=posixpath.join(src_path,
+                                                    'REDIST', '*.so*'),
+                                 dest=posixpath.join(pgi_path,
+                                                     'lib', '')))
 
         # REDIST workaround for incorrect libcudaforwrapblas.so
         # symlink
         if LooseVersion(self.__version) >= LooseVersion('18.10'):
             instructions.append(
                 copy(_from=_from,
-                     src=os.path.join(pgi_path, 'lib',
-                                      'libcudaforwrapblas.so'),
-                     dest=os.path.join(pgi_path, 'lib',
-                                       'libcudaforwrapblas.so')))
+                     src=posixpath.join(pgi_path, 'lib',
+                                        'libcudaforwrapblas.so'),
+                     dest=posixpath.join(pgi_path, 'lib',
+                                         'libcudaforwrapblas.so')))
 
         if self.__mpi:
-            mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi')
+            mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi')
             if LooseVersion(self.__version) >= LooseVersion('19.4'):
-                mpi_path = os.path.join(pgi_path, 'mpi', 'openmpi-3.1.3')
+                mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi-3.1.3')
             instructions.append(copy(_from=_from,
                                      src=mpi_path, dest=mpi_path))
 

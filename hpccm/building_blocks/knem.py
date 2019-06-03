@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 from copy import copy as _copy
 
@@ -76,7 +76,7 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
             'CPATH':
-            '{}:$CPATH'.format(os.path.join(self.__prefix, 'include'))}
+            '{}:$CPATH'.format(posixpath.join(self.__prefix, 'include'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -106,11 +106,11 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         # Copy header(s)
         self.__commands.append('mkdir -p {}/include'.format(self.__prefix))
         self.__commands.append('cp {0}/common/*.h {1}/include'.format(
-            os.path.join(self.__wd, 'knem'), self.__prefix))
+            posixpath.join(self.__wd, 'knem'), self.__prefix))
 
         # Cleanup directory
         self.__commands.append(self.cleanup_step(
-                   [os.path.join(self.__wd, 'knem')]))
+                   [posixpath.join(self.__wd, 'knem')]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

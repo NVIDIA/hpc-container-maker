@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
@@ -110,7 +110,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -153,9 +153,9 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd, 'parallel-netcdf-{}'.format(
+            directory=posixpath.join(self.__wd, 'parallel-netcdf-{}'.format(
                 self.__version)),
             toolchain=self.__toolchain))
 
@@ -165,7 +165,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # .libs/libpnetcdf.lax/libf77.a/strerrnof.o: error adding symbols: Bad value
         # Apply the workaround
         if '--enable-shared' in self.configure_opts:
-          self.__commands.append('sed -i -e \'s#pic_flag=""#pic_flag=" -fpic -DPIC"#\' -e \'s#wl=""#wl="-Wl,"#\' {}'.format(os.path.join(self.__wd, 'parallel-netcdf-{}'.format(self.__version), 'libtool')))
+          self.__commands.append('sed -i -e \'s#pic_flag=""#pic_flag=" -fpic -DPIC"#\' -e \'s#wl=""#wl="-Wl,"#\' {}'.format(posixpath.join(self.__wd, 'parallel-netcdf-{}'.format(self.__version), 'libtool')))
 
         self.__commands.append(self.build_step())
 
@@ -176,7 +176,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -184,9 +184,9 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'parallel-netcdf-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'parallel-netcdf-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -209,7 +209,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

@@ -22,6 +22,7 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import os
+import posixpath
 import re
 import subprocess
 
@@ -83,7 +84,7 @@ class git(hpccm.base_object):
             # stripping off any '.git'.  This is the default git
             # behavior, but the directory may be explicitly needed
             # below.
-            directory = os.path.splitext(os.path.basename(repository))[0]
+            directory = posixpath.splitext(posixpath.basename(repository))[0]
 
         # Copy so not to modify the member variable
         opts = list(self.git_opts)
@@ -122,7 +123,7 @@ class git(hpccm.base_object):
                  'cd -']
 
         if commit:
-            clone.extend(['cd {0}'.format(os.path.join(path, directory)),
+            clone.extend(['cd {0}'.format(posixpath.join(path, directory)),
                           'git checkout {0}'.format(commit),
                           'cd -'])
 

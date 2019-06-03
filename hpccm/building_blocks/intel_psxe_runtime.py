@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 
@@ -216,46 +216,45 @@ class intel_psxe_runtime(bb_base):
         env = {}
 
         if self.__daal:
-            env['DAALROOT'] = os.path.join(basepath, 'daal')
-            ld_library_path.append(os.path.join(basepath, 'daal', 'lib',
-                                                'intel64'))
+            env['DAALROOT'] = posixpath.join(basepath, 'daal')
+            ld_library_path.append(posixpath.join(basepath, 'daal', 'lib',
+                                                  'intel64'))
 
         if self.__icc:
-            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
-                                                'intel64_lin'))
+            ld_library_path.append(posixpath.join(basepath, 'compiler', 'lib',
+                                                  'intel64_lin'))
 
         if self.__ifort:
-            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
-                                                'intel64_lin'))
+            ld_library_path.append(posixpath.join(basepath, 'compiler', 'lib',
+                                                  'intel64_lin'))
 
         if self.__ipp:
-            env['IPPROOT' ] = os.path.join(basepath, 'ipp')
-            ld_library_path.append(os.path.join(basepath, 'ipp', 'lib',
-                                                'intel64'))
+            env['IPPROOT' ] = posixpath.join(basepath, 'ipp')
+            ld_library_path.append(posixpath.join(basepath, 'ipp', 'lib',
+                                                  'intel64'))
 
         if self.__mkl:
-            env['MKLROOT'] = os.path.join(basepath, 'mkl')
-            ld_library_path.append(os.path.join(basepath, 'mkl', 'lib',
-                                                'intel64'))
+            env['MKLROOT'] = posixpath.join(basepath, 'mkl')
+            ld_library_path.append(posixpath.join(basepath, 'mkl', 'lib',
+                                                  'intel64'))
 
         if self.__mpi:
-            env['I_MPI_ROOT'] = os.path.join(basepath, 'mpi')
-            ld_library_path.append(os.path.join(basepath, 'mpi', 'intel64',
-                                                'lib'))
-            path.append(os.path.join(basepath, 'mpi', 'intel64', 'bin'))
+            env['I_MPI_ROOT'] = posixpath.join(basepath, 'mpi')
+            ld_library_path.append(posixpath.join(basepath, 'mpi', 'intel64',
+                                                  'lib'))
+            path.append(posixpath.join(basepath, 'mpi', 'intel64', 'bin'))
 
             if LooseVersion(self.__version) >= LooseVersion('2019'):
-                env['FI_PROVIDER_PATH'] = os.path.join(basepath, 'mpi',
-                                                       'intel64', 'libfabric',
-                                                       'lib', 'prov')
-                ld_library_path.append(os.path.join(basepath, 'mpi', 'intel64',
-                                                    'libfabric', 'lib'))
-                path.append(os.path.join(basepath, 'mpi', 'intel64',
-                                         'libfabric', 'bin'))
+                env['FI_PROVIDER_PATH'] = posixpath.join(
+                    basepath, 'mpi', 'intel64', 'libfabric', 'lib', 'prov')
+                ld_library_path.append(posixpath.join(
+                    basepath, 'mpi', 'intel64', 'libfabric', 'lib'))
+                path.append(posixpath.join(basepath, 'mpi', 'intel64',
+                                           'libfabric', 'bin'))
 
         if self.__tbb:
-            ld_library_path.append(os.path.join(basepath, 'tbb', 'lib',
-                                                'intel64', 'gcc4.7'))
+            ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',
+                                                  'intel64', 'gcc4.7'))
 
         if ld_library_path:
             ld_library_path.append('$LD_LIBRARY_PATH')

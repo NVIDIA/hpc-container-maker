@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 from copy import copy as _copy
 
@@ -181,7 +181,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         if self.directory:
             # Use source from local build context
             self += copy(src=self.directory,
-                         dest=os.path.join(self.__wd, self.directory))
+                         dest=posixpath.join(self.__wd, self.directory))
         self += shell(commands=self.__commands)
         if self.__environment_variables:
             self += environment(variables=self.__environment_variables)
@@ -210,7 +210,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
 
         if self.cuda and self.__gpu_arch and directory:
             self.__commands.append(
-                self.sed_step(file=os.path.join(directory, 'Makefile.in'),
+                self.sed_step(file=posixpath.join(directory, 'Makefile.in'),
                               patterns=[r's/-arch sm_20/-arch {}/g'.format(self.__gpu_arch)]))
 
     def __setup(self):
@@ -243,23 +243,23 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
                     toolchain.CPPFLAGS = '-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI='
 
                 if not toolchain.LD_LIBRARY_PATH:
-                    toolchain.LD_LIBRARY_PATH = os.path.join(cuda_home,
-                                                             'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
+                    toolchain.LD_LIBRARY_PATH = posixpath.join(
+                        cuda_home, 'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
             else:
                 if not toolchain.LD_LIBRARY_PATH:
-                    toolchain.LD_LIBRARY_PATH = os.path.join(cuda_home,
-                                                             'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
+                    toolchain.LD_LIBRARY_PATH = posixpath.join(
+                        cuda_home, 'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
                 self.configure_opts.append(
                     '--enable-cuda --with-cuda={}'.format(cuda_home))
 
             # Workaround for using compiler wrappers in the build stage
             self.__commands.append('ln -s {0} {1}'.format(
-                os.path.join(cuda_home, 'lib64', 'stubs', 'libnvidia-ml.so'),
-                os.path.join(cuda_home, 'lib64', 'stubs',
-                             'libnvidia-ml.so.1')))
+                posixpath.join(cuda_home, 'lib64', 'stubs', 'libnvidia-ml.so'),
+                posixpath.join(cuda_home, 'lib64', 'stubs',
+                               'libnvidia-ml.so.1')))
             self.__commands.append('ln -s {0} {1}'.format(
-                os.path.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
-                os.path.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
+                posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
+                posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
 
         else:
             self.configure_opts.append('--disable-cuda')
@@ -267,23 +267,24 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         if self.directory:
             # Use source from local build context
             self.__set_gpu_arch(
-                directory=os.path.join(self.__wd, self.directory))
+                directory=posixpath.join(self.__wd, self.directory))
             self.__commands.append(self.configure_step(
-                directory=os.path.join(self.__wd, self.directory),
+                directory=posixpath.join(self.__wd, self.directory),
                 toolchain=toolchain))
         else:
             # Download source from web
             self.__commands.append(self.download_step(url=url,
                                                       directory=self.__wd))
             self.__commands.append(self.untar_step(
-                tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+                tarball=posixpath.join(self.__wd, tarball),
+                directory=self.__wd))
             self.__set_gpu_arch(
-                directory=os.path.join(self.__wd,
-                                       'mvapich2-{}'.format(self.version)))
+                directory=posixpath.join(self.__wd,
+                                         'mvapich2-{}'.format(self.version)))
 
             self.__commands.append(self.configure_step(
-                directory=os.path.join(self.__wd,
-                                       'mvapich2-{}'.format(self.version)),
+                directory=posixpath.join(self.__wd,
+                                         'mvapich2-{}'.format(self.version)),
                 toolchain=toolchain))
 
 
@@ -295,7 +296,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -304,17 +305,17 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         if self.directory:
             # Using source from local build context, cleanup directory
             self.__commands.append(self.cleanup_step(
-                items=[os.path.join(self.__wd, self.directory)]))
+                items=[posixpath.join(self.__wd, self.directory)]))
         else:
             # Using downloaded source, cleanup tarball and directory
             self.__commands.append(self.cleanup_step(
-                items=[os.path.join(self.__wd, tarball),
-                       os.path.join(self.__wd,
-                                    'mvapich2-{}'.format(self.version))]))
+                items=[posixpath.join(self.__wd, tarball),
+                       posixpath.join(self.__wd,
+                                      'mvapich2-{}'.format(self.version))]))
 
         # Setup environment variables
         self.__environment_variables['PATH'] = '{}:$PATH'.format(
-            os.path.join(self.prefix, 'bin'))
+            posixpath.join(self.prefix, 'bin'))
         if self.cuda:
             # Workaround for using compiler wrappers in the build stage
             self.__environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
@@ -340,7 +341,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             # No need to workaround compiler wrapper issue for the runtime.
             # Copy the dictionary so not to modify the original.

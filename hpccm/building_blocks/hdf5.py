@@ -22,8 +22,8 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import posixpath
 import re
-import os
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
@@ -128,7 +128,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__environment_variables = {
             'HDF5_DIR': self.prefix,
             'PATH':
-            '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+            '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -153,7 +153,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.__directory:
             # Use source from local build context
             self += copy(src=self.__directory,
-                         dest=os.path.join(self.__wd, self.__directory))
+                         dest=posixpath.join(self.__wd, self.__directory))
 
         self += shell(commands=self.__commands)
         if self.__environment_variables:
@@ -194,17 +194,18 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.__directory:
             # Use source from local build context
             self.__commands.append(self.configure_step(
-                directory=os.path.join(self.__wd, self.__directory),
+                directory=posixpath.join(self.__wd, self.__directory),
                 toolchain=self.__toolchain))
         else:
             # Download source from web
             self.__commands.append(self.download_step(url=url,
                                                       directory=self.__wd))
             self.__commands.append(self.untar_step(
-                tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+                tarball=posixpath.join(self.__wd, tarball),
+                directory=self.__wd))
             self.__commands.append(self.configure_step(
-                directory=os.path.join(self.__wd,
-                                       'hdf5-{}'.format(self.__version)),
+                directory=posixpath.join(self.__wd,
+                                         'hdf5-{}'.format(self.__version)),
                 toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())
@@ -216,7 +217,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -225,13 +226,13 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.__directory:
             # Using source from local build context, cleanup directory
             self.__commands.append(self.cleanup_step(
-                items=[os.path.join(self.__wd, self.__directory)]))
+                items=[posixpath.join(self.__wd, self.__directory)]))
         else:
             # Using downloaded source, cleanup tarball and directory
             self.__commands.append(self.cleanup_step(
-                items=[os.path.join(self.__wd, tarball),
-                       os.path.join(self.__wd,
-                                    'hdf5-{}'.format(self.__version))]))
+                items=[posixpath.join(self.__wd, tarball),
+                       posixpath.join(self.__wd,
+                                      'hdf5-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -253,7 +254,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))
