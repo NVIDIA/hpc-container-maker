@@ -11,7 +11,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the package version from hpccm/version.py
 version = {}
-with open(os.path.join('hpccm', 'version.py')) as fp:
+with open(os.path.join(here, 'hpccm', 'version.py')) as fp:
     exec(fp.read(), version)
 
 # Get the long description from the README file
