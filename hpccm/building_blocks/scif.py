@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import os
 import posixpath
 
 import hpccm.base_object
