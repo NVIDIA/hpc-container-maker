@@ -62,7 +62,12 @@ r'''# SCI-F "foo"
 COPY {0} /scif/recipes/{1}
 RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
                                              os.path.basename(scif_file.name)))
-        os.unlink(scif_file.name)
+        try:
+            os.unlink(scif_file.name)
+        except WindowsError:
+            # WindowsError: [Error 32] The process cannot access the file
+            # because it is being used by another process
+            pass
 
     @singularity
     def test_defaults_singularity(self):
@@ -117,7 +122,12 @@ My app
         # slurp file content
         with open(scif_file.name) as f:
             content = f.read()
-        os.unlink(scif_file.name)
+        try:
+            os.unlink(scif_file.name)
+        except WindowsError:
+            # WindowsError: [Error 32] The process cannot access the file
+            # because it is being used by another process
+            pass
         
         self.assertEqual(content,
 r'''%appenv foo
