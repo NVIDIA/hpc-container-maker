@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.templates.ConfigureMake
 import hpccm.templates.git
@@ -99,9 +99,9 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
             'CPATH':
-            '{}:$CPATH'.format(os.path.join(self.prefix, 'include')),
+            '{}:$CPATH'.format(posixpath.join(self.prefix, 'include')),
             'LIBRARY_PATH':
-            '{}:$LIBRARY_PATH'.format(os.path.join(self.prefix, 'lib'))}
+            '{}:$LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -129,16 +129,16 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             path=self.__wd, directory='xpmem'))
         # Build
         self.__commands.append('cd {} && autoreconf --install'.format(
-            os.path.join(self.__wd, 'xpmem')))
+            posixpath.join(self.__wd, 'xpmem')))
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd, 'xpmem'),
+            directory=posixpath.join(self.__wd, 'xpmem'),
             toolchain=self.__toolchain))
 
         self.__commands.append(self.build_step())
         self.__commands.append(self.install_step())
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -146,7 +146,7 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         # Cleanup directory
         self.__commands.append(self.cleanup_step(
-                   [os.path.join(self.__wd, 'xpmem')]))
+                   [posixpath.join(self.__wd, 'xpmem')]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -167,7 +167,7 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(
                 environment(variables=self.__environment_variables))

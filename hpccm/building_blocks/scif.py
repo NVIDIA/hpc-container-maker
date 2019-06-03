@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.base_object
 import hpccm.config
@@ -224,8 +224,8 @@ class scif(hpccm.base_object):
 
             # Container instructions to copy the SCI-F recipe file
             # into the container and then run scif
-            c_scif_file = os.path.join('/scif/recipes',
-                                       os.path.basename(self.__scif_file))
+            c_scif_file = posixpath.join('/scif/recipes',
+                                         posixpath.basename(self.__scif_file))
             instructions = []
             instructions.append(comment('SCI-F "{}"'.format(self.__name)))
             instructions.append(

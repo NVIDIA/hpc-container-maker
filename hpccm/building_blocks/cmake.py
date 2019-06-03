@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 
 import hpccm.templates.rm
@@ -116,14 +116,14 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         if self.__eula:
             self.__commands.append(
                 '/bin/sh {0} --prefix={1} --skip-license'.format(
-                    os.path.join(self.__wd, runfile), self.__prefix))
+                    posixpath.join(self.__wd, runfile), self.__prefix))
         else:
             # This will fail when building the container
             logging.warning('CMake EULA was not accepted')
             self.__commands.append(
                 '/bin/sh {0} --prefix={1}'.format(
-                    os.path.join(self.__wd, runfile), self.__prefix))
+                    posixpath.join(self.__wd, runfile), self.__prefix))
 
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, runfile)]))
+            items=[posixpath.join(self.__wd, runfile)]))

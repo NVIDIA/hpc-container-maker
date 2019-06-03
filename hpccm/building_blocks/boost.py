@@ -23,7 +23,7 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import re
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.ldconfig
@@ -171,12 +171,12 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         # Configure
         self.__commands.append(
             'cd {} && ./bootstrap.sh --prefix={} {}'.format(
-                os.path.join(self.__wd, 'boost_{}'.format(v_underscore)),
+                posixpath.join(self.__wd, 'boost_{}'.format(v_underscore)),
                 self.__prefix,
                 ' '.join(self.__bootstrap_opts)))
 
@@ -184,7 +184,7 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands.append('./b2 -j{} -q install'.format(self.__parallel))
 
         # Set library path
-        libpath = os.path.join(self.__prefix, 'lib')
+        libpath = posixpath.join(self.__prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -192,9 +192,9 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'boost_{}'.format(v_underscore))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'boost_{}'.format(v_underscore))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -215,7 +215,7 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.__prefix, 'lib'))]))
+                    directory=posixpath.join(self.__prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

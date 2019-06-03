@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 
 import hpccm.config
@@ -257,7 +257,8 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
         # Install the package
         self.__commands.append(
-            self.__installer_template.format(os.path.join(self.__wd, package)))
+            self.__installer_template.format(posixpath.join(self.__wd,
+                                                            package)))
 
         # Workaround for bad path in the MPI compiler wrappers
         self.__commands.append('(test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash)')
@@ -265,23 +266,23 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         # Workaround for using compiler wrappers in the build stage
         cuda_home = '/usr/local/cuda'
         self.__commands.append('ln -s {0} {1}'.format(
-            os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so'),
-            os.path.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so.1')))
+            posixpath.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so'),
+            posixpath.join(cuda_home, 'lib64', 'stubs', 'nvidia-ml.so.1')))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, package)]))
+            items=[posixpath.join(self.__wd, package)]))
 
         # Setup environment variables
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.__install_path,
-                                                   'bin')),
+            'PATH': '{}:$PATH'.format(posixpath.join(self.__install_path,
+                                                     'bin')),
             # Workaround for using compiler wrappers in the build stage
             'PROFILE_POSTLIB': '"-L{} -lnvidia-ml"'.format(
                 '/usr/local/cuda/lib64/stubs')}
 
         # Set library path
-        libpath = os.path.join(self.__install_path, 'lib64')
+        libpath = posixpath.join(self.__install_path, 'lib64')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -308,7 +309,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.__install_path, 'lib64'))]))
+                    directory=posixpath.join(self.__install_path, 'lib64'))]))
         if self.__environment_variables:
             # No need to workaround compiler wrapper issue for the runtime.
             # Copy the dictionary so not to modify the original.

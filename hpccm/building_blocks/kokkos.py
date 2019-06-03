@@ -24,7 +24,7 @@ from __future__ import print_function
 from six import string_types
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 import hpccm.templates.rm
@@ -151,7 +151,7 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         # Set options
         opts = self.__opts
@@ -177,8 +177,8 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             opts.append('--prefix={}'.format(self.__prefix))
 
         # Configure
-        src_dir = os.path.join(self.__wd, 'kokkos-{}'.format(self.__version))
-        build_dir = os.path.join(src_dir, 'build')
+        src_dir = posixpath.join(self.__wd, 'kokkos-{}'.format(self.__version))
+        build_dir = posixpath.join(src_dir, 'build')
         self.__commands.append('mkdir -p {0} && cd {0}'.format(build_dir))
         self.__commands.append(
             '{0}/generate_makefile.bash {1}'.format(src_dir, ' '.join(opts)))
@@ -189,9 +189,9 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'kokkos-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'kokkos-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

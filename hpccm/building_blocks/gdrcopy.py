@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -81,9 +81,9 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
             'CPATH':
-            '{}:$CPATH'.format(os.path.join(self.__prefix, 'include')),
+            '{}:$CPATH'.format(posixpath.join(self.__prefix, 'include')),
             'LIBRARY_PATH':
-            '{}:$LIBRARY_PATH'.format(os.path.join(self.__prefix, 'lib64'))}
+            '{}:$LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib64'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -112,9 +112,9 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
         self.__commands.append('cd {}'.format(
-            os.path.join(self.__wd, 'gdrcopy-{}'.format(self.__version))))
+            posixpath.join(self.__wd, 'gdrcopy-{}'.format(self.__version))))
 
         # Work around "install -D" issue on CentOS
         self.__commands.append('mkdir -p {0}/include {0}/lib64'.format(self.__prefix))
@@ -122,7 +122,7 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__commands.append('make PREFIX={} lib lib_install'.format(self.__prefix))
 
         # Set library path
-        libpath = os.path.join(self.__prefix, 'lib64')
+        libpath = posixpath.join(self.__prefix, 'lib64')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -130,9 +130,9 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'gdrcopy-{}'.format(self.__version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'gdrcopy-{}'.format(self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -153,7 +153,7 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.__prefix, 'lib64'))]))
+                    directory=posixpath.join(self.__prefix, 'lib64'))]))
         if self.__environment_variables:
             instructions.append(
                 environment(variables=self.__environment_variables))

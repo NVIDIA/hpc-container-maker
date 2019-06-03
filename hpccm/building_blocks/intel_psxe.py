@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 
 import hpccm.config
@@ -216,11 +216,11 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         self += comment('Intel Parallel Studio XE')
         self += packages(ospackages=self.__ospackages)
         self += copy(src=self.__tarball,
-                     dest=os.path.join(self.__wd, self.__tarball_name))
+                     dest=posixpath.join(self.__wd, self.__tarball_name))
         if self.__license and not '@' in self.__license:
             # License file
             self += copy(src=self.__license,
-                         dest=os.path.join(self.__wd, 'license.lic'))
+                         dest=posixpath.join(self.__wd, 'license.lic'))
         self += shell(commands=self.__commands)
 
         if self.__psxevars:
@@ -247,8 +247,8 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
             raise RuntimeError('Unknown Linux distribution')
 
     def __environment(self):
-        basepath = os.path.join(self.__prefix, 'compilers_and_libraries',
-                                'linux')
+        basepath = posixpath.join(self.__prefix, 'compilers_and_libraries',
+                                  'linux')
         cpath = []
         ld_library_path = []
         library_path = []
@@ -256,54 +256,54 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         env = {}
 
         if self.__daal:
-            env['DAALROOT'] = os.path.join(basepath, 'daal')
-            cpath.append(os.path.join(basepath, 'daal', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'daal', 'lib',
-                                                'intel64'))
-            library_path.append(os.path.join(basepath, 'daal', 'lib',
-                                             'intel64'))
+            env['DAALROOT'] = posixpath.join(basepath, 'daal')
+            cpath.append(posixpath.join(basepath, 'daal', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'daal', 'lib',
+                                                  'intel64'))
+            library_path.append(posixpath.join(basepath, 'daal', 'lib',
+                                               'intel64'))
 
         if self.__icc:
-            cpath.append(os.path.join(basepath, 'pstl', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
-                                                'intel64'))
-            path.append(os.path.join(basepath, 'bin', 'intel64'))
+            cpath.append(posixpath.join(basepath, 'pstl', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'compiler', 'lib',
+                                                  'intel64'))
+            path.append(posixpath.join(basepath, 'bin', 'intel64'))
 
         if self.__ifort:
-            ld_library_path.append(os.path.join(basepath, 'compiler', 'lib',
-                                                'intel64'))
-            path.append(os.path.join(basepath, 'bin', 'intel64'))
+            ld_library_path.append(posixpath.join(basepath, 'compiler', 'lib',
+                                                  'intel64'))
+            path.append(posixpath.join(basepath, 'bin', 'intel64'))
 
         if self.__ipp:
-            env['IPPROOT' ] = os.path.join(basepath, 'ipp')
-            cpath.append(os.path.join(basepath, 'ipp', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'ipp', 'lib',
-                                                'intel64'))
-            library_path.append(os.path.join(basepath, 'ipp', 'lib',
-                                             'intel64'))
+            env['IPPROOT' ] = posixpath.join(basepath, 'ipp')
+            cpath.append(posixpath.join(basepath, 'ipp', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'ipp', 'lib',
+                                                  'intel64'))
+            library_path.append(posixpath.join(basepath, 'ipp', 'lib',
+                                               'intel64'))
 
         if self.__mkl:
-            env['MKLROOT'] = os.path.join(basepath, 'mkl')
-            cpath.append(os.path.join(basepath, 'mkl', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'mkl', 'lib',
+            env['MKLROOT'] = posixpath.join(basepath, 'mkl')
+            cpath.append(posixpath.join(basepath, 'mkl', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'mkl', 'lib',
                                                 'intel64'))
-            library_path.append(os.path.join(basepath, 'mkl', 'lib',
-                                             'intel64'))
+            library_path.append(posixpath.join(basepath, 'mkl', 'lib',
+                                               'intel64'))
 
         if self.__mpi:
             # Handle libfabics case
-            env['I_MPI_ROOT' ] = os.path.join(basepath, 'mpi')
-            cpath.append(os.path.join(basepath, 'mpi', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'mpi', 'intel64',
-                                                'lib'))
-            path.append(os.path.join(basepath, 'mpi', 'intel64', 'bin'))
+            env['I_MPI_ROOT' ] = posixpath.join(basepath, 'mpi')
+            cpath.append(posixpath.join(basepath, 'mpi', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'mpi', 'intel64',
+                                                  'lib'))
+            path.append(posixpath.join(basepath, 'mpi', 'intel64', 'bin'))
 
         if self.__tbb:
-            cpath.append(os.path.join(basepath, 'tbb', 'include'))
-            ld_library_path.append(os.path.join(basepath, 'tbb', 'lib',
-                                                'intel64', 'gcc4.7'))
-            library_path.append(os.path.join(basepath, 'tbb', 'lib',
-                                             'intel64', 'gcc4.7'))
+            cpath.append(posixpath.join(basepath, 'tbb', 'include'))
+            ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',
+                                                  'intel64', 'gcc4.7'))
+            library_path.append(posixpath.join(basepath, 'tbb', 'lib',
+                                               'intel64', 'gcc4.7'))
 
         if cpath:
             cpath.append('$CPATH')
@@ -334,12 +334,12 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         # Get the name of the directory that created when the tarball
         # is extracted.  Assume it is the same as the basename of the
         # tarball.
-        self.__tarball_name = os.path.basename(self.__tarball)
-        basedir = os.path.splitext(self.__tarball_name)[0]
+        self.__tarball_name = posixpath.basename(self.__tarball)
+        basedir = posixpath.splitext(self.__tarball_name)[0]
 
         # Untar
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, self.__tarball_name),
+            tarball=posixpath.join(self.__wd, self.__tarball_name),
             directory=(self.__wd)))
 
         # Configure silent install
@@ -360,25 +360,25 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         elif self.__license:
             # License file
             silent_cfg.append(r's/^#\?\(ACTIVATION_TYPE\)=.*/\1=license_file/g')
-            silent_cfg.append(r's|^#\?\(ACTIVATION_LICENSE_FILE\)=.*|\1={}|g'.format(os.path.join(self.__wd, 'license.lic')))
+            silent_cfg.append(r's|^#\?\(ACTIVATION_LICENSE_FILE\)=.*|\1={}|g'.format(posixpath.join(self.__wd, 'license.lic')))
         else:
             # No license, will most likely not work
             logging.warning('No Intel Parallel Studio XE license specified')
 
         # Update the silent config file
         self.__commands.append(self.sed_step(
-            file=os.path.join(self.__wd, basedir, 'silent.cfg'),
+            file=posixpath.join(self.__wd, basedir, 'silent.cfg'),
             patterns=silent_cfg))
 
         # Install
         self.__commands.append(
             'cd {} && ./install.sh --silent=silent.cfg'.format(
-                os.path.join(self.__wd, basedir)))
+                posixpath.join(self.__wd, basedir)))
 
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, self.__tarball_name),
-                   os.path.join(self.__wd, basedir)]))
+            items=[posixpath.join(self.__wd, self.__tarball_name),
+                   posixpath.join(self.__wd, basedir)]))
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""

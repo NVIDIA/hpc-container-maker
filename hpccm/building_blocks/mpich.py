@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
+import posixpath
 import re
 from six import string_types
 
@@ -116,7 +116,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(os.path.join(self.prefix, 'bin'))}
+            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
@@ -176,12 +176,12 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
         self.__commands.append(self.untar_step(
-            tarball=os.path.join(self.__wd, tarball), directory=self.__wd))
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
         # Configure
         self.__commands.append(self.configure_step(
-            directory=os.path.join(self.__wd,
-                                   'mpich-{}'.format(self.version)),
+            directory=posixpath.join(self.__wd,
+                                     'mpich-{}'.format(self.version)),
             environment=build_environment,
             toolchain=self.__toolchain))
 
@@ -200,7 +200,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             self.__commands.append('RUNTESTS_SHOWPROGRESS=1 make testing')
 
         # Set library path
-        libpath = os.path.join(self.prefix, 'lib')
+        libpath = posixpath.join(self.prefix, 'lib')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
@@ -208,9 +208,9 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
-            items=[os.path.join(self.__wd, tarball),
-                   os.path.join(self.__wd,
-                                'mpich-{}'.format(self.version))]))
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'mpich-{}'.format(self.version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -231,7 +231,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             instructions.append(shell(
                 commands=[self.ldcache_step(
-                    directory=os.path.join(self.prefix, 'lib'))]))
+                    directory=posixpath.join(self.prefix, 'lib'))]))
         if self.__environment_variables:
             instructions.append(environment(
                 variables=self.__environment_variables))

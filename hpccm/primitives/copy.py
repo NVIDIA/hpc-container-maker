@@ -22,7 +22,7 @@ from __future__ import print_function
 
 from distutils.version import StrictVersion
 import logging  # pylint: disable=unused-import
-import os
+import posixpath
 
 import hpccm.config
 
@@ -150,7 +150,7 @@ class copy(object):
                     c[0] = c[0] + src[0]
                     c.extend(['    {}'.format(x) for x in src[1:]])
                     # Docker requires a trailing slash.  Add one if missing.
-                    c.append('    {}'.format(os.path.join(dest, '')))
+                    c.append('    {}'.format(posixpath.join(dest, '')))
                 else:
                     c[0] = c[0] + '{0} {1}'.format(src, dest)
 
@@ -199,10 +199,10 @@ class copy(object):
                         flat_files.append('    {0} {1}'.format(s, dest))
 
                         if self._post:
-                            post.append('    mv /{0} {1}'.format(os.path.basename(s), os.path.join(pair['dest'], s)))
+                            post.append('    mv /{0} {1}'.format(posixpath.basename(s), posixpath.join(pair['dest'], s)))
                     if (self._mkdir and
-                        os.path.dirname(dest) != '/' and
-                        os.path.basename(dest) != dest):
+                        posixpath.dirname(dest) != '/' and
+                        posixpath.basename(dest) != dest):
                         # When multiple files are to be copied to the
                         # same destination, assume the destination is
                         # a directory
@@ -210,14 +210,14 @@ class copy(object):
                 else:
                     flat_files.append('    {0} {1}'.format(src, dest))
                     if (self._mkdir and
-                        os.path.dirname(dest) != '/' and
-                        os.path.basename(dest) != dest):
+                        posixpath.dirname(dest) != '/' and
+                        posixpath.basename(dest) != dest):
                         # When a single file is to be copied to a
                         # destination, assume the destination is a
                         # file.
-                        pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(os.path.dirname(dest)))
+                        pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(posixpath.dirname(dest)))
                     elif self._post:
-                        post.append('    mv /{0} {1}'.format(os.path.basename(src), pair['dest']))
+                        post.append('    mv /{0} {1}'.format(posixpath.basename(src), pair['dest']))
 
             s = ''
             if pre:
