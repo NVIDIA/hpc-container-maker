@@ -230,3 +230,15 @@ r'''%files
     a /A
     b /B
     foo bar''')
+
+    @docker
+    def test_chown_docker(self):
+        """Docker --chown syntax"""
+        c = copy(_chown='alice:alice', src='foo', dest='bar')
+        self.assertEqual(str(c), 'COPY --chown=alice:alice foo bar')
+
+    @singularity
+    def test_chown_singularity(self):
+        """Docker --chown syntax"""
+        c = copy(_chown='alice:alice', src='foo', dest='bar')
+        self.assertEqual(str(c), '%files\n    foo bar')
