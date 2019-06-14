@@ -39,6 +39,9 @@ class copy(object):
     identifier.  This also causes the Singularity block to named
     `%appfiles` rather than `%files` (Singularity specific).
 
+    _chown: Set the ownership of the file(s) in the container image
+    (Docker specific).
+
     dest: Path in the container image to copy the file(s)
 
     files: A dictionary of file pairs, source and destination, to copy
@@ -85,6 +88,7 @@ class copy(object):
         #super(copy, self).__init__()
 
         self._app = kwargs.get('_app', '')  # Singularity specific
+        self.__chown = kwargs.get('_chown', '')  # Docker specific
         self.__dest = kwargs.get('dest', '')
         self.__files = kwargs.get('files', {})
         self.__from = kwargs.get('_from', '')  # Docker specific
@@ -133,6 +137,10 @@ class copy(object):
             # COPY src2 dest2
             # COPY src3 dest3
             base_inst = 'COPY '
+
+            if self.__chown:
+                base_inst = base_inst + '--chown={} '.format(self.__chown)
+
             if self.__from:
                 base_inst = base_inst + '--from={} '.format(self.__from)
 

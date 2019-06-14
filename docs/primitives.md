@@ -108,6 +108,9 @@ __Parameters__
 identifier.  This also causes the Singularity block to named
 `%appfiles` rather than `%files` (Singularity specific).
 
+- ___chown__: Set the ownership of the file(s) in the container image
+(Docker specific).
+
 - __dest__: Path in the container image to copy the file(s)
 
 - __files__: A dictionary of file pairs, source and destination, to copy
