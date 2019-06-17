@@ -286,7 +286,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
             self.__commands.append(self.ldcache_step(
                 directory=posixpath.join(self.prefix, 'lib64')))
         else:
-            self.__environment['LD_LIBARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib64'))
+            self.__environment['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib64'))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
