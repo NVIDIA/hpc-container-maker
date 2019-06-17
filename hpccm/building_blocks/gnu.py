@@ -181,6 +181,9 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
     def __build(self):
         """Build compilers from source"""
 
+        if not self.__version:
+            raise RuntimeError('The compiler version must be specified when performing a source build')
+
         # Determine which compiler frontends to build
         languages = []
         if self.__cc:
@@ -191,9 +194,6 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
             languages.append('fortran')
         if self.__openacc:
             languages.append('lto')
-
-        if not self.__version:
-            raise RuntimeError('The compiler must be specified when performing a source build')
 
         # Download source from web
         tarball = 'gcc-{0}.tar.xz'.format(self.__version)
@@ -213,7 +213,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
 
         # Configure accelerator compiler and dependencies
         if self.__openacc:
-            # nvptx-none
+            # Build nvptx-tools
             # Download
             self.__commands.append(
                 self.clone_step(repository='https://github.com/MentorEmbedded/nvptx-tools.git',
