@@ -43,6 +43,9 @@ class Test_tar(unittest.TestCase):
         self.assertEqual(t.untar_step(tarball='foo.tar.gz'),
                          'tar -x -f foo.tar.gz -z')
 
+        self.assertEqual(t.untar_step(tarball='foo.tar.xz'),
+                         'tar -x -f foo.tar.xz -J')
+
         self.assertEqual(t.untar_step(tarball='foo.tgz'),
                          'tar -x -f foo.tgz -z')
 

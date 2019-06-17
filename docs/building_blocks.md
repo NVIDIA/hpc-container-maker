@@ -495,6 +495,10 @@ __Parameters__
 - __cc__: Boolean flag to specify whether to install `gcc`.  The default
 is True.
 
+- __configure_opts__: List of options to pass to `configure`.  The
+default value is `--disable-multilib`. This option is only
+recognized if a source build is enabled.
+
 - __cxx__: Boolean flag to specify whether to install `g++`.  The
 default is True.
 
@@ -508,6 +512,35 @@ Collections (SCL) repository.  The default is False.
 - __fortran__: Boolean flag to specify whether to install `gfortran`.
 The default is True.
 
+- __ldconfig__: Boolean flag to specify whether the GNU library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the GNU library
+directory. The default value is False. This option is only
+recognized if a source build is enabled.
+
+- __openacc__: Boolean flag to control whether a OpenACC enabled
+compiler is built. If True, adds `--with-cuda-driver` and
+`--enable-offload-targets=nvptx-none` to the list of host compiler
+`configure` options and also builds the accelerator compiler and
+dependencies (`nvptx-tools` and `nvptx-newlib`). The default value
+is False. This option is only recognized if a source build is
+enabled.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `bzip2`, `file`,
+`gcc`, `g++`, `git`, `make`, `perl`, `tar`, `wget`, and
+`xz-utils`.  For RHEL-based Linux distributions, the default
+values are `bzip2`, `file`, `gcc`, `gcc-c++`, `git`, `make`,
+`perl`, `tar`, `wget`, and `xz`. This option is only recognized if
+a source build is enabled.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/gnu`. This option is only recognized if a source build
+is enabled.
+
+- __source__: Boolean flag to control whether to build the GNU compilers
+from source. The default value is False.
+
 - __version__: The version of the GNU compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
 actual compiler version.  For Ubuntu, the version is appended to
@@ -515,7 +548,9 @@ the default package name, e.g., `gcc-7`.  For RHEL-based Linux
 distributions, the version is inserted into the SCL Developer
 Toolset package name, e.g., `devtoolset-7-gcc`.  For RHEL-based
 Linux distributions, specifying the version automatically sets
-`extra_repository` to True.  The default is an empty value.
+`extra_repository` to True.  If a source build is enabled, the
+version is the compiler tarball version on the GNU FTP site and
+the version must be specified. The default is an empty value.
 
 __Examples__
 
@@ -533,9 +568,14 @@ gnu(extra_repository=True, version='7')
 ```
 
 ```python
+gnu(openacc=True, source=True, version='9.1.0')
+```
+
+```python
 g = gnu()
 openmpi(..., toolchain=g.toolchain, ...)
 ```
+
 
 ## runtime
 ```python

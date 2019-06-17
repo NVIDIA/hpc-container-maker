@@ -59,13 +59,19 @@ class ConfigureMake(hpccm.base_object):
             parallel = self.parallel
         return 'make -j{} check'.format(parallel)
 
-    def configure_step(self, directory=None, environment=[], opts=[],
-                       toolchain=None):
+    def configure_step(self, build_directory=None, directory=None,
+                       environment=[], opts=[], toolchain=None):
         """Generate configure command line string"""
 
         change_directory = ''
+        src_directory = '.'
         if directory:
-            change_directory = 'cd {} && '.format(directory)
+            if build_directory:
+                src_directory = directory
+                change_directory = 'mkdir -p {0} && cd {0} && '.format(
+                    build_directory)
+            else:
+                change_directory = 'cd {} && '.format(directory)
 
         e = []
         e.extend(environment)
@@ -130,8 +136,9 @@ class ConfigureMake(hpccm.base_object):
             configure_opts = '--prefix={0:s} {1}'.format(self.prefix,
                                                          configure_opts)
 
-        cmd = '{0} {1} ./configure {2}'.format(change_directory,
-                                               configure_env, configure_opts)
+        cmd = '{0} {1} {3}/configure {2}'.format(change_directory,
+                                       configure_env, configure_opts,
+                                       src_directory)
 
         return cmd.strip() # trim whitespace
 
