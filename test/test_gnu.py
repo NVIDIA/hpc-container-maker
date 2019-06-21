@@ -128,7 +128,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://f
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/gcc-9.1.0.tar.xz /var/tmp/gcc-9.1.0 /var/tmp/objdir
-ENV LD_LIBARY_PATH=/usr/local/gnu/lib64:$LD_LIBRARY_PATH \
+ENV LD_LIBRARY_PATH=/usr/local/gnu/lib64:$LD_LIBRARY_PATH \
     PATH=/usr/local/gnu/bin:$PATH''')
 
     @centos
@@ -198,7 +198,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://f
     make -j$(nproc) install && \
     rm -rf /var/tmp/gcc-9.1.0.tar.xz /var/tmp/gcc-9.1.0 /var/tmp/objdir && \
     rm -rf /var/tmp/accel_objdir /var/tmp/nvptx-newlib
-ENV LD_LIBARY_PATH=/usr/local/gnu/lib64:$LD_LIBRARY_PATH \
+ENV LD_LIBRARY_PATH=/usr/local/gnu/lib64:$LD_LIBRARY_PATH \
     PATH=/usr/local/gnu/bin:$PATH''')
 
     @ubuntu
