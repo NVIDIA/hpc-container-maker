@@ -73,6 +73,16 @@ class Test_ConfigureMake(unittest.TestCase):
         self.assertEqual(configure,
                          'cd /tmp/foo &&   ./configure --prefix=/usr/local')
 
+    def test_build_directory(self):
+        """Build directory specified"""
+        cm = ConfigureMake()
+
+        configure = cm.configure_step(build_directory='/tmp/build',
+                                      directory='/tmp/src')
+        # Note extra whitespace
+        self.assertEqual(configure,
+                         'mkdir -p /tmp/build && cd /tmp/build &&   /tmp/src/configure --prefix=/usr/local')
+
     def test_parallel(self):
         """Parallel count specified"""
         cm = ConfigureMake(parallel=7)

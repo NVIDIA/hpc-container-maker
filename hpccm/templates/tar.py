@@ -50,6 +50,8 @@ class tar(hpccm.base_object):
             opts.append('-z')
         elif re.search(r'\.tgz$', tarball):
             opts.append('-z')
+        elif re.search(r'\.tar\.xz$', tarball):
+            opts.append('-J')
         elif re.search(r'\.tar$', tarball):
             pass
         else:
