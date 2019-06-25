@@ -14,6 +14,8 @@
 
 from __future__ import absolute_import
 
+from hpccm.version import __version__
+
 from hpccm.base_object import base_object
 
 from hpccm.common import container_type
