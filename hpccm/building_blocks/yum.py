@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import posixpath
 
 import hpccm.config
 
@@ -38,9 +39,23 @@ class yum(bb_base):
 
     # Parameters
 
+    download: Boolean flag to specify whether to download the rpm
+    packages instead of installing them.  The default is False.
+
+    download_directory: The deb package download location. This
+    parameter is ignored if `download` is False. The default value is
+    `/var/tmp/yum_download`.
+
     epel: - Boolean flag to specify whether to enable the Extra
     Packages for Enterprise Linux (EPEL) repository.  The default is
     False.
+
+    extract: Location where the downloaded packages should be
+    extracted. Note, this extracts and does not install the packages,
+    i.e., the package manager is bypassed. After the downloaded
+    packages are extracted they are deleted. This parameter is ignored
+    if `download` is False. If empty, then the downloaded packages are
+    not extracted. The default value is an empty string.
 
     keys: A list of GPG keys to import.  The default is an empty list.
 
@@ -58,6 +73,7 @@ class yum(bb_base):
     ```python
     yum(ospackages=['make', 'wget'])
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -66,7 +82,13 @@ class yum(bb_base):
         super(yum, self).__init__()
 
         self.__commands = []
+        self.__download = kwargs.get('download', False)
+        self.__download_args = kwargs.get('download_args',
+                                          '-x \*i?86 --archlist=x86_64')
+        self.__download_directory = kwargs.get('download_directory',
+                                               '/var/tmp/yum_download')
         self.__epel = kwargs.get('epel', False)
+        self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
         self.__repositories = kwargs.get('repositories', [])
@@ -109,12 +131,43 @@ class yum(bb_base):
             self.__commands.append('yum install -y centos-release-scl')
 
         if self.ospackages:
-            install = 'yum install -y \\\n'
             packages = []
             for pkg in sorted(self.ospackages):
                 packages.append('        {}'.format(pkg))
-            install = install + ' \\\n'.join(packages)
-            self.__commands.append(install)
+
+            if self.__download:
+                # Download packages
+
+                # Need yumdownloader
+                self.__commands.append('yum install -y yum-utils')
+
+                self.__commands.append('mkdir -p {0}'.format(
+                    self.__download_directory))
+
+                download = 'yumdownloader --destdir={0} {1} \\\n'.format(
+                    self.__download_directory, self.__download_args)
+                download = download + ' \\\n'.join(packages)
+                self.__commands.append(download)
+
+                if self.__extract:
+                    # Extract the packages to a prefix - not a "real"
+                    # package manager install
+                    self.__commands.append('mkdir -p {0} && cd {0}'.format(
+                        self.__extract))
+
+                    regex = posixpath.join(
+                        self.__download_directory,
+                        '(' + '|'.join(sorted(self.ospackages)) + ').*rpm')
+                    self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -exec sh -c "rpm2cpio {{}} | cpio -idm" \;'.format(self.__download_directory, regex))
+
+                    # Cleanup downloaded packages
+                    self.__commands.append(
+                        'rm -rf {}'.format(self.__download_directory))
+            else:
+                # Install packages
+                install = 'yum install -y \\\n'
+                install = install + ' \\\n'.join(packages)
+                self.__commands.append(install)
 
         if self.__epel or self.ospackages:
             self.__commands.append('rm -rf /var/cache/yum/*')

@@ -24,6 +24,7 @@ generate:
   - hpccm.building_blocks.mkl+
   - hpccm.building_blocks.mlnx_ofed+
   - hpccm.building_blocks.mpich+
+  - hpccm.building_blocks.multi_ofed+
   - hpccm.building_blocks.mvapich2+
   - hpccm.building_blocks.mvapich2_gdr+
   - hpccm.building_blocks.netcdf+

@@ -29,6 +29,8 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
+from hpccm.primitives.shell import shell
 
 class ofed(bb_base):
     """The `ofed` building block installs the OpenFabrics Enterprise
@@ -36,26 +38,32 @@ class ofed(bb_base):
 
     For Ubuntu 16.04, the following packages are installed:
     `dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-    `libdapl-dev`, `libibcm-dev`, `libibmad5`, `libibmad-dev`,
-    `libibverbs1`, `libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`,
-    `libmlx5-1`, `libmlx5-dev`, `librdmacm1`, `librdmacm-dev`,
-    `opensm`, and `rdmacm-utils`.
+    `libdapl2`, `libdapl-dev`, `libibcm1`, `libibcm-dev`, `libibmad5`,
+    `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
+    `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+    `librdmacm-dev`, and `rdmacm-utils`.
 
     For Ubuntu 18.04, the following packages are installed:
-    `dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-    `libdapl-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
-    `libibverbs-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
-    `rdmacm-utils`.
+    `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
+    `infiniband-diags`, `libdapl2`, `libdapl-dev`, `libibmad5`,
+    `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
+    `librdmacm-dev`, and `rdmacm-utils`.
 
     For RHEL-based Linux distributions, the following packages are
     installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
     `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
-    `libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
+    `libibverbs-utils`, `librdmacm`, `rdma-core`, and
     `rdma-core-devel`.
 
     # Parameters
 
-    None
+    prefix: The top level install location. Install of installing the
+    packages via the package manager, they will be extracted to this
+    location. This option is useful if multiple versions of OFED need
+    to be installed. The environment must be manually configured to
+    recognize the OFED location, e.g., in the container entry
+    point. The default value is empty, i.e., install via the package
+    manager to the standard system locations.
 
     # Examples
 
@@ -70,38 +78,66 @@ class ofed(bb_base):
 
         super(ofed, self).__init__(**kwargs)
 
-        if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
-            hpccm.config.g_linux_version >= StrictVersion('18.0')):
-            self.__ospackages_deb = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
-                                     'infiniband-diags', 'libdapl-dev',
-                                     'libibmad5', 'libibmad-dev',
-                                     'libibverbs1', 'libibverbs-dev',
-                                     'librdmacm1', 'librdmacm-dev',
-                                     'opensm', 'rdmacm-utils']
-        else:
-            self.__ospackages_deb = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
-                                     'infiniband-diags', 'libdapl-dev',
-                                     'libibcm-dev',
+        self.__deppackages = []  # Filled in by __distro()
+        self.__ospackages = []   # Filled in by __distro()
+        self.__prefix = kwargs.get('prefix', None)
+        self.__wd = '/var/tmp'
+
+        # Set the Linux distribution specific parameters
+        self.__distro()
+
+        # Fill in container instructions
+        self.__instructions()
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+           specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            self.__deppackages = ['libnl-3-200', 'libnl-route-3-200',
+                                 'libnuma1']
+            if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                self.__ospackages= ['dapl2-utils', 'ibutils',
+                                    'ibverbs-providers', 'ibverbs-utils',
+                                    'infiniband-diags',
+                                    'libdapl2', 'libdapl-dev',
+                                    'libibmad5', 'libibmad-dev',
+                                    'libibverbs1', 'libibverbs-dev',
+                                    'librdmacm1', 'librdmacm-dev',
+                                    'rdmacm-utils']
+            else:
+                self.__ospackages = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
+                                     'infiniband-diags',
+                                     'libdapl2', 'libdapl-dev',
+                                     'libibcm1', 'libibcm-dev',
                                      'libibmad5', 'libibmad-dev',
                                      'libibverbs1', 'libibverbs-dev',
                                      'libmlx4-1', 'libmlx4-dev',
                                      'libmlx5-1', 'libmlx5-dev',
                                      'librdmacm1', 'librdmacm-dev',
-                                     'opensm', 'rdmacm-utils']
-
-        self.__ospackages_rpm = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
+                                     'rdmacm-utils']
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
+            self.__ospackages = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
                                  'libibmad', 'libibmad-devel', 'libmlx5',
                                  'libibumad', 'libibverbs', 'libibverbs-utils',
-                                 'librdmacm', 'opensm', 'rdma-core',
-                                 'rdma-core-devel']
-
-        # Fill in container instructions
-        self.__instructions()
+                                 'librdmacm', 'rdma-core', 'rdma-core-devel']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
 
     def __instructions(self):
         """Fill in container instructions"""
         self += comment('OFED')
-        self += packages(apt=self.__ospackages_deb, yum=self.__ospackages_rpm)
+        if self.__prefix:
+            # Extract to a prefix - not a "real" package manager install
+            self += packages(ospackages=self.__deppackages)
+            self += packages(download=True, extract=self.__prefix,
+                             ospackages=self.__ospackages)
+            # Suppress warnings from libibverbs
+            self += shell(commands=['mkdir -p /etc/libibverbs.d'])
+        else:
+            # Install packages using package manager
+            self += packages(ospackages=self.__ospackages)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -115,4 +151,18 @@ class ofed(bb_base):
         Stage1 += o.runtime()
         ```
         """
-        return str(self)
+        if self.__prefix:
+            instructions = []
+            instructions.append(comment('OFED'))
+
+            if self.__deppackages:
+                instructions.append(packages(ospackages=self.__deppackages))
+
+            # Suppress warnings from libibverbs
+            instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))
+
+            instructions.append(copy(_from=_from, dest=self.__prefix,
+                                     src=self.__prefix))
+            return '\n'.join(str(x) for x in instructions)
+        else:
+            return str(self)

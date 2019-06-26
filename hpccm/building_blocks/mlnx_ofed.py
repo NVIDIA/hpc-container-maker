@@ -33,6 +33,7 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
 
 class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
@@ -218,4 +219,19 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         Stage1 += m.runtime()
         ```
         """
-        return str(self)
+        if self.__prefix:
+            instructions = []
+            instructions.append(comment('Mellanox OFED version {}'.format(
+                self.__version)))
+
+            if self.__ospackages:
+                instructions.append(packages(ospackages=self.__ospackages))
+
+            # Suppress warnings from libibverbs
+            instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))
+
+            instructions.append(copy(_from=_from, dest=self.__prefix,
+                                     src=self.__prefix))
+            return '\n'.join(str(x) for x in instructions)
+        else:
+            return str(self)
