@@ -1,3 +1,11 @@
+# v19.6.0
+
+- Enhances the GNU (`gnu`) building block to build the compiler from
+  source, optionally with OpenACC support
+- Adds support for Windows
+- Enhances the `copy` primitive to support the Docker specific `--chown`
+  option
+
 # v19.5.1
 
 - Fix issue with installs from PyPi
