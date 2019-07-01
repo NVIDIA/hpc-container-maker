@@ -96,6 +96,7 @@ class multi_ofed(bb_base):
                                            '4.6-1.0.1.1'])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/ofed')
+        self.__symlink = kwargs.get('symlink', False)
 
         self.__commands = []
 
@@ -124,11 +125,13 @@ class multi_ofed(bb_base):
             self += mlnx_ofed(oslabel=self.__mlnx_oslabel,
                               packages=self.__mlnx_packages,
                               prefix=posixpath.join(self.__prefix, version),
+                              symlink=self.__symlink,
                               version=version)
 
         # Inbox OFED
         if self.__inbox:
-            self += ofed(prefix=posixpath.join(self.__prefix, 'inbox'))
+            self += ofed(prefix=posixpath.join(self.__prefix, 'inbox'),
+                         symlink=self.__symlink)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

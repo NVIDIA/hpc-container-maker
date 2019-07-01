@@ -96,6 +96,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', None)
+        self.__symlink = kwargs.get('symlink', False)
         self.__version = kwargs.get('version', '4.5-1.0.1.0')
 
         self.__commands = []
@@ -197,6 +198,18 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 self.__prefix))
             self.__commands.extend([self.__extractor_template.format(
                 x, self.__prefix) for x in self.__pkglist.split()])
+
+            # library symlinks
+            if self.__symlink:
+                self.__ospackages.append('findutils')
+
+                self.__commands.append('mkdir -p {0} && cd {0}'.format(
+                    posixpath.join(self.__prefix, 'lib')))
+                # Prune the symlink directory itself and any debug
+                # libraries
+                self.__commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
+                self.__commands.append('cd {0} && ln -s usr/bin bin'.format(
+                    self.__prefix))
         else:
             # Install in the normal system locations
             self.__commands.append('{0} {1}'.format(self.__installer,

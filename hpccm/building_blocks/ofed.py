@@ -22,6 +22,7 @@ from __future__ import print_function
 
 from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
+import posixpath
 
 import hpccm.config
 
@@ -81,6 +82,7 @@ class ofed(bb_base):
         self.__deppackages = []  # Filled in by __distro()
         self.__ospackages = []   # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', None)
+        self.__symlink = kwargs.get('symlink', False)
         self.__wd = '/var/tmp'
 
         # Set the Linux distribution specific parameters
@@ -129,12 +131,29 @@ class ofed(bb_base):
         """Fill in container instructions"""
         self += comment('OFED')
         if self.__prefix:
+            commands = []
+
             # Extract to a prefix - not a "real" package manager install
             self += packages(ospackages=self.__deppackages)
             self += packages(download=True, extract=self.__prefix,
                              ospackages=self.__ospackages)
+
+            # library symlinks
+            if self.__symlink:
+                self.__deppackages.append('findutils')
+
+                commands.append('mkdir -p {0} && cd {0}'.format(
+                    posixpath.join(self.__prefix, 'lib')))
+                # Prune the symlink directory itself and any debug
+                # libraries
+                commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
+                commands.append('cd {0} && ln -s usr/bin bin'.format(
+                    self.__prefix))
+
             # Suppress warnings from libibverbs
-            self += shell(commands=['mkdir -p /etc/libibverbs.d'])
+            commands.append('mkdir -p /etc/libibverbs.d')
+
+            self += shell(commands=commands)
         else:
             # Install packages using package manager
             self += packages(ospackages=self.__ospackages)
