@@ -48,8 +48,8 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     cuda: Boolean flag to specify whether the JuliaGPU packages should
     be installed.  If True, the `CUDAnative`, `CuArrays`, and
     `GPUArrays` packages are installed. Note that the `CUDAdrv`
-    package must be rebuilt when container the container to align with
-    the host CUDA driver. The default is False.
+    package must be rebuilt when the container is running to align
+    with the host CUDA driver. The default is False.
 
     depot: Path to the location of Julia packages. The default value
     is an empty string.

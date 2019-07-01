@@ -1002,8 +1002,8 @@ __Parameters__
 - __cuda__: Boolean flag to specify whether the JuliaGPU packages should
 be installed.  If True, the `CUDAnative`, `CuArrays`, and
 `GPUArrays` packages are installed. Note that the `CUDAdrv`
-package must be rebuilt when container the container to align with
-the host CUDA driver. The default is False.
+package must be rebuilt when the container is running to align
+with the host CUDA driver. The default is False.
 
 - __depot__: Path to the location of Julia packages. The default value
 is an empty string.
