@@ -208,7 +208,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 # Prune the symlink directory itself and any debug
                 # libraries
                 self.__commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
-                self.__commands.append('cd {0} && ln -s usr/bin bin'.format(
+                self.__commands.append('cd {0} && ln -s usr/bin bin && ln -s usr/include include'.format(
                     self.__prefix))
         else:
             # Install in the normal system locations

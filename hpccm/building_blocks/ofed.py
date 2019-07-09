@@ -147,7 +147,7 @@ class ofed(bb_base):
                 # Prune the symlink directory itself and any debug
                 # libraries
                 commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
-                commands.append('cd {0} && ln -s usr/bin bin'.format(
+                commands.append('cd {0} && ln -s usr/bin bin && ln -s usr/include include'.format(
                     self.__prefix))
 
             # Suppress warnings from libibverbs
