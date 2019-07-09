@@ -2590,6 +2590,16 @@ directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the UCX library
 directory. The default value is False.
 
+- __ofed__: Flag to control whether OFED is used by the build.  If True,
+adds `--with-verbs` and `--with-rdmacm` to the list of `configure`
+options.  If a string, uses the value of the string as the OFED
+path, e.g., `--with-verbs=/path/to/ofed`.  If False, adds
+`--without-verbs` and `--without-rdmacm` to the list of
+`configure` options.  The default is an empty string, i.e.,
+include neither `--with-verbs` not `--without-verbs` and let
+`configure` try to automatically detect whether OFED is present or
+not.
+
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `binutils-dev`,
 `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
