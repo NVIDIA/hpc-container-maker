@@ -26,6 +26,7 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
@@ -37,18 +38,18 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mkl(bb_base, hpccm.templates.wget):
+class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     """The `mkl` building block downloads and installs the [Intel Math
     Kernel Library](http://software.intel.com/mkl).
 
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
 
-    As a side effect, this building block modifies `LIBRARY_PATH`,
-    `LD_LIBRARY_PATH`, and other environment variables to include MKL.
-    Please see the `mklvars` parameter for more information.
-
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+    modified to include MKL. The default is True.
 
     eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
     The default value is `False`.
@@ -80,6 +81,7 @@ class mkl(bb_base, hpccm.templates.wget):
     ```python
     mkl(eula=True, version='2018.3-051')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -133,11 +135,12 @@ class mkl(bb_base, hpccm.templates.wget):
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mklvars
             # environment script.
-            self += environment(variables={
+            self.environment_variables={
                 'CPATH': '/opt/intel/mkl/include:$CPATH',
                 'LD_LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LD_LIBRARY_PATH',
                 'LIBRARY_PATH': '/opt/intel/mkl/lib/intel64:/opt/intel/lib/intel64:$LIBRARY_PATH',
-                'MKLROOT': '/opt/intel/mkl'})
+                'MKLROOT': '/opt/intel/mkl'}
+            self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

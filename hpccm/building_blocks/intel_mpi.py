@@ -27,6 +27,7 @@ import os
 import re
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
@@ -38,19 +39,18 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class intel_mpi(bb_base, hpccm.templates.wget):
+class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     """The `intel_mpi` building block downloads and installs the [Intel
     MPI Library](https://software.intel.com/en-us/intel-mpi-library).
 
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
 
-    As a side effect, this building block modifies `PATH`,
-    `LD_LIBRARY_PATH`, and other environment variables to include
-    Intel MPI.  Please see the `mpivars` parameter for more
-    information.
-
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+    include Intel MPI. `mpivars` has precedence. The default is True.
 
     eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
     The default value is `False`.
@@ -139,16 +139,18 @@ class intel_mpi(bb_base, hpccm.templates.wget):
             # but this may miss some things relative to the mpivars
             # environment script.
             if LooseVersion(self.version) >= LooseVersion('2019.0'):
-              self += environment(variables={
+              self.environment_variables={
                   'FI_PROVIDER_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov',
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
                   'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib:$LD_LIBRARY_PATH',
-                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/bin:$PATH'})
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/bin:$PATH'}
             else:
-              self += environment(variables={
+              self.environment_variables={
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',
                   'LD_LIBRARY_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/lib:$LD_LIBRARY_PATH',
-                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'})
+                  'PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/bin:$PATH'}
+
+            self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

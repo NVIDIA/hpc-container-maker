@@ -28,6 +28,7 @@ import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -42,8 +43,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-          hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+          hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
+          hpccm.templates.wget):
     """The `ucx` building block configures, builds, and installs the
     [UCX](https://github.com/openucx/ucx) component.
 
@@ -52,9 +54,6 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     block.  One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
     [XPMEM](#xpmem) building blocks should also be installed prior to
     this building block.
-
-    As a side effect, this building block modifies `PATH`
-    to include the UCX build.
 
     # Parameters
 
@@ -69,6 +68,10 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
     path is used.  If False, adds `--without-cuda` to the list of
     `configure` options.  The default value is an empty string.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    UCX. The default is True.
 
     gdrcopy: Flag to control whether gdrcopy is used by the build.  If
     True, adds `--with-gdrcopy` to the list of `configure` options.
@@ -128,6 +131,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
         knem='/usr/local/knem', xpmem='/usr/local/xpmem')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -154,8 +158,6 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__xpmem = kwargs.get('xpmem', '')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -173,8 +175,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self += comment('UCX version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -268,13 +269,17 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
                                   'ucx-{}'.format(self.__version))]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -296,7 +301,5 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

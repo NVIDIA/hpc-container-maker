@@ -26,6 +26,7 @@ import posixpath
 import re
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.rm
 import hpccm.templates.sed
 import hpccm.templates.tar
@@ -40,16 +41,13 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
-                 hpccm.templates.tar):
+class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
+                 hpccm.templates.sed, hpccm.templates.tar):
     """The `intel_psxe` building block installs [Intel Parallel Studio
     XE](https://software.intel.com/en-us/parallel-studio-xe).
 
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
-
-    As a side effect, this building block modifies `PATH` and
-    `LD_LIBRARY_PATH`.
 
     # Parameters
 
@@ -66,6 +64,11 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
     the corresponding runtime in the `runtime` method.  Note: this
     flag does not control whether the developer environment is
     installed; see `components`.  The default is True.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+    include Intel Parallel Studio XE. `psxevars` has precedence. The
+    default is True.
 
     eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
     The default value is `False`.
@@ -229,7 +232,7 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
             # subsequent build steps.
             self += shell(commands=['echo "source {0}/compilers_and_libraries/linux/bin/compilervars.sh intel64" >> {1}'.format(self.__prefix, self.__bashrc)])
         else:
-            self += environment(variables=self.__environment())
+            self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -379,6 +382,9 @@ class intel_psxe(bb_base, hpccm.templates.rm, hpccm.templates.sed,
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, self.__tarball_name),
                    posixpath.join(self.__wd, basedir)]))
+
+        # Set the environment
+        self.environment_variables = self.__environment()
 
     def runtime(self, _from='0'):
         """Install the runtime from a full build in a previous stage"""

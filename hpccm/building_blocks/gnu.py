@@ -25,6 +25,7 @@ import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.git
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -40,9 +41,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
-          hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-          hpccm.templates.wget):
+class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+          hpccm.templates.git, hpccm.templates.ldconfig, hpccm.templates.rm,
+          hpccm.templates.tar, hpccm.templates.wget):
     """The `gnu` building block installs the GNU compilers from the
     upstream Linux distribution.
 
@@ -61,6 +62,10 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
 
     cxx: Boolean flag to specify whether to install `g++`.  The
     default is True.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    the GNU compiler. The default is True.
 
     extra_repository: Boolean flag to specify whether to enable an
     extra package repository containing addition GNU compiler
@@ -159,7 +164,6 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
         self.__commands = []       # Filled in below
         self.__compiler_debs = []  # Filled in below
         self.__compiler_rpms = []  # Filled in below
-        self.__environment = {}    # Filled in below
         self.__extra_repo_apt = [] # Filled in below
         self.__runtime_debs = ['libgomp1']
         self.__runtime_rpms = ['libgomp']
@@ -280,13 +284,13 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
         self.__commands.append(self.install_step())
 
         # Environment
-        self.__environment = {'PATH': '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))}
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(
                 directory=posixpath.join(self.prefix, 'lib64')))
         else:
-            self.__environment['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib64'))
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib64'))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
@@ -325,7 +329,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
                     self.__commands.append('update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-{}) 30'.format(self.__version))
                 self.__commands.append('update-alternatives --install /usr/bin/gcov gcov $(which gcov-{}) 30'.format(self.__version))
             elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-                self.__environment = {'PATH': '/opt/rh/devtoolset-{}/root/usr/bin:$PATH'.format(self.__version)}
+                self.environment_variables['PATH'] = '/opt/rh/devtoolset-{}/root/usr/bin:$PATH'.format(self.__version)
             else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
@@ -343,8 +347,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
                              yum=self.__compiler_rpms)
         if self.__commands:
             self += shell(commands=self.__commands)
-        if self.__environment:
-            self += environment(variables=self.__environment)
+        self += environment(variables=self.environment_step())
 
     def __repository(self):
         """Setup installation from a package repository"""
@@ -406,9 +409,8 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.git,
                         directory=posixpath.join(self.prefix, 'lib64'))]))
             else:
                 instructions.append(environment(
-                    variables={'LD_LIBRARY_PATH':
-                               '{}:$LD_LIBRARY_PATH'.format(
-                                   posixpath.join(self.prefix, 'lib64'))}))
+                    variables=self.environment_step(
+                        include_only=['LD_LIBRARY_PATH'])))
         else:
             instructions.append(
                 packages(apt=self.__runtime_debs,

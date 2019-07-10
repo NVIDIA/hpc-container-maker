@@ -25,6 +25,7 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.wget
@@ -37,21 +38,22 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-             hpccm.templates.wget):
+class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+             hpccm.templates.rm, hpccm.templates.wget):
     """The `libsim` building block configures, builds, and installs the
     [VisIt
     Libsim](http://www.visitusers.org/index.php?title=Libsim_Batch)
     component.
-
-    As a side effect, this building block modifies `PATH` to include
-    the Libsim build.
 
     If GPU rendering will be used then a
     [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
     recommended.
 
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    Libsim. The default is True.
 
     ldconfig: Boolean flag to specify whether the Libsim library
     directories should be added dynamic linker cache.  If False, then
@@ -128,8 +130,6 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__url = r'http://portal.nersc.gov/project/visit/releases/{0}/{1}'
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.__prefix, 'bin'))}
         self.__wd = '/var/tmp/visit' # working directory
 
         # Set the Linux distribution specific parameters
@@ -147,8 +147,7 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('VisIt libsim version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -220,11 +219,15 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             self.__commands.append(self.ldcache_step(
                 directory=posixpath.join(libpath, suffix2)))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{0}:{1}:$LD_LIBRARY_PATH'.format(posixpath.join(libpath, suffix1), posixpath.join(libpath, suffix2))
+            self.environment_variables['LD_LIBRARY_PATH'] = '{0}:{1}:$LD_LIBRARY_PATH'.format(posixpath.join(libpath, suffix1), posixpath.join(libpath, suffix2))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd)]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -253,7 +256,5 @@ class libsim(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
                                                                      suffix1)),
                           self.ldcache_step(
                               directory=posixpath.join(libpath, suffix2))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)
