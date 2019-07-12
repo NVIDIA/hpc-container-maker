@@ -33,6 +33,7 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
 
 class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
@@ -95,6 +96,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', None)
+        self.__symlink = kwargs.get('symlink', False)
         self.__version = kwargs.get('version', '4.5-1.0.1.0')
 
         self.__commands = []
@@ -196,6 +198,18 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 self.__prefix))
             self.__commands.extend([self.__extractor_template.format(
                 x, self.__prefix) for x in self.__pkglist.split()])
+
+            # library symlinks
+            if self.__symlink:
+                self.__ospackages.append('findutils')
+
+                self.__commands.append('mkdir -p {0} && cd {0}'.format(
+                    posixpath.join(self.__prefix, 'lib')))
+                # Prune the symlink directory itself and any debug
+                # libraries
+                self.__commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
+                self.__commands.append('cd {0} && ln -s usr/bin bin && ln -s usr/include include'.format(
+                    self.__prefix))
         else:
             # Install in the normal system locations
             self.__commands.append('{0} {1}'.format(self.__installer,
@@ -218,4 +232,19 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         Stage1 += m.runtime()
         ```
         """
-        return str(self)
+        if self.__prefix:
+            instructions = []
+            instructions.append(comment('Mellanox OFED version {}'.format(
+                self.__version)))
+
+            if self.__ospackages:
+                instructions.append(packages(ospackages=self.__ospackages))
+
+            # Suppress warnings from libibverbs
+            instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))
+
+            instructions.append(copy(_from=_from, dest=self.__prefix,
+                                     src=self.__prefix))
+            return '\n'.join(str(x) for x in instructions)
+        else:
+            return str(self)

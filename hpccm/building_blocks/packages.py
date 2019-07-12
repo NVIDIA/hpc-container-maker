@@ -52,10 +52,24 @@ class packages(bb_base):
     apt_repositories: A list of apt repositories to add.  The default
     is an empty list.
 
+    download: Boolean flag to specify whether to download the deb /
+    rpm packages instead of installing them.  The default is False.
+
+    download_directory: The deb package download location. This
+    parameter is ignored if `download` is False. The default value is
+    `/var/tmp/packages_download`.
+
     epel: Boolean flag to specify whether to enable the Extra Packages
     for Enterprise Linux (EPEL) repository.  The default is False.
     This parameter is ignored if the Linux distribution is not
     RHEL-based.
+
+    extract: Location where the downloaded packages should be
+    extracted. Note, this extracts and does not install the packages,
+    i.e., the package manager is bypassed. After the downloaded
+    packages are extracted they are deleted. This parameter is ignored
+    if `download` is False. If empty, then the downloaded packages are
+    not extracted. The default value is an empty string.
 
     ospackages: A list of packages to install.  The list is used for
     both Ubuntu and RHEL-based Linux distributions, therefore only
@@ -89,6 +103,7 @@ class packages(bb_base):
     ```python
     packages(apt=['python3'], yum=['python34'], epel=True)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -100,6 +115,10 @@ class packages(bb_base):
         self.__apt_keys = kwargs.get('apt_keys', [])
         self.__apt_ppas = kwargs.get('apt_ppas', [])
         self.__apt_repositories = kwargs.get('apt_repositories', [])
+        self.__download = kwargs.get('download', False)
+        self.__download_directory = kwargs.get('download_directory',
+                                               '/var/tmp/packages_download')
+        self.__extract = kwargs.get('extract', None)
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__scl = kwargs.get('scl', False)
@@ -114,21 +133,33 @@ class packages(bb_base):
         """String representation of the building block"""
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if self.__apt:
-                self += apt_get(keys=self.__apt_keys, ospackages=self.__apt,
+                self += apt_get(download=self.__download,
+                                download_directory=self.__download_directory,
+                                extract=self.__extract,
+                                keys=self.__apt_keys, ospackages=self.__apt,
                                 ppas=self.__apt_ppas,
                                 repositories=self.__apt_repositories)
             else:
-                self += apt_get(keys=self.__apt_keys,
+                self += apt_get(download=self.__download,
+                                download_directory=self.__download_directory,
+                                extract=self.__extract,
+                                keys=self.__apt_keys,
                                 ospackages=self.__ospackages,
                                 ppas=self.__apt_ppas,
                                 repositories=self.__apt_repositories)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if self.__yum:
-                self += yum(epel=self.__epel, keys=self.__yum_keys,
+                self += yum(download=self.__download,
+                            download_directory=self.__download_directory,
+                            extract=self.__extract, epel=self.__epel,
+                            keys=self.__yum_keys,
                             ospackages=self.__yum, scl=self.__scl,
                             repositories=self.__yum_repositories)
             else:
-                self += yum(epel=self.__epel, keys=self.__yum_keys,
+                self += yum(download=self.__download,
+                            download_directory=self.__download_directory,
+                            extract=self.__extract,
+                            epel=self.__epel, keys=self.__yum_keys,
                             ospackages=self.__ospackages, scl=self.__scl,
                             repositories=self.__yum_repositories)
         else:

@@ -93,6 +93,16 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     `LD_LIBRARY_PATH` is modified to include the UCX library
     directory. The default value is False.
 
+    ofed: Flag to control whether OFED is used by the build.  If True,
+    adds `--with-verbs` and `--with-rdmacm` to the list of `configure`
+    options.  If a string, uses the value of the string as the OFED
+    path, e.g., `--with-verbs=/path/to/ofed`.  If False, adds
+    `--without-verbs` and `--without-rdmacm` to the list of
+    `configure` options.  The default is an empty string, i.e.,
+    include neither `--with-verbs` not `--without-verbs` and let
+    `configure` try to automatically detect whether OFED is present or
+    not.
+
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are `binutils-dev`,
     `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
@@ -148,6 +158,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__cuda = kwargs.get('cuda', True)
         self.__gdrcopy = kwargs.get('gdrcopy', '')
         self.__knem = kwargs.get('knem', '')
+        self.__ofed = kwargs.get('ofed', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '1.4.0')
@@ -236,6 +247,19 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
                 self.configure_opts.append('--with-knem')
         elif self.__knem == False:
             self.configure_opts.append('--without-knem')
+
+        # OFED
+        if self.__ofed:
+            if isinstance(self.__ofed, string_types):
+                # Use specified path
+                self.configure_opts.extend(
+                    ['--with-verbs={}'.format(self.__ofed),
+                     '--with-rdmacm={}'.format(self.__ofed)])
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.configure_opts.extend(['--with-verbs', '--with-rdmacm'])
+        elif self.__ofed == False:
+            self.configure_opts.extend(['--without-verbs', '--without-rdmacm'])
 
         # XPMEM
         if self.__xpmem:

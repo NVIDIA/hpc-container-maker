@@ -56,3 +56,32 @@ r'''RUN rpm --import https://www.example.com/key.pub && \
     yum install -y \
         example && \
     rm -rf /var/cache/yum/*''')
+
+    @centos
+    @docker
+    def test_download(self):
+        """Download parameter"""
+        y = yum(download=True, download_directory='/tmp/download',
+                ospackages=['rdma-core'])
+        self.assertEqual(str(y),
+r'''RUN yum install -y yum-utils && \
+    mkdir -p /tmp/download && \
+    yumdownloader --destdir=/tmp/download -x \*i?86 --archlist=x86_64 \
+        rdma-core && \
+    rm -rf /var/cache/yum/*''')
+
+    @centos
+    @docker
+    def test_extract(self):
+        """Extract parameter"""
+        y = yum(download=True, extract='/usr/local/ofed',
+                ospackages=['rdma-core'])
+        self.assertEqual(str(y),
+r'''RUN yum install -y yum-utils && \
+    mkdir -p /var/tmp/yum_download && \
+    yumdownloader --destdir=/var/tmp/yum_download -x \*i?86 --archlist=x86_64 \
+        rdma-core && \
+    mkdir -p /usr/local/ofed && cd /usr/local/ofed && \
+    find /var/tmp/yum_download -regextype posix-extended -type f -regex "/var/tmp/yum_download/(rdma-core).*rpm" -exec sh -c "rpm2cpio {} | cpio -idm" \; && \
+    rm -rf /var/tmp/yum_download && \
+    rm -rf /var/cache/yum/*''')

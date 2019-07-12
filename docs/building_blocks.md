@@ -12,6 +12,20 @@ used instead of `apt_get`.
 __Parameters__
 
 
+- __download__: Boolean flag to specify whether to download the deb
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/apt_get_download`.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
+
 - __keys__: A list of GPG keys to add.  The default is an empty list.
 
 - __ospackages__: A list of packages to install.  The default is an
@@ -29,6 +43,7 @@ __Examples__
 ```python
 apt_get(ospackages=['make', 'wget'])
 ```
+
 
 # boost
 ```python
@@ -1455,6 +1470,63 @@ Stage0 += m
 Stage1 += m.runtime()
 ```
 
+# multi_ofed
+```python
+multi_ofed(self, **kwargs)
+```
+The `multi_ofed` building block downloads and installs multiple
+versions of the OpenFabrics Enterprise Distribution (OFED). Please
+refer to the [`mlnx_ofed`](#mlnx_ofed) and [`ofed`](#ofed)
+building blocks for more information.
+
+__Parameters__
+
+
+- __inbox__: Boolean flag to specify whether to install the 'inbox' OFED
+distributed by the Linux distribution.  The default is True.
+
+- __mlnx_oslabel__: The Linux distribution label assigned by Mellanox to
+the tarball. Please see the corresponding
+[`mlnx_ofed`](#mlnx_ofed) parameter for more information.
+
+- __mlnx_packages__: List of packages to install from Mellanox
+OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
+parameter for more information.
+
+- __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
+versions to install.  The default values are `3.3-1.0.4.0`,
+`3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
+`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`
+
+- __ospackages__: List of OS packages to install prior to installing
+OFED.  For Ubuntu, the default values are `libnl-3-200`,
+`libnl-route-3-200`, and `libnuma1`.  For RHEL-based Linux
+distributions, the default values are `libnl`, `libnl3`, and
+`numactl-libs`.
+
+- __prefix__: The top level install location.  The OFED packages will be
+extracted to this location as subdirectories named for the
+respective Mellanox OFED version, or `inbox` for the 'inbox'
+OFED. The environment must be manually configured to recognize the
+desired OFED location, e.g., in the container entry point. The
+default value is `/usr/local/ofed`.
+
+__Examples__
+
+
+```python
+multi_ofed(inbox=True, mlnx_versions=['4.5-1.0.1.0', '4.6-1.0.1.1'],
+           prefix='/usr/local/ofed')
+```
+
+
+## runtime
+```python
+multi_ofed.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
 # mvapich2
 ```python
 mvapich2(self, **kwargs)
@@ -1764,27 +1836,33 @@ Distribution packages that are part of the Linux distribution.
 
 For Ubuntu 16.04, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-`libdapl-dev`, `libibcm-dev`, `libibmad5`, `libibmad-dev`,
-`libibverbs1`, `libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`,
-`libmlx5-1`, `libmlx5-dev`, `librdmacm1`, `librdmacm-dev`,
-`opensm`, and `rdmacm-utils`.
+`libdapl2`, `libdapl-dev`, `libibcm1`, `libibcm-dev`, `libibmad5`,
+`libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
+`libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+`librdmacm-dev`, and `rdmacm-utils`.
 
 For Ubuntu 18.04, the following packages are installed:
-`dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-`libdapl-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
-`libibverbs-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
-`rdmacm-utils`.
+`dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
+`infiniband-diags`, `libdapl2`, `libdapl-dev`, `libibmad5`,
+`libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
+`librdmacm-dev`, and `rdmacm-utils`.
 
 For RHEL-based Linux distributions, the following packages are
 installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
-`libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
+`libibverbs-utils`, `librdmacm`, `rdma-core`, and
 `rdma-core-devel`.
 
 __Parameters__
 
 
-None
+- __prefix__: The top level install location. Install of installing the
+packages via the package manager, they will be extracted to this
+location. This option is useful if multiple versions of OFED need
+to be installed. The environment must be manually configured to
+recognize the OFED location, e.g., in the container entry
+point. The default value is empty, i.e., install via the package
+manager to the standard system locations.
 
 __Examples__
 
@@ -2004,10 +2082,24 @@ is an empty list.
 - __apt_repositories__: A list of apt repositories to add.  The default
 is an empty list.
 
+- __download__: Boolean flag to specify whether to download the deb /
+rpm packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/packages_download`.
+
 - __epel__: Boolean flag to specify whether to enable the Extra Packages
 for Enterprise Linux (EPEL) repository.  The default is False.
 This parameter is ignored if the Linux distribution is not
 RHEL-based.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
 
 - __ospackages__: A list of packages to install.  The list is used for
 both Ubuntu and RHEL-based Linux distributions, therefore only
@@ -2042,6 +2134,7 @@ packages(apt=['zlib1g-dev'], yum=['zlib-devel'])
 ```python
 packages(apt=['python3'], yum=['python34'], epel=True)
 ```
+
 
 # pgi
 ```python
@@ -2497,6 +2590,16 @@ directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the UCX library
 directory. The default value is False.
 
+- __ofed__: Flag to control whether OFED is used by the build.  If True,
+adds `--with-verbs` and `--with-rdmacm` to the list of `configure`
+options.  If a string, uses the value of the string as the OFED
+path, e.g., `--with-verbs=/path/to/ofed`.  If False, adds
+`--without-verbs` and `--without-rdmacm` to the list of
+`configure` options.  The default is an empty string, i.e.,
+include neither `--with-verbs` not `--without-verbs` and let
+`configure` try to automatically detect whether OFED is present or
+not.
+
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `binutils-dev`,
 `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
@@ -2623,9 +2726,23 @@ be used instead of `yum`.
 __Parameters__
 
 
+- __download__: Boolean flag to specify whether to download the rpm
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/yum_download`.
+
 - __epel__: - Boolean flag to specify whether to enable the Extra
 Packages for Enterprise Linux (EPEL) repository.  The default is
 False.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
 
 - __keys__: A list of GPG keys to import.  The default is an empty list.
 
@@ -2644,4 +2761,5 @@ __Examples__
 ```python
 yum(ospackages=['make', 'wget'])
 ```
+
 
