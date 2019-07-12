@@ -132,6 +132,9 @@ class multi_ofed(bb_base):
         if self.__inbox:
             self += ofed(prefix=posixpath.join(self.__prefix, 'inbox'),
                          symlink=self.__symlink)
+            self += shell(commands=['ln -s {0} {1}'.format(
+                posixpath.join(self.__prefix, 'inbox'),
+                posixpath.join(self.__prefix, '5.0-0'))])
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

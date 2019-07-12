@@ -123,7 +123,8 @@ RUN apt-get update -y && \
     find /var/tmp/packages_download -regextype posix-extended -type f -regex "/var/tmp/packages_download/(dapl2-utils|ibutils|ibverbs-utils|infiniband-diags|libdapl-dev|libdapl2|libibcm-dev|libibcm1|libibmad-dev|libibmad5|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1|rdmacm-utils).*deb" -exec dpkg --extract {} /usr/local/ofed/inbox \; && \
     rm -rf /var/tmp/packages_download && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /etc/libibverbs.d''')
+RUN mkdir -p /etc/libibverbs.d
+RUN ln -s /usr/local/ofed/inbox /usr/local/ofed/5.0-0''')
 
     @centos
     @docker
