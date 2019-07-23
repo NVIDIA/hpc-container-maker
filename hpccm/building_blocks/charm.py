@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.sed
@@ -37,19 +38,20 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-            hpccm.templates.sed, hpccm.templates.tar, hpccm.templates.wget):
+class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+            hpccm.templates.rm, hpccm.templates.sed, hpccm.templates.tar,
+            hpccm.templates.wget):
     """The `charm` building block downloads and install the
     [Charm++](http://charm.cs.illinois.edu/research/charm) component.
-
-    As a side effect, this building block modifies `PATH` to include
-    the Charm++ build.  It also sets the `CHARMBASE` environment
-    variable to the top level install directory.
 
     # Parameters
 
     check: Boolean flag to specify whether the test cases should be
     run.  The default is False.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+    modified to include Charm++. The default is True.
 
     ldconfig: Boolean flag to specify whether the Charm++ library
     directory should be added dynamic linker cache.  If False, then
@@ -109,10 +111,6 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__wd = '/var/tmp' # working directory
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'CHARMBASE': self.__installdir,
-            'PATH': '{}:$PATH'.format(posixpath.join(self.__installdir,
-                                                     'bin'))}
 
         # Construct series of steps to execute
         self.__setup()
@@ -126,8 +124,7 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('Charm++ version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -168,7 +165,7 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Check the build
         if self.__check:
@@ -178,6 +175,11 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball)]))
+
+        # Set the environment
+        self.environment_variables['CHARMBASE'] = self.__installdir
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__installdir, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -199,7 +201,5 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.__prefix, 'lib_so'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

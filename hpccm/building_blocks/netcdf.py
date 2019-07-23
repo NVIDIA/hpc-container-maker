@@ -27,6 +27,7 @@ from copy import copy as _copy
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -41,17 +42,15 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-             hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+             hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
+             hpccm.templates.wget):
     """The `netcdf` building block downloads, configures, builds, and
     installs the
     [NetCDF](https://www.unidata.ucar.edu/software/netcdf/) component.
 
     The [HDF5](#hdf5) building block should be installed prior to this
     building block.
-
-    As a side effect, this building block modifies `PATH` to include
-    the NetCDF build.
 
     # Parameters
 
@@ -63,6 +62,10 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
     cxx: Boolean flag to specify whether the NetCDF C++ library should
     be installed.  The default is True.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    NetCDF. The default is True.
 
     fortran: Boolean flag to specify whether the NetCDF Fortran
     library should be installed.  The default is True.
@@ -133,8 +136,6 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__wd = '/var/tmp'
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -170,8 +171,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         self += shell(commands=self.__commands)
 
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -233,12 +233,16 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
                                   'netcdf-{}'.format(self.__version))]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
 
     def __setup_optional(self, pkg='', version=''):
         # Create a copy of the toolchain so that it can be modified
@@ -306,7 +310,5 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

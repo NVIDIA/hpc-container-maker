@@ -25,6 +25,7 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.git
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -38,14 +39,12 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-            hpccm.templates.git, hpccm.templates.rm, hpccm.templates.tar):
+class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+            hpccm.templates.ldconfig, hpccm.templates.git, hpccm.templates.rm,
+            hpccm.templates.tar):
     """The `xpmem` building block builds and installs the user space
     library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
     component.
-
-    As a side effect, this building block modifies `CPATH` and
-    `LIBRARY_PATH`.
 
     # Parameters
 
@@ -54,6 +53,10 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
     configure_opts: List of options to pass to `configure`.  The
     default values are `--disable-kernel-module`.
+
+    environment: Boolean flag to specify whether the environment
+    (`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
+    to include XPMEM. The default is True.
 
     ldconfig: Boolean flag to specify whether the XPMEM library
     directory should be added dynamic linker cache.  If False, then
@@ -76,6 +79,7 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     ```python
     xpmem(prefix='/opt/xpmem', branch='master')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -97,11 +101,6 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__toolchain = kwargs.get('toolchain', toolchain())
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'CPATH':
-            '{}:$CPATH'.format(posixpath.join(self.prefix, 'include')),
-            'LIBRARY_PATH':
-            '{}:$LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -116,8 +115,7 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self += comment('XPMEM branch {}'.format(self.__branch))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -142,11 +140,17 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup directory
         self.__commands.append(self.cleanup_step(
                    [posixpath.join(self.__wd, 'xpmem')]))
+
+        # Set the environment
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.prefix, 'lib'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -168,7 +172,5 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

@@ -54,4 +54,4 @@ class bb_base(hpccm.base_object):
 
     def __str__(self):
         """String representation of the building block"""
-        return '\n'.join(str(x) for x in self.__instructions)
+        return '\n'.join(str(x) for x in self.__instructions if str(x))

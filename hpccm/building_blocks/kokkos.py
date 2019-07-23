@@ -27,6 +27,7 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
@@ -39,8 +40,8 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
-             hpccm.templates.wget):
+class kokkos(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
+             hpccm.templates.tar, hpccm.templates.wget):
     """The `kokkos` building block downloads and installs the
     [Kokkos](https://github.com/kokkos/kokkos) component.
 
@@ -55,6 +56,10 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     True, adds `--with-cuda` to the list of `generate_makefile.bash`
     options.  If a string, uses the value of the string as the CUDA
     path.  If False, does nothing.  The default value is True.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    Kokkos. The default is True.
 
     hwloc: Flag to control whether a hwloc aware build is performed.
     If True, adds `--with-hwloc` to the list of
@@ -103,8 +108,6 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__version = kwargs.get('version', '2.8.00')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}/bin:$PATH'.format(self.__prefix)}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -122,8 +125,7 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self += comment('Kokkos version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -193,6 +195,10 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                    posixpath.join(self.__wd,
                                   'kokkos-{}'.format(self.__version))]))
 
+        # Set the environment
+        self.environment_variables['PATH'] = '{}/bin:$PATH'.format(
+            self.__prefix)
+
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -209,7 +215,5 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         instructions.append(comment('Kokkos'))
         instructions.append(copy(_from=_from, src=self.__prefix,
                                  dest=self.__prefix))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

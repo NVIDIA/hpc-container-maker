@@ -26,6 +26,7 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
@@ -35,17 +36,12 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class intel_psxe_runtime(bb_base):
+class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     """The `intel_mpi` building block downloads and installs the [Intel
     Parallel Studio XE runtime](https://software.intel.com/en-us/articles/intel-parallel-studio-xe-runtime-by-version).
 
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
-
-    As a side effect, this building block modifies `PATH`,
-    `LD_LIBRARY_PATH`, and other environment variables to include the
-    Intel Parallel Studio XE runtime.  Please see the `psxevars`
-    parameter for more information.
 
     Note: this building block does *not* install development versions
     of the Intel software tools.  Please see the
@@ -57,6 +53,11 @@ class intel_psxe_runtime(bb_base):
     daal: Boolean flag to specify whether the Intel Data Analytics
     Acceleration Library runtime should be installed.  The default is
     True.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+    include Intel Parallel Studio XE runtime. `psxevars` has
+    precedence. The default is True.
 
     eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
     The default value is `False`.
@@ -183,7 +184,7 @@ class intel_psxe_runtime(bb_base):
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the psxevars
             # environment script.
-            self += environment(variables=self.__environment())
+            self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -289,6 +290,9 @@ class intel_psxe_runtime(bb_base):
                 self.__runtime_packages.append('intel-mpi-runtime')
             if self.__tbb:
                 self.__runtime_packages.append('intel-tbb-runtime')
+
+        # Set the environment
+        self.environment_variables = self.__environment()
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

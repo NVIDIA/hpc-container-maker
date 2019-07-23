@@ -26,6 +26,7 @@ import posixpath
 import re
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.wget
@@ -39,8 +40,8 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-                   hpccm.templates.wget):
+class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+                   hpccm.templates.rm, hpccm.templates.wget):
     """The `mvapich2_gdr` building blocks installs the
     [MVAPICH2-GDR](http://mvapich.cse.ohio-state.edu) component.
     Depending on the parameters, the package will be downloaded from
@@ -60,9 +61,6 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     The [gdrcopy](#gdrcopy) building block should be installed prior
     to this building block.
 
-    As a side effect, this building block modifies `PATH` and
-    `LD_LIBRARY_PATH` to include the MVAPICH2-GDR build.
-
     As a side effect, a toolchain is created containing the MPI
     compiler wrappers.  The toolchain can be passed to other
     operations that want to build using the MPI compiler wrappers.
@@ -77,6 +75,10 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     built against.  The version string format is X.Y.  The version
     should match the version of CUDA provided by the base image.  This
     value is ignored if `package` is set.  The default value is `9.2`.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    MVAPICH2-GDR. The default is True.
 
     gnu: Boolean flag to specify whether a GNU build should be used.
     The default value is True.
@@ -160,7 +162,6 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             self.__gnu = True
 
         self.__commands = []              # Filled in by __setup()
-        self.__environment_variables = {} # Filled in by __setup()
         self.__install_path = ''          # Filled in by __setup()
 
         # Set the Linux distribution specific parameters
@@ -178,7 +179,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('MVAPICH2-GDR version {}'.format(self.version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -217,7 +218,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
     def __setup(self):
         """Construct the series of shell commands and environment variables,
-           i.e., fill in self.__commands and self.__environment_variables"""
+           i.e., fill in self.__commands and self.environment_variables"""
 
         if self.__package:
             # Override individual settings and just use the specified package
@@ -274,19 +275,17 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             items=[posixpath.join(self.__wd, package)]))
 
         # Setup environment variables
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.__install_path,
-                                                     'bin')),
-            # Workaround for using compiler wrappers in the build stage
-            'PROFILE_POSTLIB': '"-L{} -lnvidia-ml"'.format(
-                '/usr/local/cuda/lib64/stubs')}
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__install_path, 'bin'))
+        # Workaround for using compiler wrappers in the build stage
+        self.environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml"'.format('/usr/local/cuda/lib64/stubs')
 
         # Set library path
         libpath = posixpath.join(self.__install_path, 'lib64')
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
 
     def runtime(self, _from='0'):
@@ -310,10 +309,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.__install_path, 'lib64'))]))
-        if self.__environment_variables:
-            # No need to workaround compiler wrapper issue for the runtime.
-            # Copy the dictionary so not to modify the original.
-            vars = dict(self.__environment_variables)
-            del vars['PROFILE_POSTLIB']
-            instructions.append(environment(variables=vars))
+        # No need to workaround compiler wrapper issue for the runtime.
+        instructions.append(environment(
+            variables=self.environment_step(exclude=['PROFILE_POSTLIB'])))
         return '\n'.join(str(x) for x in instructions)

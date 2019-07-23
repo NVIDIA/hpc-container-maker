@@ -23,10 +23,9 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import posixpath
-import re
-from copy import copy as _copy
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.git
 import hpccm.templates.rm
 
@@ -38,14 +37,15 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
+class knem(bb_base, hpccm.templates.envvars, hpccm.templates.git,
+           hpccm.templates.rm):
     """The `knem` building block install the headers from the
     [KNEM](http://knem.gforge.inria.fr) component.
 
-    As a side effect, this building block modifies `CPATH`,
-    `LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
-
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`CPATH`) should be modified to include knem. The default is True.
 
     ospackages: List of OS packages to install prior to installing.
     The default values are `ca-certificates` and `git`.
@@ -61,6 +61,7 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
     ```python
     knem(prefix='/opt/knem/1.1.3', version='1.1.3')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -74,9 +75,6 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         self.__version = kwargs.get('version', '1.1.3')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'CPATH':
-            '{}:$CPATH'.format(posixpath.join(self.__prefix, 'include'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -91,7 +89,7 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         self += comment('KNEM version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -112,6 +110,10 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         self.__commands.append(self.cleanup_step(
                    [posixpath.join(self.__wd, 'knem')]))
 
+        # Set the environment
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -128,6 +130,5 @@ class knem(bb_base, hpccm.templates.git, hpccm.templates.rm):
         instructions.append(comment('KNEM'))
         instructions.append(copy(_from=_from, src=self.__prefix,
                                  dest=self.__prefix))
-        instructions.append(
-            environment(variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

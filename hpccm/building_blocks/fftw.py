@@ -25,6 +25,7 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -38,8 +39,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-           hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+           hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
+           hpccm.templates.wget):
     """The `fftw` building block downloads, configures, builds, and
     installs the [FFTW](http://www.fftw.org) component.  Depending on
     the parameters, the source will be downloaded from the web
@@ -59,6 +61,10 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     local build context.  The default value is empty.  If this is
     defined, the source in the local build context will be used rather
     than downloading the source from the web.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`) should be modified to include FFTW. The
+    default is True.
 
     ldconfig: Boolean flag to specify whether the FFTW library
     directory should be added dynamic linker cache.  If False, then
@@ -122,7 +128,6 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__version = kwargs.get('version', '3.3.8')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {} # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
         # Construct series of steps to execute
@@ -145,8 +150,7 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
                          dest=posixpath.join(self.__wd,
                                              self.__directory))
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -190,7 +194,7 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         if self.__directory:
             # Using source from local build context, cleanup directory
@@ -223,7 +227,5 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

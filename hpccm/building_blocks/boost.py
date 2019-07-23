@@ -26,6 +26,7 @@ import re
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -39,8 +40,8 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-            hpccm.templates.tar, hpccm.templates.wget):
+class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+            hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `boost` building block downloads and installs the
     [Boost](https://www.boost.org) component.
 
@@ -48,6 +49,10 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
     bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
     default is an empty list.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`) should be modified to include Boost. The
+    default is True.
 
     ldconfig: Boolean flag to specify whether the Boost library
     directory should be added dynamic linker cache.  If False, then
@@ -104,7 +109,6 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__version = kwargs.get('version', '1.68.0')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {} # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
         if self.__sourceforge:
@@ -125,8 +129,7 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('Boost version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -188,7 +191,7 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
@@ -216,7 +219,5 @@ class boost(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.__prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

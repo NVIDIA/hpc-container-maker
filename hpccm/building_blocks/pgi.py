@@ -26,6 +26,7 @@ import re
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
@@ -39,8 +40,8 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
-          hpccm.templates.wget):
+class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
+          hpccm.templates.tar, hpccm.templates.wget):
     """The `pgi` building block downloads and installs the PGI compiler.
     Currently, the only option is to install the latest community
     edition.
@@ -48,14 +49,16 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     You must agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
     building block.
 
-    As a side effect, this building block modifies `PATH` and
-    `LD_LIBRARY_PATH` to include the PGI compiler.
-
     As a side effect, a toolchain is created containing the PGI
     compilers.  The tool can be passed to other operations that want
     to build using the PGI compilers.
 
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
+    should be modified to include the PGI compiler. The default is
+    True.
 
     eula: By setting this value to `True`, you agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
     The default value is `False`.
@@ -115,6 +118,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     p = pgi(eula=True)
     openmpi(..., toolchain=p.toolchain, ...)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -176,7 +180,7 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        self += environment(variables=self.__environment())
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -366,6 +370,10 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             posixpath.join(self.__basepath, self.__version, 'lib',
                            'libnuma.so.1')))
 
+        # Set the environment
+        self.environment_variables = self.__environment()
+        self.runtime_environment_variables = self.__environment(runtime=True)
+
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -416,6 +424,6 @@ class pgi(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if self.__runtime_commands:
             instructions.append(shell(commands=self.__runtime_commands))
 
-        instructions.append(environment(
-            variables=self.__environment(runtime=True)))
+        instructions.append(environment(variables=self.environment_step(
+            runtime=True)))
         return '\n'.join(str(x) for x in instructions)

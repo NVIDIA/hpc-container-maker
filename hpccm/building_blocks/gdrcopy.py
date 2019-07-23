@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -36,16 +37,17 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-              hpccm.templates.tar, hpccm.templates.wget):
+class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+              hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `gdrcopy` building block builds and installs the user space
     library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
     component.
 
-    As a side effect, this building block modifies `CPATH` and
-    `LIBRARY_PATH`.
-
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
+    modified to include the gdrcopy. The default is True.
 
     ldconfig: Boolean flag to specify whether the gdrcopy library
     directory should be added dynamic linker cache.  If False, then
@@ -66,6 +68,7 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     ```python
     gdrcopy(prefix='/opt/gdrcopy/1.3', version='1.3')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -79,11 +82,6 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__version = kwargs.get('version', '1.3')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'CPATH':
-            '{}:$CPATH'.format(posixpath.join(self.__prefix, 'include')),
-            'LIBRARY_PATH':
-            '{}:$LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib64'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -98,8 +96,7 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('GDRCOPY version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -126,13 +123,18 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
                                   'gdrcopy-{}'.format(self.__version))]))
+
+        # Set the environment
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib64'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -154,7 +156,5 @@ class gdrcopy(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.__prefix, 'lib64'))]))
-        if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

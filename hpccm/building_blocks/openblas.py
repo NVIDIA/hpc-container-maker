@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -37,12 +38,16 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-               hpccm.templates.tar, hpccm.templates.wget):
+class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+               hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `openblas` building block builds and installs the
     [OpenBLAS](https://www.openblas.net) component.
 
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    OpenBLAS. The default is True.
 
     ldconfig: Boolean flag to specify whether the OpenBLAS library
     directory should be added dynamic linker cache.  If False, then
@@ -75,6 +80,7 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     p = pgi(eula=True)
     openblas(toolchain=p.toolchain)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -91,7 +97,6 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__version = kwargs.get('version', '0.3.3')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {} # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -106,8 +111,7 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('OpenBLAS version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -143,7 +147,7 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
@@ -171,7 +175,5 @@ class openblas(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.__prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)
