@@ -37,7 +37,7 @@ class Test_ucx(unittest.TestCase):
         """Default ucx building block"""
         u = ucx()
         self.assertEqual(str(u),
-r'''# UCX version 1.4.0
+r'''# UCX version 1.5.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
@@ -46,12 +46,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -61,7 +61,7 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
         """Default ucx building block"""
         u = ucx()
         self.assertEqual(str(u),
-r'''# UCX version 1.4.0
+r'''# UCX version 1.5.2
 RUN yum install -y \
         binutils-devel \
         file \
@@ -69,12 +69,12 @@ RUN yum install -y \
         numactl-devel \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -82,9 +82,10 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     @docker
     def test_with_paths_ubuntu(self):
         """ucx building block with paths"""
-        u = ucx(cuda='/cuda', gdrcopy='/gdrcopy', knem='/knem', xpmem='/xpmem')
+        u = ucx(cuda='/cuda', gdrcopy='/gdrcopy', knem='/knem', ofed='/ofed',
+                xpmem='/xpmem')
         self.assertEqual(str(u),
-r'''# UCX version 1.4.0
+r'''# UCX version 1.5.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
@@ -93,12 +94,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-xpmem=/xpmem && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-verbs=/ofed --with-rdmacm=/ofed --with-xpmem=/xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -106,9 +107,9 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     @docker
     def test_with_true_ubuntu(self):
         """ucx building block with True values"""
-        u = ucx(cuda=True, gdrcopy=True, knem=True, xpmem=True)
+        u = ucx(cuda=True, gdrcopy=True, knem=True, ofed=True, xpmem=True)
         self.assertEqual(str(u),
-r'''# UCX version 1.4.0
+r'''# UCX version 1.5.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
@@ -117,12 +118,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-xpmem && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-verbs --with-rdmacm --with-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -130,9 +131,9 @@ ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     @docker
     def test_with_false_ubuntu(self):
         """ucx building block with False values"""
-        u = ucx(cuda=False, gdrcopy=False, knem=False, xpmem=False)
+        u = ucx(cuda=False, gdrcopy=False, knem=False, ofed=False, xpmem=False)
         self.assertEqual(str(u),
-r'''# UCX version 1.4.0
+r'''# UCX version 1.5.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
@@ -141,12 +142,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --without-gdrcopy --without-knem --without-xpmem && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --without-gdrcopy --without-knem --without-verbs --without-rdmacm --without-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -173,6 +174,28 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     echo "/usr/local/ucx/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV PATH=/usr/local/ucx/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_environment(self):
+        """environment option"""
+        u = ucx(environment=False, version='1.4.0')
+        self.assertEqual(str(u),
+r'''# UCX version 1.4.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        binutils-dev \
+        file \
+        libnuma-dev \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0''')
 
     @ubuntu
     @docker

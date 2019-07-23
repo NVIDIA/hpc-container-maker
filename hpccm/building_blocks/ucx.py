@@ -28,6 +28,7 @@ import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -42,8 +43,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-          hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+          hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
+          hpccm.templates.wget):
     """The `ucx` building block configures, builds, and installs the
     [UCX](https://github.com/openucx/ucx) component.
 
@@ -52,9 +54,6 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     block.  One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
     [XPMEM](#xpmem) building blocks should also be installed prior to
     this building block.
-
-    As a side effect, this building block modifies `PATH`
-    to include the UCX build.
 
     # Parameters
 
@@ -69,6 +68,10 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
     path is used.  If False, adds `--without-cuda` to the list of
     `configure` options.  The default value is an empty string.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    UCX. The default is True.
 
     gdrcopy: Flag to control whether gdrcopy is used by the build.  If
     True, adds `--with-gdrcopy` to the list of `configure` options.
@@ -93,6 +96,16 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     `LD_LIBRARY_PATH` is modified to include the UCX library
     directory. The default value is False.
 
+    ofed: Flag to control whether OFED is used by the build.  If True,
+    adds `--with-verbs` and `--with-rdmacm` to the list of `configure`
+    options.  If a string, uses the value of the string as the OFED
+    path, e.g., `--with-verbs=/path/to/ofed`.  If False, adds
+    `--without-verbs` and `--without-rdmacm` to the list of
+    `configure` options.  The default is an empty string, i.e.,
+    include neither `--with-verbs` not `--without-verbs` and let
+    `configure` try to automatically detect whether OFED is present or
+    not.
+
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are `binutils-dev`,
     `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
@@ -107,7 +120,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     default value is empty.
 
     version: The version of UCX source to download.  The default value
-    is `1.4.0`.
+    is `1.5.2`.
 
     xpmem: Flag to control whether XPMEM is used by the build.  If
     True, adds `--with-xpmem` to the list of `configure` options.  If
@@ -128,6 +141,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
         knem='/usr/local/knem', xpmem='/usr/local/xpmem')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -148,14 +162,13 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__cuda = kwargs.get('cuda', True)
         self.__gdrcopy = kwargs.get('gdrcopy', '')
         self.__knem = kwargs.get('knem', '')
+        self.__ofed = kwargs.get('ofed', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.4.0')
+        self.__version = kwargs.get('version', '1.5.2')
         self.__xpmem = kwargs.get('xpmem', '')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Set the Linux distribution specific parameters
@@ -173,8 +186,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self += comment('UCX version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -237,6 +249,19 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         elif self.__knem == False:
             self.configure_opts.append('--without-knem')
 
+        # OFED
+        if self.__ofed:
+            if isinstance(self.__ofed, string_types):
+                # Use specified path
+                self.configure_opts.extend(
+                    ['--with-verbs={}'.format(self.__ofed),
+                     '--with-rdmacm={}'.format(self.__ofed)])
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.configure_opts.extend(['--with-verbs', '--with-rdmacm'])
+        elif self.__ofed == False:
+            self.configure_opts.extend(['--without-verbs', '--without-rdmacm'])
+
         # XPMEM
         if self.__xpmem:
             if isinstance(self.__xpmem, string_types):
@@ -268,13 +293,17 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
                                   'ucx-{}'.format(self.__version))]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -296,7 +325,5 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(
-                environment(variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

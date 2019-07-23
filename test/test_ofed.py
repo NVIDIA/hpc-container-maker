@@ -45,7 +45,9 @@ RUN apt-get update -y && \
         ibverbs-utils \
         infiniband-diags \
         libdapl-dev \
+        libdapl2 \
         libibcm-dev \
+        libibcm1 \
         libibmad-dev \
         libibmad5 \
         libibverbs-dev \
@@ -56,7 +58,6 @@ RUN apt-get update -y && \
         libmlx5-dev \
         librdmacm-dev \
         librdmacm1 \
-        opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -71,16 +72,17 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         dapl2-utils \
         ibutils \
+        ibverbs-providers \
         ibverbs-utils \
         infiniband-diags \
         libdapl-dev \
+        libdapl2 \
         libibmad-dev \
         libibmad5 \
         libibverbs-dev \
         libibverbs1 \
         librdmacm-dev \
         librdmacm1 \
-        opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -103,10 +105,49 @@ RUN yum install -y \
         libibverbs-utils \
         libmlx5 \
         librdmacm \
-        opensm \
         rdma-core \
         rdma-core-devel && \
     rm -rf /var/cache/yum/*''')
+
+    @ubuntu
+    @docker
+    def test_prefix_ubuntu16(self):
+        o = ofed(prefix='/usr/local/ofed')
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libnl-3-200 \
+        libnl-route-3-200 \
+        libnuma1 && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && \
+    mkdir -m 777 -p /var/tmp/packages_download && cd /var/tmp/packages_download && \
+    DEBIAN_FRONTEND=noninteractive apt-get download -y \
+        dapl2-utils \
+        ibutils \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libdapl2 \
+        libibcm-dev \
+        libibcm1 \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        libmlx4-1 \
+        libmlx4-dev \
+        libmlx5-1 \
+        libmlx5-dev \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    mkdir -p /usr/local/ofed && \
+    find /var/tmp/packages_download -regextype posix-extended -type f -regex "/var/tmp/packages_download/(dapl2-utils|ibutils|ibverbs-utils|infiniband-diags|libdapl-dev|libdapl2|libibcm-dev|libibcm1|libibmad-dev|libibmad5|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1|rdmacm-utils).*deb" -exec dpkg --extract {} /usr/local/ofed \; && \
+    rm -rf /var/tmp/packages_download && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /etc/libibverbs.d''')
 
     @ubuntu
     @docker
@@ -123,7 +164,9 @@ RUN apt-get update -y && \
         ibverbs-utils \
         infiniband-diags \
         libdapl-dev \
+        libdapl2 \
         libibcm-dev \
+        libibcm1 \
         libibmad-dev \
         libibmad5 \
         libibverbs-dev \
@@ -134,6 +177,22 @@ RUN apt-get update -y && \
         libmlx5-dev \
         librdmacm-dev \
         librdmacm1 \
-        opensm \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu
+    @docker
+    def test_runtime_prefix(self):
+        """Prefix + runtime"""
+        o = ofed(prefix='/usr/local/ofed')
+        r = o.runtime()
+        self.assertEqual(r,
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libnl-3-200 \
+        libnl-route-3-200 \
+        libnuma1 && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /etc/libibverbs.d
+COPY --from=0 /usr/local/ofed /usr/local/ofed''')

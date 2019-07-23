@@ -23,6 +23,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 
 import hpccm.config
+import posixpath
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.common import linux_distro
@@ -37,6 +38,20 @@ class apt_get(bb_base):
     used instead of `apt_get`.
 
     # Parameters
+
+    download: Boolean flag to specify whether to download the deb
+    packages instead of installing them.  The default is False.
+
+    download_directory: The deb package download location. This
+    parameter is ignored if `download` is False. The default value is
+    `/var/tmp/apt_get_download`.
+
+    extract: Location where the downloaded packages should be
+    extracted. Note, this extracts and does not install the packages,
+    i.e., the package manager is bypassed. After the downloaded
+    packages are extracted they are deleted. This parameter is ignored
+    if `download` is False. If empty, then the downloaded packages are
+    not extracted. The default value is an empty string.
 
     keys: A list of GPG keys to add.  The default is an empty list.
 
@@ -54,6 +69,7 @@ class apt_get(bb_base):
     ```python
     apt_get(ospackages=['make', 'wget'])
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -62,6 +78,10 @@ class apt_get(bb_base):
         super(apt_get, self).__init__()
 
         self.__commands = []
+        self.__download = kwargs.get('download', False)
+        self.__download_directory = kwargs.get('download_directory',
+                                               '/var/tmp/apt_get_download')
+        self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
         self.__ppas = kwargs.get('ppas', [])
@@ -102,13 +122,41 @@ class apt_get(bb_base):
                     'echo "{}" >> /etc/apt/sources.list.d/hpccm.list'.format(repo))
 
         if self.ospackages:
-            self.__commands.append('apt-get update -y')
-
-            install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
             packages = []
             for pkg in sorted(self.ospackages):
                 packages.append('        {}'.format(pkg))
-            install = install + ' \\\n'.join(packages)
-            self.__commands.append(install)
+
+            self.__commands.append('apt-get update -y')
+
+            if self.__download:
+                # Download packages
+                # Assign mode 777 to work around warnings
+                # Ubuntu 16: Can't drop privileges for downloading as file
+                # Ubuntu 18: Download is performed unsandboxed as root as file
+                self.__commands.append('mkdir -m 777 -p {0} && cd {0}'.format(
+                    self.__download_directory))
+
+                download = 'DEBIAN_FRONTEND=noninteractive apt-get download -y \\\n'
+                download = download + ' \\\n'.join(packages)
+                self.__commands.append(download)
+
+                if self.__extract:
+                    # Extract the packages to a prefix - not a "real"
+                    # package manager install
+                    self.__commands.append('mkdir -p {0}'.format(
+                        self.__extract))
+
+                    regex = posixpath.join(
+                        self.__download_directory,
+                        '(' + '|'.join(sorted(self.ospackages)) + ').*deb')
+                    self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -exec dpkg --extract {{}} {2} \;'.format(self.__download_directory, regex, self.__extract))
+
+                    # Cleanup downloaded packages
+                    self.__commands.append(
+                        'rm -rf {}'.format(self.__download_directory))
+            else:
+                install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
+                install = install + ' \\\n'.join(packages)
+                self.__commands.append(install)
 
             self.__commands.append('rm -rf /var/lib/apt/lists/*')

@@ -28,6 +28,7 @@ from six import string_types
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -42,13 +43,11 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-            hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+            hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
+            hpccm.templates.wget):
     """The `mpich` building block configures, builds, and installs the
     [MPICH](https://www.mpich.org) component.
-
-    As a side effect, this building block modifies `PATH` to include
-    the MPICH build.
 
     As a side effect, a toolchain is created containing the MPI
     compiler wrappers.  The tool can be passed to other operations
@@ -61,6 +60,10 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
     configure_opts: List of options to pass to `configure`.  The
     default is an empty list.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    MPICH. The default is True.
 
     ldconfig: Boolean flag to specify whether the MPICH library
     directory should be added dynamic linker cache.  If False, then
@@ -81,7 +84,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of MPICH source to download.  The default
-    value is `3.3`.
+    value is `3.3.1`.
 
     # Examples
 
@@ -112,11 +115,9 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # MPICH does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '3.3')
+        self.version = kwargs.get('version', '3.3.1')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
@@ -138,8 +139,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self += comment('MPICH version {}'.format(self.version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -204,13 +204,17 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
                                   'mpich-{}'.format(self.version))]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -232,7 +236,5 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

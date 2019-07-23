@@ -28,6 +28,7 @@ from six import string_types
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -42,15 +43,13 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
-              hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
+              hpccm.templates.ldconfig, hpccm.templates.rm,
+              hpccm.templates.tar, hpccm.templates.wget):
     """The `openmpi` building block configures, builds, and installs the
     [OpenMPI](https://www.open-mpi.org) component.  Depending on the
     parameters, the source will be downloaded from the web (default)
     or copied from a source directory in the local build context.
-
-    As a side effect, this building block modifies `PATH` and
-    `LD_LIBRARY_PATH` to include the OpenMPI build.
 
     As a side effect, a toolchain is created containing the MPI
     compiler wrappers.  The tool can be passed to other operations
@@ -75,6 +74,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     local build context.  The default value is empty.  If this is
     defined, the source in the local build context will be used rather
     than downloading the source from the web.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    OpenMPI. The default is True.
 
     infiniband: Boolean flag to control whether InfiniBand
     capabilities are included.  If True, adds `--with-verbs` to the
@@ -108,7 +111,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
     version: The version of OpenMPI source to download.  This
     value is ignored if `directory` is set.  The default value is
-    `3.1.2`.
+    `4.0.1`.
 
     # Examples
 
@@ -152,12 +155,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.version = kwargs.get('version', '3.1.2')
+        self.version = kwargs.get('version', '4.0.1')
         self.__ucx = kwargs.get('ucx', False)
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
@@ -186,8 +187,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             self += copy(src=self.directory,
                          dest=posixpath.join(self.__wd, self.directory))
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -293,7 +293,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         if self.directory:
             # Using source from local build context, cleanup directory
@@ -305,6 +305,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
                 items=[posixpath.join(self.__wd, tarball),
                        posixpath.join(self.__wd,
                                       'openmpi-{}'.format(self.version))]))
+
+        # Set the environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -326,7 +330,5 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            instructions.append(environment(
-                variables=self.__environment_variables))
+        instructions.append(environment(variables=self.environment_step()))
         return '\n'.join(str(x) for x in instructions)

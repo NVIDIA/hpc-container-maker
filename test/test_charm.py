@@ -37,20 +37,23 @@ class Test_charm(unittest.TestCase):
         """Default charm building block"""
         c = charm()
         self.assertEqual(str(c),
-r'''# Charm++ version 6.8.2
+r'''# Charm++ version 6.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
         git \
+        libtool \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.8.2.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.8.2.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-v6.8.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j4 && \
-    rm -rf /var/tmp/charm-6.8.2.tar.gz
-ENV CHARMBASE=/usr/local/charm-v6.8.2 \
-    LD_LIBRARY_PATH=/usr/local/charm-v6.8.2/lib_so:$LD_LIBRARY_PATH \
-    PATH=/usr/local/charm-v6.8.2/bin:$PATH''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j4 && \
+    rm -rf /var/tmp/charm-6.9.0.tar.gz
+ENV CHARMBASE=/usr/local/charm-6.9.0 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.9.0/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -61,7 +64,10 @@ ENV CHARMBASE=/usr/local/charm-v6.8.2 \
 r'''# Charm++ version 6.8.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
         git \
+        libtool \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -81,7 +87,7 @@ ENV CHARMBASE=/usr/local/charm-v6.8.2 \
         r = c.runtime()
         self.assertEqual(r,
 r'''# Charm++
-COPY --from=0 /usr/local/charm-v6.8.2 /usr/local/charm-v6.8.2
-ENV CHARMBASE=/usr/local/charm-v6.8.2 \
-    LD_LIBRARY_PATH=/usr/local/charm-v6.8.2/lib_so:$LD_LIBRARY_PATH \
-    PATH=/usr/local/charm-v6.8.2/bin:$PATH''')
+COPY --from=0 /usr/local/charm-6.9.0 /usr/local/charm-6.9.0
+ENV CHARMBASE=/usr/local/charm-6.9.0 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.9.0/bin:$PATH''')

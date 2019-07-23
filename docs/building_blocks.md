@@ -12,6 +12,20 @@ used instead of `apt_get`.
 __Parameters__
 
 
+- __download__: Boolean flag to specify whether to download the deb
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/apt_get_download`.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
+
 - __keys__: A list of GPG keys to add.  The default is an empty list.
 
 - __ospackages__: A list of packages to install.  The default is an
@@ -30,6 +44,7 @@ __Examples__
 apt_get(ospackages=['make', 'wget'])
 ```
 
+
 # boost
 ```python
 boost(self, **kwargs)
@@ -42,6 +57,10 @@ __Parameters__
 
 - __bootstrap_opts__: List of options to pass to `bootstrap.sh`.  The
 default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`) should be modified to include Boost. The
+default is True.
 
 - __ldconfig__: Boolean flag to specify whether the Boost library
 directory should be added dynamic linker cache.  If False, then
@@ -68,7 +87,7 @@ repository.  For versions of Boost older than 1.63.0, the
 SourceForge repository should be used.  The default is False.
 
 - __version__: The version of Boost source to download.  The default
-value is `1.68.0`.
+value is `1.70.0`.
 
 __Examples__
 
@@ -111,9 +130,6 @@ this building block.
 A MPI building block should be installed prior to this building
 block.
 
-As a side effect, this building block modifies `PATH` to include
-the Catalyst build.
-
 If GPU rendering will be used then a
 [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
 recommended.
@@ -134,6 +150,10 @@ Python edition is selected, then the [Python](#python) building
 block should be installed with development libraries prior to this
 building block. The default value is
 `Base-Enable-Python-Essentials-Extras-Rendering-Base`.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+ParaView Catalyst. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the Catalyst library
 directory should be added dynamic linker cache.  If False, then
@@ -159,7 +179,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of Catalyst source to download.  The default
-value is `5.6.0`.
+value is `5.6.1`.
 
 __Examples__
 
@@ -217,7 +237,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of CGNS source to download.  The default
-value is `3.3.1`.
+value is `3.4.0`.
 
 __Examples__
 
@@ -249,15 +269,15 @@ charm(self, **kwargs)
 The `charm` building block downloads and install the
 [Charm++](http://charm.cs.illinois.edu/research/charm) component.
 
-As a side effect, this building block modifies `PATH` to include
-the Charm++ build.  It also sets the `CHARMBASE` environment
-variable to the top level install directory.
-
 __Parameters__
 
 
 - __check__: Boolean flag to specify whether the test cases should be
 run.  The default is False.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+modified to include Charm++. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the Charm++ library
 directory should be added dynamic linker cache.  If False, then
@@ -268,7 +288,8 @@ directory. The default value is False.
 The default values are `--build-shared`, and `--with-production`.
 
 - __ospackages__: List of OS packages to install prior to configuring
-and building.  The default values are `git`, `make`, and `wget`.
+and building.  The default values are `autoconf`, `automake`,
+`git`, `libtool`, `make`, and `wget`.
 
 - __prefix__: The top level install prefix.  The default value is
 `/usr/local`.
@@ -280,7 +301,7 @@ is `charm++`.
 The default value is `multicore-linux-x86_64`.
 
 - __version__: The version of Charm++ to download.  The default value is
-`6.8.2`.
+`6.9.0`.
 
 __Examples__
 
@@ -330,7 +351,7 @@ The default value is `wget`.
 `/usr/local`.
 
 - __version__: The version of CMake to download.  The default value is
-`3.12.3`.
+`3.14.5`.
 
 __Examples__
 
@@ -367,6 +388,10 @@ default values are `--enable-shared`, `--enable-openmp`,
 local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`) should be modified to include FFTW. The
+default is True.
 
 - __ldconfig__: Boolean flag to specify whether the FFTW library
 directory should be added dynamic linker cache.  If False, then
@@ -435,11 +460,12 @@ The `gdrcopy` building block builds and installs the user space
 library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
 component.
 
-As a side effect, this building block modifies `CPATH` and
-`LIBRARY_PATH`.
-
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
+modified to include the gdrcopy. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the gdrcopy library
 directory should be added dynamic linker cache.  If False, then
@@ -461,6 +487,7 @@ __Examples__
 ```python
 gdrcopy(prefix='/opt/gdrcopy/1.3', version='1.3')
 ```
+
 
 ## runtime
 ```python
@@ -501,6 +528,10 @@ recognized if a source build is enabled.
 
 - __cxx__: Boolean flag to specify whether to install `g++`.  The
 default is True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+the GNU compiler. The default is True.
 
 - __extra_repository__: Boolean flag to specify whether to enable an
 extra package repository containing addition GNU compiler
@@ -603,9 +634,6 @@ on the parameters, the source will be downloaded from the web
 (default) or copied from a source directory in the local build
 context.
 
-As a side effect, this building block modifies `PATH`
-to include the HDF5 build, and sets `HDF5_DIR`.
-
 __Parameters__
 
 
@@ -619,6 +647,10 @@ default values are `--enable-cxx` and `--enable-fortran`.
 local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+include HDF5. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the HDF5 library
 directory should be added dynamic linker cache.  If False, then
@@ -639,7 +671,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of HDF5 source to download.  This value is
-ignored if `directory` is set.  The default value is `1.10.4`.
+ignored if `directory` is set.  The default value is `1.10.5`.
 
 __Examples__
 
@@ -688,13 +720,12 @@ MPI Library](https://software.intel.com/en-us/intel-mpi-library).
 You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
 to use this building block.
 
-As a side effect, this building block modifies `PATH`,
-`LD_LIBRARY_PATH`, and other environment variables to include
-Intel MPI.  Please see the `mpivars` parameter for more
-information.
-
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+include Intel MPI. `mpivars` has precedence. The default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
 The default value is `False`.
@@ -722,7 +753,7 @@ Intel MPI.  For Ubuntu, the default values are
 the default values are `man-db` and `openssh-clients`.
 
 - __version__: The version of Intel MPI to install.  The default value
-is `2019.1-053`.
+is `2019.4-070`.
 
 __Examples__
 
@@ -757,9 +788,6 @@ XE](https://software.intel.com/en-us/parallel-studio-xe).
 You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
 to use this building block.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH`.
-
 __Parameters__
 
 
@@ -776,6 +804,11 @@ Acceleration Library environment should be configured when
 - __the corresponding runtime in the `runtime` method.  Note__: this
 flag does not control whether the developer environment is
 installed; see `components`.  The default is True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+include Intel Parallel Studio XE. `psxevars` has precedence. The
+default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
 The default value is `False`.
@@ -894,11 +927,6 @@ Parallel Studio XE runtime](https://software.intel.com/en-us/articles/intel-para
 You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
 to use this building block.
 
-As a side effect, this building block modifies `PATH`,
-`LD_LIBRARY_PATH`, and other environment variables to include the
-Intel Parallel Studio XE runtime.  Please see the `psxevars`
-parameter for more information.
-
 Note: this building block does *not* install development versions
 of the Intel software tools.  Please see the
 [intel_psxe](#intel_psxe), [intel_mpi](#intel_mpi), or [mkl](#mkl)
@@ -910,6 +938,11 @@ __Parameters__
 - __daal__: Boolean flag to specify whether the Intel Data Analytics
 Acceleration Library runtime should be installed.  The default is
 True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+include Intel Parallel Studio XE runtime. `psxevars` has
+precedence. The default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
 The default value is `False`.
@@ -956,7 +989,7 @@ and `which`.
 install.  Due to issues in the Intel apt / yum repositories, only
 the major version is used; within a major version, the most recent
 minor version will be installed.  The default value is
-`2019.3-199`.
+`2019.4-243`.
 
 - __tbb__: Boolean flag to specify whether the Intel Threading Building
 Blocks runtime should be installed.  The default is True.
@@ -1056,11 +1089,11 @@ knem(self, **kwargs)
 The `knem` building block install the headers from the
 [KNEM](http://knem.gforge.inria.fr) component.
 
-As a side effect, this building block modifies `CPATH`,
-`LD_LIBRARY_PATH`, and `LIBRARY_PATH`.
-
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`) should be modified to include knem. The default is True.
 
 - __ospackages__: List of OS packages to install prior to installing.
 The default values are `ca-certificates` and `git`.
@@ -1077,6 +1110,7 @@ __Examples__
 ```python
 knem(prefix='/opt/knem/1.1.3', version='1.1.3')
 ```
+
 
 ## runtime
 ```python
@@ -1114,6 +1148,10 @@ True, adds `--with-cuda` to the list of `generate_makefile.bash`
 options.  If a string, uses the value of the string as the CUDA
 path.  If False, does nothing.  The default value is True.
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+Kokkos. The default is True.
+
 - __hwloc__: Flag to control whether a hwloc aware build is performed.
 If True, adds `--with-hwloc` to the list of
 `generate_makefile.bash` options.  If a string, uses the value of
@@ -1133,7 +1171,7 @@ default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
 is `/usr/local/kokkos`.
 
 - __version__: The version of Kokkos source to download.  The default
-value is `2.8.00`.
+value is `2.9.00`.
 
 __Examples__
 
@@ -1168,9 +1206,6 @@ The `libsim` building block configures, builds, and installs the
 Libsim](http://www.visitusers.org/index.php?title=Libsim_Batch)
 component.
 
-As a side effect, this building block modifies `PATH` to include
-the Libsim build.
-
 If GPU rendering will be used then a
 [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
 recommended.
@@ -1178,13 +1213,20 @@ recommended.
 __Parameters__
 
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+Libsim. The default is True.
+
 - __ldconfig__: Boolean flag to specify whether the Libsim library
 directories should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the Libsim library
 directories. The default value is False.
 
 - __mpi__: Boolean flag to specify whether Libsim should be built with
-MPI support.  If True, then the build script options `--parallel`
+MPI support.  VisIt uses MPI-1 routines that have been removed
+from the MPI standard; the MPI library may need to be built with
+special compatibility options, e.g., `--enable-mpi1-compatibility`
+for OpenMPI.  If True, then the build script options `--parallel`
 and `--no-icet` are added and the environment variable
 `PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
 block should be installed prior this building block.  The default
@@ -1263,6 +1305,10 @@ want to build using the LLVM compilers.
 __Parameters__
 
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include the
+LLVM compilers. The default is True.
+
 - __extra_repository__: Boolean flag to specify whether to enable an
 extra package repository containing addition LLVM compiler
 packages.  For Ubuntu, setting this flag to True enables the
@@ -1296,6 +1342,7 @@ l = llvm()
 openmpi(..., toolchain=l.toolchain, ...)
 ```
 
+
 ## runtime
 ```python
 llvm.runtime(self, _from=u'0')
@@ -1322,12 +1369,12 @@ Kernel Library](http://software.intel.com/mkl).
 You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
 to use this building block.
 
-As a side effect, this building block modifies `LIBRARY_PATH`,
-`LD_LIBRARY_PATH`, and other environment variables to include MKL.
-Please see the `mklvars` parameter for more information.
-
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+modified to include MKL. The default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
 The default value is `False`.
@@ -1352,7 +1399,7 @@ MKL.  For Ubuntu, the default values are `apt-transport-https`,
 distributions, the default is an empty list.
 
 - __version__: The version of MKL to install.  The default value is
-`2019.0-045`.
+`2019.4-070`.
 
 __Examples__
 
@@ -1360,6 +1407,7 @@ __Examples__
 ```python
 mkl(eula=True, version='2018.3-051')
 ```
+
 
 ## runtime
 ```python
@@ -1418,7 +1466,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.5-1.0.1.0`.
+value is `4.6-1.0.1.1`.
 
 __Examples__
 
@@ -1451,9 +1499,6 @@ mpich(self, **kwargs)
 The `mpich` building block configures, builds, and installs the
 [MPICH](https://www.mpich.org) component.
 
-As a side effect, this building block modifies `PATH` to include
-the MPICH build.
-
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The tool can be passed to other operations
 that want to build using the MPI compiler wrappers.
@@ -1466,6 +1511,10 @@ testing` steps should be performed.  The default is False.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+MPICH. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the MPICH library
 directory should be added dynamic linker cache.  If False, then
@@ -1486,7 +1535,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MPICH source to download.  The default
-value is `3.3`.
+value is `3.3.1`.
 
 __Examples__
 
@@ -1515,6 +1564,63 @@ Stage0 += m
 Stage1 += m.runtime()
 ```
 
+# multi_ofed
+```python
+multi_ofed(self, **kwargs)
+```
+The `multi_ofed` building block downloads and installs multiple
+versions of the OpenFabrics Enterprise Distribution (OFED). Please
+refer to the [`mlnx_ofed`](#mlnx_ofed) and [`ofed`](#ofed)
+building blocks for more information.
+
+__Parameters__
+
+
+- __inbox__: Boolean flag to specify whether to install the 'inbox' OFED
+distributed by the Linux distribution.  The default is True.
+
+- __mlnx_oslabel__: The Linux distribution label assigned by Mellanox to
+the tarball. Please see the corresponding
+[`mlnx_ofed`](#mlnx_ofed) parameter for more information.
+
+- __mlnx_packages__: List of packages to install from Mellanox
+OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
+parameter for more information.
+
+- __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
+versions to install.  The default values are `3.3-1.0.4.0`,
+`3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
+`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`
+
+- __ospackages__: List of OS packages to install prior to installing
+OFED.  For Ubuntu, the default values are `libnl-3-200`,
+`libnl-route-3-200`, and `libnuma1`.  For RHEL-based Linux
+distributions, the default values are `libnl`, `libnl3`, and
+`numactl-libs`.
+
+- __prefix__: The top level install location.  The OFED packages will be
+extracted to this location as subdirectories named for the
+respective Mellanox OFED version, or `inbox` for the 'inbox'
+OFED. The environment must be manually configured to recognize the
+desired OFED location, e.g., in the container entry point. The
+default value is `/usr/local/ofed`.
+
+__Examples__
+
+
+```python
+multi_ofed(inbox=True, mlnx_versions=['4.5-1.0.1.0', '4.6-1.0.1.1'],
+           prefix='/usr/local/ofed')
+```
+
+
+## runtime
+```python
+multi_ofed.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
 # mvapich2
 ```python
 mvapich2(self, **kwargs)
@@ -1528,9 +1634,6 @@ build context.
 An InfiniBand building block ([OFED](#ofed) or [Mellanox
 OFED](#mlnx_ofed)) should be installed prior to this building
 block.
-
-As a side effect, this building block modifies `PATH`
-to include the MVAPICH2 build.
 
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The tool can be passed to other operations
@@ -1557,6 +1660,10 @@ the local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+MVAPICH2. The default is True.
+
 - __gpu_arch__: The GPU architecture to use.  Older versions of MVAPICH2
 (2.3b and previous) were hard-coded to use "sm_20".  This option
 has no effect on more recent MVAPICH2 versions.  The default value
@@ -1581,7 +1688,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MVAPICH2 source to download.  This value
-is ignored if `directory` is set.  The default value is `2.3`.
+is ignored if `directory` is set.  The default value is `2.3.1`.
 
 __Examples__
 
@@ -1642,9 +1749,6 @@ prior to this building block.
 The [gdrcopy](#gdrcopy) building block should be installed prior
 to this building block.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the MVAPICH2-GDR build.
-
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The toolchain can be passed to other
 operations that want to build using the MPI compiler wrappers.
@@ -1660,6 +1764,10 @@ __Parameters__
 built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This
 value is ignored if `package` is set.  The default value is `9.2`.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+MVAPICH2-GDR. The default is True.
 
 - __gnu__: Boolean flag to specify whether a GNU build should be used.
 The default value is True.
@@ -1737,9 +1845,6 @@ installs the
 The [HDF5](#hdf5) building block should be installed prior to this
 building block.
 
-As a side effect, this building block modifies `PATH` to include
-the NetCDF build.
-
 __Parameters__
 
 
@@ -1751,6 +1856,10 @@ default value is an empty list.
 
 - __cxx__: Boolean flag to specify whether the NetCDF C++ library should
 be installed.  The default is True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+NetCDF. The default is True.
 
 - __fortran__: Boolean flag to specify whether the NetCDF Fortran
 library should be installed.  The default is True.
@@ -1778,13 +1887,13 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of NetCDF to download.  The default value is
-`4.6.1`.
+`4.7.0`.
 
 - __version_cxx__: The version of NetCDF C++ to download.  The default
 value is `4.3.0`.
 
 - __version_fortran__: The version of NetCDF Fortran to download.  The
-default value is `4.4.4`.
+default value is `4.4.5`.
 
 __Examples__
 
@@ -1824,27 +1933,33 @@ Distribution packages that are part of the Linux distribution.
 
 For Ubuntu 16.04, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-`libdapl-dev`, `libibcm-dev`, `libibmad5`, `libibmad-dev`,
-`libibverbs1`, `libibverbs-dev`, `libmlx4-1`, `libmlx4-dev`,
-`libmlx5-1`, `libmlx5-dev`, `librdmacm1`, `librdmacm-dev`,
-`opensm`, and `rdmacm-utils`.
+`libdapl2`, `libdapl-dev`, `libibcm1`, `libibcm-dev`, `libibmad5`,
+`libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
+`libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+`librdmacm-dev`, and `rdmacm-utils`.
 
 For Ubuntu 18.04, the following packages are installed:
-`dapl2-utils`, `ibutils`, `ibverbs-utils`, `infiniband-diags`,
-`libdapl-dev`, `libibmad5`, `libibmad-dev`, `libibverbs1`,
-`libibverbs-dev`, `librdmacm1`, `librdmacm-dev`, `opensm`, and
-`rdmacm-utils`.
+`dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
+`infiniband-diags`, `libdapl2`, `libdapl-dev`, `libibmad5`,
+`libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
+`librdmacm-dev`, and `rdmacm-utils`.
 
 For RHEL-based Linux distributions, the following packages are
 installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
-`libibverbs-utils`, `librdmacm`, `opensm`, `rdma-core`, and
+`libibverbs-utils`, `librdmacm`, `rdma-core`, and
 `rdma-core-devel`.
 
 __Parameters__
 
 
-None
+- __prefix__: The top level install location. Install of installing the
+packages via the package manager, they will be extracted to this
+location. This option is useful if multiple versions of OFED need
+to be installed. The environment must be manually configured to
+recognize the OFED location, e.g., in the container entry
+point. The default value is empty, i.e., install via the package
+manager to the standard system locations.
 
 __Examples__
 
@@ -1880,6 +1995,10 @@ The `openblas` building block builds and installs the
 __Parameters__
 
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+OpenBLAS. The default is True.
+
 - __ldconfig__: Boolean flag to specify whether the OpenBLAS library
 directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the OpenBLAS library
@@ -1899,7 +2018,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.3`.
+value is `0.3.6`.
 
 __Examples__
 
@@ -1912,6 +2031,7 @@ openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
 p = pgi(eula=True)
 openblas(toolchain=p.toolchain)
 ```
+
 
 ## runtime
 ```python
@@ -1938,9 +2058,6 @@ The `openmpi` building block configures, builds, and installs the
 parameters, the source will be downloaded from the web (default)
 or copied from a source directory in the local build context.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the OpenMPI build.
-
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The tool can be passed to other operations
 that want to build using the MPI compiler wrappers.
@@ -1965,6 +2082,10 @@ is True.
 local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+OpenMPI. The default is True.
 
 - __infiniband__: Boolean flag to control whether InfiniBand
 capabilities are included.  If True, adds `--with-verbs` to the
@@ -1998,7 +2119,7 @@ list of `configure` options.  The default is False.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`3.1.2`.
+`4.0.1`.
 
 __Examples__
 
@@ -2064,10 +2185,24 @@ is an empty list.
 - __apt_repositories__: A list of apt repositories to add.  The default
 is an empty list.
 
+- __download__: Boolean flag to specify whether to download the deb /
+rpm packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/packages_download`.
+
 - __epel__: Boolean flag to specify whether to enable the Extra Packages
 for Enterprise Linux (EPEL) repository.  The default is False.
 This parameter is ignored if the Linux distribution is not
 RHEL-based.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
 
 - __ospackages__: A list of packages to install.  The list is used for
 both Ubuntu and RHEL-based Linux distributions, therefore only
@@ -2103,6 +2238,7 @@ packages(apt=['zlib1g-dev'], yum=['zlib-devel'])
 packages(apt=['python3'], yum=['python34'], epel=True)
 ```
 
+
 # pgi
 ```python
 pgi(self, **kwargs)
@@ -2114,15 +2250,17 @@ edition.
 You must agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
 building block.
 
-As a side effect, this building block modifies `PATH` and
-`LD_LIBRARY_PATH` to include the PGI compiler.
-
 As a side effect, a toolchain is created containing the PGI
 compilers.  The tool can be passed to other operations that want
 to build using the PGI compilers.
 
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
+should be modified to include the PGI compiler. The default is
+True.
 
 - __eula__: By setting this value to `True`, you agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
 The default value is `False`.
@@ -2183,6 +2321,7 @@ pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
 p = pgi(eula=True)
 openmpi(..., toolchain=p.toolchain, ...)
 ```
+
 
 ## runtime
 ```python
@@ -2247,9 +2386,6 @@ installs the
 [PnetCDF](http://cucis.ece.northwestern.edu/projects/PnetCDF/index.html)
 component.
 
-As a side effect, this building block modifies `PATH` to include
-the PnetCDF build.
-
 __Parameters__
 
 
@@ -2258,6 +2394,10 @@ should be performed.  The default is False.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--enable-shared`.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+PnetCDF. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the PnetCDF library
 directory should be added dynamic linker cache.  If False, then
@@ -2276,7 +2416,7 @@ used.  The default is to use the standard MPI compiler wrappers,
 e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
 
 - __version__: The version of PnetCDF source to download.  The default
-value is `1.10.0`.
+value is `1.11.2`.
 
 __Examples__
 
@@ -2289,6 +2429,7 @@ pnetcdf(prefix='/opt/pnetcdf/1.10.0', version='1.10.0')
 ompi = openmpi(...)
 pnetcdf(toolchain=ompi.toolchain, ...)
 ```
+
 
 ## runtime
 ```python
@@ -2516,9 +2657,6 @@ block.  One or all of the [gdrcopy](#gdrcopy), [KNEM](#knem), and
 [XPMEM](#xpmem) building blocks should also be installed prior to
 this building block.
 
-As a side effect, this building block modifies `PATH`
-to include the UCX build.
-
 __Parameters__
 
 
@@ -2533,6 +2671,10 @@ True, adds `--with-cuda=/usr/local/cuda` to the list of
 the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
 path is used.  If False, adds `--without-cuda` to the list of
 `configure` options.  The default value is an empty string.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+UCX. The default is True.
 
 - __gdrcopy__: Flag to control whether gdrcopy is used by the build.  If
 True, adds `--with-gdrcopy` to the list of `configure` options.
@@ -2557,6 +2699,16 @@ directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the UCX library
 directory. The default value is False.
 
+- __ofed__: Flag to control whether OFED is used by the build.  If True,
+adds `--with-verbs` and `--with-rdmacm` to the list of `configure`
+options.  If a string, uses the value of the string as the OFED
+path, e.g., `--with-verbs=/path/to/ofed`.  If False, adds
+`--without-verbs` and `--without-rdmacm` to the list of
+`configure` options.  The default is an empty string, i.e.,
+include neither `--with-verbs` not `--without-verbs` and let
+`configure` try to automatically detect whether OFED is present or
+not.
+
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `binutils-dev`,
 `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
@@ -2571,7 +2723,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.4.0`.
+is `1.5.2`.
 
 - __xpmem__: Flag to control whether XPMEM is used by the build.  If
 True, adds `--with-xpmem` to the list of `configure` options.  If
@@ -2593,6 +2745,7 @@ ucx(cuda=False, prefix='/opt/ucx/1.4.0', version='1.4.0')
 ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
     knem='/usr/local/knem', xpmem='/usr/local/xpmem')
 ```
+
 
 ## runtime
 ```python
@@ -2618,9 +2771,6 @@ The `xpmem` building block builds and installs the user space
 library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
 component.
 
-As a side effect, this building block modifies `CPATH` and
-`LIBRARY_PATH`.
-
 __Parameters__
 
 
@@ -2629,6 +2779,10 @@ __Parameters__
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--disable-kernel-module`.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
+to include XPMEM. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the XPMEM library
 directory should be added dynamic linker cache.  If False, then
@@ -2652,6 +2806,7 @@ __Examples__
 ```python
 xpmem(prefix='/opt/xpmem', branch='master')
 ```
+
 
 ## runtime
 ```python
@@ -2683,9 +2838,23 @@ be used instead of `yum`.
 __Parameters__
 
 
+- __download__: Boolean flag to specify whether to download the rpm
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/yum_download`.
+
 - __epel__: - Boolean flag to specify whether to enable the Extra
 Packages for Enterprise Linux (EPEL) repository.  The default is
 False.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
 
 - __keys__: A list of GPG keys to import.  The default is an empty list.
 
@@ -2704,4 +2873,5 @@ __Examples__
 ```python
 yum(ospackages=['make', 'wget'])
 ```
+
 

@@ -28,6 +28,7 @@ from copy import copy as _copy
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.sed
@@ -43,7 +44,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mvapich2(bb_base, hpccm.templates.ConfigureMake,
+class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                hpccm.templates.ldconfig, hpccm.templates.rm,
                hpccm.templates.sed, hpccm.templates.tar, hpccm.templates.wget):
     """The `mvapich2` building block configures, builds, and installs the
@@ -55,9 +56,6 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
     An InfiniBand building block ([OFED](#ofed) or [Mellanox
     OFED](#mlnx_ofed)) should be installed prior to this building
     block.
-
-    As a side effect, this building block modifies `PATH`
-    to include the MVAPICH2 build.
 
     As a side effect, a toolchain is created containing the MPI
     compiler wrappers.  The tool can be passed to other operations
@@ -83,6 +81,10 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
     defined, the source in the local build context will be used rather
     than downloading the source from the web.
 
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    MVAPICH2. The default is True.
+
     gpu_arch: The GPU architecture to use.  Older versions of MVAPICH2
     (2.3b and previous) were hard-coded to use "sm_20".  This option
     has no effect on more recent MVAPICH2 versions.  The default value
@@ -107,7 +109,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
     default is empty.
 
     version: The version of MVAPICH2 source to download.  This value
-    is ignored if `directory` is set.  The default value is `2.3`.
+    is ignored if `directory` is set.  The default value is `2.3.1`.
 
     # Examples
 
@@ -148,10 +150,9 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3')
+        self.version = kwargs.get('version', '2.3.1')
 
         self.__commands = []              # Filled in by __setup()
-        self.__environment_variables = {} # Filled in by __setup()
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
@@ -183,8 +184,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
             self += copy(src=self.directory,
                          dest=posixpath.join(self.__wd, self.directory))
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -235,6 +235,9 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
             if toolchain.CC and re.match('.*pgcc', toolchain.CC):
                 self.configure_opts.append(
                     '--enable-cuda=basic --with-cuda={}'.format(cuda_home))
+
+                # Work around issue when using PGI 19.4
+                self.configure_opts.append('--enable-fast=O1')
 
                 if not toolchain.CFLAGS:
                     toolchain.CFLAGS = '-ta=tesla:nordc'
@@ -300,7 +303,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         if self.directory:
             # Using source from local build context, cleanup directory
@@ -314,11 +317,11 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
                                       'mvapich2-{}'.format(self.version))]))
 
         # Setup environment variables
-        self.__environment_variables['PATH'] = '{}:$PATH'.format(
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.prefix, 'bin'))
         if self.cuda:
             # Workaround for using compiler wrappers in the build stage
-            self.__environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
+            self.environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -342,11 +345,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake,
             instructions.append(shell(
                 commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, 'lib'))]))
-        if self.__environment_variables:
-            # No need to workaround compiler wrapper issue for the runtime.
-            # Copy the dictionary so not to modify the original.
-            vars = dict(self.__environment_variables)
-            if vars.get('PROFILE_POSTLIB'):
-                del vars['PROFILE_POSTLIB']
-            instructions.append(environment(variables=vars))
+        # No need to workaround compiler wrapper issue for the runtime.
+        instructions.append(environment(
+            variables=self.environment_step(exclude=['PROFILE_POSTLIB'])))
         return '\n'.join(str(x) for x in instructions)

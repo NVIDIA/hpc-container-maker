@@ -23,6 +23,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 
 import hpccm.config
+import hpccm.templates.envvars
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
@@ -32,7 +33,7 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class llvm(bb_base):
+class llvm(bb_base, hpccm.templates.envvars):
     """The `llvm` building block installs the LLVM compilers (clang and
     clang++) from the upstream Linux distribution.
 
@@ -41,6 +42,10 @@ class llvm(bb_base):
     want to build using the LLVM compilers.
 
     # Parameters
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include the
+    LLVM compilers. The default is True.
 
     extra_repository: Boolean flag to specify whether to enable an
     extra package repository containing addition LLVM compiler
@@ -73,6 +78,7 @@ class llvm(bb_base):
     l = llvm()
     openmpi(..., toolchain=l.toolchain, ...)
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -86,7 +92,6 @@ class llvm(bb_base):
         self.__commands = []       # Filled in below
         self.__compiler_debs = ['clang']  # Filled in below
         self.__compiler_rpms = ['clang']  # Filled in below
-        self.__environment = {}    # Filled in below
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_debs = ['libclang1']
         self.__runtime_rpms = ['llvm-libs']
@@ -134,8 +139,8 @@ class llvm(bb_base):
             # Setup the environment so that the alternate compiler version
             # is the new default
             if self.__version:
-                self.__environment = {'PATH': '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version),
-                                      'LD_LIBRARY_PATH': '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)}
+                self.environment_variables['PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version)
+                self.environment_variables['LD_LIBRARY_PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)
         else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
@@ -150,8 +155,7 @@ class llvm(bb_base):
                          yum=self.__compiler_rpms)
         if self.__commands:
             self += shell(commands=self.__commands)
-        if self.__environment:
-            self += environment(variables=self.__environment)
+        self += environment(variables=self.environment_step())
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
