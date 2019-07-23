@@ -81,7 +81,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of MPICH source to download.  The default
-    value is `3.3`.
+    value is `3.3.1`.
 
     # Examples
 
@@ -112,7 +112,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # MPICH does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '3.3')
+        self.version = kwargs.get('version', '3.3.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

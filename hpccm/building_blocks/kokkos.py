@@ -75,7 +75,7 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     is `/usr/local/kokkos`.
 
     version: The version of Kokkos source to download.  The default
-    value is `2.8.00`.
+    value is `2.9.00`.
 
     # Examples
 
@@ -100,7 +100,7 @@ class kokkos(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local/kokkos')
-        self.__version = kwargs.get('version', '2.8.00')
+        self.__version = kwargs.get('version', '2.9.00')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

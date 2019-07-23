@@ -49,7 +49,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     `/usr/local`.
 
     version: The version of CMake to download.  The default value is
-    `3.12.3`.
+    `3.14.5`.
 
     # Examples
 
@@ -76,7 +76,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
         self.__ospackages = kwargs.get('ospackages', ['wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local')
-        self.__version = kwargs.get('version', '3.12.3')
+        self.__version = kwargs.get('version', '3.14.5')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -60,7 +61,8 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     The default values are `--build-shared`, and `--with-production`.
 
     ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `git`, `make`, and `wget`.
+    and building.  The default values are `autoconf`, `automake`,
+    `git`, `libtool`, `make`, and `wget`.
 
     prefix: The top level install prefix.  The default value is
     `/usr/local`.
@@ -72,7 +74,7 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     The default value is `multicore-linux-x86_64`.
 
     version: The version of Charm++ to download.  The default value is
-    `6.8.2`.
+    `6.9.0`.
 
     # Examples
 
@@ -96,16 +98,24 @@ class charm(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__check = kwargs.get('check', False)
         self.__options = kwargs.get('options', ['--build-shared',
                                                 '--with-production'])
-        self.__ospackages = kwargs.get('ospackages', ['git', 'make', 'wget'])
+        self.__ospackages = kwargs.get('ospackages',
+                                       ['autoconf', 'automake', 'git',
+                                        'libtool', 'make', 'wget'])
         self.__parallel = kwargs.get('parallel', 4)
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__target = kwargs.get('target', 'charm++')
         self.__target_architecture = kwargs.get('target_architecture',
                                                 'multicore-linux-x86_64')
-        self.__version = kwargs.get('version', '6.8.2')
+        self.__version = kwargs.get('version', '6.9.0')
 
-        self.__installdir = posixpath.join(self.__prefix,
-                                           'charm-v{}'.format(self.__version))
+        # Version 6.9.0 dropped the 'v' from directory name
+        if LooseVersion(self.__version) >= LooseVersion('6.9.0'):
+            self.__installdir = posixpath.join(
+                self.__prefix, 'charm-{}'.format(self.__version))
+        else:
+            self.__installdir = posixpath.join(
+                self.__prefix, 'charm-v{}'.format(self.__version))
+
         self.__wd = '/var/tmp' # working directory
 
         self.__commands = [] # Filled in by __setup()

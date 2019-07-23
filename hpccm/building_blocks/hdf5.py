@@ -84,7 +84,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of HDF5 source to download.  This value is
-    ignored if `directory` is set.  The default value is `1.10.4`.
+    ignored if `directory` is set.  The default value is `1.10.5`.
 
     # Examples
 
@@ -122,7 +122,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.10.4')
+        self.__version = kwargs.get('version', '1.10.5')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {

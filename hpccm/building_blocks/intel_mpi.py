@@ -78,7 +78,7 @@ class intel_mpi(bb_base, hpccm.templates.wget):
     the default values are `man-db` and `openssh-clients`.
 
     version: The version of Intel MPI to install.  The default value
-    is `2019.1-053`.
+    is `2019.4-070`.
 
     # Examples
 
@@ -99,7 +99,7 @@ class intel_mpi(bb_base, hpccm.templates.wget):
 
         self.__mpivars = kwargs.get('mpivars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2019.1-053')
+        self.version = kwargs.get('version', '2019.4-070')
 
         self.__bashrc = ''      # Filled in by __distro()
 

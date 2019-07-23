@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -75,7 +76,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
     e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
 
     version: The version of PnetCDF source to download.  The default
-    value is `1.10.0`.
+    value is `1.11.2`.
 
     # Examples
 
@@ -97,7 +98,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.configure_opts = kwargs.get('configure_opts', ['--enable-shared'])
         self.prefix = kwargs.get('prefix', '/usr/local/pnetcdf')
 
-        self.__baseurl = kwargs.get('baseurl', 'http://cucis.ece.northwestern.edu/projects/PnetCDF/Release')
+        self.__baseurl = kwargs.get('baseurl', 'https://parallel-netcdf.github.io/Release')
         self.__check = kwargs.get('check', False)
         self.__ospackages = kwargs.get('ospackages', ['m4', 'make', 'tar',
                                                       'wget'])
@@ -106,7 +107,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
                                       toolchain(CC='mpicc', CXX='mpicxx',
                                                 F77='mpif77', F90='mpif90',
                                                 FC='mpifort'))
-        self.__version = kwargs.get('version', '1.10.0')
+        self.__version = kwargs.get('version', '1.11.2')
 
         self.__commands = [] # Filled in by __setup()
         self.__environment_variables = {
@@ -146,7 +147,12 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        tarball = 'parallel-netcdf-{}.tar.gz'.format(self.__version)
+        # Version 1.11.0 changed the package name
+        if LooseVersion(self.__version) >= LooseVersion('1.11.0'):
+            pkgname = 'pnetcdf'
+        else:
+            pkgname = 'parallel-netcdf'
+        tarball = '{0}-{1}.tar.gz'.format(pkgname, self.__version)
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
@@ -155,8 +161,8 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
         self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd, 'parallel-netcdf-{}'.format(
-                self.__version)),
+            directory=posixpath.join(self.__wd, '{0}-{1}'.format(
+                pkgname, self.__version)),
             toolchain=self.__toolchain))
 
         # For some compilers, --enable-shared leads to the following error:
@@ -165,7 +171,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         # .libs/libpnetcdf.lax/libf77.a/strerrnof.o: error adding symbols: Bad value
         # Apply the workaround
         if '--enable-shared' in self.configure_opts:
-          self.__commands.append('sed -i -e \'s#pic_flag=""#pic_flag=" -fpic -DPIC"#\' -e \'s#wl=""#wl="-Wl,"#\' {}'.format(posixpath.join(self.__wd, 'parallel-netcdf-{}'.format(self.__version), 'libtool')))
+          self.__commands.append('sed -i -e \'s#pic_flag=""#pic_flag=" -fpic -DPIC"#\' -e \'s#wl=""#wl="-Wl,"#\' {}'.format(posixpath.join(self.__wd, '{0}-{1}'.format(pkgname, self.__version), 'libtool')))
 
         self.__commands.append(self.build_step())
 
@@ -186,7 +192,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.ldconfig,
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
-                                  'parallel-netcdf-{}'.format(self.__version))]))
+                                  '{0}-{1}'.format(pkgname, self.__version))]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
