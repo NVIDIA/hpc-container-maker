@@ -37,7 +37,7 @@ class Test_cgns(unittest.TestCase):
         """Default cgns building block"""
         c = cgns()
         self.assertEqual(str(c),
-r'''# CGNS version 3.3.1
+r'''# CGNS version 3.4.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
@@ -45,12 +45,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.3.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v3.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/CGNS-3.3.1/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.4.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v3.4.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/CGNS-3.4.0/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/v3.3.1.tar.gz /var/tmp/v3.3.1''')
+    rm -rf /var/tmp/v3.4.0.tar.gz /var/tmp/v3.4.0''')
 
     @centos
     @docker
@@ -58,7 +58,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Default cgns building block"""
         c = cgns()
         self.assertEqual(str(c),
-r'''# CGNS version 3.3.1
+r'''# CGNS version 3.4.0
 RUN yum install -y \
         bzip2 \
         file \
@@ -66,12 +66,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.3.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v3.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/CGNS-3.3.1/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/CGNS/CGNS/archive/v3.4.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v3.4.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/CGNS-3.4.0/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/v3.3.1.tar.gz /var/tmp/v3.3.1''')
+    rm -rf /var/tmp/v3.4.0.tar.gz /var/tmp/v3.4.0''')
 
     @ubuntu
     @docker

@@ -87,7 +87,7 @@ repository.  For versions of Boost older than 1.63.0, the
 SourceForge repository should be used.  The default is False.
 
 - __version__: The version of Boost source to download.  The default
-value is `1.68.0`.
+value is `1.70.0`.
 
 __Examples__
 
@@ -179,7 +179,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of Catalyst source to download.  The default
-value is `5.6.0`.
+value is `5.6.1`.
 
 __Examples__
 
@@ -237,7 +237,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of CGNS source to download.  The default
-value is `3.3.1`.
+value is `3.4.0`.
 
 __Examples__
 
@@ -288,7 +288,8 @@ directory. The default value is False.
 The default values are `--build-shared`, and `--with-production`.
 
 - __ospackages__: List of OS packages to install prior to configuring
-and building.  The default values are `git`, `make`, and `wget`.
+and building.  The default values are `autoconf`, `automake`,
+`git`, `libtool`, `make`, and `wget`.
 
 - __prefix__: The top level install prefix.  The default value is
 `/usr/local`.
@@ -300,7 +301,7 @@ is `charm++`.
 The default value is `multicore-linux-x86_64`.
 
 - __version__: The version of Charm++ to download.  The default value is
-`6.8.2`.
+`6.9.0`.
 
 __Examples__
 
@@ -350,7 +351,7 @@ The default value is `wget`.
 `/usr/local`.
 
 - __version__: The version of CMake to download.  The default value is
-`3.12.3`.
+`3.14.5`.
 
 __Examples__
 
@@ -670,7 +671,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of HDF5 source to download.  This value is
-ignored if `directory` is set.  The default value is `1.10.4`.
+ignored if `directory` is set.  The default value is `1.10.5`.
 
 __Examples__
 
@@ -752,7 +753,7 @@ Intel MPI.  For Ubuntu, the default values are
 the default values are `man-db` and `openssh-clients`.
 
 - __version__: The version of Intel MPI to install.  The default value
-is `2019.1-053`.
+is `2019.4-070`.
 
 __Examples__
 
@@ -988,7 +989,7 @@ and `which`.
 install.  Due to issues in the Intel apt / yum repositories, only
 the major version is used; within a major version, the most recent
 minor version will be installed.  The default value is
-`2019.3-199`.
+`2019.4-243`.
 
 - __tbb__: Boolean flag to specify whether the Intel Threading Building
 Blocks runtime should be installed.  The default is True.
@@ -1110,7 +1111,7 @@ default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
 is `/usr/local/kokkos`.
 
 - __version__: The version of Kokkos source to download.  The default
-value is `2.8.00`.
+value is `2.9.00`.
 
 __Examples__
 
@@ -1162,7 +1163,10 @@ directories should be added dynamic linker cache.  If False, then
 directories. The default value is False.
 
 - __mpi__: Boolean flag to specify whether Libsim should be built with
-MPI support.  If True, then the build script options `--parallel`
+MPI support.  VisIt uses MPI-1 routines that have been removed
+from the MPI standard; the MPI library may need to be built with
+special compatibility options, e.g., `--enable-mpi1-compatibility`
+for OpenMPI.  If True, then the build script options `--parallel`
 and `--no-icet` are added and the environment variable
 `PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
 block should be installed prior this building block.  The default
@@ -1335,7 +1339,7 @@ MKL.  For Ubuntu, the default values are `apt-transport-https`,
 distributions, the default is an empty list.
 
 - __version__: The version of MKL to install.  The default value is
-`2019.0-045`.
+`2019.4-070`.
 
 __Examples__
 
@@ -1402,7 +1406,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.5-1.0.1.0`.
+value is `4.6-1.0.1.1`.
 
 __Examples__
 
@@ -1471,7 +1475,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MPICH source to download.  The default
-value is `3.3`.
+value is `3.3.1`.
 
 __Examples__
 
@@ -1624,7 +1628,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MVAPICH2 source to download.  This value
-is ignored if `directory` is set.  The default value is `2.3`.
+is ignored if `directory` is set.  The default value is `2.3.1`.
 
 __Examples__
 
@@ -1823,13 +1827,13 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of NetCDF to download.  The default value is
-`4.6.1`.
+`4.7.0`.
 
 - __version_cxx__: The version of NetCDF C++ to download.  The default
 value is `4.3.0`.
 
 - __version_fortran__: The version of NetCDF Fortran to download.  The
-default value is `4.4.4`.
+default value is `4.4.5`.
 
 __Examples__
 
@@ -1954,7 +1958,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.3`.
+value is `0.3.6`.
 
 __Examples__
 
@@ -2055,7 +2059,7 @@ list of `configure` options.  The default is False.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`3.1.2`.
+`4.0.1`.
 
 __Examples__
 
@@ -2352,7 +2356,7 @@ used.  The default is to use the standard MPI compiler wrappers,
 e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
 
 - __version__: The version of PnetCDF source to download.  The default
-value is `1.10.0`.
+value is `1.11.2`.
 
 __Examples__
 
@@ -2659,7 +2663,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.4.0`.
+is `1.5.2`.
 
 - __xpmem__: Flag to control whether XPMEM is used by the build.  If
 True, adds `--with-xpmem` to the list of `configure` options.  If

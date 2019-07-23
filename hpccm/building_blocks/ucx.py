@@ -120,7 +120,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default value is empty.
 
     version: The version of UCX source to download.  The default value
-    is `1.4.0`.
+    is `1.5.2`.
 
     xpmem: Flag to control whether XPMEM is used by the build.  If
     True, adds `--with-xpmem` to the list of `configure` options.  If
@@ -165,7 +165,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.__ofed = kwargs.get('ofed', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.4.0')
+        self.__version = kwargs.get('version', '1.5.2')
         self.__xpmem = kwargs.get('xpmem', '')
 
         self.__commands = [] # Filled in by __setup()

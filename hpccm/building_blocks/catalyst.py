@@ -102,7 +102,7 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
     default is empty.
 
     version: The version of Catalyst source to download.  The default
-    value is `5.6.0`.
+    value is `5.6.1`.
 
     # Examples
 
@@ -124,7 +124,7 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
         self.__runtime_ospackages = [] # Filled in by __distro()
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '5.6.0')
+        self.__version = kwargs.get('version', '5.6.1')
         self.__url = r'https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version={0}\&type=catalyst\&os=Sources\&downloadFile={1}'
 
         self.__commands = [] # Filled in by __setup()

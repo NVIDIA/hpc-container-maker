@@ -70,7 +70,7 @@ class cgns(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.rm,
     default is empty.
 
     version: The version of CGNS source to download.  The default
-    value is `3.3.1`.
+    value is `3.4.0`.
 
     # Examples
 
@@ -93,7 +93,7 @@ class cgns(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.rm,
         self.__check = kwargs.get('check', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '3.3.1')
+        self.__version = kwargs.get('version', '3.4.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

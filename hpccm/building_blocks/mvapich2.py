@@ -109,7 +109,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of MVAPICH2 source to download.  This value
-    is ignored if `directory` is set.  The default value is `2.3`.
+    is ignored if `directory` is set.  The default value is `2.3.1`.
 
     # Examples
 
@@ -150,7 +150,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3')
+        self.version = kwargs.get('version', '2.3.1')
 
         self.__commands = []              # Filled in by __setup()
 
@@ -235,6 +235,9 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             if toolchain.CC and re.match('.*pgcc', toolchain.CC):
                 self.configure_opts.append(
                     '--enable-cuda=basic --with-cuda={}'.format(cuda_home))
+
+                # Work around issue when using PGI 19.4
+                self.configure_opts.append('--enable-fast=O1')
 
                 if not toolchain.CFLAGS:
                     toolchain.CFLAGS = '-ta=tesla:nordc'

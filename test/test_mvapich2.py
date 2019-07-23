@@ -38,7 +38,7 @@ class Test_mvapich2(unittest.TestCase):
         """Default mvapich2 building block"""
         mv2 = mvapich2()
         self.assertEqual(str(mv2),
-r'''# MVAPICH2 version 2.3
+r'''# MVAPICH2 version 2.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
@@ -49,12 +49,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mvapich2-2.3 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mvapich2-2.3.1 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
+    rm -rf /var/tmp/mvapich2-2.3.1.tar.gz /var/tmp/mvapich2-2.3.1
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml -lcuda"''')
@@ -70,7 +70,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         tc.FC = 'pgfortran'
         mv2 = mvapich2(toolchain=tc, cuda=True)
         self.assertEqual(str(mv2),
-r'''# MVAPICH2 version 2.3
+r'''# MVAPICH2 version 2.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
@@ -81,12 +81,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mvapich2-2.3 &&  CC=pgcc CFLAGS=-ta=tesla:nordc CPPFLAGS='-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI=' CXX=pgc++ F77=pgfortran FC=pgfortran LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda=basic --with-cuda=/usr/local/cuda && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mvapich2-2.3.1 &&  CC=pgcc CFLAGS=-ta=tesla:nordc CPPFLAGS='-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI=' CXX=pgc++ F77=pgfortran FC=pgfortran LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda=basic --with-cuda=/usr/local/cuda --enable-fast=O1 && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
+    rm -rf /var/tmp/mvapich2-2.3.1.tar.gz /var/tmp/mvapich2-2.3.1
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml -lcuda"''')
@@ -125,7 +125,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         """Disable CUDA"""
         mv2 = mvapich2(cuda=False)
         self.assertEqual(str(mv2),
-r'''# MVAPICH2 version 2.3
+r'''# MVAPICH2 version 2.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         byacc \
@@ -134,12 +134,12 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mvapich2-2.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mvapich2-2.3.1 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
+    rm -rf /var/tmp/mvapich2-2.3.1.tar.gz /var/tmp/mvapich2-2.3.1
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH''')
 
@@ -149,7 +149,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
         """Default mvapich2 building block"""
         mv2 = mvapich2()
         self.assertEqual(str(mv2),
-r'''# MVAPICH2 version 2.3
+r'''# MVAPICH2 version 2.3.1
 RUN yum install -y \
         byacc \
         file \
@@ -159,12 +159,12 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
     ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mvapich2-2.3 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mvapich2-2.3.1 &&  LD_LIBRARY_PATH='/usr/local/cuda/lib64/stubs:$LD_LIBRARY_PATH' ./configure --prefix=/usr/local/mvapich2 --disable-mcast --enable-cuda --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mvapich2-2.3.tar.gz /var/tmp/mvapich2-2.3
+    rm -rf /var/tmp/mvapich2-2.3.1.tar.gz /var/tmp/mvapich2-2.3.1
 ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mvapich2/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml -lcuda"''')

@@ -193,7 +193,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/opt/intel')
         self.__psxevars = kwargs.get('psxevars', True)
-        self.__runtime_version = kwargs.get('runtime_version', '2019.1-144')
+        self.__runtime_version = kwargs.get('runtime_version', '2019.4-243')
         self.__tarball = kwargs.get('tarball', None)
         self.__tbb = kwargs.get('tbb', True)
         self.__wd = '/var/tmp' # working directory

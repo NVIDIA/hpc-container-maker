@@ -61,7 +61,10 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     directories. The default value is False.
 
     mpi: Boolean flag to specify whether Libsim should be built with
-    MPI support.  If True, then the build script options `--parallel`
+    MPI support.  VisIt uses MPI-1 routines that have been removed
+    from the MPI standard; the MPI library may need to be built with
+    special compatibility options, e.g., `--enable-mpi1-compatibility`
+    for OpenMPI.  If True, then the build script options `--parallel`
     and `--no-icet` are added and the environment variable
     `PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
     block should be installed prior this building block.  The default

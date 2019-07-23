@@ -111,7 +111,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
     version: The version of OpenMPI source to download.  This
     value is ignored if `directory` is set.  The default value is
-    `3.1.2`.
+    `4.0.1`.
 
     # Examples
 
@@ -155,7 +155,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.version = kwargs.get('version', '3.1.2')
+        self.version = kwargs.get('version', '4.0.1')
         self.__ucx = kwargs.get('ucx', False)
 
         self.__commands = [] # Filled in by __setup()

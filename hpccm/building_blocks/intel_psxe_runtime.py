@@ -104,7 +104,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     install.  Due to issues in the Intel apt / yum repositories, only
     the major version is used; within a major version, the most recent
     minor version will be installed.  The default value is
-    `2019.3-199`.
+    `2019.4-243`.
 
     tbb: Boolean flag to specify whether the Intel Threading Building
     Blocks runtime should be installed.  The default is True.
@@ -140,7 +140,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2019.3-199')
+        self.__version = kwargs.get('version', '2019.4-243')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()

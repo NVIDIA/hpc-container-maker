@@ -74,7 +74,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     distributions, the default is an empty list.
 
     version: The version of MKL to install.  The default value is
-    `2019.0-045`.
+    `2019.4-070`.
 
     # Examples
 
@@ -96,7 +96,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
 
         self.__mklvars = kwargs.get('mklvars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2019.0-045')
+        self.version = kwargs.get('version', '2019.4-070')
 
         self.__bashrc = ''      # Filled in by __distro()
 
