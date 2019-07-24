@@ -26,6 +26,7 @@ import posixpath
 import re
 
 import hpccm.config
+import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -38,8 +39,8 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
-            hpccm.templates.tar, hpccm.templates.wget):
+class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+            hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
     """The `julia` building block downloads and installs the
     [Julia](https://julialang.org) programming environment.
 
@@ -53,6 +54,10 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
 
     depot: Path to the location of Julia packages. The default value
     is an empty string.
+
+    environment: Boolean flag to specify whether the environment
+    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+    Julia. The default is True.
 
     ldconfig: Boolean flag to specify whether the Julia library
     directory should be added dynamic linker cache.  If False, then
@@ -69,12 +74,12 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
     is `/usr/local/julia`.
 
     version: The version of Julia to install.  The default value is
-    `1.1.0`.
+    `1.1.1`.
 
     # Examples
 
     ```python
-    julia(prefix='/usr/local/julia', version='1.1.0')
+    julia(prefix='/usr/local/julia', version='1.1.1')
     ```
 
     """
@@ -91,11 +96,9 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self.__ospackages = kwargs.get('ospackages', ['tar', 'wget'])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/julia')
-        self.__version = kwargs.get('version', '1.1.0')
+        self.__version = kwargs.get('version', '1.1.1')
 
         self.__commands = [] # Filled in by __setup()
-        self.__environment_variables = {
-            'PATH': '{}:$PATH'.format(posixpath.join(self.__prefix, 'bin'))}
         self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
@@ -110,8 +113,7 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         self += comment('Julia version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
-        if self.__environment_variables:
-            self += environment(variables=self.__environment_variables)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -165,7 +167,7 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(directory=libpath))
         else:
-            self.__environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
         self.__commands.append(self.cleanup_step(
@@ -173,8 +175,10 @@ class julia(bb_base, hpccm.templates.ldconfig, hpccm.templates.rm,
                    posixpath.join(self.__wd, 'julia-{}'.format(self.__version))]))
 
         # Setup environment
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
         if self.__depot:
-            self.__environment_variables['JULIA_DEPOT_PATH'] = self.__depot
+            self.environment_variables['JULIA_DEPOT_PATH'] = self.__depot
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

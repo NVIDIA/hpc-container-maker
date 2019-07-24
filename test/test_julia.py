@@ -37,16 +37,16 @@ class Test_julia(unittest.TestCase):
         """Default julia building block"""
         j = julia()
         self.assertEqual(str(j),
-r'''# Julia version 1.1.0
+r'''# Julia version 1.1.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.0-linux-x86_64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.0-linux-x86_64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.1.0 /usr/local/julia && \
-    rm -rf /var/tmp/julia-1.1.0-linux-x86_64.tar.gz /var/tmp/julia-1.1.0
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.1-linux-x86_64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.1-linux-x86_64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.1.1 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.1.1-linux-x86_64.tar.gz /var/tmp/julia-1.1.1
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
@@ -56,17 +56,17 @@ ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
         """depot and packages options"""
         j = julia(depot='~/.julia-ngc', packages=['CUDAnative', 'CuArrays'])
         self.assertEqual(str(j),
-r'''# Julia version 1.1.0
+r'''# Julia version 1.1.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.0-linux-x86_64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.0-linux-x86_64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.1.0 /usr/local/julia && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.1-linux-x86_64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.1-linux-x86_64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.1.1 /usr/local/julia && \
     JULIA_DEPOT_PATH=~/.julia-ngc /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \
-    rm -rf /var/tmp/julia-1.1.0-linux-x86_64.tar.gz /var/tmp/julia-1.1.0
+    rm -rf /var/tmp/julia-1.1.1-linux-x86_64.tar.gz /var/tmp/julia-1.1.1
 ENV JULIA_DEPOT_PATH=~/.julia-ngc \
     LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
@@ -77,18 +77,18 @@ ENV JULIA_DEPOT_PATH=~/.julia-ngc \
         """cuda and ldconfig options"""
         j = julia(cuda=True, ldconfig=True)
         self.assertEqual(str(j),
-r'''# Julia version 1.1.0
+r'''# Julia version 1.1.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.0-linux-x86_64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.0-linux-x86_64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.1.0 /usr/local/julia && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.1/julia-1.1.1-linux-x86_64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.1.1-linux-x86_64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.1.1 /usr/local/julia && \
     /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays"), PackageSpec(name="GPUArrays")])' && \
     echo "/usr/local/julia/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/julia-1.1.0-linux-x86_64.tar.gz /var/tmp/julia-1.1.0
+    rm -rf /var/tmp/julia-1.1.1-linux-x86_64.tar.gz /var/tmp/julia-1.1.1
 ENV PATH=/usr/local/julia/bin:$PATH''')
 
     @ubuntu
