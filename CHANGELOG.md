@@ -1,3 +1,20 @@
+# v19.7.0
+
+- Refreshes default component versions for the Boost (`boost`),
+  ParaView/Catalyst (`catalyst`), CGNS (`cgns`), Charm++ (`charm`),
+  CMake (`cmake`), HDF5 (`hdf5`), Intel MPI (`intel_mpi`), Intel
+  Parallel Studio XE (`intel_psxe` and `intel_psxe_runtime`), Kokkos
+  (`kokkos`), MKL (`mkl`), Mellanox OFED (`mlnx_ofed`), MPICH (`mpich`),
+  MVAPICH2 (`mvapich2`), NetCDF (`netcdf`), OpenBLAS (`openblas`),
+  OpenMPI (`openmpi`), PnetCDF (`pnetcdf`), and UCX (`ucx`) building
+  blocks.
+- Adds "Multi OFED" (`multi_ofed`) building block to install multiple,
+  side-by-side versions of Mellanox and inbox OFED that can be selected
+  at runtime based on the best match with the host InfiniBand driver.
+- Adds `envvars` template and updates most building blocks to
+  introduce an `environment` parameter to optionally disable setting
+  up the component environment.
+
 # v19.6.0
 
 - Enhances the GNU (`gnu`) building block to build the compiler from
