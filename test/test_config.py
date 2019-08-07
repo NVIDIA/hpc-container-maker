@@ -95,3 +95,57 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_singularity_version('10.0')
         self.assertEqual(hpccm.config.g_singularity_version,
                          StrictVersion('10.0'))
+
+    @docker
+    def test_set_cpu_architecture_aarch64(self):
+        """Set CPU architecture to ARM"""
+        hpccm.config.set_cpu_architecture('aarch64')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
+
+    @docker
+    def test_set_cpu_architecture_arm(self):
+        """Set CPU architecture to ARM"""
+        hpccm.config.set_cpu_architecture('arm')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
+
+    @docker
+    def test_set_cpu_architecture_arm64v8(self):
+        """Set CPU architecture to ARM"""
+        hpccm.config.set_cpu_architecture('arm64v8')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
+
+    @docker
+    def test_set_cpu_architecture_ppc64le(self):
+        """Set CPU architecture to POWER"""
+        hpccm.config.set_cpu_architecture('ppc64le')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
+
+    @docker
+    def test_set_cpu_architecture_power(self):
+        """Set CPU architecture to POWER"""
+        hpccm.config.set_cpu_architecture('power')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
+
+    @docker
+    def test_set_cpu_architecture_x86_64(self):
+        """Set CPU architecture to x86_64"""
+        hpccm.config.set_cpu_architecture('x86_64')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
+
+    @docker
+    def test_set_cpu_architecture_amd64(self):
+        """Set CPU architecture to x86_64"""
+        hpccm.config.set_cpu_architecture('amd64')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
+
+    @docker
+    def test_set_cpu_architecture_x86(self):
+        """Set CPU architecture to x86_64"""
+        hpccm.config.set_cpu_architecture('x86')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
+
+    @docker
+    def test_set_cpu_architecture_invalid(self):
+        """Set CPU architecture to invalid value"""
+        hpccm.config.set_cpu_architecture('invalid')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
