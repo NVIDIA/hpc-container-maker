@@ -66,7 +66,7 @@ def set_cpu_architecture(arch):
 
   # Arguments
 
-  arch (string): Value values are `aarch64`, `ppc64le`, and `x86_64.
+  arch (string): Value values are `aarch64`, `ppc64le`, and `x86_64`.
   `arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
   for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
   """

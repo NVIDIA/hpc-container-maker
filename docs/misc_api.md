@@ -30,7 +30,7 @@ know what you are doing.
 __Arguments__
 
 
-- __arch (string)__: Value values are `aarch64`, `ppc64le`, and `x86_64.
+- __arch (string)__: Value values are `aarch64`, `ppc64le`, and `x86_64`.
 `arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
 for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
 
