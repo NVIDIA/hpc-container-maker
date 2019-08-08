@@ -7,6 +7,12 @@ The `baseimage` primitive defines the base image to be used.
 __Parameters__
 
 
+- ___arch__: The underlying CPU architecture of the base image.  Valid
+values are `aarch64`, `ppc64le`, and `x86_64`.  By default, the
+primitive attemps to figure out the CPU architecture by inspecting
+the image identifier, and falls back to `x86_64` if unable to
+determine the CPU architecture automatically.
+
 - ___as__: Name for the stage.  When using Singularity multi-stage
 recipes, this value must be specified.  The default value is
 empty.

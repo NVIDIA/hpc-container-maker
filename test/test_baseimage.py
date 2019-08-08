@@ -28,7 +28,7 @@ from distutils.version import StrictVersion
 import hpccm.config
 
 from hpccm.primitives.baseimage import baseimage
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 
 class Test_baseimage(unittest.TestCase):
     def setUp(self):
@@ -196,3 +196,45 @@ Stage: dev
         b = baseimage(image='foo', _distro='nonexistent')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+
+    @docker
+    def test_detect_aarch64(self):
+        """Base image CPU architecture detection"""
+        b = baseimage(image='arm64v8/centos:7')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.AARCH64)
+
+    @docker
+    def test_detect_ppc64le(self):
+        """Base image CPU architecture detection"""
+        b = baseimage(image='ppc64le/centos:7')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.PPC64LE)
+
+    @docker
+    def test_detect_nonexistent(self):
+        """Base image CPU architecture detection"""
+        b = baseimage(image='foo')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.X86_64)
+
+    @docker
+    def test_arch_aarch64(self):
+        """Base image CPU architecture specification"""
+        b = baseimage(image='foo', _arch='aarch64')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.AARCH64)
+
+    @docker
+    def test_arch_ppc64le(self):
+        """Base image CPU architecture specification"""
+        b = baseimage(image='foo', _arch='ppc64le')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.PPC64LE)
+
+    @docker
+    def test_arch_x86_64(self):
+        """Base image CPU architecture specification"""
+        b = baseimage(image='foo', _arch='x86_64')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.X86_64)
+
+    @docker
+    def test_arch_nonexistent(self):
+        """Base image CPU architecture specification"""
+        b = baseimage(image='foo', _arch='nonexistent')
+        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.X86_64)

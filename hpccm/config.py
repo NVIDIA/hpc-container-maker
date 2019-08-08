@@ -26,10 +26,12 @@ from distutils.version import StrictVersion
 import logging
 import sys
 
+from hpccm.common import cpu_arch
 from hpccm.common import container_type
 from hpccm.common import linux_distro
 
 # Global variables
+g_cpu_arch = cpu_arch.X86_64         # CPU architecture
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
@@ -55,7 +57,32 @@ def set_container_format(ctype):
   else:
     raise RuntimeError('Unrecognized container format: {}'.format(ctype))
 
+def set_cpu_architecture(arch):
+  """Set the CPU architecture
+
+  In most cases, the `baseimage` primitive should be relied upon to
+  set the CPU architecture.  Only use this function if you really
+  know what you are doing.
+
+  # Arguments
+
+  arch (string): Value values are `aarch64`, `ppc64le`, and `x86_64`.
+  `arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
+  for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
+  """
+  this = sys.modules[__name__]
+  if arch == 'aarch64' or arch == 'arm' or arch == 'arm64v8':
+    this.g_cpu_arch = cpu_arch.AARCH64
+  elif arch == 'ppc64le' or arch == 'power':
+    this.g_cpu_arch = cpu_arch.PPC64LE
+  elif arch == 'x86_64' or arch == 'amd64' or arch == 'x86':
+    this.g_cpu_arch = cpu_arch.X86_64
+  else:
+    logging.warning('Unable to determine the CPU architecture, defaulting to x86_64')
+    this.g_cpu_arch = cpu_arch.X86_64
+
 def set_linux_distro(distro):
+
   """Set the Linux distribution and version
 
   In most cases, the `baseimage` primitive should be relied upon to

@@ -35,6 +35,12 @@ class baseimage(object):
 
     # Parameters
 
+    _arch: The underlying CPU architecture of the base image.  Valid
+    values are `aarch64`, `ppc64le`, and `x86_64`.  By default, the
+    primitive attemps to figure out the CPU architecture by inspecting
+    the image identifier, and falls back to `x86_64` if unable to
+    determine the CPU architecture automatically.
+
     _as: Name for the stage.  When using Singularity multi-stage
     recipes, this value must be specified.  The default value is
     empty.
@@ -69,11 +75,29 @@ class baseimage(object):
 
         #super(baseimage, self).__init__()
 
+        self.__arch = kwargs.get('_arch', '')
         self.__as = kwargs.get('AS', '') # Deprecated
         self.__as = kwargs.get('_as', self.__as)
         self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
         self.__distro = kwargs.get('_distro', '')
         self.__docker_env = kwargs.get('_docker_env', True) # Singularity specific
+
+        # Set the global CPU architecture.  User the user specified
+        # value if available, otherwise try to figure it out based on
+        # the image name.
+        self.__arch = self.__arch.lower()
+        if self.__arch == 'aarch64':
+            hpccm.config.set_cpu_architecture('aarch64')
+        elif self.__arch == 'ppc64le':
+            hpccm.config.set_cpu_architecture('ppc64le')
+        elif self.__arch == 'x86_64':
+            hpccm.config.set_cpu_architecture('x86_64')
+        elif re.search(r'aarch64|arm64v8', self.image):
+            hpccm.config.set_cpu_architecture('aarch64')
+        elif re.search(r'ppc64le', self.image):
+            hpccm.config.set_cpu_architecture('ppc64le')
+        else:
+            hpccm.config.set_cpu_architecture('x86_64')
 
         # Set the global Linux distribution.  Use the user specified
         # value if available, otherwise try to figure it out based on
