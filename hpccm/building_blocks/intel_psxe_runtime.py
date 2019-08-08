@@ -30,7 +30,7 @@ import hpccm.templates.envvars
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
@@ -145,6 +145,9 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
 
         self.__bashrc = ''            # Filled in by __distro()
         self.__runtime_packages = []  # Filled in by __setup()
+
+        if hpccm.config.g_cpu_arch != cpu_arch.X86_64: # pragma: no cover
+            logging.warning('Using intel_psxe_runtime on a non-x86_64 processor')
 
         # Set the Linux distribution specific parameters
         self.__distro()

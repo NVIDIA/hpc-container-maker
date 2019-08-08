@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.openblas import openblas
 from hpccm.toolchain import toolchain
@@ -32,6 +32,7 @@ class Test_openblas(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -54,6 +55,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/v0.3.6.tar.gz /var/tmp/OpenBLAS-0.3.6
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -76,6 +78,29 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/v0.3.3.tar.gz /var/tmp/OpenBLAS-0.3.3''')
 
+    @aarch64
+    @ubuntu
+    @docker
+    def test_aarch64(self):
+        """Default openblas building block"""
+        o = openblas(version='0.3.6')
+        self.assertEqual(str(o),
+r'''# OpenBLAS version 0.3.6
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/OpenBLAS-0.3.6 && make  TARGET=ARMV8 USE_OPENMP=1 && \
+    make install PREFIX=/usr/local/openblas && \
+    rm -rf /var/tmp/v0.3.6.tar.gz /var/tmp/OpenBLAS-0.3.6
+ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):

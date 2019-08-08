@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker
+from helpers import aarch64, centos, docker, x86_64
 
 from hpccm.building_blocks.yum import yum
 
@@ -31,6 +31,7 @@ class Test_yum(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @centos
     @docker
     def test_basic(self):
@@ -43,6 +44,7 @@ r'''RUN yum install -y \
         gcc-fortran && \
     rm -rf /var/cache/yum/*''')
 
+    @x86_64
     @centos
     @docker
     def test_add_repo(self):
@@ -57,6 +59,7 @@ r'''RUN rpm --import https://www.example.com/key.pub && \
         example && \
     rm -rf /var/cache/yum/*''')
 
+    @x86_64
     @centos
     @docker
     def test_download(self):
@@ -70,6 +73,21 @@ r'''RUN yum install -y yum-utils && \
         rdma-core && \
     rm -rf /var/cache/yum/*''')
 
+    @aarch64
+    @centos
+    @docker
+    def test_download_aarch64(self):
+        """Download parameter"""
+        y = yum(download=True, download_directory='/tmp/download',
+                ospackages=['rdma-core'])
+        self.assertEqual(str(y),
+r'''RUN yum install -y yum-utils && \
+    mkdir -p /tmp/download && \
+    yumdownloader --destdir=/tmp/download  \
+        rdma-core && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
     @centos
     @docker
     def test_extract(self):

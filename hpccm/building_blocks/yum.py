@@ -26,7 +26,7 @@ import posixpath
 import hpccm.config
 
 from hpccm.building_blocks.base import bb_base
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.shell import shell
 
 class yum(bb_base):
@@ -83,8 +83,7 @@ class yum(bb_base):
 
         self.__commands = []
         self.__download = kwargs.get('download', False)
-        self.__download_args = kwargs.get('download_args',
-                                          '-x \*i?86 --archlist=x86_64')
+        self.__download_args = kwargs.get('download_args', '')
         self.__download_directory = kwargs.get('download_directory',
                                                '/var/tmp/yum_download')
         self.__epel = kwargs.get('epel', False)
@@ -97,6 +96,9 @@ class yum(bb_base):
         if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
             logging.warning('Using yum on a non-RHEL based Linux distribution')
 
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
+
         # Construct the series of commands that form the building
         # block
         self.__setup()
@@ -107,6 +109,14 @@ class yum(bb_base):
     def __instructions(self):
         """Fill in container instructions"""
         self += shell(chdir=False, commands=self.__commands)
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            if not self.__download_args:
+                self.__download_args = '-x \*i?86 --archlist=x86_64'
 
     def __setup(self):
         """Construct the series of commands to execute"""

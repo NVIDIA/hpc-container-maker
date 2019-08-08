@@ -28,7 +28,7 @@ import hpccm.config
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
@@ -42,7 +42,10 @@ class ofed(bb_base):
     `libdapl2`, `libdapl-dev`, `libibcm1`, `libibcm-dev`, `libibmad5`,
     `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
     `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
-    `librdmacm-dev`, and `rdmacm-utils`.
+    `librdmacm-dev`, and `rdmacm-utils`.  For Ubuntu 16.04 and aarch64
+    processors, the `dapl2-utils`, `libdapl2`, `libdapl-dev`,
+    `libibcm1` and `libibcm-dev` packages not installed because they
+    are not available.
 
     For Ubuntu 18.04, the following packages are installed:
     `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
@@ -118,6 +121,12 @@ class ofed(bb_base):
                                      'libmlx5-1', 'libmlx5-dev',
                                      'librdmacm1', 'librdmacm-dev',
                                      'rdmacm-utils']
+                if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+                    # Ubuntu 16.04 for ARM is missing these packages
+                    for missing in ['dapl2-utils', 'libdapl2', 'libdapl-dev',
+                                    'libibcm1', 'libibcm-dev']:
+                        if missing in self.__ospackages:
+                            self.__ospackages.remove(missing)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
             self.__ospackages = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
