@@ -343,6 +343,9 @@ The `cmake` building block downloads and installs the
 __Parameters__
 
 
+- __bootstrap_opts__: List of options to pass to `bootstrap` when
+building from source.  The default is an empty list.
+
 - __eula__: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
 The default value is `False`.
 
@@ -351,6 +354,11 @@ The default value is `wget`.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local`.
+
+- __source__: Boolean flag to specify whether to build CMake from
+source.  For x86_64 processors, the default is False, i.e., use
+the available pre-compiled package.  For all other processors, the
+default is True.
 
 - __version__: The version of CMake to download.  The default value is
 `3.14.5`.
@@ -365,6 +373,7 @@ cmake(eula=True)
 ```python
 cmake(eula=True, version='3.10.3')
 ```
+
 
 # fftw
 ```python

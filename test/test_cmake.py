@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.cmake import cmake
 
@@ -31,6 +31,7 @@ class Test_cmake(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -40,12 +41,14 @@ class Test_cmake(unittest.TestCase):
 r'''# CMake version 3.14.5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -54,12 +57,14 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         self.assertEqual(str(c),
 r'''# CMake version 3.14.5
 RUN yum install -y \
+        make \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_eula(self):
@@ -69,12 +74,14 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 r'''# CMake version 3.14.5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_version(self):
@@ -84,8 +91,47 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 r'''# CMake version 3.10.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh && \
     /bin/sh /var/tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.10.3-Linux-x86_64.sh''')
+
+    @x86_64
+    @centos
+    @docker
+    def test_source(self):
+        """Source option"""
+        c = cmake(eula=True, source=True, version='3.14.5')
+        self.assertEqual(str(c),
+r'''# CMake version 3.14.5
+RUN yum install -y \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/cmake-3.14.5.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5''')
+
+    @aarch64
+    @centos
+    @docker
+    def test_aarch64(self):
+        """Source option"""
+        c = cmake(eula=True, version='3.14.5')
+        self.assertEqual(str(c),
+r'''# CMake version 3.14.5
+RUN yum install -y \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/cmake-3.14.5.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5''')
