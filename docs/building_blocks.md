@@ -1714,6 +1714,10 @@ incompatibilities.
 __Parameters__
 
 
+- __arch__: The processor architecture of the MVAPICH2-GDR package.  The
+default value is set automatically based on the processor
+architecture of the base image.
+
 - __cuda_version__: The version of CUDA the MVAPICH2-GDR package was
 built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This

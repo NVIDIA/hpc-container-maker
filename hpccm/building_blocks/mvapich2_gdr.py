@@ -71,6 +71,10 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    arch: The processor architecture of the MVAPICH2-GDR package.  The
+    default value is set automatically based on the processor
+    architecture of the base image.
+
     cuda_version: The version of CUDA the MVAPICH2-GDR package was
     built against.  The version string format is X.Y.  The version
     should match the version of CUDA provided by the base image.  This
@@ -134,6 +138,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(mvapich2_gdr, self).__init__(**kwargs)
 
+        self.__arch = kwargs.get('arch', hpccm.config.get_cpu_architecture())
         self.__baseurl = kwargs.get('baseurl',
                                     'http://mvapich.cse.ohio-state.edu/download/mvapich/gdr')
         self.__cuda_version = kwargs.get('cuda_version', '9.2')
@@ -143,7 +148,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__mofed_version = kwargs.get('mlnx_ofed_version', '4.5')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__package = kwargs.get('package', '')
-        self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-1.el7.x86_64.rpm'
+        self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-1.el7.{4}.rpm'
         self.__pgi = kwargs.get('pgi', False)
         self.__pgi_version = kwargs.get('pgi_version', '18.10')
         self.version = kwargs.get('version', '2.3.1')
@@ -245,7 +250,8 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
             # Package filename
             package = self.__package_template.format(
-                cuda_string, mofed_string, compiler_string, self.version)
+                cuda_string, mofed_string, compiler_string, self.version,
+                self.__arch)
 
         self.__install_path = self.__install_path_template.format(
             self.version, cuda_string, mofed_string, compiler_string)

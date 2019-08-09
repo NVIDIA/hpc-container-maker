@@ -101,6 +101,7 @@ class Test_config(unittest.TestCase):
         """Set CPU architecture to ARM"""
         hpccm.config.set_cpu_architecture('aarch64')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
+        self.assertEqual(hpccm.config.get_cpu_architecture(), 'aarch64')
 
     @docker
     def test_set_cpu_architecture_arm(self):
@@ -119,6 +120,7 @@ class Test_config(unittest.TestCase):
         """Set CPU architecture to POWER"""
         hpccm.config.set_cpu_architecture('ppc64le')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
+        self.assertEqual(hpccm.config.get_cpu_architecture(), 'ppc64le')
 
     @docker
     def test_set_cpu_architecture_power(self):
@@ -131,6 +133,7 @@ class Test_config(unittest.TestCase):
         """Set CPU architecture to x86_64"""
         hpccm.config.set_cpu_architecture('x86_64')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
+        self.assertEqual(hpccm.config.get_cpu_architecture(), 'x86_64')
 
     @docker
     def test_set_cpu_architecture_amd64(self):
