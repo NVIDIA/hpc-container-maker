@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import posixpath
 from copy import copy as _copy
@@ -206,7 +207,12 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         if not toolchain.LDFLAGS:
             toolchain.LDFLAGS = '-L{}/lib'.format(self.__hdf5_dir)
 
-        tarball = 'netcdf-{}.tar.gz'.format(self.__version)
+        # Version 4.7.0 changed the package name
+        if LooseVersion(self.__version) >= LooseVersion('4.7.0'):
+            pkgname = 'netcdf-c'
+        else:
+            pkgname = 'netcdf'
+        tarball = '{0}-{1}.tar.gz'.format(pkgname, self.__version)
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
@@ -217,7 +223,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         self.__commands.append(self.configure_step(
             directory=posixpath.join(self.__wd,
-                                     'netcdf-{}'.format(self.__version)),
+                                     '{0}-{1}'.format(pkgname, self.__version)),
             toolchain=toolchain))
 
         self.__commands.append(self.build_step())
@@ -238,7 +244,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd,
-                                  'netcdf-{}'.format(self.__version))]))
+                                  '{0}-{1}'.format(pkgname, self.__version))]))
 
         # Set the environment
         self.environment_variables['PATH'] = '{}:$PATH'.format(

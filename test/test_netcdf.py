@@ -49,12 +49,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.7.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-4.7.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-c-4.7.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-c-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-4.7.0.tar.gz /var/tmp/netcdf-4.7.0 && \
+    rm -rf /var/tmp/netcdf-c-4.7.0.tar.gz /var/tmp/netcdf-c-4.7.0 && \
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx4-4.3.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-cxx4-4.3.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-cxx4-4.3.0 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
@@ -87,12 +87,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.7.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-4.7.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-c-4.7.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-c-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-4.7.0.tar.gz /var/tmp/netcdf-4.7.0 && \
+    rm -rf /var/tmp/netcdf-c-4.7.0.tar.gz /var/tmp/netcdf-c-4.7.0 && \
     mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx4-4.3.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-cxx4-4.3.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-cxx4-4.3.0 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
