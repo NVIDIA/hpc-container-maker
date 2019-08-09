@@ -24,7 +24,15 @@ import logging # pylint: disable=unused-import
 
 import hpccm.config
 
-from hpccm.common import container_type, linux_distro
+from hpccm.common import container_type, cpu_arch, linux_distro
+
+def aarch64(function):
+    """Decorator to set the CPU architecture to aarch64"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_arch = cpu_arch.AARCH64
+        return function(*args, **kwargs)
+
+    return wrapper
 
 def bash(function):
     """Decorator to set the global container type to bash"""
@@ -51,6 +59,14 @@ def docker(function):
 
     return wrapper
 
+def invalid_cpu_arch(function):
+    """Decorator to set the global CPU architecture to an invalid value"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_arch = None
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def invalid_ctype(function):
     """Decorator to set the global container type to an invalid value"""
     def wrapper(*args, **kwargs):
@@ -63,6 +79,14 @@ def invalid_distro(function):
     """Decorator to set the global Linux distribution to an invalid value"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = None
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def ppc64le(function):
+    """Decorator to set the CPU architecture to ppc64le"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_arch = cpu_arch.PPC64LE
         return function(*args, **kwargs)
 
     return wrapper
@@ -103,6 +127,14 @@ def ubuntu18(function):
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
         hpccm.config.g_linux_version = StrictVersion('18.04')
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def x86_64(function):
+    """Decorator to set the CPU architecture to x86_64"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_arch = cpu_arch.X86_64
         return function(*args, **kwargs)
 
     return wrapper

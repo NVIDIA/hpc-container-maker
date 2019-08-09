@@ -37,7 +37,24 @@ g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
 g_singularity_version = StrictVersion('2.6') # Singularity version
 
+def get_cpu_architecture():
+  """Return the architecture string for the currently configured CPU
+  architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
+
+  """
+
+  this = sys.modules[__name__]
+  if this.g_cpu_arch == cpu_arch.AARCH64:
+    return 'aarch64'
+  elif this.g_cpu_arch == cpu_arch.PPC64LE:
+    return 'ppc64le'
+  elif this.g_cpu_arch == cpu_arch.X86_64:
+    return 'x86_64'
+  else: # pragma: no cover
+    raise RuntimeError('Unrecognized processor architecture')
+
 def set_container_format(ctype):
+
   """Set the container format
 
   # Arguments

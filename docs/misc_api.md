@@ -1,5 +1,13 @@
 # hpccm.config
 
+## get_cpu_architecture
+```python
+get_cpu_architecture()
+```
+Return the architecture string for the currently configured CPU
+architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
+
+
 ## set_container_format
 ```python
 set_container_format(ctype)

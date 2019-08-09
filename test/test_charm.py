@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.charm import charm
 
@@ -31,6 +31,7 @@ class Test_charm(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults(self):
@@ -55,6 +56,32 @@ ENV CHARMBASE=/usr/local/charm-6.9.0 \
     LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
     PATH=/usr/local/charm-6.9.0/bin:$PATH''')
 
+    @aarch64
+    @ubuntu
+    @docker
+    def test_aarch64(self):
+        """Default charm building block"""
+        c = charm(version='6.9.0')
+        self.assertEqual(str(c),
+r'''# Charm++ version 6.9.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        git \
+        libtool \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-arm8 --build-shared --with-production -j4 && \
+    rm -rf /var/tmp/charm-6.9.0.tar.gz
+ENV CHARMBASE=/usr/local/charm-6.9.0 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.9.0/bin:$PATH''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -79,6 +106,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
 ENV CHARMBASE=/usr/local/charm-v6.8.2 \
     PATH=/usr/local/charm-v6.8.2/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):

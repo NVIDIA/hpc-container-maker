@@ -25,19 +25,26 @@ import logging # pylint: disable=unused-import
 import posixpath
 import re
 
+import hpccm.config
 import hpccm.templates.rm
+import hpccm.templates.tar
 import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
-class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
+class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
+            hpccm.templates.wget):
     """The `cmake` building block downloads and installs the
     [CMake](https://cmake.org) component.
 
     # Parameters
+
+    bootstrap_opts: List of options to pass to `bootstrap` when
+    building from source.  The default is an empty list.
 
     eula: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
     The default value is `False`.
@@ -47,6 +54,11 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
     prefix: The top level install location.  The default value is
     `/usr/local`.
+
+    source: Boolean flag to specify whether to build CMake from
+    source.  For x86_64 processors, the default is False, i.e., use
+    the available pre-compiled package.  For all other processors, the
+    default is True.
 
     version: The version of CMake to download.  The default value is
     `3.14.5`.
@@ -60,6 +72,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     ```python
     cmake(eula=True, version='3.10.3')
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -68,14 +81,17 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         super(cmake, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl', 'https://cmake.org/files')
+        self.__bootstrap_opts = kwargs.get('bootstrap_opts', [])
 
         # By setting this value to True, you agree to the CMake
         # End-User License Agreement
         # (https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt)
         self.__eula = kwargs.get('eula', False)
 
-        self.__ospackages = kwargs.get('ospackages', ['wget'])
+        self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])
+        self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local')
+        self.__source = kwargs.get('source', False)
         self.__version = kwargs.get('version', '3.14.5')
 
         self.__commands = [] # Filled in by __setup()
@@ -97,6 +113,15 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
+        if not self.__source and hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            # Use the pre-compiled x86_64 binary
+            self.__binary()
+        else:
+            # Build from source
+            self.__build()
+
+    def __binary(self):
+        """Install the pre-compiled binary"""
 
         # The download URL has the format contains vMAJOR.MINOR in the
         # path and the runfile contains MAJOR.MINOR.REVISION, so pull
@@ -127,3 +152,39 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, runfile)]))
+
+    def __build(self):
+        """Build from source"""
+
+        # The download URL has the format contains vMAJOR.MINOR in the
+        # path and the tarball contains MAJOR.MINOR.REVISION, so pull
+        # apart the full version to get the MAJOR and MINOR
+        # components.
+        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
+        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
+                                       match.groupdict()['minor'])
+        tarball = 'cmake-{}.tar.gz'.format(self.__version)
+        url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+
+        # Download source from web
+        self.__commands.append(self.download_step(url=url,
+                                                  directory=self.__wd))
+        self.__commands.append(self.untar_step(
+            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
+
+        # Build and install
+        if not self.__bootstrap_opts:
+            self.__bootstrap_opts.append(
+                '--parallel={}'.format(self.__parallel))
+        self.__commands.append('cd {} && ./bootstrap --prefix={} {}'.format(
+            posixpath.join(self.__wd, 'cmake-{}'.format(self.__version)),
+            self.__prefix,
+            ' '.join(self.__bootstrap_opts)))
+        self.__commands.append('make -j{}'.format(self.__parallel))
+        self.__commands.append('make install')
+
+        # Cleanup tarball and directory
+        self.__commands.append(self.cleanup_step(
+            items=[posixpath.join(self.__wd, tarball),
+                   posixpath.join(self.__wd,
+                                  'cmake-{}'.format(self.__version))]))

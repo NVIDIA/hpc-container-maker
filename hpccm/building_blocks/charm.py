@@ -25,6 +25,7 @@ from distutils.version import LooseVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.config
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -34,6 +35,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -73,7 +75,9 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     is `charm++`.
 
     target_architecture: The target machine architecture to build.
-    The default value is `multicore-linux-x86_64`.
+    For x86_64 processors, the default value is
+    `multicore-linux-x86_64`.  For aarch64 processors, the default
+    value is `multicore-arm8`.
 
     version: The version of Charm++ to download.  The default value is
     `6.9.0`.
@@ -106,8 +110,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__parallel = kwargs.get('parallel', 4)
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__target = kwargs.get('target', 'charm++')
-        self.__target_architecture = kwargs.get('target_architecture',
-                                                'multicore-linux-x86_64')
+        self.__target_architecture = kwargs.get('target_architecture', '')
         self.__version = kwargs.get('version', '6.9.0')
 
         # Version 6.9.0 dropped the 'v' from directory name
@@ -122,6 +125,9 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
 
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
+
         # Construct series of steps to execute
         self.__setup()
 
@@ -135,6 +141,19 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            if not self.__target_architecture:
+                self.__target_architecture = 'multicore-arm8'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            if not self.__target_architecture:
+                self.__target_architecture = 'multicore-linux-x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
