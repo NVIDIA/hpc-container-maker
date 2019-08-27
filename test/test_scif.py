@@ -69,6 +69,25 @@ RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
             # because it is being used by another process
             pass
 
+    @docker
+    def test_arguments_docker(self):
+        """Default scif building block with _arguments"""
+        scif_file = tempfile.NamedTemporaryFile(delete=False, suffix='.scif')
+        s = scif(_arguments='--mount=type=bind,target=/scif/apps/foo/src',
+                 file=scif_file.name,
+                 name='foo')
+        self.assertEqual(str(s),
+r'''# SCI-F "foo"
+COPY {0} /scif/recipes/{1}
+RUN --mount=type=bind,target=/scif/apps/foo/src scif install /scif/recipes/{1}'''.format(scif_file.name,
+                                             os.path.basename(scif_file.name)))
+        try:
+            os.unlink(scif_file.name)
+        except WindowsError:
+            # WindowsError: [Error 32] The process cannot access the file
+            # because it is being used by another process
+            pass
+
     @singularity
     def test_defaults_singularity(self):
         """Default scif building block"""
@@ -86,7 +105,7 @@ RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
         s += runscript(commands=['default_program'])
         s += shell(commands=['build_cmds'])
         s += shell(commands=['test_program'], _test=True)
-        self.assertEqual(str(s), 
+        self.assertEqual(str(s),
 r'''%appenv foo
     export ONE=1
 %appfiles foo
@@ -128,7 +147,7 @@ My app
             # WindowsError: [Error 32] The process cannot access the file
             # because it is being used by another process
             pass
-        
+
         self.assertEqual(content,
 r'''%appenv foo
     export ONE=1

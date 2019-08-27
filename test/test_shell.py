@@ -159,3 +159,10 @@ class Test_shell(unittest.TestCase):
         s.append(shell(commands=['c']))
         merged = s[0].merge(s)
         self.assertEqual(str(merged), '%post\n    cd /\n    a\n    b\n    c')
+
+    @docker
+    def test_arguments_docker(self):
+        """List of commands specified"""
+        cmds = ['a', 'b', 'c']
+        s = shell(commands=cmds, _arguments='--mount=type=bind,target=/usr/local/mysrc')
+        self.assertEqual(str(s), 'RUN --mount=type=bind,target=/usr/local/mysrc a && \\\n    b && \\\n    c')
