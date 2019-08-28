@@ -40,17 +40,12 @@ class shell(object):
     environment should be also be loaded when executing a SCI-F
     `%appinstall` block.  The default is False.
 
-    _arguments: Using experimental syntax to supply Docker RUN arguments.
-    Can be used to mount a host path into the container during build.
-    Requires env var DOCKER_BUILDKIT=1 and the following line in the Dockerfile:
-    # syntax=docker/dockerfile:experimental
-    (Docker specific), see also:
-    https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md#experimental-syntaxes
+    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
     chdir: Boolean flag to specify whether to change the working
     directory to `/` before executing any commands.  Docker
     automatically resets the working directory for each `RUN`
-    instruction.  Setting this option to True make Singularity behave
+    instruction.  Setting this option to True makes Singularity behave
     the same.  This option is ignored for Docker.  The default is
     True.
 
@@ -65,6 +60,12 @@ class shell(object):
 
     ```python
     shell(commands=['cd /path/to/src', './configure', 'make install'])
+    ```
+
+    ```python
+    # Cache Go packages
+    shell(_arguments=['--mount=type=cache,target=/root/.cache/go-build']
+          commands=['cd /path/to/go-src', 'go build'])
     ```
 
     """

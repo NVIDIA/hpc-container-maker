@@ -2482,21 +2482,15 @@ creates SCI-F recipe files in the current directory (see also the
 __Parameters__
 
 
-- ___arguments__: Using experimental syntax to supply Docker RUN arguments.
-Can be used to mount a host path into the container during build.
-- __Requires env var DOCKER_BUILDKIT=1 and the following line in the Dockerfile__:
-__syntax=docker/dockerfile:experimental__
+- ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
-(Docker specific), see also:
-https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md#experimental-syntaxes
-
-file: The SCI-F recipe file name.  The default value is the name
+- __file__: The SCI-F recipe file name.  The default value is the name
 parameter with the `.scif` suffix.
 
-name: The name to use to label the SCI-F application.  This
+- __name__: The name to use to label the SCI-F application.  This
 parameter is required.
 
-_native: Boolean flag to specify whether to use the native
+- ___native__: Boolean flag to specify whether to use the native
 Singularity support for SCI-F when generating Singularity
 definition files.  The default is True (Singularity specific).
 

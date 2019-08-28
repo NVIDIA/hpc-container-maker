@@ -306,18 +306,12 @@ identifier.  This also causes the Singularity block to named
 environment should be also be loaded when executing a SCI-F
 `%appinstall` block.  The default is False.
 
-- ___arguments__: A string of additional arguments to the Docker RUN
-statement. Can be used to mount a host directory into the container
-during build time. Another use case is to supply cached directories
-on the host. This requires the environment variable `DOCKER_BUILDKIT=1`
-and the following line at the beginning of the Dockerfile:
-`# syntax=docker/dockerfile:experimental`. (Docker specific)
-For more info see the [Docker Buildkit docs](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md#experimental-syntaxes)
+- ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
 - __chdir__: Boolean flag to specify whether to change the working
 directory to `/` before executing any commands.  Docker
 automatically resets the working directory for each `RUN`
-instruction.  Setting this option to True make Singularity behave
+instruction.  Setting this option to True makes Singularity behave
 the same.  This option is ignored for Docker.  The default is
 True.
 
@@ -340,6 +334,7 @@ shell(commands=['cd /path/to/src', './configure', 'make install'])
 shell(_arguments=['--mount=type=cache,target=/root/.cache/go-build']
       commands=['cd /path/to/go-src', 'go build'])
 ```
+
 
 # user
 ```python
