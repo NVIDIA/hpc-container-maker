@@ -77,7 +77,8 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     target_architecture: The target machine architecture to build.
     For x86_64 processors, the default value is
     `multicore-linux-x86_64`.  For aarch64 processors, the default
-    value is `multicore-arm8`.
+    value is `multicore-arm8`.  For ppc64le processors, the default is
+    `multicore-linux-ppc64le`.
 
     version: The version of Charm++ to download.  The default value is
     `6.9.0`.
@@ -149,6 +150,9 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             if not self.__target_architecture:
                 self.__target_architecture = 'multicore-arm8'
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if not self.__target_architecture:
+                self.__target_architecture = 'multicore-linux-ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             if not self.__target_architecture:
                 self.__target_architecture = 'multicore-linux-x86_64'

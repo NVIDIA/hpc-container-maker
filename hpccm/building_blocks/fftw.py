@@ -58,7 +58,7 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     configure_opts: List of options to pass to `configure`.  For
     x86_64 processors, the default values are `--enable-shared`,
     `--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
-    aarch64 processors, the default values are `--enable-shared`,
+    other processors, the default values are `--enable-shared`,
     `--enable-openmp`, and `--enable-threads`.
 
     directory: Path to the unpackaged source directory relative to the
@@ -161,16 +161,14 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            if not self.configure_opts:
-                self.configure_opts = ['--enable-shared', '--enable-openmp',
-                                       '--enable-threads']
-        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             if not self.configure_opts:
                 self.configure_opts = ['--enable-shared', '--enable-openmp',
                                        '--enable-threads', '--enable-sse2']
-        else: # pragma: no cover
-            raise RuntimeError('Unknown CPU architecture')
+        else:
+            if not self.configure_opts:
+                self.configure_opts = ['--enable-shared', '--enable-openmp',
+                                       '--enable-threads']
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.pgi import pgi
 
@@ -31,6 +31,7 @@ class Test_pgi(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -58,6 +59,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -84,6 +86,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_eula(self):
@@ -111,6 +114,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_tarball(self):
@@ -137,6 +141,7 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2017-1710-x86_64.tar.gz
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/17.10/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/17.10/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_tarball2(self):
@@ -163,6 +168,7 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-1804-x86_64.tar.gz
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_tarball_no_leading_zero(self):
@@ -189,6 +195,7 @@ RUN mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgilinux-2018-184-x86_64.tar.gz 
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/18.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/18.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_system_cuda(self):
@@ -217,6 +224,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_mpi(self):
@@ -245,6 +253,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-comm
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib:/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH \
     PATH=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/bin:/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_extended_environment(self):
@@ -279,6 +288,7 @@ ENV CC=/opt/pgi/linux86-64/19.4/bin/pgcc \
     MODULEPATH=/opt/pgi/modulefiles:$MODULEPATH \
     PATH=/opt/pgi/linux86-64/19.4/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_extended_environment_mpi(self):
@@ -316,6 +326,34 @@ ENV CC=/opt/pgi/linux86-64/19.4/bin/pgcc \
     PGI_OPTL_INCLUDE_DIRS=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/include \
     PGI_OPTL_LIB_DIRS=/opt/pgi/linux86-64/19.4/mpi/openmpi-3.1.3/lib''')
 
+    @ppc64le
+    @centos
+    @docker
+    def test_ppc64le(self):
+        """Default PGI building block on ppc64le"""
+        p = pgi(eula=True)
+        self.assertEqual(str(p),
+r'''# PGI compiler version 19.4
+RUN yum install -y \
+        gcc \
+        gcc-c++ \
+        numactl-libs \
+        perl \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/pgi-community-linux-openpower-latest.tar.gz --referer https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155 -P /var/tmp https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-openpower && \
+    mkdir -p /var/tmp/pgi && tar -x -f /var/tmp/pgi-community-linux-openpower-latest.tar.gz -C /var/tmp/pgi -z && \
+    cd /var/tmp/pgi && PGI_ACCEPT_EULA=accept PGI_INSTALL_DIR=/opt/pgi PGI_INSTALL_MPI=false PGI_INSTALL_NVIDIA=true PGI_MPI_GPU_SUPPORT=false PGI_SILENT=true ./install && \
+    echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> /opt/pgi/linuxpower/19.4/bin/siterc && \
+    echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> /opt/pgi/linuxpower/19.4/bin/siterc && \
+    echo "append LDLIBARGS=\$library_path;" >> /opt/pgi/linuxpower/19.4/bin/siterc && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linuxpower/19.4/lib/libnuma.so && \
+    ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linuxpower/19.4/lib/libnuma.so.1 && \
+    rm -rf /var/tmp/pgi-community-linux-openpower-latest.tar.gz /var/tmp/pgi
+ENV LD_LIBRARY_PATH=/opt/pgi/linuxpower/19.4/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/pgi/linuxpower/19.4/bin:$PATH''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_runtime_ubuntu(self):
@@ -334,6 +372,7 @@ RUN ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/l
     ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_runtime_centos(self):
@@ -351,6 +390,7 @@ RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so && \
     ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.4/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.4/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_runtime_mpi_centos(self):

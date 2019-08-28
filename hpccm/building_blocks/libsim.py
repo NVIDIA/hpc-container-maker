@@ -32,7 +32,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -119,6 +119,7 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(libsim, self).__init__(**kwargs)
 
+        self.__arch = None # Filled in by __cpu_arch()
         self.__buildscript = r'build_visit{0}'
         self.__mpi = kwargs.get('mpi', True)
         self.__opts = kwargs.get('opts', ['--xdb', '--server-components-only'])
@@ -134,6 +135,9 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp/visit' # working directory
+
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -151,6 +155,18 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            # Bug in the VisIt build config
+            self.__arch = 'linux-intel'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            self.__arch = 'linux-x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -213,7 +229,7 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             self.__wd, ' '.join(env), buildscript, ' '.join(opts)))
 
         # Set library path
-        libpath = posixpath.join(self.__prefix, self.__version, 'linux-x86_64')
+        libpath = posixpath.join(self.__prefix, self.__version, self.__arch)
         suffix1 = 'lib'
         suffix2 = posixpath.join('libsim', 'V2', 'lib')
         if self.ldconfig:
@@ -251,7 +267,7 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                  dest=self.__prefix))
         if self.ldconfig:
             libpath = posixpath.join(self.__prefix, self.__version,
-                                     'linux-x86_64')
+                                     self.__arch)
             suffix1 = 'lib'
             suffix2 = posixpath.join('libsim', 'V2', 'lib')
             instructions.append(shell(

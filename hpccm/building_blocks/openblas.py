@@ -58,8 +58,9 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     make_opts: List of options to pass to `make`.  For aarch64
     processors, the default values are `TARGET=ARMV8` and
-    `USE_OPENMP=1`.  For x86_64 processors, the default value is
-    `USE_OPENMP=1`.
+    `USE_OPENMP=1`.  For ppc64le processors, the default values are
+    `TARGET=POWER8` and `USE_OPENMP=1`.  For x86_64 processors, the
+    default value is `USE_OPENMP=1`.
 
     ospackages: List of OS packages to install prior to building.  The
     default values are `make`, `perl`, `tar`, and `wget`.
@@ -128,6 +129,9 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             if not self.__make_opts:
                 self.__make_opts = ['TARGET=ARMV8', 'USE_OPENMP=1']
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if not self.__make_opts:
+                self.__make_opts = ['TARGET=POWER8', 'USE_OPENMP=1']
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             if not self.__make_opts:
                 self.__make_opts = ['USE_OPENMP=1']

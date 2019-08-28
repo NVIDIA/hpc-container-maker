@@ -44,8 +44,10 @@ class ofed(bb_base):
     `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
     `librdmacm-dev`, and `rdmacm-utils`.  For Ubuntu 16.04 and aarch64
     processors, the `dapl2-utils`, `libdapl2`, `libdapl-dev`,
-    `libibcm1` and `libibcm-dev` packages not installed because they
-    are not available.
+    `libibcm1` and `libibcm-dev` packages are not installed because
+    they are not available.  For Ubuntu 16.04 and ppc64le processors,
+    the `libibcm1` and `libibcm-dev` packages are not installed
+    because they are not available.
 
     For Ubuntu 18.04, the following packages are installed:
     `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
@@ -125,6 +127,11 @@ class ofed(bb_base):
                     # Ubuntu 16.04 for ARM is missing these packages
                     for missing in ['dapl2-utils', 'libdapl2', 'libdapl-dev',
                                     'libibcm1', 'libibcm-dev']:
+                        if missing in self.__ospackages:
+                            self.__ospackages.remove(missing)
+                elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+                    # Ubuntu 16.04 for Power is missing these packages
+                    for missing in ['libibcm1', 'libibcm-dev']:
                         if missing in self.__ospackages:
                             self.__ospackages.remove(missing)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos, docker, ppc64le, ubuntu, ubuntu18, x86_64
 
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 
@@ -215,6 +215,65 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64.tgz -C /var/tmp -z && \
     rpm --install /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibverbs-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibverbs-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibverbs-utils-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibmad-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibmad-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibumad-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libibumad-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libmlx4-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libmlx4-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libmlx5-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/libmlx5-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/librdmacm-devel-*.aarch64.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64/RPMS/librdmacm-*.aarch64.rpm && \
     rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.6alternate-aarch64''')
+
+    @ppc64le
+    @ubuntu
+    @docker
+    def test_ppc64le_ubuntu(self):
+        """aarch64"""
+        mofed = mlnx_ofed(version='4.6-1.0.1.1')
+        self.assertEqual(str(mofed),
+r'''# Mellanox OFED version 4.6-1.0.1.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libnl-3-200 \
+        libnl-route-3-200 \
+        libnuma1 \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le.tgz -C /var/tmp -z && \
+    dpkg --install /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibverbs1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibverbs-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/ibverbs-utils_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibmad_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibmad-devel_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibumad_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libibumad-devel_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libmlx4-1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libmlx4-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libmlx5-1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/libmlx5-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/librdmacm-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le/DEBS/librdmacm1_*_ppc64el.deb && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-ppc64le''')
+
+    @ppc64le
+    @ubuntu18
+    @docker
+    def test_ppc64le_ubuntu18(self):
+        """aarch64"""
+        mofed = mlnx_ofed(version='4.6-1.0.1.1')
+        self.assertEqual(str(mofed),
+r'''# Mellanox OFED version 4.6-1.0.1.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libnl-3-200 \
+        libnl-route-3-200 \
+        libnuma1 \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le.tgz -C /var/tmp -z && \
+    dpkg --install /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibverbs1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibverbs-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/ibverbs-utils_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibmad_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibmad-devel_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibumad_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libibumad-devel_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libmlx4-1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libmlx4-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libmlx5-1_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/libmlx5-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/librdmacm-dev_*_ppc64el.deb /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le/DEBS/librdmacm1_*_ppc64el.deb && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-ppc64le''')
+
+    @ppc64le
+    @centos
+    @docker
+    def test_ppc64le_centos(self):
+        """aarch64"""
+        mofed = mlnx_ofed(version='4.6-1.0.1.1')
+        self.assertEqual(str(mofed),
+r'''# Mellanox OFED version 4.6-1.0.1.1
+RUN yum install -y \
+        libnl \
+        libnl3 \
+        numactl-libs \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le.tgz -C /var/tmp -z && \
+    rpm --install /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibverbs-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibverbs-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibverbs-utils-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibmad-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibmad-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibumad-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libibumad-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libmlx4-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libmlx4-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libmlx5-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/libmlx5-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/librdmacm-devel-*.ppc64le.rpm /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le/RPMS/librdmacm-*.ppc64le.rpm && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-ppc64le''')
 
     @x86_64
     @ubuntu
