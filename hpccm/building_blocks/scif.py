@@ -50,12 +50,7 @@ class scif(hpccm.base_object):
 
     # Parameters
 
-    _arguments: Using experimental syntax to supply Docker RUN arguments.
-    Can be used to mount a host path into the container during build.
-    Requires env var DOCKER_BUILDKIT=1 and the following line in the Dockerfile:
-    # syntax=docker/dockerfile:experimental
-    (Docker specific), see also:
-    https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md#experimental-syntaxes
+    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
     file: The SCI-F recipe file name.  The default value is the name
     parameter with the `.scif` suffix.

@@ -2478,6 +2478,8 @@ creates SCI-F recipe files in the current directory (see also the
 __Parameters__
 
 
+- ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
 - __file__: The SCI-F recipe file name.  The default value is the name
 parameter with the `.scif` suffix.
 
