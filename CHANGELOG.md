@@ -1,6 +1,7 @@
 # v19.8.0
 
-- Adds support for ARM (aarch64) and POWER (ppc64le) processors.
+- Adds experimental support for ARM (aarch64) and POWER (ppc64le)
+  processors.
 - Enhances the `shell` primitive to support Docker specific 
   experimental `RUN` options.
 - Fix issue due to NetCDF package name change.
