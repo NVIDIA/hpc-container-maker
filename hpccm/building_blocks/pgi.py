@@ -33,7 +33,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -126,6 +126,8 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         super(pgi, self).__init__(**kwargs)
 
+        self.__arch_directory = None # Filled in __cpu_arch()
+        self.__arch_pkg = None # Filled in by __cpu_arch()
         self.__commands = [] # Filled in by __setup()
         self.__libnuma_path = '' # Filled in __distro()
         self.__runtime_commands = [] # Filled in by __setup()
@@ -143,21 +145,26 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__system_cuda = kwargs.get('system_cuda', False)
         self.__system_libnuma = kwargs.get('system_libnuma', True)
         self.__tarball = kwargs.get('tarball', '')
-        self.__url = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-x64'
+        self.__url_template = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-{}'
 
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
         self.__version = kwargs.get('version', '19.4')
         self.__wd = '/var/tmp' # working directory
 
-        self.__basepath = posixpath.join(self.__prefix, 'linux86-64')
-        self.__basepath_llvm = posixpath.join(self.__prefix, 'linux86-64-llvm')
-
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
 
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
+
         # Set the Linux distribution specific parameters
         self.__distro()
+
+        self.__basepath = posixpath.join(self.__prefix, self.__arch_directory)
+        self.__basepath_llvm = posixpath.join(self.__prefix,
+                                              '{}-llvm'.format(
+                                                  self.__arch_directory))
 
         # Construct the series of steps to execute
         self.__setup()
@@ -181,6 +188,19 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            self.__arch_directory = 'linuxpower'
+            self.__arch_pkg = 'openpower'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            self.__arch_directory = 'linux86-64'
+            self.__arch_pkg = 'x64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -297,10 +317,12 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             # Also, the version downloaded cannot be controlled, it
             # will always be the 'latest'.  Use a synthetic tarball
             # filename.
-            tarball = 'pgi-community-linux-x64-latest.tar.gz'
+            tarball = 'pgi-community-linux-{}-latest.tar.gz'.format(
+                self.__arch_pkg)
 
             self.__commands.append(self.download_step(
-                url=self.__url, outfile=posixpath.join(self.__wd, tarball),
+                url=self.__url_template.format(self.__arch_pkg),
+                outfile=posixpath.join(self.__wd, tarball),
                 referer=self.__referer, directory=self.__wd))
 
         self.__commands.append(self.untar_step(
@@ -394,7 +416,8 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         pgi_path = posixpath.join(self.__basepath, self.__version)
         src_path = pgi_path
-        if LooseVersion(self.__version) >= LooseVersion('19.4'):
+        if (LooseVersion(self.__version) >= LooseVersion('19.4') and
+            hpccm.config.g_cpu_arch == cpu_arch.X86_64):
             # Too many levels of symlinks for the Docker builder to
             # handle, so use the real path
             src_path = posixpath.join(self.__basepath_llvm, self.__version)
@@ -406,7 +429,8 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         # REDIST workaround for incorrect libcudaforwrapblas.so
         # symlink
-        if LooseVersion(self.__version) >= LooseVersion('18.10'):
+        if (LooseVersion(self.__version) >= LooseVersion('18.10') and
+            hpccm.config.g_cpu_arch == cpu_arch.X86_64):
             instructions.append(
                 copy(_from=_from,
                      src=posixpath.join(pgi_path, 'lib',

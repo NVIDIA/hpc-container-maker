@@ -134,6 +134,12 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 self.__arch_pkg = 'arm64'
             else:
                 self.__arch_pkg = 'aarch64'
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            self.__arch_download = 'ppc64le'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_pkg = 'ppc64el'
+            else:
+                self.__arch_pkg = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_download = 'x86_64'
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:

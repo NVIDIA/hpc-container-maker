@@ -36,6 +36,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
@@ -273,6 +274,11 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 self.configure_opts.append('--with-xpmem')
         elif self.__xpmem == False:
             self.configure_opts.append('--without-xpmem')
+
+        # Workaround for format warning considered an error on Power
+        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if not self.__toolchain.CFLAGS:
+                self.__toolchain.CFLAGS = '-Wno-error=format'
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,

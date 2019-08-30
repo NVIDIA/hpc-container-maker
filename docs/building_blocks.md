@@ -300,7 +300,8 @@ is `charm++`.
 - __target_architecture__: The target machine architecture to build.
 For x86_64 processors, the default value is
 `multicore-linux-x86_64`.  For aarch64 processors, the default
-value is `multicore-arm8`.
+value is `multicore-arm8`.  For ppc64le processors, the default is
+`multicore-linux-ppc64le`.
 
 - __version__: The version of Charm++ to download.  The default value is
 `6.9.0`.
@@ -394,7 +395,7 @@ should be performed.  The default is False.
 - __configure_opts__: List of options to pass to `configure`.  For
 x86_64 processors, the default values are `--enable-shared`,
 `--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
-aarch64 processors, the default values are `--enable-shared`,
+other processors, the default values are `--enable-shared`,
 `--enable-openmp`, and `--enable-threads`.
 
 - __directory__: Path to the unpackaged source directory relative to the
@@ -1896,8 +1897,10 @@ For Ubuntu 16.04, the following packages are installed:
 `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
 `librdmacm-dev`, and `rdmacm-utils`.  For Ubuntu 16.04 and aarch64
 processors, the `dapl2-utils`, `libdapl2`, `libdapl-dev`,
-`libibcm1` and `libibcm-dev` packages not installed because they
-are not available.
+`libibcm1` and `libibcm-dev` packages are not installed because
+they are not available.  For Ubuntu 16.04 and ppc64le processors,
+the `libibcm1` and `libibcm-dev` packages are not installed
+because they are not available.
 
 For Ubuntu 18.04, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
@@ -1967,8 +1970,9 @@ directory. The default value is False.
 
 - __make_opts__: List of options to pass to `make`.  For aarch64
 processors, the default values are `TARGET=ARMV8` and
-`USE_OPENMP=1`.  For x86_64 processors, the default value is
-`USE_OPENMP=1`.
+`USE_OPENMP=1`.  For ppc64le processors, the default values are
+`TARGET=POWER8` and `USE_OPENMP=1`.  For x86_64 processors, the
+default value is `USE_OPENMP=1`.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make`, `perl`, `tar`, and `wget`.
