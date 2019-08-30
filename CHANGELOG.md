@@ -1,3 +1,11 @@
+# v19.8.0
+
+- Adds experimental support for ARM (aarch64) and POWER (ppc64le)
+  processors.
+- Enhances the `shell` primitive to support Docker specific 
+  experimental `RUN` options.
+- Fix issue due to NetCDF package name change.
+
 # v19.7.0
 
 - Refreshes default component versions for the Boost (`boost`),
