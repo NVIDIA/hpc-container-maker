@@ -1041,6 +1041,10 @@ with the host CUDA driver. The default is False.
 - __depot__: Path to the location of Julia packages. The default value
 is an empty string.
 
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+Julia. The default is True.
+
 - __ldconfig__: Boolean flag to specify whether the Julia library
 directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the Julia library
@@ -1056,13 +1060,13 @@ empty list.
 is `/usr/local/julia`.
 
 - __version__: The version of Julia to install.  The default value is
-`1.1.0`.
+`1.2.0`.
 
 __Examples__
 
 
 ```python
-julia(prefix='/usr/local/julia', version='1.1.0')
+julia(prefix='/usr/local/julia', version='1.2.0')
 ```
 
 
