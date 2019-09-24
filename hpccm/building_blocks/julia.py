@@ -34,6 +34,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -98,8 +99,10 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(julia, self).__init__(**kwargs)
 
+        self.__arch_directory = None # Filled in by __cpu_arch()
+        self.__arch_pkg = None # Filled in by __cpu_arch()
         self.__baseurl = kwargs.get('baseurl',
-                                    'https://julialang-s3.julialang.org/bin/linux/x64')
+                                    'https://julialang-s3.julialang.org/bin/linux')
         self.__cuda = kwargs.get('cuda', False)
         self.__depot = kwargs.get('depot', None)
         self.__history = kwargs.get('history', None)
@@ -110,6 +113,9 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
+
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -125,6 +131,19 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
 
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_directory = 'aarch64'
+            self.__arch_pkg = 'aarch64'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            self.__arch_directory = 'x64'
+            self.__arch_pkg = 'x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
@@ -137,8 +156,10 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         major_minor = '{0}.{1}'.format(match.groupdict()['major'],
                                        match.groupdict()['minor'])
 
-        tarball = 'julia-{}-linux-x86_64.tar.gz'.format(self.__version)
-        url = '{0}/{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+        tarball = 'julia-{0}-linux-{1}.tar.gz'.format(self.__version,
+                                                      self.__arch_pkg)
+        url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, self.__arch_directory,
+                                       major_minor, tarball)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,

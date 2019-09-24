@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.julia import julia
 
@@ -31,6 +31,7 @@ class Test_julia(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -50,6 +51,27 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
+    @aarch64
+    @ubuntu
+    @docker
+    def test_aarch64(self):
+        """aarch64"""
+        j = julia()
+        self.assertEqual(str(j),
+r'''# Julia version 1.2.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.2/julia-1.2.0-linux-aarch64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-aarch64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.2.0-linux-aarch64.tar.gz /var/tmp/julia-1.2.0
+ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/julia/bin:$PATH''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_depot_history_packages(self):
@@ -73,6 +95,7 @@ ENV JULIA_HISTORY=/tmp/julia_history.jl \
     LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_cuda_ldconfig(self):
@@ -93,6 +116,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/julia-1.2.0-linux-x86_64.tar.gz /var/tmp/julia-1.2.0
 ENV PATH=/usr/local/julia/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):
