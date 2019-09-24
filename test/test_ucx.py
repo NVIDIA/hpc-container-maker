@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.ucx import ucx
 
@@ -31,6 +31,7 @@ class Test_ucx(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -55,6 +56,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -78,6 +80,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_with_paths_ubuntu(self):
@@ -103,6 +106,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_with_true_ubuntu(self):
@@ -127,6 +131,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_with_false_ubuntu(self):
@@ -151,6 +156,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -175,6 +181,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
 ENV PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_environment(self):
@@ -196,6 +203,30 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0''')
+
+    @ppc64le
+    @centos
+    @docker
+    def test_ppc64le(self):
+        """ppc64le"""
+        u = ucx(cuda=False, knem='/usr/local/knem', version='1.5.2')
+        self.assertEqual(str(u),
+r'''# UCX version 1.5.2
+RUN yum install -y \
+        binutils-devel \
+        file \
+        make \
+        numactl-devel \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.5.2 &&  CFLAGS=-Wno-error=format ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --with-knem=/usr/local/knem && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
+ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/ucx/bin:$PATH''')
 
     @ubuntu
     @docker

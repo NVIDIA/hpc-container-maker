@@ -298,7 +298,10 @@ and building.  The default values are `autoconf`, `automake`,
 is `charm++`.
 
 - __target_architecture__: The target machine architecture to build.
-The default value is `multicore-linux-x86_64`.
+For x86_64 processors, the default value is
+`multicore-linux-x86_64`.  For aarch64 processors, the default
+value is `multicore-arm8`.  For ppc64le processors, the default is
+`multicore-linux-ppc64le`.
 
 - __version__: The version of Charm++ to download.  The default value is
 `6.9.0`.
@@ -341,6 +344,9 @@ The `cmake` building block downloads and installs the
 __Parameters__
 
 
+- __bootstrap_opts__: List of options to pass to `bootstrap` when
+building from source.  The default is an empty list.
+
 - __eula__: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
 The default value is `False`.
 
@@ -349,6 +355,11 @@ The default value is `wget`.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local`.
+
+- __source__: Boolean flag to specify whether to build CMake from
+source.  For x86_64 processors, the default is False, i.e., use
+the available pre-compiled package.  For all other processors, the
+default is True.
 
 - __version__: The version of CMake to download.  The default value is
 `3.14.5`.
@@ -363,6 +374,7 @@ cmake(eula=True)
 ```python
 cmake(eula=True, version='3.10.3')
 ```
+
 
 # fftw
 ```python
@@ -380,9 +392,11 @@ __Parameters__
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
-- __configure_opts__: List of options to pass to `configure`.  The
-default values are `--enable-shared`, `--enable-openmp`,
-`--enable-threads`, and `--enable-sse2`.
+- __configure_opts__: List of options to pass to `configure`.  For
+x86_64 processors, the default values are `--enable-shared`,
+`--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
+other processors, the default values are `--enable-shared`,
+`--enable-openmp`, and `--enable-threads`.
 
 - __directory__: Path to the unpackaged source directory relative to the
 local build context.  The default value is empty.  If this is
@@ -1451,7 +1465,8 @@ __Parameters__
 
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
-RHEL-based Linux distributions, the default value is `rhel7.2`.
+RHEL-based Linux distributions, the default value is `rhel7.2` for
+x86_64 processors and `rhel7.6alternate` for aarch64 processors.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -1773,6 +1788,10 @@ incompatibilities.
 __Parameters__
 
 
+- __arch__: The processor architecture of the MVAPICH2-GDR package.  The
+default value is set automatically based on the processor
+architecture of the base image.
+
 - __cuda_version__: The version of CUDA the MVAPICH2-GDR package was
 built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This
@@ -1949,7 +1968,12 @@ For Ubuntu 16.04, the following packages are installed:
 `libdapl2`, `libdapl-dev`, `libibcm1`, `libibcm-dev`, `libibmad5`,
 `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `libmlx4-1`,
 `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
-`librdmacm-dev`, and `rdmacm-utils`.
+`librdmacm-dev`, and `rdmacm-utils`.  For Ubuntu 16.04 and aarch64
+processors, the `dapl2-utils`, `libdapl2`, `libdapl-dev`,
+`libibcm1` and `libibcm-dev` packages are not installed because
+they are not available.  For Ubuntu 16.04 and ppc64le processors,
+the `libibcm1` and `libibcm-dev` packages are not installed
+because they are not available.
 
 For Ubuntu 18.04, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
@@ -2017,8 +2041,11 @@ directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the OpenBLAS library
 directory. The default value is False.
 
-- __make_opts__: List of options to pass to `make`.  The default value
-is `USE_OPENMP=1`.
+- __make_opts__: List of options to pass to `make`.  For aarch64
+processors, the default values are `TARGET=ARMV8` and
+`USE_OPENMP=1`.  For ppc64le processors, the default values are
+`TARGET=POWER8` and `USE_OPENMP=1`.  For x86_64 processors, the
+default value is `USE_OPENMP=1`.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make`, `perl`, `tar`, and `wget`.
@@ -2527,6 +2554,8 @@ creates SCI-F recipe files in the current directory (see also the
 
 __Parameters__
 
+
+- ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
 - __file__: The SCI-F recipe file name.  The default value is the name
 parameter with the `.scif` suffix.

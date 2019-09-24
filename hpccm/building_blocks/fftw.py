@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.config
 import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -33,6 +34,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -53,9 +55,11 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
 
-    configure_opts: List of options to pass to `configure`.  The
-    default values are `--enable-shared`, `--enable-openmp`,
-    `--enable-threads`, and `--enable-sse2`.
+    configure_opts: List of options to pass to `configure`.  For
+    x86_64 processors, the default values are `--enable-shared`,
+    `--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
+    other processors, the default values are `--enable-shared`,
+    `--enable-openmp`, and `--enable-threads`.
 
     directory: Path to the unpackaged source directory relative to the
     local build context.  The default value is empty.  If this is
@@ -114,9 +118,7 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(fftw, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts',
-                                         ['--enable-shared', '--enable-openmp',
-                                          '--enable-threads', '--enable-sse2'])
+        self.configure_opts = kwargs.get('configure_opts', [])
         self.prefix = kwargs.get('prefix', '/usr/local/fftw')
 
         self.__baseurl = kwargs.get('baseurl', 'ftp://ftp.fftw.org/pub/fftw')
@@ -129,6 +131,9 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
+
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
 
         # Construct series of steps to execute
         self.__setup()
@@ -151,6 +156,19 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                                              self.__directory))
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            if not self.configure_opts:
+                self.configure_opts = ['--enable-shared', '--enable-openmp',
+                                       '--enable-threads', '--enable-sse2']
+        else:
+            if not self.configure_opts:
+                self.configure_opts = ['--enable-shared', '--enable-openmp',
+                                       '--enable-threads']
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

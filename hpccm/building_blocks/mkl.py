@@ -31,7 +31,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -99,6 +99,9 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
         self.version = kwargs.get('version', '2019.4-070')
 
         self.__bashrc = ''      # Filled in by __distro()
+
+        if hpccm.config.g_cpu_arch != cpu_arch.X86_64: # pragma: no cover
+            logging.warning('Using mkl on a non-x86_64 processor')
 
         # Set the Linux distribution specific parameters
         self.__distro()

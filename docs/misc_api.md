@@ -1,5 +1,13 @@
 # hpccm.config
 
+## get_cpu_architecture
+```python
+get_cpu_architecture()
+```
+Return the architecture string for the currently configured CPU
+architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
+
+
 ## set_container_format
 ```python
 set_container_format(ctype)
@@ -16,6 +24,23 @@ __Raises__
 
 
 - `RuntimeError`: invalid container type argument
+
+## set_cpu_architecture
+```python
+set_cpu_architecture(arch)
+```
+Set the CPU architecture
+
+In most cases, the `baseimage` primitive should be relied upon to
+set the CPU architecture.  Only use this function if you really
+know what you are doing.
+
+__Arguments__
+
+
+- __arch (string)__: Value values are `aarch64`, `ppc64le`, and `x86_64`.
+`arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
+for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
 
 ## set_linux_distro
 ```python

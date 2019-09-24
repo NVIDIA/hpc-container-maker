@@ -24,6 +24,12 @@ class container_type(Enum):
     SINGULARITY = 2
     BASH = 3
 
+class cpu_arch(Enum):
+    """Supported CPU architectures"""
+    X86_64 = 1
+    AARCH64 = 2
+    PPC64LE = 3
+
 class linux_distro(Enum):
     """Supported Linux distribution types"""
     UBUNTU = 1

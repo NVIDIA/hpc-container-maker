@@ -40,10 +40,12 @@ class shell(object):
     environment should be also be loaded when executing a SCI-F
     `%appinstall` block.  The default is False.
 
+    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
     chdir: Boolean flag to specify whether to change the working
     directory to `/` before executing any commands.  Docker
     automatically resets the working directory for each `RUN`
-    instruction.  Setting this option to True make Singularity behave
+    instruction.  Setting this option to True makes Singularity behave
     the same.  This option is ignored for Docker.  The default is
     True.
 
@@ -60,6 +62,12 @@ class shell(object):
     shell(commands=['cd /path/to/src', './configure', 'make install'])
     ```
 
+    ```python
+    # Cache Go packages
+    shell(_arguments=['--mount=type=cache,target=/root/.cache/go-build']
+          commands=['cd /path/to/go-src', 'go build'])
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -69,6 +77,7 @@ class shell(object):
 
         self._app = kwargs.get('_app', '') # Singularity specific
         self._appenv = kwargs.get('_appenv', False) # Singularity specific
+        self._arguments = kwargs.get('_arguments', '') # Docker specific
         self.chdir = kwargs.get('chdir', True)
         self.commands = kwargs.get('commands', [])
         self._test = kwargs.get('_test', False) # Singularity specific
@@ -89,10 +98,16 @@ class shell(object):
                 # RUN cmd1 && \
                 #     cmd2 && \
                 #     cmd3
-                s = ['RUN {}'.format(self.commands[0])]
+                s = ['RUN ']
+                if self._arguments:
+                    s[0] += self._arguments + ' '
+                s[0] += self.commands[0]
                 s.extend(['    {}'.format(x) for x in self.commands[1:]])
                 return ' && \\\n'.join(s)
             elif hpccm.config.g_ctype == container_type.SINGULARITY:
+                if self._arguments:
+                    logging.warning('The Docker specific _arguments was given: '
+                                    'ignoring statement!')
                 # Format:
                 # %post [OR %appinstall app_name]
                 #     cmd1

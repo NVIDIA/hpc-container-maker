@@ -31,7 +31,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
@@ -46,7 +46,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
-    RHEL-based Linux distributions, the default value is `rhel7.2`.
+    RHEL-based Linux distributions, the default value is `rhel7.2` for
+    x86_64 processors and `rhel7.6alternate` for aarch64 processors.
 
     ospackages: List of OS packages to install prior to installing
     OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -89,6 +90,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         super(mlnx_ofed, self).__init__(**kwargs)
 
+        self.__arch_download = None # Filled in __cpu_arch()
+        self.__arch_pkg = None # Filled in by __cpu_arch()
         self.__baseurl = kwargs.get('baseurl',
                                     'http://content.mellanox.com/ofed')
         self.__label = None  # Filled in by __setup()
@@ -101,6 +104,9 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         self.__commands = []
         self.__wd = '/var/tmp'
+
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -117,6 +123,31 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self += comment('Mellanox OFED version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_download = 'aarch64'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_pkg = 'arm64'
+            else:
+                self.__arch_pkg = 'aarch64'
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            self.__arch_download = 'ppc64le'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_pkg = 'ppc64el'
+            else:
+                self.__arch_pkg = 'ppc64le'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            self.__arch_download = 'x86_64'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_pkg = 'amd64'
+            else:
+                self.__arch_pkg = 'x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -140,18 +171,22 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5-1', 'libmlx5-dev',
                                    'librdmacm-dev', 'librdmacm1']
 
-            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
-                self.__version, self.__oslabel)
+            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-{2}'.format(
+                self.__version, self.__oslabel, self.__arch_download)
 
             self.__installer = 'dpkg --install'
             self.__extractor_template = 'dpkg --extract {0} {1}'
 
-            self.__pkglist = ' '.join('{}_*_amd64.deb'.format(
-                posixpath.join(self.__wd, self.__label, 'DEBS', x))
+            self.__pkglist = ' '.join('{}_*_{}.deb'.format(
+                posixpath.join(self.__wd, self.__label, 'DEBS', x),
+                self.__arch_pkg)
                                       for x in self.__packages)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
-                self.__oslabel = 'rhel7.2'
+                if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+                    self.__oslabel = 'rhel7.6alternate'
+                else:
+                    self.__oslabel = 'rhel7.2'
             if not self.__ospackages:
                 self.__ospackages = ['libnl', 'libnl3', 'numactl-libs', 'wget']
             if not self.__packages:
@@ -163,14 +198,15 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5', 'libmlx5-devel',
                                    'librdmacm-devel', 'librdmacm']
 
-            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-x86_64'.format(
-                self.__version, self.__oslabel)
+            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-{2}'.format(
+                self.__version, self.__oslabel, self.__arch_download)
 
             self.__installer = 'rpm --install'
             self.__extractor_template = 'rpm2cpio {0} | cpio -idm'
 
-            self.__pkglist = ' '.join('{}-*.x86_64.rpm'.format(
-                posixpath.join(self.__wd, self.__label, 'RPMS', x))
+            self.__pkglist = ' '.join('{}-*.{}.rpm'.format(
+                posixpath.join(self.__wd, self.__label, 'RPMS', x),
+                self.__arch_pkg)
                                       for x in self.__packages)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

@@ -50,6 +50,8 @@ class scif(hpccm.base_object):
 
     # Parameters
 
+    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
     file: The SCI-F recipe file name.  The default value is the name
     parameter with the `.scif` suffix.
 
@@ -85,6 +87,7 @@ class scif(hpccm.base_object):
         self.__applabels = []
         self.__apprun = []
         self.__apptest = []
+        self.__arguments = kwargs.get('_arguments')
         self.__name = kwargs.get('name', None)
         if not self.__name:
             raise RuntimeError('"name" must be defined')
@@ -232,7 +235,8 @@ class scif(hpccm.base_object):
             instructions.append(
                 copy(src=self.__scif_file, dest=c_scif_file))
             instructions.append(
-                shell(chdir=False,
+                shell(_arguments = self.__arguments,
+                      chdir=False,
                       commands=['scif install {}'.format(c_scif_file)]))
 
             return '\n'.join(str(x) for x in instructions)

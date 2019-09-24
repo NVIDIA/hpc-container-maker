@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.fftw import fftw
 
@@ -31,6 +31,7 @@ class Test_fftw(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -52,6 +53,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -72,6 +74,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_mpi(self):
@@ -93,6 +96,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -114,6 +118,51 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     echo "/usr/local/fftw/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8''')
 
+    @aarch64
+    @ubuntu
+    @docker
+    def test_aarch64(self):
+        """Default fftw building block"""
+        f = fftw(version='3.3.8')
+        self.assertEqual(str(f),
+r'''# FFTW version 3.3.8
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    @ppc64le
+    @ubuntu
+    @docker
+    def test_ppc64le(self):
+        """Default fftw building block"""
+        f = fftw(version='3.3.8')
+        self.assertEqual(str(f),
+r'''# FFTW version 3.3.8
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-shared --enable-openmp --enable-threads && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):
@@ -125,6 +174,7 @@ r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_directory(self):

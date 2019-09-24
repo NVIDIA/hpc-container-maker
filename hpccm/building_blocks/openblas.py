@@ -24,6 +24,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import posixpath
 
+import hpccm.config
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
@@ -32,6 +33,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -54,8 +56,11 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `LD_LIBRARY_PATH` is modified to include the OpenBLAS library
     directory. The default value is False.
 
-    make_opts: List of options to pass to `make`.  The default value
-    is `USE_OPENMP=1`.
+    make_opts: List of options to pass to `make`.  For aarch64
+    processors, the default values are `TARGET=ARMV8` and
+    `USE_OPENMP=1`.  For ppc64le processors, the default values are
+    `TARGET=POWER8` and `USE_OPENMP=1`.  For x86_64 processors, the
+    default value is `USE_OPENMP=1`.
 
     ospackages: List of OS packages to install prior to building.  The
     default values are `make`, `perl`, `tar`, and `wget`.
@@ -89,7 +94,8 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         super(openblas, self).__init__(**kwargs)
 
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/xianyi/OpenBLAS/archive')
-        self.__make_opts = kwargs.get('make_opts', ['USE_OPENMP=1'])
+        self.__make_opts = kwargs.get('make_opts',
+                                      []) # Filled in by __cpu_arch()
         self.__ospackages = kwargs.get('ospackages', ['make', 'perl', 'tar',
                                                       'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/openblas')
@@ -98,6 +104,9 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
+
+        # Set the CPU architecture specific parameters
+        self.__cpu_arch()
 
         # Construct the series of steps to execute
         self.__setup()
@@ -112,6 +121,22 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            if not self.__make_opts:
+                self.__make_opts = ['TARGET=ARMV8', 'USE_OPENMP=1']
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if not self.__make_opts:
+                self.__make_opts = ['TARGET=POWER8', 'USE_OPENMP=1']
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            if not self.__make_opts:
+                self.__make_opts = ['USE_OPENMP=1']
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in

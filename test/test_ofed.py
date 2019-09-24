@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu, ubuntu18
+from helpers import aarch64, centos, docker, ubuntu, ubuntu18, ppc64le, x86_64
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -31,6 +31,7 @@ class Test_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -61,6 +62,7 @@ RUN apt-get update -y && \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @x86_64
     @ubuntu18
     @docker
     def test_defaults_ubuntu18(self):
@@ -86,6 +88,7 @@ RUN apt-get update -y && \
         rdmacm-utils && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -109,6 +112,7 @@ RUN yum install -y \
         rdma-core-devel && \
     rm -rf /var/cache/yum/*''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_prefix_ubuntu16(self):
@@ -149,6 +153,62 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /etc/libibverbs.d''')
 
+    @aarch64
+    @ubuntu
+    @docker
+    def test_aarch64_ubuntu16(self):
+        """aarch64"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ibutils \
+        ibverbs-utils \
+        infiniband-diags \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        libmlx4-1 \
+        libmlx4-dev \
+        libmlx5-1 \
+        libmlx5-dev \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @ppc64le
+    @ubuntu
+    @docker
+    def test_ppc64le_ubuntu16(self):
+        """ppc64le"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        dapl2-utils \
+        ibutils \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libdapl2 \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        libmlx4-1 \
+        libmlx4-dev \
+        libmlx5-1 \
+        libmlx5-dev \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):
