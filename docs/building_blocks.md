@@ -1033,17 +1033,22 @@ __Parameters__
 
 
 - __cuda__: Boolean flag to specify whether the JuliaGPU packages should
-be installed.  If True, the `CUDAnative`, `CuArrays`, and
-`GPUArrays` packages are installed. Note that the `CUDAdrv`
+be installed.  If True, the `CUDAapi`, `CUDAdrv`, `CUDAnative`,
+and `CuArrays` packages are installed. Note that the `CUDAdrv`
 package must be rebuilt when the container is running to align
 with the host CUDA driver. The default is False.
 
-- __depot__: Path to the location of Julia packages. The default value
-is an empty string.
+- __depot__: Path to the location of "user" Julia package depot. The
+default is an empty string, i.e., `~/.julia`. The depot location
+needs to be writable by the user running the container.
 
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 Julia. The default is True.
+
+- __history__: Path to the Julia history file. The default value is an
+empty string, i.e., `~/.julia/logs/repl_history.jl`. The history
+location needs to be writable by the user running the container.
 
 - __ldconfig__: Boolean flag to specify whether the Julia library
 directory should be added dynamic linker cache.  If False, then
@@ -1067,6 +1072,10 @@ __Examples__
 
 ```python
 julia(prefix='/usr/local/julia', version='1.2.0')
+```
+
+```python
+julia(depot='/tmp', history='/tmp/repl_history.jl')
 ```
 
 

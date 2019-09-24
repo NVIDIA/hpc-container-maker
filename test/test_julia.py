@@ -52,9 +52,10 @@ ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
-    def test_depot_packages(self):
-        """depot and packages options"""
-        j = julia(depot='~/.julia-ngc', packages=['CUDAnative', 'CuArrays'])
+    def test_depot_history_packages(self):
+        """depot, history, and packages options"""
+        j = julia(depot='~/.julia-ngc', history='/tmp/julia_history.jl',
+                  packages=['CUDAnative', 'CuArrays'])
         self.assertEqual(str(j),
 r'''# Julia version 1.2.0
 RUN apt-get update -y && \
@@ -65,9 +66,10 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-x86_64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
-    JULIA_DEPOT_PATH=~/.julia-ngc /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \
+    JULIA_DEPOT_PATH=/usr/local/julia/share/julia /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \
+    echo "DEPOT_PATH[1] = \"~/.julia-ngc\"" >> /usr/local/julia/etc/julia/startup.jl && \
     rm -rf /var/tmp/julia-1.2.0-linux-x86_64.tar.gz /var/tmp/julia-1.2.0
-ENV JULIA_DEPOT_PATH=~/.julia-ngc \
+ENV JULIA_HISTORY=/tmp/julia_history.jl \
     LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
@@ -86,7 +88,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-x86_64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
-    /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays"), PackageSpec(name="GPUArrays")])' && \
+    JULIA_DEPOT_PATH=/usr/local/julia/share/julia /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAapi"), PackageSpec(name="CUDAdrv"), PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \
     echo "/usr/local/julia/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/julia-1.2.0-linux-x86_64.tar.gz /var/tmp/julia-1.2.0
 ENV PATH=/usr/local/julia/bin:$PATH''')

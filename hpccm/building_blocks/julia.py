@@ -47,17 +47,22 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     # Parameters
 
     cuda: Boolean flag to specify whether the JuliaGPU packages should
-    be installed.  If True, the `CUDAnative`, `CuArrays`, and
-    `GPUArrays` packages are installed. Note that the `CUDAdrv`
+    be installed.  If True, the `CUDAapi`, `CUDAdrv`, `CUDAnative`,
+    and `CuArrays` packages are installed. Note that the `CUDAdrv`
     package must be rebuilt when the container is running to align
     with the host CUDA driver. The default is False.
 
-    depot: Path to the location of Julia packages. The default value
-    is an empty string.
+    depot: Path to the location of "user" Julia package depot. The
+    default is an empty string, i.e., `~/.julia`. The depot location
+    needs to be writable by the user running the container.
 
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
     Julia. The default is True.
+
+    history: Path to the Julia history file. The default value is an
+    empty string, i.e., `~/.julia/logs/repl_history.jl`. The history
+    location needs to be writable by the user running the container.
 
     ldconfig: Boolean flag to specify whether the Julia library
     directory should be added dynamic linker cache.  If False, then
@@ -82,6 +87,10 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     julia(prefix='/usr/local/julia', version='1.2.0')
     ```
 
+    ```python
+    julia(depot='/tmp', history='/tmp/repl_history.jl')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -93,6 +102,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                     'https://julialang-s3.julialang.org/bin/linux/x64')
         self.__cuda = kwargs.get('cuda', False)
         self.__depot = kwargs.get('depot', None)
+        self.__history = kwargs.get('history', None)
         self.__ospackages = kwargs.get('ospackages', ['tar', 'wget'])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/julia')
@@ -143,7 +153,8 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         # Install packages
         if self.__cuda:
-            self.__packages.extend(['CUDAnative', 'CuArrays', 'GPUArrays'])
+            self.__packages.extend(['CUDAapi', 'CUDAdrv', 'CUDAnative',
+                                    'CuArrays'])
         if self.__packages:
             # remove duplicates
             self.__packages = sorted(list(set(self.__packages)))
@@ -156,11 +167,24 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             packages_csv = ', '.join('{}'.format(pkg)
                                      for pkg in self.__packages)
             julia = posixpath.join(self.__prefix, 'bin', 'julia')
-            if self.__depot:
-                julia = 'JULIA_DEPOT_PATH={0} '.format(self.__depot) + julia
+            # Install packages in the default location alongside Julia
+            # itself.
+            julia = 'JULIA_DEPOT_PATH={0} {1}'.format(
+                posixpath.join(self.__prefix, 'share', 'julia'), julia)
             self.__commands.append(
                 '{0} -e \'using Pkg; Pkg.add([{1}])\''.format(julia,
                                                               packages_csv))
+
+        # Startup file
+        if self.__depot:
+            # The "user" depot path mist be writable by the user
+            # running the container.  Modify the Julia startup file to
+            # modify the "user" depot from ~/.julia to another
+            # location.
+            startup = posixpath.join(self.__prefix, 'etc', 'julia',
+                                     'startup.jl')
+            self.__commands.append('echo "DEPOT_PATH[1] = \\"{0}\\"" >> {1}'.format(
+                self.__depot, startup))
 
         # Set library path
         libpath = posixpath.join(self.__prefix, 'lib')
@@ -177,8 +201,8 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         # Setup environment
         self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))
-        if self.__depot:
-            self.environment_variables['JULIA_DEPOT_PATH'] = self.__depot
+        if self.__history:
+            self.environment_variables['JULIA_HISTORY'] = self.__history
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
