@@ -1036,6 +1036,79 @@ Stage0 += i
 Stage1 += i.runtime()
 ```
 
+# julia
+```python
+julia(self, **kwargs)
+```
+The `julia` building block downloads and installs the
+[Julia](https://julialang.org) programming environment.
+
+__Parameters__
+
+
+- __cuda__: Boolean flag to specify whether the JuliaGPU packages should
+be installed.  If True, the `CUDAapi`, `CUDAdrv`, `CUDAnative`,
+and `CuArrays` packages are installed. Note that the `CUDAdrv`
+package must be rebuilt when the container is running to align
+with the host CUDA driver. The default is False.
+
+- __depot__: Path to the location of "user" Julia package depot. The
+default is an empty string, i.e., `~/.julia`. The depot location
+needs to be writable by the user running the container.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+Julia. The default is True.
+
+- __history__: Path to the Julia history file. The default value is an
+empty string, i.e., `~/.julia/logs/repl_history.jl`. The history
+location needs to be writable by the user running the container.
+
+- __ldconfig__: Boolean flag to specify whether the Julia library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the Julia library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to building. The
+default values are `tar` and `wget`.
+
+- __packages__: List of Julia packages to install. The default is an
+empty list.
+
+- __prefix__: The top level installation location.  The default value
+is `/usr/local/julia`.
+
+- __version__: The version of Julia to install.  The default value is
+`1.2.0`.
+
+__Examples__
+
+
+```python
+julia(prefix='/usr/local/julia', version='1.2.0')
+```
+
+```python
+julia(depot='/tmp', history='/tmp/repl_history.jl')
+```
+
+
+## runtime
+```python
+julia.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+j = julia(...)
+Stage0 += j
+Stage1 += j.runtime()
+```
+
 # knem
 ```python
 knem(self, **kwargs)

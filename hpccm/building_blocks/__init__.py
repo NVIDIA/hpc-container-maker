@@ -27,6 +27,7 @@ from hpccm.building_blocks.hdf5 import hdf5
 from hpccm.building_blocks.intel_mpi import intel_mpi
 from hpccm.building_blocks.intel_psxe import intel_psxe
 from hpccm.building_blocks.intel_psxe_runtime import intel_psxe_runtime
+from hpccm.building_blocks.julia import julia
 from hpccm.building_blocks.knem import knem
 from hpccm.building_blocks.kokkos import kokkos
 from hpccm.building_blocks.libsim import libsim
