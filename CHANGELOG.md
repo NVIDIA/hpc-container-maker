@@ -1,3 +1,7 @@
+# v19.9.0
+
+- Adds Julia (`julia`) building block.
+
 # v19.8.0
 
 - Adds experimental support for ARM (aarch64) and POWER (ppc64le)
