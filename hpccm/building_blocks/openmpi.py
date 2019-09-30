@@ -257,7 +257,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 cuda_home = "/usr/local/cuda"
                 if self.__toolchain.CUDA_HOME:
                     cuda_home = self.__toolchain.CUDA_HOME
-                self.__commands.append('ln -s {0} {1}'.format(
+                self.__commands.append('ln -sf {0} {1}'.format(
                     posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
                     posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
                 if not self.__toolchain.LD_LIBRARY_PATH:
