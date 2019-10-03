@@ -1,3 +1,78 @@
+# arm_allinea_studio
+```python
+arm_allinea_studio(self, **kwargs)
+```
+The `arm_allinea_studio` building block downloads and installs the
+[Arm Allinea
+Studio](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio).
+
+You must agree to the [Arm End User License Agreement](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula)
+to use this building block.
+
+As a side effect, a toolchain is created containing the Arm
+Allinea Studio compilers.  The toolchain can be passed to other
+operations that want to build using the Arm Allinea Studio
+compilers.
+
+__Parameters__
+
+
+- __armpl_generic_aarch64_only__: Boolean flag to specify whether only
+the aarch64-generic version of the Arm Performance Libraries
+should be installed.  If False, then all variants of the Arm
+Performance Libraries, e.g., Cortex-A72, Generic-SVE,
+ThunderX2CN99, and Generic-AArch64 are installed, but note that
+this will very significantly increase the size of the container
+image. The default is True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
+should be modified to include Arm Allinea Studio. The default is
+True.
+
+- __eula__: By setting this value to `True`, you agree to the [Arm End User License Agreement](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula).
+The default value is `False`.
+
+- __ospackages__: List of OS packages to install prior to installing Arm
+Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
+`python`, `tar`, `wget`.  For RHEL-based Linux distributions, the
+default values are `glibc-devel`, `tar`, `wget`.
+
+- __prefix__: The top level install prefix.  The default value is
+`/opt/arm`.
+
+- __tarball__: Path to the Arm Allinea Studio tarball relative to the
+local build context.  The default value is empty.  If this is
+defined, the tarball in the local build context will be used
+rather than downloading the tarball from the web.
+
+- __version__: The version of Arm Allinea Studio to install.  The
+default value is `19.3`.
+
+__Examples__
+
+
+```python
+arm_allinea_studio(eula=True, version='19.3')
+```
+
+
+## runtime
+```python
+arm_allinea_studio.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+a = arm_allinea_compiler(...)
+Stage0 += a
+Stage1 += a.runtime()
+```
+
 # apt_get
 ```python
 apt_get(self, **kwargs)
