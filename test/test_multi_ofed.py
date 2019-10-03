@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu, ubuntu18
+from helpers import centos, docker, ubuntu, ubuntu18, x86_64
 
 from hpccm.building_blocks.multi_ofed import multi_ofed
 
@@ -31,6 +31,7 @@ class Test_multi_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_versions_ubuntu(self):
@@ -126,6 +127,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /etc/libibverbs.d
 RUN ln -s /usr/local/ofed/inbox /usr/local/ofed/5.0-0''')
 
+    @x86_64
     @centos
     @docker
     def test_runtime_centos(self):
@@ -142,6 +144,7 @@ RUN yum install -y \
 RUN mkdir -p /etc/libibverbs.d
 COPY --from=0 /usr/local/ofed /usr/local/ofed''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_runtime_ubuntu(self):
