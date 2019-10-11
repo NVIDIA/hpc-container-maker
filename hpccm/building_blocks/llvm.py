@@ -145,7 +145,7 @@ class llvm(bb_base, hpccm.templates.envvars):
             if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
                 # The default llvm configuration for CentOS on aarch64
                 # processors is unable to locate some gcc
-                # components. Setup necessary the gcc environment.
+                # components. Setup the necessary gcc environment.
                 self.environment_variables['COMPILER_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH'
                 self.environment_variables['CPATH'] = '/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:$CPATH'
                 self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2'
