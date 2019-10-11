@@ -68,6 +68,7 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
         self.assertEqual(str(m),
 r'''# MKL version 2019.4-070
 RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
+    yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && \
     yum install -y \
         intel-mkl-64bit-2019.4-070 && \

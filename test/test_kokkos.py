@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, centos8, docker, ubuntu
 
 from hpccm.building_blocks.kokkos import kokkos
 
@@ -64,6 +64,33 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         self.assertEqual(str(k),
 r'''# Kokkos version 2.9.00
 RUN yum install -y \
+        bc \
+        gzip \
+        hwloc-devel \
+        make \
+        tar \
+        wget \
+        which && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-2.9.00/build && cd /var/tmp/kokkos-2.9.00/build && \
+    /var/tmp/kokkos-2.9.00/generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
+    make kokkoslib -j$(nproc) && \
+    make install -j$(nproc) && \
+    rm -rf /var/tmp/2.9.00.tar.gz /var/tmp/kokkos-2.9.00
+ENV PATH=/usr/local/kokkos/bin:$PATH''')
+
+    @centos8
+    @docker
+    def test_defaults_centos8(self):
+        """Default kokkos building block"""
+        k = kokkos()
+        self.assertEqual(str(k),
+r'''# Kokkos version 2.9.00
+RUN yum install -y dnf-utils && \
+    yum-config-manager --set-enabled PowerTools && \
+    yum install -y \
         bc \
         gzip \
         hwloc-devel \

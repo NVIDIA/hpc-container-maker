@@ -77,6 +77,10 @@ class packages(bb_base):
     should be specified.  This parameter is ignored if `apt` or `yum`
     is specified.  The default value is an empty list.
 
+    powertools: Boolean flag to specify whether to enable the
+    PowerTools repository.  The default is False.  This parameter is
+    ignored if the Linux distribution is not RHEL-based.
+
     scl: Boolean flag to specify whether to enable the Software
     Collections (SCL) repository.  The default is False.  This
     parameter is ignored if the Linux distribution is not RHEL-based.
@@ -121,6 +125,7 @@ class packages(bb_base):
         self.__extract = kwargs.get('extract', None)
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__powertools = kwargs.get('powertools', False)
         self.__scl = kwargs.get('scl', False)
         self.__yum = kwargs.get('yum', [])
         self.__yum_keys = kwargs.get('yum_keys', [])
@@ -153,14 +158,16 @@ class packages(bb_base):
                             download_directory=self.__download_directory,
                             extract=self.__extract, epel=self.__epel,
                             keys=self.__yum_keys,
-                            ospackages=self.__yum, scl=self.__scl,
+                            ospackages=self.__yum,
+                            powertools=self.__powertools, scl=self.__scl,
                             repositories=self.__yum_repositories)
             else:
                 self += yum(download=self.__download,
                             download_directory=self.__download_directory,
                             extract=self.__extract,
                             epel=self.__epel, keys=self.__yum_keys,
-                            ospackages=self.__ospackages, scl=self.__scl,
+                            ospackages=self.__ospackages,
+                            powertools=self.__powertools, scl=self.__scl,
                             repositories=self.__yum_repositories)
         else:
             raise RuntimeError('Unknown Linux distribution')

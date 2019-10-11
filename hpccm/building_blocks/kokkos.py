@@ -23,6 +23,7 @@ from __future__ import print_function
 
 from six import string_types
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -104,6 +105,7 @@ class kokkos(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__opts = kwargs.get('opts', [])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__parallel = kwargs.get('parallel', '$(nproc)')
+        self.__powertools = False # enable the CentOS PowerTools repo
         self.__prefix = kwargs.get('prefix', '/usr/local/kokkos')
         self.__version = kwargs.get('version', '2.9.00')
 
@@ -123,7 +125,8 @@ class kokkos(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Fill in container instructions"""
 
         self += comment('Kokkos version {}'.format(self.__version))
-        self += packages(ospackages=self.__ospackages)
+        self += packages(ospackages=self.__ospackages,
+                         powertools=self.__powertools)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
 
@@ -139,6 +142,10 @@ class kokkos(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             if not self.__ospackages:
                 self.__ospackages = ['bc', 'gzip', 'hwloc-devel', 'make',
                                      'tar', 'wget', 'which']
+
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                # hwloc-devel is in the CentOS powertools repository
+                self.__powertools = True
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 

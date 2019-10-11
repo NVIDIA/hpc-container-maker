@@ -18,11 +18,12 @@ recipes, this value must be specified.  The default value is
 empty.
 
 - ___distro__: The underlying Linux distribution of the base image.
-Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,
-and `ubuntu18`.  By default, the primitive attempts to figure out
-the Linux distribution by inspecting the image identifier, and
-falls back to `ubuntu` if unable to determine the Linux
-distribution automatically.
+Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
+`rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
+default, the primitive attempts to figure out the Linux
+distribution by inspecting the image identifier, and falls back to
+`ubuntu` if unable to determine the Linux distribution
+automatically.
 
 - ___docker_env__: Boolean specifying whether to load the Docker base
  image environment, i.e., source

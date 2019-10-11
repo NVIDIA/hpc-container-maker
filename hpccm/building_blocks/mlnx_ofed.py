@@ -51,9 +51,10 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
     ospackages: List of OS packages to install prior to installing
     OFED.  For Ubuntu, the default values are `libnl-3-200`,
-    `libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based Linux
+    `libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based 7.x
     distributions, the default values are `libnl`, `libnl3`,
-    `numactl-libs`, and `wget`.
+    `numactl-libs`, and `wget`.  For RHEL-based 8.x distributions, the
+    default values are `libnl3`, `numactl-libs`, and `wget`.
 
     packages: List of packages to install from Mellanox OFED.  For
     Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
@@ -186,9 +187,14 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
                     self.__oslabel = 'rhel7.6alternate'
                 else:
-                    self.__oslabel = 'rhel7.2'
+                    if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                        self.__oslabel = 'rhel8.0'
+                    else:
+                        self.__oslabel = 'rhel7.2'
             if not self.__ospackages:
-                self.__ospackages = ['libnl', 'libnl3', 'numactl-libs', 'wget']
+                self.__ospackages = ['libnl3', 'numactl-libs', 'wget']
+                if hpccm.config.g_linux_version < StrictVersion('8.0'):
+                    self.__ospackages.append('libnl')
             if not self.__packages:
                 self.__packages = ['libibverbs', 'libibverbs-devel',
                                    'libibverbs-utils',

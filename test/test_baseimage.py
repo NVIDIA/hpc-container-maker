@@ -149,11 +149,53 @@ Stage: dev
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
 
     @docker
+    def test_detect_ubuntu_16(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='ubuntu:16.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+
+    @docker
+    def test_detect_ubuntu_18(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='ubuntu:18.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+
+    @docker
     def test_detect_centos(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-centos7')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+    @docker
+    def test_detect_centos_7(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='centos:7')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+    @docker
+    def test_detect_centos_8(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='centos:8')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+
+    @docker
+    def test_detect_ubi7(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nvidia/cuda:10.1-devel-ubi7')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.RHEL)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+    @docker
+    def test_detect_ubi8(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nvidia/cuda:10.1-devel-ubi8')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.RHEL)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
 
     @docker
     def test_detect_nonexistent(self):
@@ -189,6 +231,20 @@ Stage: dev
         b = baseimage(image='foo', _distro='centos')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+    @docker
+    def test_distro_centos7(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='centos7')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+    @docker
+    def test_distro_centos8(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='centos8')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
 
     @docker
     def test_distro_nonexistent(self):

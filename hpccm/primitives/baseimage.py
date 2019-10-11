@@ -46,11 +46,12 @@ class baseimage(object):
     empty.
 
     _distro: The underlying Linux distribution of the base image.
-    Valid values are `centos`, `redhat`, `rhel`, `ubuntu`, `ubuntu16`,
-    and `ubuntu18`.  By default, the primitive attempts to figure out
-    the Linux distribution by inspecting the image identifier, and
-    falls back to `ubuntu` if unable to determine the Linux
-    distribution automatically.
+    Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
+    `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
+    default, the primitive attempts to figure out the Linux
+    distribution by inspecting the image identifier, and falls back to
+    `ubuntu` if unable to determine the Linux distribution
+    automatically.
 
     _docker_env: Boolean specifying whether to load the Docker base
      image environment, i.e., source
@@ -109,11 +110,28 @@ class baseimage(object):
             hpccm.config.set_linux_distro('ubuntu16')
         elif self.__distro == 'ubuntu18':
             hpccm.config.set_linux_distro('ubuntu18')
-        elif (self.__distro == 'centos' or self.__distro == 'rhel' or
-              self.__distro == 'redhat'):
+        elif self.__distro == 'centos':
             hpccm.config.set_linux_distro('centos')
+        elif self.__distro == 'centos7':
+            hpccm.config.set_linux_distro('centos7')
+        elif self.__distro == 'centos8':
+            hpccm.config.set_linux_distro('centos8')
+        elif (self.__distro == 'rhel' or self.__distro == 'redhat'):
+            hpccm.config.set_linux_distro('rhel')
+        elif self.__distro == 'rhel7':
+            hpccm.config.set_linux_distro('rhel7')
+        elif self.__distro == 'rhel8':
+            hpccm.config.set_linux_distro('rhel8')
+        elif re.search(r'centos:?7', self.image):
+            hpccm.config.set_linux_distro('centos7')
+        elif re.search(r'centos:?8', self.image):
+            hpccm.config.set_linux_distro('centos8')
         elif re.search(r'centos|rhel|redhat', self.image):
             hpccm.config.set_linux_distro('centos')
+        elif re.search(r'ubi:?7', self.image):
+            hpccm.config.set_linux_distro('rhel7')
+        elif re.search(r'ubi:?8', self.image):
+            hpccm.config.set_linux_distro('rhel8')
         elif re.search(r'ubuntu:?16', self.image):
             hpccm.config.set_linux_distro('ubuntu16')
         elif re.search(r'ubuntu:?18', self.image):

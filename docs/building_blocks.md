@@ -1315,6 +1315,9 @@ recommended.
 __Parameters__
 
 
+- __build_opts__: List of VisIt build script options. The default values
+are `--xdb` and `--server-components-only`.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 Libsim. The default is True.
@@ -1333,9 +1336,6 @@ and `--no-icet` are added and the environment variable
 `PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
 block should be installed prior this building block.  The default
 value is True.
-
-- __opts__: List of VisIt build script options. The default values are
-`--xdb` and `--server-components-only`.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `gzip`, `make`,
@@ -1545,9 +1545,10 @@ x86_64 processors and `rhel7.6alternate` for aarch64 processors.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
-`libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based Linux
+`libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based 7.x
 distributions, the default values are `libnl`, `libnl3`,
-`numactl-libs`, and `wget`.
+`numactl-libs`, and `wget`.  For RHEL-based 8.x distributions, the
+default values are `libnl3`, `numactl-libs`, and `wget`.
 
 - __packages__: List of packages to install from Mellanox OFED.  For
 Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
@@ -2056,10 +2057,15 @@ For Ubuntu 18.04, the following packages are installed:
 `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
 `librdmacm-dev`, and `rdmacm-utils`.
 
-For RHEL-based Linux distributions, the following packages are
+For RHEL-based 7.x distributions, the following packages are
 installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
 `libibverbs-utils`, `librdmacm`, `rdma-core`, and
+`rdma-core-devel`.
+
+For RHEL-based 8.x distributions, the following packages are
+installed: `libibmad`, `libibmad-devel`, `libmlx5`, `libibumad`,
+`libibverbs`, `libibverbs-utils`, `librdmacm`, `rdma-core`, and
 `rdma-core-devel`.
 
 __Parameters__
@@ -2325,6 +2331,10 @@ packages with the consistent names across Linux distributions
 should be specified.  This parameter is ignored if `apt` or `yum`
 is specified.  The default value is an empty list.
 
+- __powertools__: Boolean flag to specify whether to enable the
+PowerTools repository.  The default is False.  This parameter is
+ignored if the Linux distribution is not RHEL-based.
+
 - __scl__: Boolean flag to specify whether to enable the Software
 Collections (SCL) repository.  The default is False.  This
 parameter is ignored if the Linux distribution is not RHEL-based.
@@ -2463,12 +2473,14 @@ The `pip` building block installs Python packages from PyPi.
 __Parameters__
 
 
+- __alternatives__: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+
 - __ospackages__: List of OS packages to install prior to installing
 PyPi packages.  For Ubuntu, the default values are `python-pip`,
 `python-setuptools`, and `python-wheel` for Python 2.x and
 `python3-pip`, `python3-setuptools`, and `python3-wheel` for
-Python 3.x.  For RHEL-based Linux distributions, the default
-values are `python-pip` for Python 2.x and `python34-pip` for
+Python 3.x.  For RHEL-based distributions, the default
+values are `python2-pip` for Python 2.x and `python3-pip` for
 Python 3.x.
 
 - __packages__: List of PyPi packages to install.  The default is
@@ -2571,6 +2583,8 @@ distribution.
 
 __Parameters__
 
+
+- __alternatives__: Boolean flag to specify whether to configure alternatives for `python` and `python-config` (if `devel` is enabled).  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
 
 - __devel__: Boolean flag to specify whether to also install the Python
 development headers and libraries.  The default is False.
@@ -2977,6 +2991,10 @@ not extracted. The default value is an empty string.
 
 - __ospackages__: A list of packages to install.  The default is an
 empty list.
+
+- __powertools__: Boolean flag to specify whether to enable the
+PowerTools repository.  The default is False.  This parameter is
+only recognized if the CentOS version is 8.x.
 
 - __repositories__: A list of yum repositories to add.  The default is
 an empty list.

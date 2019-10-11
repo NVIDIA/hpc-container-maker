@@ -23,15 +23,20 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
+from hpccm.primitives.shell import shell
 
 class python(bb_base):
     """The `python` building block installs Python from the upstream Linux
     distribution.
 
     # Parameters
+
+    alternatives: Boolean flag to specify whether to configure alternatives for `python` and `python-config` (if `devel` is enabled).  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
 
     devel: Boolean flag to specify whether to also install the Python
     development headers and libraries.  The default is False.
@@ -59,8 +64,8 @@ class python(bb_base):
 
         super(python, self).__init__(**kwargs)
 
+        self.__alternatives = kwargs.get('alternatives', False)
         self.__devel = kwargs.get('devel', False)
-        self.__epel = False
         self.__python2 = kwargs.get('python2', True)
         self.__python3 = kwargs.get('python3', True)
 
@@ -69,18 +74,19 @@ class python(bb_base):
 
         if self.__python2:
             self.__debs.append('python')
-            self.__rpms.append('python')
+            self.__rpms.append('python2')
+
             if self.__devel:
                 self.__debs.append('python-dev')
-                self.__rpms.append('python-devel')
+                self.__rpms.append('python2-devel')
 
         if self.__python3:
             self.__debs.append('python3')
-            self.__rpms.append('python34')  # EPEL package
-            self.__epel = True
+            self.__rpms.append('python3')
+
             if self.__devel:
                 self.__debs.append('python3-dev')
-                self.__rpms.append('python34-devel')  # EPEL package
+                self.__rpms.append('python3-devel')
 
         # Fill in container instructions
         self.__instructions()
@@ -89,7 +95,13 @@ class python(bb_base):
         """Fill in container instructions"""
 
         self += comment('Python')
-        self += packages(apt=self.__debs, epel=self.__epel, yum=self.__rpms)
+        self += packages(apt=self.__debs, yum=self.__rpms)
+        if self.__alternatives:
+            alternatives = ['alternatives --set python /usr/bin/python2']
+            if self.__devel:
+                alternatives.append('alternatives --install /usr/bin/python-config python-config /usr/bin/python2-config 30')
+            self += shell(commands=alternatives)
+
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -103,8 +115,4 @@ class python(bb_base):
         Stage1 += p.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('Python'))
-        instructions.append(packages(apt=self.__debs, epel=self.__epel,
-                                     yum=self.__rpms))
-        return '\n'.join(str(x) for x in instructions)
+        return str(self)

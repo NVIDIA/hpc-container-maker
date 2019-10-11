@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, x86_64
+from helpers import aarch64, centos, centos8, docker, x86_64
 
 from hpccm.building_blocks.yum import yum
 
@@ -54,7 +54,42 @@ r'''RUN yum install -y \
                 repositories=['http://www.example.com/example.repo'])
         self.assertEqual(str(y),
 r'''RUN rpm --import https://www.example.com/key.pub && \
+    yum install -y yum-utils && \
     yum-config-manager --add-repo http://www.example.com/example.repo && \
+    yum install -y \
+        example && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_add_repo_centos8(self):
+        """Add repo and key"""
+        y = yum(keys=['https://www.example.com/key.pub'],
+                ospackages=['example'],
+                repositories=['http://www.example.com/example.repo'])
+        self.assertEqual(str(y),
+r'''RUN rpm --import https://www.example.com/key.pub && \
+    yum install -y dnf-utils && \
+    yum-config-manager --add-repo http://www.example.com/example.repo && \
+    yum install -y \
+        example && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_add_repo_powertools_centos8(self):
+        """Add repo and key and enable PowerTools"""
+        y = yum(keys=['https://www.example.com/key.pub'],
+                ospackages=['example'],
+                repositories=['http://www.example.com/example.repo'],
+                powertools=True)
+        self.assertEqual(str(y),
+r'''RUN rpm --import https://www.example.com/key.pub && \
+    yum install -y dnf-utils && \
+    yum-config-manager --add-repo http://www.example.com/example.repo && \
+    yum-config-manager --set-enabled PowerTools && \
     yum install -y \
         example && \
     rm -rf /var/cache/yum/*''')
@@ -102,4 +137,28 @@ r'''RUN yum install -y yum-utils && \
     mkdir -p /usr/local/ofed && cd /usr/local/ofed && \
     find /var/tmp/yum_download -regextype posix-extended -type f -regex "/var/tmp/yum_download/(rdma-core).*rpm" -exec sh -c "rpm2cpio {} | cpio -idm" \; && \
     rm -rf /var/tmp/yum_download && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @centos
+    @docker
+    def test_powertools_centos7(self):
+        """Powertools repo"""
+        y = yum(ospackages=['hwloc-devel'], powertools=True)
+        self.assertEqual(str(y),
+r'''RUN yum install -y \
+        hwloc-devel && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_powertools_centos8(self):
+        """Powertools repo"""
+        y = yum(ospackages=['hwloc-devel'], powertools=True)
+        self.assertEqual(str(y),
+r'''RUN yum install -y dnf-utils && \
+    yum-config-manager --set-enabled PowerTools && \
+    yum install -y \
+        hwloc-devel && \
     rm -rf /var/cache/yum/*''')

@@ -126,6 +126,8 @@ class cgns(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.rm,
             if not self.__ospackages:
                 self.__ospackages = ['bzip2', 'file', 'make', 'wget',
                                      'zlib-devel']
+                if self.__check:
+                    self.__ospackages.append('diffutils')
             self.__runtime_ospackages = ['zlib']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

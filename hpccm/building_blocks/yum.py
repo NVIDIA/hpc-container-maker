@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -62,6 +63,10 @@ class yum(bb_base):
     ospackages: A list of packages to install.  The default is an
     empty list.
 
+    powertools: Boolean flag to specify whether to enable the
+    PowerTools repository.  The default is False.  This parameter is
+    only recognized if the CentOS version is 8.x.
+
     repositories: A list of yum repositories to add.  The default is
     an empty list.
 
@@ -90,6 +95,7 @@ class yum(bb_base):
         self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
+        self.__powertools = kwargs.get('powertools', False)
         self.__repositories = kwargs.get('repositories', [])
         self.__scl = kwargs.get('scl', False)
 
@@ -126,6 +132,14 @@ class yum(bb_base):
                 ' '.join(self.__keys)))
 
         if self.__repositories:
+            # Need yum-config-manager
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                # CentOS 8
+                self.__commands.append('yum install -y dnf-utils')
+            else:
+                # CentOS 7
+                self.__commands.append('yum install -y yum-utils')
+
             for repo in self.__repositories:
                 self.__commands.append(
                     'yum-config-manager --add-repo {}'.format(repo))
@@ -134,6 +148,16 @@ class yum(bb_base):
             # This needs to be a discrete, preliminary step so that
             # packages from EPEL are available to be installed.
             self.__commands.append('yum install -y epel-release')
+
+        if (self.__powertools and
+            hpccm.config.g_linux_version >= StrictVersion('8.0')):
+            # This needs to be a discrete, preliminary step so that
+            # packages from PowerTools are available to be installed.
+            if not self.__repositories:
+                # dnf-utils will be installed above if repositories are
+                # enabled
+                self.__commands.append('yum install -y dnf-utils')
+            self.__commands.append('yum-config-manager --set-enabled PowerTools')
 
         if self.__scl:
             # This needs to be a discrete, preliminary step so that

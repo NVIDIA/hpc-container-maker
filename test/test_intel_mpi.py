@@ -74,6 +74,7 @@ RUN yum install -y \
         openssh-clients && \
     rm -rf /var/cache/yum/*
 RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
+    yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
     yum install -y \
         intel-mpi-2019.4-070 && \

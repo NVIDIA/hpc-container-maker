@@ -81,6 +81,29 @@ class Test_config(unittest.TestCase):
                          hpccm.linux_distro.CENTOS)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
 
+        hpccm.config.set_linux_distro('centos8')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+
+    @docker
+    def test_set_linux_distro_rhel(self):
+        """Set Linux distribution to RHEL"""
+        hpccm.config.set_linux_distro('rhel')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.RHEL)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+        hpccm.config.set_linux_distro('rhel7')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.RHEL)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+
+        hpccm.config.set_linux_distro('rhel8')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.RHEL)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+
     @docker
     def test_set_linux_distro_invalid(self):
         """Set Linux distribution to an invalid value"""

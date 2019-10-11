@@ -21,10 +21,14 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
+
+import hpccm.config
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
@@ -33,12 +37,14 @@ class pip(bb_base):
 
     # Parameters
 
+    alternatives: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+
     ospackages: List of OS packages to install prior to installing
     PyPi packages.  For Ubuntu, the default values are `python-pip`,
     `python-setuptools`, and `python-wheel` for Python 2.x and
     `python3-pip`, `python3-setuptools`, and `python3-wheel` for
-    Python 3.x.  For RHEL-based Linux distributions, the default
-    values are `python-pip` for Python 2.x and `python34-pip` for
+    Python 3.x.  For RHEL-based distributions, the default
+    values are `python2-pip` for Python 2.x and `python3-pip` for
     Python 3.x.
 
     packages: List of PyPi packages to install.  The default is
@@ -67,6 +73,7 @@ class pip(bb_base):
 
         super(pip, self).__init__(**kwargs)
 
+        self.__alternatives = kwargs.get('alternatives', False)
         self.__epel = False
         self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])
@@ -78,15 +85,17 @@ class pip(bb_base):
 
         if self.__ospackages == None:
             if self.__pip.startswith('pip3'):
-                self.__epel = True
                 self.__debs.extend(['python3-pip', 'python3-setuptools',
                                     'python3-wheel'])
-                self.__rpms.append('python34-pip')  # EPEL package
+                self.__rpms.append('python3-pip')
             else:
-                self.__epel = True
                 self.__debs.extend(['python-pip', 'python-setuptools',
                                     'python-wheel'])
-                self.__rpms.append('python-pip')    # EPEL package
+                self.__rpms.append('python2-pip')
+                if (hpccm.config.g_linux_distro == linux_distro.CENTOS and
+                    hpccm.config.g_linux_version < StrictVersion('8.0')):
+                    # python2-pip is an EPEL package in CentOS 7.x
+                    self.__epel = True
         elif self.__ospackages:
             self.__debs = self.__ospackages
             self.__rpms = self.__ospackages
@@ -101,6 +110,11 @@ class pip(bb_base):
         if self.__debs or self.__rpms:
             self += packages(apt=self.__debs, epel=self.__epel,
                              yum=self.__rpms)
+
+        if self.__alternatives:
+            self += shell(commands=[
+                'alternatives --set python /usr/bin/python2',
+                'alternatives --install /usr/bin/pip pip /usr/bin/pip2 30'])
 
         if self.__pip:
             cmds = []
