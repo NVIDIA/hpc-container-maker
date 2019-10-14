@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -31,6 +31,7 @@ class Test_llvm(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -43,6 +44,7 @@ RUN apt-get update -y && \
         clang && \
     rm -rf /var/lib/apt/lists/*''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -58,6 +60,7 @@ RUN yum install -y \
         clang && \
     rm -rf /var/cache/yum/*''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_version_ubuntu(self):
@@ -72,6 +75,7 @@ RUN apt-get update -y && \
 RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && \
     update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-6.0) 30''')
 
+    @x86_64
     @centos
     @docker
     def test_version_centos(self):
@@ -90,6 +94,26 @@ RUN yum install -y centos-release-scl && \
 ENV LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64:$LD_LIBRARY_PATH \
     PATH=/opt/rh/llvm-toolset-7/root/usr/bin:$PATH''')
 
+    @aarch64
+    @centos
+    @docker
+    def test_aarch64_centos(self):
+        """aarch64"""
+        l = llvm()
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang && \
+    rm -rf /var/cache/yum/*
+ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH \
+    CPATH=/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:$CPATH \
+    LIBRARY_PATH=/usr/lib/gcc/aarch64-redhat-linux/4.8.2''')
+
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):

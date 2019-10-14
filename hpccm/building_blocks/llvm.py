@@ -27,7 +27,7 @@ import hpccm.templates.envvars
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
@@ -141,6 +141,14 @@ class llvm(bb_base, hpccm.templates.envvars):
             if self.__version:
                 self.environment_variables['PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version)
                 self.environment_variables['LD_LIBRARY_PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)
+
+            if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+                # The default llvm configuration for CentOS on aarch64
+                # processors is unable to locate some gcc
+                # components. Setup the necessary gcc environment.
+                self.environment_variables['COMPILER_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH'
+                self.environment_variables['CPATH'] = '/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:$CPATH'
+                self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2'
         else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
