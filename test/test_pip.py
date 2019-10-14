@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, centos8, docker, ubuntu
 
 from hpccm.building_blocks.pip import pip
 
@@ -55,8 +55,22 @@ RUN pip install hpccm''')
 r'''# pip
 RUN yum install -y epel-release && \
     yum install -y \
-        python-pip && \
+        python2-pip && \
     rm -rf /var/cache/yum/*
+RUN pip install hpccm''')
+
+    @centos8
+    @docker
+    def test_alternatives_centos8(self):
+        """Default pip building block"""
+        p = pip(packages=['hpccm'], alternatives=True)
+        self.assertEqual(str(p),
+r'''# pip
+RUN yum install -y \
+        python2-pip && \
+    rm -rf /var/cache/yum/*
+RUN alternatives --set python /usr/bin/python2 && \
+    alternatives --install /usr/bin/pip pip /usr/bin/pip2 30
 RUN pip install hpccm''')
 
     @ubuntu
@@ -81,9 +95,8 @@ RUN pip3 install hpccm''')
         p = pip(packages=['hpccm'], pip='pip3')
         self.assertEqual(str(p),
 r'''# pip
-RUN yum install -y epel-release && \
-    yum install -y \
-        python34-pip && \
+RUN yum install -y \
+        python3-pip && \
     rm -rf /var/cache/yum/*
 RUN pip3 install hpccm''')
 

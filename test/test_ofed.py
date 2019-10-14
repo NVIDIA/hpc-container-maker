@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, ubuntu, ubuntu18, ppc64le, x86_64
+from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ppc64le, x86_64
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -101,6 +101,28 @@ RUN yum install -y \
         dapl-devel \
         ibutils \
         libibcm \
+        libibmad \
+        libibmad-devel \
+        libibumad \
+        libibverbs \
+        libibverbs-utils \
+        libmlx5 \
+        librdmacm \
+        rdma-core \
+        rdma-core-devel && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_defaults_centos8(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN yum install -y dnf-utils && \
+    yum-config-manager --set-enabled PowerTools && \
+    yum install -y \
         libibmad \
         libibmad-devel \
         libibumad \

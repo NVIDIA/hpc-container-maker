@@ -51,6 +51,15 @@ def centos(function):
 
     return wrapper
 
+def centos8(function):
+    """Decorator to set the Linux distribution to CentOS 8"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.CENTOS
+        hpccm.config.g_linux_version = StrictVersion('8.0')
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def docker(function):
     """Decorator to set the global container type to docker"""
     def wrapper(*args, **kwargs):

@@ -55,9 +55,11 @@ know what you are doing.
 __Arguments__
 
 
-- __distro (string)__: Valid values are `centos7`, `ubuntu16`, and
-`ubuntu18`.  `ubuntu` is an alias for `ubuntu16` and `centos` is an
-alias for `centos7`.
+- __distro (string)__: Valid values are `centos7`, `centos8`, `rhel7`,
+`rhel8`, `ubuntu16`, and `ubuntu18`.  `ubuntu` is an alias for
+`ubuntu16`, `centos` is an alias for `centos7`, and `rhel` is an
+alias for `rhel7`.
+
 
 ## set_singularity_version
 ```python

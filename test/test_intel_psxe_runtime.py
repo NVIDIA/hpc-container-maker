@@ -108,6 +108,7 @@ RUN yum install -y \
         which && \
     rm -rf /var/cache/yum/*
 RUN rpm --import https://yum.repos.intel.com/2019/setup/RPM-GPG-KEY-intel-psxe-runtime-2019 && \
+    yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/2019/setup/intel-psxe-runtime-2019.repo && \
     yum install -y \
         intel-icc-runtime \

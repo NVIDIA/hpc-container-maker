@@ -51,6 +51,9 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    build_opts: List of VisIt build script options. The default values
+    are `--xdb` and `--server-components-only`.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
     Libsim. The default is True.
@@ -69,9 +72,6 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `PAR_COMPILER` is set to `mpicc`. If True, a MPI library building
     block should be installed prior this building block.  The default
     value is True.
-
-    opts: List of VisIt build script options. The default values are
-    `--xdb` and `--server-components-only`.
 
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are `gzip`, `make`,
@@ -122,7 +122,8 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__arch = None # Filled in by __cpu_arch()
         self.__buildscript = r'build_visit{0}'
         self.__mpi = kwargs.get('mpi', True)
-        self.__opts = kwargs.get('opts', ['--xdb', '--server-components-only'])
+        self.__opts = kwargs.get('build_opts',
+                                 ['--xdb', '--server-components-only'])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local/visit')

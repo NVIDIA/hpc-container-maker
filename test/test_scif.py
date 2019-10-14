@@ -181,10 +181,9 @@ r'''%apphelp foo
 Python
 %appinstall foo
     for f in /.singularity.d/env/*; do . $f; done
-    yum install -y epel-release
     yum install -y \
-        python \
-        python34
+        python2 \
+        python3
     rm -rf /var/cache/yum/*
 %apprun foo
     eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"''')

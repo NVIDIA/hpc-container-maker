@@ -55,10 +55,15 @@ class ofed(bb_base):
     `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
     `librdmacm-dev`, and `rdmacm-utils`.
 
-    For RHEL-based Linux distributions, the following packages are
+    For RHEL-based 7.x distributions, the following packages are
     installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
     `libibmad-devel`, `libmlx5`, `libibumad`, `libibverbs`,
     `libibverbs-utils`, `librdmacm`, `rdma-core`, and
+    `rdma-core-devel`.
+
+    For RHEL-based 8.x distributions, the following packages are
+    installed: `libibmad`, `libibmad-devel`, `libmlx5`, `libibumad`,
+    `libibverbs`, `libibverbs-utils`, `librdmacm`, `rdma-core`, and
     `rdma-core-devel`.
 
     # Parameters
@@ -86,6 +91,7 @@ class ofed(bb_base):
 
         self.__deppackages = []  # Filled in by __distro()
         self.__ospackages = []   # Filled in by __distro()
+        self.__powertools = False # enable the CentOS PowerTools repo
         self.__prefix = kwargs.get('prefix', None)
         self.__symlink = kwargs.get('symlink', False)
         self.__wd = '/var/tmp'
@@ -136,10 +142,19 @@ class ofed(bb_base):
                             self.__ospackages.remove(missing)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
-            self.__ospackages = ['dapl', 'dapl-devel', 'ibutils', 'libibcm',
-                                 'libibmad', 'libibmad-devel', 'libmlx5',
-                                 'libibumad', 'libibverbs', 'libibverbs-utils',
-                                 'librdmacm', 'rdma-core', 'rdma-core-devel']
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                self.__ospackages = ['libibmad', 'libibmad-devel',
+                                     'libibumad', 'libibverbs',
+                                     'libibverbs-utils', 'libmlx5',
+                                     'librdmacm',
+                                     'rdma-core', 'rdma-core-devel']
+                self.__powertools = True
+            else:
+                self.__ospackages = ['dapl', 'dapl-devel', 'ibutils',
+                                     'libibcm', 'libibmad', 'libibmad-devel',
+                                     'libmlx5', 'libibumad', 'libibverbs',
+                                     'libibverbs-utils', 'librdmacm',
+                                     'rdma-core', 'rdma-core-devel']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
@@ -152,7 +167,8 @@ class ofed(bb_base):
             # Extract to a prefix - not a "real" package manager install
             self += packages(ospackages=self.__deppackages)
             self += packages(download=True, extract=self.__prefix,
-                             ospackages=self.__ospackages)
+                             ospackages=self.__ospackages,
+                             powertools=self.__powertools)
 
             # library symlinks
             if self.__symlink:
@@ -172,7 +188,8 @@ class ofed(bb_base):
             self += shell(commands=commands)
         else:
             # Install packages using package manager
-            self += packages(ospackages=self.__ospackages)
+            self += packages(ospackages=self.__ospackages,
+                             powertools=self.__powertools)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

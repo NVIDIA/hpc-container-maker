@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, centos8, docker, ubuntu
 
 from hpccm.building_blocks.python import python
 
@@ -51,11 +51,23 @@ RUN apt-get update -y && \
         p = python()
         self.assertEqual(str(p),
 r'''# Python
-RUN yum install -y epel-release && \
-    yum install -y \
-        python \
-        python34 && \
+RUN yum install -y \
+        python2 \
+        python3 && \
     rm -rf /var/cache/yum/*''')
+
+    @centos8
+    @docker
+    def test_defaults_alternatives(self):
+        """Default python building block"""
+        p = python(alternatives=True)
+        self.assertEqual(str(p),
+r'''# Python
+RUN yum install -y \
+        python2 \
+        python3 && \
+    rm -rf /var/cache/yum/*
+RUN alternatives --set python /usr/bin/python2''')
 
     @ubuntu
     @docker
