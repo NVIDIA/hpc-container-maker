@@ -50,11 +50,12 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     x86_64 processors and `rhel7.6alternate` for aarch64 processors.
 
     ospackages: List of OS packages to install prior to installing
-    OFED.  For Ubuntu, the default values are `libnl-3-200`,
-    `libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based 7.x
-    distributions, the default values are `libnl`, `libnl3`,
-    `numactl-libs`, and `wget`.  For RHEL-based 8.x distributions, the
-    default values are `libnl3`, `numactl-libs`, and `wget`.
+    OFED.  For Ubuntu, the default values are `findutils`,
+    `libnl-3-200`, `libnl-route-3-200`, `libnuma1`, and `wget`.  For
+    RHEL-based 7.x distributions, the default values are `findutils`,
+    `libnl`, `libnl3`, `numactl-libs`, and `wget`.  For RHEL-based 8.x
+    distributions, the default values are `findutils`, `libnl3`,
+    `numactl-libs`, and `wget`.
 
     packages: List of packages to install from Mellanox OFED.  For
     Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
@@ -161,8 +162,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 else:
                     self.__oslabel = 'ubuntu16.04'
             if not self.__ospackages:
-                self.__ospackages = ['libnl-3-200', 'libnl-route-3-200',
-                                     'libnuma1', 'wget']
+                self.__ospackages = ['findutils', 'libnl-3-200',
+                                     'libnl-route-3-200', 'libnuma1', 'wget']
             if not self.__packages:
                 self.__packages = ['libibverbs1', 'libibverbs-dev',
                                    'ibverbs-utils',
@@ -178,10 +179,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__installer = 'dpkg --install'
             self.__extractor_template = 'dpkg --extract {0} {1}'
 
-            self.__pkglist = ' '.join('{}_*_{}.deb'.format(
-                posixpath.join(self.__wd, self.__label, 'DEBS', x),
-                self.__arch_pkg)
-                                      for x in self.__packages)
+            self.__pkglist = '.*(' + '|'.join(sorted(self.__packages)) + ')_.*_{}.deb'.format(self.__arch_pkg)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
                 if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
@@ -192,7 +190,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                     else:
                         self.__oslabel = 'rhel7.2'
             if not self.__ospackages:
-                self.__ospackages = ['libnl3', 'numactl-libs', 'wget']
+                self.__ospackages = ['findutils', 'libnl3', 'numactl-libs',
+                                     'wget']
                 if hpccm.config.g_linux_version < StrictVersion('8.0'):
                     self.__ospackages.append('libnl')
             if not self.__packages:
@@ -208,12 +207,13 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 self.__version, self.__oslabel, self.__arch_download)
 
             self.__installer = 'rpm --install'
-            self.__extractor_template = 'rpm2cpio {0} | cpio -idm'
+            self.__extractor_template = 'sh -c "rpm2cpio {0} | cpio -idm"'
 
-            self.__pkglist = ' '.join('{}-*.{}.rpm'.format(
-                posixpath.join(self.__wd, self.__label, 'RPMS', x),
-                self.__arch_pkg)
-                                      for x in self.__packages)
+            self.__pkglist = '.*(' + '|'.join(sorted(self.__packages)) + ')-[0-9].*{}.rpm'.format(self.__arch_pkg)
+            #self.__pkglist = ' '.join('{}-*.{}.rpm'.format(
+            #    posixpath.join(self.__wd, self.__label, 'RPMS', x),
+            #    self.__arch_pkg)
+            #                          for x in self.__packages)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
@@ -238,13 +238,15 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__commands.append('mkdir -p /etc/libibverbs.d')
             self.__commands.append('mkdir -p {0} && cd {0}'.format(
                 self.__prefix))
-            self.__commands.extend([self.__extractor_template.format(
-                x, self.__prefix) for x in self.__pkglist.split()])
+            self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -not -path "*UPSTREAM*" -exec {2} \;'.format(
+                posixpath.join(self.__wd, self.__label),
+                self.__pkglist,
+                self.__extractor_template.format('{}', self.__prefix)))
+            #self.__commands.extend([self.__extractor_template.format(
+            #    x, self.__prefix) for x in self.__pkglist.split()])
 
             # library symlinks
             if self.__symlink:
-                self.__ospackages.append('findutils')
-
                 self.__commands.append('mkdir -p {0} && cd {0}'.format(
                     posixpath.join(self.__prefix, 'lib')))
                 # Prune the symlink directory itself and any debug
@@ -254,8 +256,12 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                     self.__prefix))
         else:
             # Install in the normal system locations
-            self.__commands.append('{0} {1}'.format(self.__installer,
-                                                    self.__pkglist))
+
+            # MLNX OFED version 4.7 and later split the packages into
+            # several subdirectories.  Exclude the upstream packages.
+            self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -not -path "*UPSTREAM*" -exec {2} {{}} +'.format(
+                posixpath.join(self.__wd, self.__label),
+                self.__pkglist, self.__installer))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(

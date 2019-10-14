@@ -42,6 +42,7 @@ class Test_multi_ofed(unittest.TestCase):
 r'''# Mellanox OFED version 4.5-1.0.1.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        findutils \
         libnl-3-200 \
         libnl-route-3-200 \
         libnuma1 \
@@ -51,23 +52,12 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
     mkdir -p /etc/libibverbs.d && \
     mkdir -p /usr/local/ofed/4.5-1.0.1.0 && cd /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibverbs1_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibverbs-dev_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/ibverbs-utils_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibmad_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibmad-devel_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibumad_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libibumad-devel_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libmlx4-1_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libmlx4-dev_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libmlx5-1_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/libmlx5-dev_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/librdmacm-dev_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64/DEBS/librdmacm1_*_amd64.deb /usr/local/ofed/4.5-1.0.1.0 && \
+    find /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --extract {} /usr/local/ofed/4.5-1.0.1.0 \; && \
     rm -rf /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-x86_64
 # Mellanox OFED version 4.6-1.0.1.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        findutils \
         libnl-3-200 \
         libnl-route-3-200 \
         libnuma1 \
@@ -77,19 +67,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
     mkdir -p /etc/libibverbs.d && \
     mkdir -p /usr/local/ofed/4.6-1.0.1.1 && cd /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibverbs1_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibverbs-dev_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/ibverbs-utils_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibmad_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibmad-devel_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibumad_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libibumad-devel_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libmlx4-1_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libmlx4-dev_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libmlx5-1_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/libmlx5-dev_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/librdmacm-dev_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
-    dpkg --extract /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64/DEBS/librdmacm1_*_amd64.deb /usr/local/ofed/4.6-1.0.1.1 && \
+    find /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --extract {} /usr/local/ofed/4.6-1.0.1.1 \; && \
     rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64
 # OFED
 RUN apt-get update -y && \
