@@ -210,10 +210,6 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__extractor_template = 'sh -c "rpm2cpio {0} | cpio -idm"'
 
             self.__pkglist = '.*(' + '|'.join(sorted(self.__packages)) + ')-[0-9].*{}.rpm'.format(self.__arch_pkg)
-            #self.__pkglist = ' '.join('{}-*.{}.rpm'.format(
-            #    posixpath.join(self.__wd, self.__label, 'RPMS', x),
-            #    self.__arch_pkg)
-            #                          for x in self.__packages)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
@@ -242,8 +238,6 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                 posixpath.join(self.__wd, self.__label),
                 self.__pkglist,
                 self.__extractor_template.format('{}', self.__prefix)))
-            #self.__commands.extend([self.__extractor_template.format(
-            #    x, self.__prefix) for x in self.__pkglist.split()])
 
             # library symlinks
             if self.__symlink:
