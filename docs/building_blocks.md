@@ -1544,11 +1544,12 @@ RHEL-based Linux distributions, the default value is `rhel7.2` for
 x86_64 processors and `rhel7.6alternate` for aarch64 processors.
 
 - __ospackages__: List of OS packages to install prior to installing
-OFED.  For Ubuntu, the default values are `libnl-3-200`,
-`libnl-route-3-200`, `libnuma1`, and `wget`.  For RHEL-based 7.x
-distributions, the default values are `libnl`, `libnl3`,
-`numactl-libs`, and `wget`.  For RHEL-based 8.x distributions, the
-default values are `libnl3`, `numactl-libs`, and `wget`.
+OFED.  For Ubuntu, the default values are `findutils`,
+`libnl-3-200`, `libnl-route-3-200`, `libnuma1`, and `wget`.  For
+RHEL-based 7.x distributions, the default values are `findutils`,
+`libnl`, `libnl3`, `numactl-libs`, and `wget`.  For RHEL-based 8.x
+distributions, the default values are `findutils`, `libnl3`,
+`numactl-libs`, and `wget`.
 
 - __packages__: List of packages to install from Mellanox OFED.  For
 Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
