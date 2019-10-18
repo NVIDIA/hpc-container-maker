@@ -21,6 +21,7 @@ from hpccm.building_blocks.catalyst import catalyst
 from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
+from hpccm.building_blocks.conda import conda
 from hpccm.building_blocks.fftw import fftw
 from hpccm.building_blocks.gdrcopy import gdrcopy
 from hpccm.building_blocks.gnu import gnu

@@ -451,6 +451,66 @@ cmake(eula=True, version='3.10.3')
 ```
 
 
+# conda
+```python
+conda(self, **kwargs)
+```
+The `conda` building block installs Anaconda.
+
+You must agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/) to use this building block.
+
+__Parameters__
+
+
+- __channels__: List of additional Conda channels to enable.  The
+default is an empty list.
+
+- __eula__: By setting this value to `True`, you agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/).
+The default value is `False`.
+
+- __ospackages__: List of OS packages to install prior to installing
+Conda.  The default values are `ca-certificates` and `wget`.
+
+- __packages__: List of Conda packages to install.  The default is an
+empty list.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/anaconda`.
+
+- __python2__: Boolean flag to specify that the Python 2 version of
+Anaconda should be installed.  The default is False.
+
+- __version__: The version of Anaconda to download.  The default value
+is `4.7.12`.
+
+__Examples__
+
+
+```python
+conda(packages=['numpy'])
+```
+
+```python
+conda(channels=['conda-forge', 'nvidia'], prefix='/opt/conda')
+```
+
+
+## runtime
+```python
+conda.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+c = conda(...)
+Stage0 += c
+Stage1 += c.runtime()
+```
+
 # fftw
 ```python
 fftw(self, **kwargs)
