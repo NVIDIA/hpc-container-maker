@@ -49,6 +49,9 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    basedir: List of additional include and library paths for building
+    Charm++.  The default is an empty list.
+
     check: Boolean flag to specify whether the test cases should be
     run.  The default is False.
 
@@ -100,15 +103,16 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(charm, self).__init__(**kwargs)
 
+        self.__basedir = kwargs.get('basedir', [])
         self.__baseurl = kwargs.get('baseurl',
-                                    'http://charm.cs.illinois.edu/distrib')
+                                    'https://github.com/UIUC-PPL/charm/archive')
         self.__check = kwargs.get('check', False)
         self.__options = kwargs.get('options', ['--build-shared',
                                                 '--with-production'])
         self.__ospackages = kwargs.get('ospackages',
                                        ['autoconf', 'automake', 'git',
                                         'libtool', 'make', 'wget'])
-        self.__parallel = kwargs.get('parallel', 4)
+        self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__target = kwargs.get('target', 'charm++')
         self.__target_architecture = kwargs.get('target_architecture', '')
@@ -163,7 +167,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        tarball = 'charm-{}.tar.gz'.format(self.__version)
+        tarball = 'v{}.tar.gz'.format(self.__version)
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
@@ -188,10 +192,17 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                         'common', 'cc-pgcc.sh'),
                     patterns=[r's/pgCC/pgc++/g']))
 
+        # Construct options string
+        options = []
+        if self.__options:
+            options.extend(self.__options)
+        if self.__basedir:
+            options.extend(['--basedir={}'.format(x) for x in self.__basedir])
+
         # Build
         self.__commands.append('cd {} && ./build {} {} {} -j{}'.format(
             self.__installdir, self.__target, self.__target_architecture,
-            ' '.join(self.__options), self.__parallel))
+            ' '.join(options), self.__parallel))
 
         # Set library path
         libpath = posixpath.join(self.__installdir, 'lib_so')

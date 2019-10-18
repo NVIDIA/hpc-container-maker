@@ -48,10 +48,10 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.9.0.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.9.0.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j4 && \
-    rm -rf /var/tmp/charm-6.9.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
+    rm -rf /var/tmp/v6.9.0.tar.gz
 ENV CHARMBASE=/usr/local/charm-6.9.0 \
     LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
     PATH=/usr/local/charm-6.9.0/bin:$PATH''')
@@ -73,10 +73,10 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.9.0.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.9.0.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-arm8 --build-shared --with-production -j4 && \
-    rm -rf /var/tmp/charm-6.9.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-arm8 --build-shared --with-production -j$(nproc) && \
+    rm -rf /var/tmp/v6.9.0.tar.gz
 ENV CHARMBASE=/usr/local/charm-6.9.0 \
     LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
     PATH=/usr/local/charm-6.9.0/bin:$PATH''')
@@ -98,10 +98,10 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.9.0.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.9.0.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-ppc64le --build-shared --with-production -j4 && \
-    rm -rf /var/tmp/charm-6.9.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-ppc64le --build-shared --with-production -j$(nproc) && \
+    rm -rf /var/tmp/v6.9.0.tar.gz
 ENV CHARMBASE=/usr/local/charm-6.9.0 \
     LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
     PATH=/usr/local/charm-6.9.0/bin:$PATH''')
@@ -123,13 +123,38 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://charm.cs.illinois.edu/distrib/charm-6.8.2.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/charm-6.8.2.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-v6.8.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j4 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.8.2.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.8.2.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-v6.8.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
     echo "/usr/local/charm-v6.8.2/lib_so" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/charm-6.8.2.tar.gz
+    rm -rf /var/tmp/v6.8.2.tar.gz
 ENV CHARMBASE=/usr/local/charm-v6.8.2 \
     PATH=/usr/local/charm-v6.8.2/bin:$PATH''')
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_basedir(self):
+        """basedir option"""
+        c = charm(basedir=['/usr/local/openmpi'], version='6.9.0')
+        self.assertEqual(str(c),
+r'''# Charm++ version 6.9.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        git \
+        libtool \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production --basedir=/usr/local/openmpi -j$(nproc) && \
+    rm -rf /var/tmp/v6.9.0.tar.gz
+ENV CHARMBASE=/usr/local/charm-6.9.0 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.9.0/bin:$PATH''')
 
     @x86_64
     @ubuntu
