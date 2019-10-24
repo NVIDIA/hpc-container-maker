@@ -153,7 +153,6 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__commands.append(
                 '/bin/sh {0} --prefix={1}'.format(
                     posixpath.join(self.__wd, runfile), self.__prefix))
-        
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, runfile)]))
