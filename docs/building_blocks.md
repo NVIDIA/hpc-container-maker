@@ -347,6 +347,9 @@ The `charm` building block downloads and install the
 __Parameters__
 
 
+- __basedir__: List of additional include and library paths for building
+Charm++.  The default is an empty list.
+
 - __check__: Boolean flag to specify whether the test cases should be
 run.  The default is False.
 
