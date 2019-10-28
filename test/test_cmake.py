@@ -45,8 +45,10 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
+    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
     @centos
@@ -61,8 +63,10 @@ RUN yum install -y \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
+    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
     @ubuntu
@@ -78,8 +82,10 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh''')
+    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
     @ubuntu
@@ -95,8 +101,10 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.10.3-Linux-x86_64.sh''')
+    rm -rf /var/tmp/cmake-3.10.3-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
     @centos
@@ -115,7 +123,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
     make -j$(nproc) && \
     make install && \
-    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5''')
+    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5
+ENV PATH=/usr/local/bin:$PATH''')
 
     @aarch64
     @centos
@@ -134,4 +143,5 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
     make -j$(nproc) && \
     make install && \
-    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5''')
+    rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5
+ENV PATH=/usr/local/bin:$PATH''')

@@ -35,6 +35,7 @@ from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
+from hpccm.primitives.environment import environment
 
 class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             hpccm.templates.wget):
@@ -109,6 +110,9 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self += comment('CMake version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
+        self += environment(variables={'PATH': '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))})
+
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -137,6 +141,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__commands.append(self.download_step(url=url,
                                                   directory=self.__wd))
 
+        self.__commands.append('mkdir -p {}'.format(self.__prefix))
         # Run the runfile
         if self.__eula:
             self.__commands.append(
@@ -148,7 +153,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             self.__commands.append(
                 '/bin/sh {0} --prefix={1}'.format(
                     posixpath.join(self.__wd, runfile), self.__prefix))
-
+                    
         # Cleanup runfile
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, runfile)]))
