@@ -1,3 +1,12 @@
+# v19.10.0
+
+- Adds Anaconda (`conda`) and Arm Allinea Studio (`arm_allinea_studio`)
+  building blocks.
+- Adds support for CentOS 8 base images.
+- Fixes and enhancements for the Charm++ (`charm`), CMake (`cmake`),
+  LLVM (`llvm`), Mellanox OFED (`mlnx_ofed`), and OpenMPI (`openmpi`)
+  building blocks.
+
 # v19.9.0
 
 - Adds Julia (`julia`) building block.
