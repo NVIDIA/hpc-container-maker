@@ -2,10 +2,15 @@
 
 ## Installation
 
-HPCCM can be installed from [PyPi](https://pypi.org/project/hpccm/).
+HPCCM can be installed from [PyPi](https://pypi.org/project/hpccm/)
+or [Conda](https://anaconda.org/conda-forge/hpccm).
 
 ```
 $ sudo pip install hpccm
+```
+
+```
+$ conda install -c conda-forge hpccm
 ```
 
 ## Using HPCCM
