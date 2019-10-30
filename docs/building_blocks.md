@@ -2493,7 +2493,7 @@ downloading the tarball from the web.
 - __version__: The version of the PGI compiler to use.  Note this value
 is currently only used when setting the environment and does not
 control the version of the compiler downloaded.  The default value
-is `19.4`.
+is `19.10`.
 
 __Examples__
 

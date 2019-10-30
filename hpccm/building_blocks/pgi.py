@@ -102,7 +102,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     version: The version of the PGI compiler to use.  Note this value
     is currently only used when setting the environment and does not
     control the version of the compiler downloaded.  The default value
-    is `19.4`.
+    is `19.10`.
 
     # Examples
 
@@ -149,7 +149,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         # The version is fragile since the latest version is
         # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '19.4')
+        self.__version = kwargs.get('version', '19.10')
         self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
