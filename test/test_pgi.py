@@ -367,7 +367,6 @@ RUN apt-get update -y && \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/pgi/linux86-64-llvm/19.10/REDIST/*.so* /opt/pgi/linux86-64/19.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so
 RUN ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so && \
     ln -sf /usr/lib/x86_64-linux-gnu/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.10/lib:$LD_LIBRARY_PATH''')
@@ -385,7 +384,6 @@ RUN yum install -y \
         numactl-libs && \
     rm -rf /var/cache/yum/*
 COPY --from=0 /opt/pgi/linux86-64-llvm/19.10/REDIST/*.so* /opt/pgi/linux86-64/19.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so
 RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so && \
     ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so.1
 ENV LD_LIBRARY_PATH=/opt/pgi/linux86-64/19.10/lib:$LD_LIBRARY_PATH''')
@@ -404,7 +402,6 @@ RUN yum install -y \
         openssh-clients && \
     rm -rf /var/cache/yum/*
 COPY --from=0 /opt/pgi/linux86-64-llvm/19.10/REDIST/*.so* /opt/pgi/linux86-64/19.10/lib/
-COPY --from=0 /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so /opt/pgi/linux86-64/19.10/lib/libcudaforwrapblas.so
 COPY --from=0 /opt/pgi/linux86-64/19.10/mpi/openmpi-3.1.3 /opt/pgi/linux86-64/19.10/mpi/openmpi-3.1.3
 RUN ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so && \
     ln -sf /usr/lib64/libnuma.so.1 /opt/pgi/linux86-64/19.10/lib/libnuma.so.1

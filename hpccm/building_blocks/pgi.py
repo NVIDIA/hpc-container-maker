@@ -430,6 +430,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # REDIST workaround for incorrect libcudaforwrapblas.so
         # symlink
         if (LooseVersion(self.__version) >= LooseVersion('18.10') and
+            LooseVersion(self.__version) < LooseVersion('19.10') and
             hpccm.config.g_cpu_arch == cpu_arch.X86_64):
             instructions.append(
                 copy(_from=_from,
