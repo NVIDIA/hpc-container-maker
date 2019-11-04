@@ -23,16 +23,19 @@ from __future__ import print_function
 
 from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
+import posixpath
 
 import hpccm.config
+import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
 
-class pip(bb_base):
+class pip(bb_base, hpccm.templates.rm):
     """The `pip` building block installs Python packages from PyPi.
 
     # Parameters
@@ -52,6 +55,9 @@ class pip(bb_base):
 
     pip: The name of the `pip` tool to use. The default is `pip`.
 
+    requirements: Path to pip requirements file.  The default is
+    empty.
+
     upgrade: Boolean flag to control whether pip itself should be
     upgraded prior to installing any PyPi packages.  The default is
     False.
@@ -66,6 +72,10 @@ class pip(bb_base):
     pip(packages=['hpccm'], pip='pip3')
     ```
 
+    ```python
+    pip(requirements='requirements.txt')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -78,7 +88,9 @@ class pip(bb_base):
         self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])
         self.__pip = kwargs.get('pip', 'pip')
+        self.__requirements = kwargs.get('requirements', None)
         self.__upgrade = kwargs.get('upgrade', False)
+        self.__wd = '/var/tmp' # working directory
 
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below
@@ -121,6 +133,19 @@ class pip(bb_base):
 
             if self.__upgrade:
                 cmds.append('{0} install --upgrade pip'.format(self.__pip))
+
+            if self.__requirements:
+                self += copy(src=self.__requirements,
+                             dest=posixpath.join(
+                                 self.__wd,
+                                 posixpath.basename(self.__requirements)))
+                cmds.append('{0} install -r {1}'.format(
+                    self.__pip,
+                    posixpath.join(self.__wd,
+                                   posixpath.basename(self.__requirements))))
+                cmds.append(self.cleanup_step(items=[
+                    posixpath.join(self.__wd,
+                                   posixpath.basename(self.__requirements))]))
 
             if self.__packages:
                 cmds.append('{0} install {1}'.format(self.__pip,

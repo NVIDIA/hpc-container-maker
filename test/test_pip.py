@@ -124,6 +124,23 @@ RUN pip install hpccm''')
 
     @ubuntu
     @docker
+    def test_requirements(self):
+        """specify requirements options"""
+        p = pip(requirements='foo/requirements.txt')
+        self.assertEqual(str(p),
+r'''# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python-pip \
+        python-setuptools \
+        python-wheel && \
+    rm -rf /var/lib/apt/lists/*
+COPY foo/requirements.txt /var/tmp/requirements.txt
+RUN pip install -r /var/tmp/requirements.txt && \
+    rm -rf /var/tmp/requirements.txt''')
+
+    @ubuntu
+    @docker
     def test_upgrade(self):
         """upgrade option"""
         p = pip(packages=['hpccm'], upgrade=True)
