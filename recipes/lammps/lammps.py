@@ -92,7 +92,8 @@ Stage0 += shell(commands=[
   'wget -P /tmp https://github.com/lammps/lammps/archive/{}'.format(tarball),
   # Extract files from archive
   'tar -xzf /tmp/{} -C /tmp'.format(tarball),
-  # Fix up CUDA static linking
+  # Force CUDA dynamic linking, see
+  # https://github.com/openucx/ucx/wiki/NVIDIA-GPU-Support
   'sed -i \'s/^cuda_args=""/cuda_args="--cudart shared"/g\' {}/lib/kokkos/bin/nvcc_wrapper'.format(srcdir),
   # CMake configuration
   cm.configure_step(directory='{}/cmake'.format(srcdir),
@@ -145,4 +146,6 @@ Stage1 += copy(_from='build',
 Stage1 += environment(variables={
   'LD_LIBRARY_PATH': '/usr/local/lammps-{}/lib:$LD_LIBRARY_PATH'.format(
     compute_capability),
-  'PATH': '/usr/local/lammps-{}/bin:$PATH'.format(compute_capability)})
+  'PATH': '/usr/local/lammps-{}/bin:$PATH'.format(compute_capability),
+  # Workaround, see https://github.com/openucx/ucx/wiki/NVIDIA-GPU-Support
+  'UCX_MEMTYPE_CACHE': 'n'})
