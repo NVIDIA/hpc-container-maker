@@ -25,8 +25,9 @@ if StrictVersion(hpccm.__version__) < StrictVersion('19.10.0'):
 # Use appropriate container base images based on the CPU architecture
 arch = USERARG.get('arch', 'x86_64')
 if arch == 'aarch64':
-  default_build_image = 'gitlab-master.nvidia.com:5005/cuda-installer/cuda-aarch64:10.2-devel-ubuntu18.04'
-  default_runtime_image = 'gitlab-master.nvidia.com:5005/cuda-installer/cuda-aarch64:10.2-base-ubuntu18.04'
+  # Early Access images - NGC registration required to use
+  default_build_image = 'nvcr.io/ea-cuda-sc19/arm-partners/cuda-aarch64:10.2-devel-ubuntu18.04'
+  default_runtime_image = 'nvcr.io/ea-cuda-sc19/arm-partners/cuda-aarch64:10.2-base-ubuntu18.04'
 elif arch == 'x86_64':
   default_build_image = 'nvidia/cuda:10.1-devel-ubuntu18.04'
   default_runtime_image = 'nvidia/cuda:10.1-base-ubuntu18.04'
