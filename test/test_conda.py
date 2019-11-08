@@ -122,6 +122,31 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://r
     @x86_64
     @ubuntu
     @docker
+    def test_environment(self):
+        """environment"""
+        c = conda(eula=True, environment='foo/environment.yml')
+        self.assertEqual(str(c),
+r'''# Anaconda
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+COPY foo/environment.yml /var/tmp/environment.yml
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+    /usr/local/anaconda/bin/conda init && \
+    ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    . /usr/local/anaconda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    conda env update -f /var/tmp/environment.yml && \
+    rm -rf /var/tmp/environment.yml && \
+    /usr/local/anaconda/bin/conda clean -afy && \
+    rm -rf /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh''')
+
+    @x86_64
+    @ubuntu
+    @docker
     def test_python2(self):
         """python 2"""
         c = conda(eula=True, python2=True)

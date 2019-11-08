@@ -46,6 +46,9 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     channels: List of additional Conda channels to enable.  The
     default is an empty list.
 
+    environment: Path to the Conda environment file to clone.  The
+    default value is empty.
+
     eula: By setting this value to `True`, you agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/).
     The default value is `False`.
 
@@ -74,6 +77,10 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     conda(channels=['conda-forge', 'nvidia'], prefix='/opt/conda')
     ```
 
+    ```python
+    conda(environment='environment.yml')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -85,6 +92,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__baseurl = kwargs.get('baseurl',
                                     'http://repo.anaconda.com/miniconda')
         self.__channels = kwargs.get('channels', [])
+        self.__environment = kwargs.get('environment', None)
 
         # By setting this value to True, you agree to the
         # corresponding Anaconda End User License Agreement
@@ -118,6 +126,9 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
         self += comment('Anaconda')
         self += packages(ospackages=self.__ospackages)
+        if self.__environment:
+            self += copy(src=self.__environment, dest=posixpath.join(
+                self.__wd, posixpath.basename(self.__environment)))
         self += shell(commands=self.__commands)
 
     def __cpu_arch(self):
@@ -158,7 +169,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
             posixpath.join(self.__prefix, 'etc', 'profile.d', 'conda.sh')))
 
         # Activate
-        if self.__channels or self.__packages:
+        if self.__channels or self.__environment or self.__packages:
             self.__commands.append('. {}'.format(
                 posixpath.join(self.__prefix, 'etc', 'profile.d', 'conda.sh')))
             self.__commands.append('conda activate base')
@@ -168,6 +179,15 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
             self.__commands.append('conda config {}'.format(
                 ' '.join(['--add channels {}'.format(x)
                           for x in sorted(self.__channels)])))
+
+        # Install environment
+        if self.__environment:
+            self.__commands.append('conda env update -f {}'.format(
+                posixpath.join(self.__wd,
+                               posixpath.basename(self.__environment))))
+            self.__commands.append(self.cleanup_step(
+                items=[posixpath.join(
+                    self.__wd, posixpath.basename(self.__environment))]))
 
         # Install conda packages
         if self.__packages:

@@ -468,6 +468,9 @@ __Parameters__
 - __channels__: List of additional Conda channels to enable.  The
 default is an empty list.
 
+- __environment__: Path to the Conda environment file to clone.  The
+default value is empty.
+
 - __eula__: By setting this value to `True`, you agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/).
 The default value is `False`.
 
@@ -495,6 +498,10 @@ conda(packages=['numpy'])
 
 ```python
 conda(channels=['conda-forge', 'nvidia'], prefix='/opt/conda')
+```
+
+```python
+conda(environment='environment.yml')
 ```
 
 
@@ -2552,6 +2559,9 @@ an empty list.
 
 - __pip__: The name of the `pip` tool to use. The default is `pip`.
 
+- __requirements__: Path to pip requirements file.  The default is
+empty.
+
 - __upgrade__: Boolean flag to control whether pip itself should be
 upgraded prior to installing any PyPi packages.  The default is
 False.
@@ -2565,6 +2575,10 @@ pip(packages=['hpccm'])
 
 ```python
 pip(packages=['hpccm'], pip='pip3')
+```
+
+```python
+pip(requirements='requirements.txt')
 ```
 
 
