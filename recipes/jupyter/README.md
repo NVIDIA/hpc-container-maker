@@ -41,6 +41,7 @@ $ jupyter.py --notebook notebook.py --requirements requirements.txt --format sin
 ```
 
 Using Anaconda:
+```
 $ jupyter.py --packager anaconda --notebook notebook.py --environment.yml --format singularity > Singularity.def
 ```
 
