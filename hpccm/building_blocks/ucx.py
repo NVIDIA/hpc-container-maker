@@ -23,6 +23,7 @@ from __future__ import print_function
 
 from six import string_types
 
+from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -165,6 +166,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.__knem = kwargs.get('knem', '')
         self.__ofed = kwargs.get('ofed', '')
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__version = kwargs.get('version', '1.5.2')
         self.__xpmem = kwargs.get('xpmem', '')
@@ -197,10 +199,15 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             if not self.__ospackages:
                 self.__ospackages = ['binutils-dev', 'file', 'libnuma-dev',
                                      'make', 'wget']
+            if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                self.__runtime_ospackages = ['libbinutils']
+            else:
+                self.__runtime_ospackages = ['binutils']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['binutils-devel', 'file', 'make',
                                      'numactl-devel', 'wget']
+            self.__runtime_ospackages = ['binutils']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
@@ -325,6 +332,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         """
         instructions = []
         instructions.append(comment('UCX'))
+        instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(copy(_from=_from, src=self.prefix,
                                  dest=self.prefix))
         if self.ldconfig:
