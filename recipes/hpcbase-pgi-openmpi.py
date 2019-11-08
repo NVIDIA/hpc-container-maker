@@ -2,12 +2,12 @@
 HPC Base image
 
 Contents:
-  CUDA version 10.0
+  CUDA version 10.1
   FFTW version 3.3.8
   HDF5 version 1.10.5
   Mellanox OFED version 4.6-1.0.1.1
-  OpenMPI version 4.0.1
-  PGI compilers version 19.4
+  OpenMPI version 4.0.2
+  PGI compilers version 19.10
   Python 2 and 3 (upstream)
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
@@ -22,11 +22,11 @@ else:
 
 # Choose between either Ubuntu 16.04 (default) or CentOS 7
 # Add '--userarg centos=true' to the command line to select CentOS
-devel_image = 'nvidia/cuda:10.0-devel-ubuntu16.04'
-runtime_image = 'nvidia/cuda:10.0-runtime-ubuntu16.04'
+devel_image = 'nvidia/cuda:10.1-devel-ubuntu16.04'
+runtime_image = 'nvidia/cuda:10.1-runtime-ubuntu16.04'
 if USERARG.get('centos', False):
-    devel_image = 'nvidia/cuda:10.0-devel-centos7'
-    runtime_image = 'nvidia/cuda:10.0-runtime-centos7'
+    devel_image = 'nvidia/cuda:10.1-devel-centos7'
+    runtime_image = 'nvidia/cuda:10.1-runtime-centos7'
 
 ######
 # Devel stage
@@ -40,14 +40,14 @@ Stage0 += baseimage(image=devel_image, _as='devel')
 Stage0 += python()
 
 # PGI compilers
-compiler = pgi(eula=pgi_eula, version='19.4')
+compiler = pgi(eula=pgi_eula, version='19.10')
 Stage0 += compiler
 
 # Mellanox OFED
 Stage0 += mlnx_ofed(version='4.6-1.0.1.1')
 
 # OpenMPI
-Stage0 += openmpi(version='4.0.1', toolchain=compiler.toolchain)
+Stage0 += openmpi(version='4.0.2', toolchain=compiler.toolchain)
 
 # FFTW
 Stage0 += fftw(version='3.3.8', mpi=True, toolchain=compiler.toolchain)
