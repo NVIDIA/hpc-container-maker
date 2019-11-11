@@ -14,6 +14,8 @@ generate:
   - hpccm.building_blocks.conda+
   - hpccm.building_blocks.fftw+
   - hpccm.building_blocks.gdrcopy+
+  - hpccm.building_blocks.generic_autotools+
+  - hpccm.building_blocks.generic_cmake+
   - hpccm.building_blocks.gnu+
   - hpccm.building_blocks.hdf5+
   - hpccm.building_blocks.intel_mpi+
