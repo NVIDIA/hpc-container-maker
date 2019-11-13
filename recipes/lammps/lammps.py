@@ -16,11 +16,10 @@
 ########
 
 from distutils.version import StrictVersion
-from hpccm.templates.CMakeBuild import CMakeBuild
 import hpccm.version
 
-if StrictVersion(hpccm.__version__) < StrictVersion('19.10.0'):
-  raise Exception('requires HPCCM version 19.10.0 or later')
+if StrictVersion(hpccm.__version__) < StrictVersion('19.11.0'):
+  raise Exception('requires HPCCM version 19.11.0 or later')
 
 # Use appropriate container base images based on the CPU architecture
 arch = USERARG.get('arch', 'x86_64')
@@ -76,8 +75,7 @@ if gpu_arch not in ['Pascal60', 'Volta70', 'Turing75']:
 
 lammps_version = USERARG.get('lammps_version', 'patch_19Sep2019')
 compute_capability = 'sm' + gpu_arch[-2:]
-tarball = '{}.tar.gz'.format(lammps_version)
-srcdir = '/tmp/lammps-{}'.format(lammps_version)
+srcdir = '/var/tmp/lammps-{}'.format(lammps_version)
 
 Stage0 += comment('LAMMPS version {0} for CUDA compute capability {1}'.format(
   lammps_version, compute_capability))
@@ -87,47 +85,36 @@ Stage0 += apt_get(ospackages=['bc', 'git', 'libgomp1', 'libhwloc-dev', 'make',
                               'tar', 'wget'])
 
 # LAMMPS build
-cm = CMakeBuild()
-Stage0 += shell(commands=[
-  # Download LAMMPS
-  'wget -P /tmp https://github.com/lammps/lammps/archive/{}'.format(tarball),
-  # Extract files from archive
-  'tar -xzf /tmp/{} -C /tmp'.format(tarball),
+Stage0 += generic_cmake(
+  build_directory='{0}/build-{1}'.format(srcdir, gpu_arch),
+  cmake_opts=['-D BUILD_SHARED_LIBS=ON',
+              '-D CUDA_USE_STATIC_CUDA_RUNTIME=OFF',
+              '-D KOKKOS_ARCH={}'.format(gpu_arch),
+              '-D CMAKE_BUILD_TYPE=Release',
+              '-D MPI_C_COMPILER={}'.format(mpi.toolchain.CC),
+              '-D BUILD_MPI=yes',
+              '-D PKG_MPIIO=on',
+              '-D BUILD_OMP=yes',
+              '-D BUILD_LIB=no',
+              '-D CMAKE_CXX_COMPILER={}/lib/kokkos/bin/nvcc_wrapper'.format(srcdir),
+              '-D PKG_USER-REAXC=yes',
+              '-D PKG_KSPACE=yes',
+              '-D PKG_MOLECULE=yes',
+              '-D PKG_REPLICA=yes',
+              '-D PKG_RIGID=yes',
+              '-D PKG_MISC=yes',
+              '-D PKG_MANYBODY=yes',
+              '-D PKG_ASPHERE=yes',
+              '-D PKG_GPU=no',
+              '-D PKG_KOKKOS=yes',
+              '-D KOKKOS_ENABLE_CUDA=yes',
+              '-D KOKKOS_ENABLE_HWLOC=yes'],
+  directory='{}/cmake'.format(srcdir),
   # Force CUDA dynamic linking, see
   # https://github.com/openucx/ucx/wiki/NVIDIA-GPU-Support
-  'sed -i \'s/^cuda_args=""/cuda_args="--cudart shared"/g\' {}/lib/kokkos/bin/nvcc_wrapper'.format(srcdir),
-  # CMake configuration
-  cm.configure_step(directory='{}/cmake'.format(srcdir),
-                    build_directory='{0}/build-{1}'.format(srcdir, gpu_arch),
-                    opts=['-D BUILD_SHARED_LIBS=ON',
-                          '-D CUDA_USE_STATIC_CUDA_RUNTIME=OFF',
-                          '-D CMAKE_INSTALL_PREFIX=/usr/local/lammps-{}'.format(compute_capability),
-                          '-D KOKKOS_ARCH={}'.format(gpu_arch),
-                          '-D CMAKE_BUILD_TYPE=Release',
-                          '-D MPI_C_COMPILER={}'.format(mpi.toolchain.CC),
-                          '-D BUILD_MPI=yes',
-                          '-D PKG_MPIIO=on',
-                          '-D BUILD_OMP=yes',
-                          '-D BUILD_LIB=no',
-                          '-D CMAKE_CXX_COMPILER={}/lib/kokkos/bin/nvcc_wrapper'.format(srcdir),
-                          '-D PKG_USER-REAXC=yes',
-                          '-D PKG_KSPACE=yes',
-                          '-D PKG_MOLECULE=yes',
-                          '-D PKG_REPLICA=yes',
-                          '-D PKG_RIGID=yes',
-                          '-D PKG_MISC=yes',
-                          '-D PKG_MANYBODY=yes',
-                          '-D PKG_ASPHERE=yes',
-                          '-D PKG_GPU=no',
-                          '-D PKG_KOKKOS=yes',
-                          '-D KOKKOS_ENABLE_CUDA=yes',
-                          '-D KOKKOS_ENABLE_HWLOC=yes']),
-  # Build
-  cm.build_step(),
-  # Install
-  cm.build_step(target='install'),
-  # Cleanup
-  'rm -rf {0} /tmp/{1}'.format(srcdir, tarball)])
+  preconfigure=['sed -i \'s/^cuda_args=""/cuda_args="--cudart shared"/g\' {}/lib/kokkos/bin/nvcc_wrapper'.format(srcdir)],
+  prefix='/usr/local/lammps-{}'.format(compute_capability),
+  url='https://github.com/lammps/lammps/archive/{}.tar.gz'.format(lammps_version))
 
 ########
 # Runtime stage (Stage 1)
@@ -135,15 +122,12 @@ Stage0 += shell(commands=[
 
 Stage1 += baseimage(image=USERARG.get('runtime_image', default_runtime_image))
 
-# Build stage runtime support
+# Build stage runtime support + LAMMPS
 Stage1 += Stage0.runtime()
 
 ########
 # LAMMPS
 ########
-Stage1 += copy(_from='build',
-               src='/usr/local/lammps-{}'.format(compute_capability),
-               dest='/usr/local/lammps-{}'.format(compute_capability))
 Stage1 += environment(variables={
   'LD_LIBRARY_PATH': '/usr/local/lammps-{}/lib:$LD_LIBRARY_PATH'.format(
     compute_capability),
