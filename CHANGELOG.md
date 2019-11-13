@@ -1,3 +1,12 @@
+# v19.11.0
+
+- Adds generic building blocks for GNU Autotools (`generic_autotools`)
+  and CMake (`generic_cmake`) packages
+- Refresh default component version for the PGI (`pgi`) building block
+- Adds Jupyter notebook example recipe
+- Refresh default component versions used in the hpcbase example recipes
+- Fix issue with UCX runtime dependencies
+
 # v19.10.0
 
 - Adds Anaconda (`conda`) and Arm Allinea Studio (`arm_allinea_studio`)
