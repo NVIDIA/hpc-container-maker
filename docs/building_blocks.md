@@ -664,6 +664,159 @@ Stage0 += g
 Stage1 += g.runtime()
 ```
 
+# generic_autotools
+```python
+generic_autotools(self, **kwargs)
+```
+The `generic_autotools` building block downloads, configures,
+builds, and installs a specified GNU Autotools enabled package.
+
+__Parameters__
+
+
+- __build_directory__: The location to build the package.  The default
+value is the source code location.
+
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default value is an empty list.
+
+- __directory__: The source code location.  The default value is the
+basename of the downloaded package.  If the value is not an
+absolute path, then the temporary working directory is prepended.
+
+- __install__: Boolean flag to specify whether the `make install` step
+should be performed.  The default is True.
+
+- __make__: Boolean flag to specify whether the `make` step should be
+performed.  The default is True.
+
+- __postinstall__: List of shell commands to run after running 'make
+install'.  The working directory is the install prefix.  The
+default is an empty list.
+
+- __preconfigure__: List of shell commands to run prior to running
+`configure`.  The working directory is the source code location.
+The default is an empty list.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local`. It is highly recommended not use use this default
+and instead set the prefix to a package specific directory.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __url__: The URL of the tarball package to build.  This parameter must
+be specified.
+
+__Examples__
+
+
+```python
+generic_autotools(directory='tcl8.6.9/unix',
+                  prefix='/usr/local/tcl',
+                  url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
+```
+
+
+## runtime
+```python
+generic_autotools.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+g = generic_autotools(...)
+Stage0 += g
+Stage1 += g.runtime()
+```
+
+# generic_cmake
+```python
+generic_cmake(self, **kwargs)
+```
+The `generic_cmake` building block downloads, configures,
+builds, and installs a specified CMake enabled package.
+
+__Parameters__
+
+
+- __build_directory__: The location to build the package.  The default
+value is a `build` subdirectory in the source code location.
+
+- __configure_opts__: List of options to pass to `cmake`.  The default
+value is an empty list.
+
+- __directory__: The source code location.  The default value is the
+basename of the downloaded package.  If the value is not an
+absolute path, then the temporary working directory is prepended.
+
+- __install__: Boolean flag to specify whether the `make install` step
+should be performed.  The default is True.
+
+- __make__: Boolean flag to specify whether the `make` step should be
+performed.  The default is True.
+
+- __postinstall__: List of shell commands to run after running 'make
+install'.  The working directory is the install prefix.  The
+default is an empty list.
+
+- __preconfigure__: List of shell commands to run prior to running
+`cmake`.  The working directory is the source code location.  The
+default is an empty list.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local`. It is highly recommended not to use this default and
+instead set the prefix to a package specific directory.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __url__: The URL of the tarball package to build.  This parameter must
+be specified.
+
+__Examples__
+
+
+```python
+generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                          '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                          '-D GMX_BUILD_OWN_FFTW=ON',
+                          '-D GMX_GPU=ON',
+                          '-D GMX_MPI=OFF',
+                          '-D GMX_OPENMP=ON',
+                          '-D GMX_PREFER_STATIC_LIBS=ON',
+                          '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+              directory='gromacs-2018.2',
+              prefix='/usr/local/gromacs',
+              url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+```
+
+
+## runtime
+```python
+generic_cmake.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+g = generic_cmake(...)
+Stage0 += g
+Stage1 += g.runtime()
+```
+
 # gnu
 ```python
 gnu(self, **kwargs)

@@ -24,6 +24,8 @@ from hpccm.building_blocks.cmake import cmake
 from hpccm.building_blocks.conda import conda
 from hpccm.building_blocks.fftw import fftw
 from hpccm.building_blocks.gdrcopy import gdrcopy
+from hpccm.building_blocks.generic_autotools import generic_autotools
+from hpccm.building_blocks.generic_cmake import generic_cmake
 from hpccm.building_blocks.gnu import gnu
 from hpccm.building_blocks.hdf5 import hdf5
 from hpccm.building_blocks.intel_mpi import intel_mpi
