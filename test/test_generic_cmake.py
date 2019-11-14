@@ -117,6 +117,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """environment and toolchain"""
         tc = toolchain(CC='gcc', CXX='g++', FC='gfortran')
         g = generic_cmake(
+            check=True,
             cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
                         '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
                         '-D GMX_BUILD_OWN_FFTW=ON',
@@ -124,7 +125,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
                         '-D GMX_MPI=OFF',
                         '-D GMX_OPENMP=ON',
                         '-D GMX_PREFER_STATIC_LIBS=ON',
-                        '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+                        '-D MPIEXEC_PREFLAGS=--allow-run-as-root',
+                        '-D REGRESSIONTEST_DOWNLOAD=ON'],
             directory='gromacs-2018.2',
             environment={'FOO': 'BAR'},
             prefix='/usr/local/gromacs',
@@ -134,8 +136,9 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2018.2.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && FOO=BAR CC=gcc CXX=g++ FC=gfortran cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root /var/tmp/gromacs-2018.2 && \
+    mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && FOO=BAR CC=gcc CXX=g++ FC=gfortran cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root -D REGRESSIONTEST_DOWNLOAD=ON /var/tmp/gromacs-2018.2 && \
     cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/gromacs-2018.2/build --target check -- -j$(nproc) && \
     cmake --build /var/tmp/gromacs-2018.2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/v2018.2.tar.gz /var/tmp/gromacs-2018.2''')
 

@@ -751,6 +751,9 @@ __Parameters__
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
 
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
 - __configure_opts__: List of options to pass to `cmake`.  The default
 value is an empty list.
 
