@@ -1,3 +1,6 @@
+# v19.12.0
+- Fixed NetCDF download URLs
+
 # v19.11.0
 
 - Adds generic building blocks for GNU Autotools (`generic_autotools`)
