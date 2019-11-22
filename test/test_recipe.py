@@ -57,7 +57,7 @@ class Test_recipe(unittest.TestCase):
         rf = os.path.join(path, '..', 'recipes', 'examples', 'basic.py')
         r = recipe(rf)
         self.assertEqual(r.strip(),
-r'''FROM ubuntu:16.04 AS stage0
+r'''FROM ubuntu:16.04
 
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -230,7 +230,7 @@ From: nvidia/cuda:9.0-runtime-ubuntu16.04
         rf = os.path.join(path, '..', 'recipes', 'examples', 'userargs.py')
         r = recipe(rf, userarg={'cuda': '9.0', 'ompi': '2.1.2'})
         self.assertEqual(r.strip(),
-r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS stage0
+r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04
 
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \
