@@ -121,7 +121,9 @@ From: foo
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
         self.assertEqual(str(b),
-r'''BootStrap: docker
+r'''# NOTE: this definition file depends on features only available in
+# Singularity 3.2 and later.
+BootStrap: docker
 From: foo
 Stage: dev
 %post
