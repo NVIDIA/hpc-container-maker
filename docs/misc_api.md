@@ -142,7 +142,7 @@ The value is passed to the `baseimage` primitive.
 
 ## runtime
 ```python
-Stage.runtime(self, _from=u'0', exclude=[])
+Stage.runtime(self, _from=None, exclude=[])
 ```
 Generate the set of instructions to install the runtime specific
 components from a previous stage.

@@ -47,7 +47,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/tcl8.6.9/unix &&   ./configure --prefix=/usr/local/tcl && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/tcl8.6.9-src.tar.gz /var/tmp/tcl8.6.9/unix''')
+    rm -rf /var/tmp/tcl8.6.9/unix /var/tmp/tcl8.6.9-src.tar.gz''')
 
     @ubuntu
     @docker
@@ -55,6 +55,13 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """missing url"""
         with self.assertRaises(RuntimeError):
             g = generic_autotools()
+
+    @ubuntu
+    @docker
+    def test_both_repository_and_url(self):
+        """both repository and url"""
+        with self.assertRaises(RuntimeError):
+            g = generic_autotools(repository='foo', url='bar')
 
     @ubuntu
     @docker
@@ -84,7 +91,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) install && \
     cd /usr/local/tcl && \
     echo "post" && \
-    rm -rf /var/tmp/tcl8.6.9-src.tar.gz /var/tmp/tcl8.6.9/unix''')
+    rm -rf /var/tmp/tcl8.6.9/unix /var/tmp/tcl8.6.9-src.tar.gz''')
 
     @ubuntu
     @docker
@@ -104,7 +111,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) check && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/openmpi-4.0.1.tar.bz2 /var/tmp/openmpi-4.0.1''')
+    rm -rf /var/tmp/openmpi-4.0.1 /var/tmp/openmpi-4.0.1.tar.bz2''')
 
     @ubuntu
     @docker
@@ -125,7 +132,24 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /tmp/build && cd /tmp/build &&  FOO=BAR CC=gcc CXX=g++ FC=gfortran /var/tmp/tcl8.6.9/unix/configure --prefix=/usr/local/tcl && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/tcl8.6.9-src.tar.gz /var/tmp/tcl8.6.9/unix /tmp/build''')
+    rm -rf /var/tmp/tcl8.6.9/unix /var/tmp/tcl8.6.9-src.tar.gz /tmp/build''')
+
+    @ubuntu
+    @docker
+    def test_repository(self):
+        """test repository option"""
+        g = generic_autotools(preconfigure=['./autogen.sh'],
+                              prefix='/usr/local/zeromq',
+                              repository='https://github.com/zeromq/libzmq.git')
+        self.assertEqual(str(g),
+r'''# https://github.com/zeromq/libzmq.git
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/zeromq/libzmq.git libzmq && cd - && \
+    cd /var/tmp/libzmq && \
+    ./autogen.sh && \
+    cd /var/tmp/libzmq &&   ./configure --prefix=/usr/local/zeromq && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/libzmq''')
 
     @ubuntu
     @docker
