@@ -1,85 +1,51 @@
 r"""
-GROMACS 2018.2
+GROMACS 2019.4
 
 Contents:
   Ubuntu 16.04
-  CUDA version 9.0
+  CUDA version 10.1
   GNU compilers (upstream)
   OFED (upstream)
-  OpenMPI version 3.0.0
+  OpenMPI version 3.1.4
 """
-# pylint: disable=invalid-name, undefined-variable, used-before-assignment
-# pylama: ignore=E0602
-import os
-from hpccm.templates.CMakeBuild import CMakeBuild
-from hpccm.templates.git import git
 
-gromacs_version = USERARG.get('GROMACS_VERSION', '2018.2')
+gromacs_version = USERARG.get('gromacs', '2019.4')
 
 Stage0 += comment(__doc__.strip(), reformat=False)
-Stage0.name = 'devel'
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
+Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04')
 
 Stage0 += python(python3=False)
 
 Stage0 += gnu(fortran=False)
 
-Stage0 += packages(ospackages=['ca-certificates', 'cmake', 'git'])
+Stage0 += cmake(eula=True)
 
 Stage0 += ofed()
 
-Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'],
-               prefix="/opt/openmpi", version='3.0.0')
+Stage0 += openmpi(version='3.1.4')
 
-cm = CMakeBuild()
-build_cmds = [git().clone_step(
-                  repository='https://github.com/gromacs/gromacs',
-                  branch='v' + gromacs_version, path='/gromacs',
-                  directory='src'),
-              cm.configure_step(directory='/gromacs/src',
-                                build_directory='/gromacs/build',
-                                opts=[
-                                  '-DCMAKE_BUILD_TYPE=Release',
-                                  '-DCMAKE_INSTALL_PREFIX=/gromacs/install',
-                                  '-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
-                                  '-DGMX_BUILD_OWN_FFTW=ON',
-                                  '-DGMX_GPU=ON',
-                                  '-DGMX_MPI=OFF',
-                                  '-DGMX_OPENMP=ON',
-                                  '-DGMX_PREFER_STATIC_LIBS=ON',
-                                  '-DMPIEXEC_PREFLAGS=--allow-run-as-root',
-                                  '-DREGRESSIONTEST_DOWNLOAD=ON']),
-              cm.build_step(),
-              cm.build_step(target='install'),
-              cm.build_step(target='check')]
-Stage0 += shell(commands=build_cmds)
+Stage0 += generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                                    '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                                    '-D GMX_BUILD_OWN_FFTW=ON',
+                                    '-D GMX_GPU=ON',
+                                    '-D GMX_MPI=ON',
+                                    '-D GMX_OPENMP=ON',
+                                    '-D GMX_PREFER_STATIC_LIBS=ON',
+                                    '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+                        prefix='/usr/local/gromacs',
+                        url='http://ftp.gromacs.org/pub/gromacs/gromacs-{}.tar.gz'.format(gromacs_version))
 
-# Include examples if they exist in the build context
-if os.path.isdir('recipes/gromacs/examples'):
-    Stage0 += copy(src='recipes/gromacs/examples', dest='/workspace/examples')
+Stage0 += environment(variables={'PATH': '$PATH:/usr/local/gromacs/bin'})
 
-Stage0 += environment(variables={'PATH': '$PATH:/gromacs/install/bin'})
-
-Stage0 += label(metadata={'com.nvidia.gromacs.version': gromacs_version})
-
-Stage0 += workdir(directory='/workspace')
+Stage0 += label(metadata={'gromacs.version': gromacs_version})
 
 ######
 # Runtime image stage
 ######
-Stage1.baseimage('nvidia/cuda:9.0-runtime-ubuntu16.04')
+Stage1 += baseimage(image='nvidia/cuda:10.1-runtime-ubuntu16.04')
 
-Stage1 += Stage0.runtime(_from=Stage0.name)
+Stage1 += Stage0.runtime()
 
-Stage1 += copy(_from=Stage0.name, src='/gromacs/install',
-               dest='/gromacs/install')
+Stage1 += environment(variables={'PATH': '$PATH:/usr/local/gromacs/bin'})
 
-# Include examples if they exist in the build context
-if os.path.isdir('recipes/gromacs/examples'):
-    Stage1 += copy(src='recipes/gromacs/examples', dest='/workspace/examples')
-
-Stage1 += environment(variables={'PATH': '$PATH:/gromacs/install/bin'})
-
-Stage1 += label(metadata={'com.nvidia.gromacs.version': gromacs_version})
-
-Stage1 += workdir(directory='/workspace')
+Stage1 += label(metadata={'gromacs.version': gromacs_version})

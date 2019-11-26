@@ -52,6 +52,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
     build_directory: The location to build the package.  The default
     value is a `build` subdirectory in the source code location.
 
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
     cmake_opts: List of options to pass to `cmake`.  The default value
     is an empty list.
 
@@ -132,6 +135,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
 
         self.__branch = kwargs.get('branch', None)
         self.__build_directory = kwargs.get('build_directory', 'build')
+        self.__check = kwargs.get('check', False)
         self.cmake_opts = kwargs.get('cmake_opts', [])
         self.__directory = kwargs.get('directory', None)
         self.__environment = kwargs.get('environment', {})
@@ -229,6 +233,10 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
         # Build
         if self.__make:
             self.__commands.append(self.build_step())
+
+        # Check the build
+        if self.__check:
+            self.__commands.append(self.build_step(target='check'))
 
         # Install
         if self.__install:
