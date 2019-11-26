@@ -22,6 +22,9 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 
+import hpccm.config
+
+from hpccm.common import container_type
 from hpccm.primitives.baseimage import baseimage
 
 class Stage(object):
@@ -49,6 +52,13 @@ class Stage(object):
 
     def __iadd__(self, layer):
         """Add the layer to the stage.  Allows "+=" syntax."""
+
+        # The name of the stage should reflect the name the user
+        # provided in the baseimage primitive (via the _as parameter).
+        # This violates the encapsulation of the baseimage primitive.
+        if layer.__class__.__name__ == 'baseimage' and not self.name:
+          self.name = layer._baseimage__as
+
         if isinstance(layer, list):
             self.__layers.extend(layer)
         else:
@@ -78,7 +88,7 @@ class Stage(object):
             self.__layers.insert(0, baseimage(image=image, _as=self.name,
                                               _distro=_distro))
 
-    def runtime(self, _from='0', exclude=[]):
+    def runtime(self, _from=None, exclude=[]):
         """Generate the set of instructions to install the runtime specific
         components from a previous stage.
 
@@ -107,6 +117,17 @@ class Stage(object):
         ```
 
         """
+
+        # If the name of the stage is not explicitly specified, use
+        # the name of the Stage if available, otherwise 0 (Docker's
+        # default)
+        if not _from and self.name:
+            _from = self.name
+        elif not _from:
+            if hpccm.config.g_ctype == container_type.SINGULARITY:
+                logging.warning('Multi-stage Singularity containers require a named first stage')
+            _from = '0'
+
         instructions = []
         for layer in self.__layers:
             runtime = getattr(layer, 'runtime', None)

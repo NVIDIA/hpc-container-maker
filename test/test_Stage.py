@@ -22,10 +22,11 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker
+from helpers import centos, docker, singularity32
 
 from hpccm.building_blocks import boost
 from hpccm.building_blocks import gnu
+from hpccm.primitives.baseimage import baseimage
 from hpccm.primitives.shell import shell
 from hpccm.Stage import Stage
 
@@ -96,3 +97,93 @@ RUN yum install -y \
         libgfortran \
         libgomp && \
     rm -rf /var/cache/yum/*''')
+
+    @docker
+    def test_multistage_noas_docker(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime()
+        self.assertEqual(str(s1),
+r'''# Boost
+COPY --from=0 /usr/local/boost /usr/local/boost
+ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @singularity32
+    def test_multistage_noas_singularity(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime()
+        self.assertEqual(str(s1),
+r'''# Boost
+%files from 0
+    /usr/local/boost /usr/local/boost
+%environment
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @docker
+    def test_multistage_as_docker(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7', _as='devel')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime()
+        self.assertEqual(str(s1),
+r'''# Boost
+COPY --from=devel /usr/local/boost /usr/local/boost
+ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @singularity32
+    def test_multistage_as_singularity(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7', _as='devel')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime()
+        self.assertEqual(str(s1),
+r'''# Boost
+%files from devel
+    /usr/local/boost /usr/local/boost
+%environment
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @docker
+    def test_multistage_as_override_docker(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7', _as='devel')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime(_from='build')
+        self.assertEqual(str(s1),
+r'''# Boost
+COPY --from=build /usr/local/boost /usr/local/boost
+ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @singularity32
+    def test_multistage_as_override_singularity(self):
+        """Multistage naming"""
+        s0 = Stage()
+        s0 += baseimage(image='centos:7', _as='devel')
+        s0 += boost()
+        s1 = Stage()
+        s1 += s0.runtime(_from='build')
+        self.assertEqual(str(s1),
+r'''# Boost
+%files from build
+    /usr/local/boost /usr/local/boost
+%environment
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH
+%post
+    export LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
