@@ -122,7 +122,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         self.configure_opts = kwargs.get('configure_opts', [])
 
-        self.__baseurl = 'https://www.unidata.ucar.edu/downloads/netcdf/ftp'
+        self.__baseurl = 'ftp://ftp.unidata.ucar.edu/pub/netcdf'
         self.__check = kwargs.get('check', False)
         self.__cxx = kwargs.get('cxx', True)
         self.__fortran = kwargs.get('fortran', True)
