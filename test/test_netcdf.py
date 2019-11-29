@@ -49,19 +49,19 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.7.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-c-4.7.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-c-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-c-4.7.0.tar.gz /var/tmp/netcdf-c-4.7.0 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx4-4.3.0.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx4-4.3.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-cxx4-4.3.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-cxx4-4.3.0 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-cxx4-4.3.0.tar.gz /var/tmp/netcdf-cxx4-4.3.0 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.5.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-fortran-4.4.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-fortran-4.4.5 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
@@ -87,19 +87,19 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.7.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-c-4.7.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-c-4.7.0 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-c-4.7.0.tar.gz /var/tmp/netcdf-c-4.7.0 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx4-4.3.0.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx4-4.3.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-cxx4-4.3.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-cxx4-4.3.0 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-cxx4-4.3.0.tar.gz /var/tmp/netcdf-cxx4-4.3.0 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.5.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-fortran-4.4.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-fortran-4.4.5 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
@@ -127,20 +127,20 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.6.1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.6.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-4.6.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-4.6.1 &&  CPPFLAGS=-I/usr/local/hdf5/include LDFLAGS=-L/usr/local/hdf5/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/netcdf/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/netcdf-4.6.1.tar.gz /var/tmp/netcdf-4.6.1 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-cxx4-4.3.0.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-cxx4-4.3.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-cxx4-4.3.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-cxx4-4.3.0 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-cxx4-4.3.0.tar.gz /var/tmp/netcdf-cxx4-4.3.0 && \
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz && \
+    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/netcdf-fortran-4.4.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/netcdf-fortran-4.4.4 &&  CPPFLAGS=-I/usr/local/netcdf/include LD_LIBRARY_PATH='/usr/local/netcdf/lib:$LD_LIBRARY_PATH' LDFLAGS=-L/usr/local/netcdf/lib ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
