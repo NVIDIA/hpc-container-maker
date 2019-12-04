@@ -674,6 +674,10 @@ builds, and installs a specified GNU Autotools enabled package.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
 - __build_directory__: The location to build the package.  The default
 value is the source code location.
 
@@ -705,12 +709,15 @@ The default is an empty list.
 `/usr/local`. It is highly recommended not use use this default
 and instead set the prefix to a package specific directory.
 
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  This parameter must
-be specified.
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
 
 __Examples__
 
@@ -719,6 +726,12 @@ __Examples__
 generic_autotools(directory='tcl8.6.9/unix',
                   prefix='/usr/local/tcl',
                   url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
+```
+
+```python
+generic_autotools(preconfigure=['./autogen.sh'],
+                  prefix='/usr/local/zeromq',
+                  repository='https://github.com/zeromq/libzmq.git')
 ```
 
 
@@ -738,6 +751,69 @@ Stage0 += g
 Stage1 += g.runtime()
 ```
 
+# generic_build
+```python
+generic_build(self, **kwargs)
+```
+The `generic_build` building block downloads and builds
+a specified package.
+
+__Parameters__
+
+
+- __build__: List of shell commands to run in order to build the
+package.  The working directory is the source directory.  The
+default is an empty list.
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __directory__: The source code location.  The default value is the
+basename of the downloaded package.  If the value is not an
+absolute path, then the temporary working directory is prepended.
+
+- __install__: List of shell commands to run in order to install the
+package.  The working directory is the source directory.  If
+`prefix` is defined, it will be automatically created if the list
+is non-empty.  The default is an empty list.
+
+- __prefix__: The top level install location.  The default value is
+empty. If defined then the location is copied as part of the
+runtime method.
+
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
+
+__Examples__
+
+
+```python
+generic_build(build=['make ARCH=sm_70'],
+              install=['cp stream /usr/local/bin/cuda-stream'],
+              repository='https://github.com/bcumming/cuda-stream')
+```
+
+
+## runtime
+```python
+generic_build.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+g = generic_build(...)
+Stage0 += g
+Stage1 += g.runtime()
+```
+
 # generic_cmake
 ```python
 generic_cmake(self, **kwargs)
@@ -748,14 +824,18 @@ builds, and installs a specified CMake enabled package.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
-- __configure_opts__: List of options to pass to `cmake`.  The default
-value is an empty list.
+- __cmake_opts__: List of options to pass to `cmake`.  The default value
+is an empty list.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
@@ -779,12 +859,15 @@ default is an empty list.
 `/usr/local`. It is highly recommended not to use this default and
 instead set the prefix to a package specific directory.
 
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  This parameter must
-be specified.
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
 
 __Examples__
 
@@ -801,6 +884,26 @@ generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
               directory='gromacs-2018.2',
               prefix='/usr/local/gromacs',
               url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+```
+
+```python
+generic_cmake(branch='v0.8.0',
+              cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                          '-D QUDA_DIRAC_CLOVER=ON',
+                          '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                          '-D QUDA_DIRAC_STAGGERED=ON',
+                          '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                          '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                          '-D QUDA_DIRAC_WILSON=ON',
+                          '-D QUDA_FORCE_GAUGE=ON',
+                          '-D QUDA_FORCE_HISQ=ON',
+                          '-D QUDA_GPU_ARCH=sm_70',
+                          '-D QUDA_INTERFACE_MILC=ON',
+                          '-D QUDA_INTERFACE_QDP=ON',
+                          '-D QUDA_LINK_HISQ=ON',
+                          '-D QUDA_MPI=ON'],
+              prefix='/usr/local/quda',
+              repository='https://github.com/lattice/quda.git')
 ```
 
 

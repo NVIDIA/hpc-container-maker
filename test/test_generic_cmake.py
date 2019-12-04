@@ -55,7 +55,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root /var/tmp/gromacs-2018.2 && \
     cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/gromacs-2018.2/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/v2018.2.tar.gz /var/tmp/gromacs-2018.2''')
+    rm -rf /var/tmp/gromacs-2018.2 /var/tmp/v2018.2.tar.gz''')
 
     @ubuntu
     @docker
@@ -63,6 +63,13 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """missing url"""
         with self.assertRaises(RuntimeError):
             g = generic_cmake()
+
+    @ubuntu
+    @docker
+    def test_both_repository_and_url(self):
+        """both repository and url"""
+        with self.assertRaises(RuntimeError):
+            g = generic_cmake(repository='foo', url='bar')
 
     @ubuntu
     @docker
@@ -86,7 +93,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /tmp/build && cd /tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /var/tmp/spdlog-1.4.2 && \
     cmake --build /tmp/build --target all -- -j$(nproc) && \
     cmake --build /tmp/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/v1.4.2.tar.gz /var/tmp/spdlog-1.4.2 /tmp/build''')    
+    rm -rf /var/tmp/spdlog-1.4.2 /var/tmp/v1.4.2.tar.gz /tmp/build''')
 
     @ubuntu
     @docker
@@ -109,7 +116,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cmake --build /var/tmp/spdlog-1.4.2/build --target install -- -j$(nproc) && \
     cd /usr/local/spdlog && \
     echo "post" && \
-    rm -rf /var/tmp/v1.4.2.tar.gz /var/tmp/spdlog-1.4.2''')    
+    rm -rf /var/tmp/spdlog-1.4.2 /var/tmp/v1.4.2.tar.gz''')
 
     @ubuntu
     @docker
@@ -140,7 +147,36 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/gromacs-2018.2/build --target check -- -j$(nproc) && \
     cmake --build /var/tmp/gromacs-2018.2/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/v2018.2.tar.gz /var/tmp/gromacs-2018.2''')
+    rm -rf /var/tmp/gromacs-2018.2 /var/tmp/v2018.2.tar.gz''')
+
+    @ubuntu
+    @docker
+    def test_repository(self):
+        """test repository option"""
+        g = generic_cmake(branch='v0.8.0',
+                          cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                                      '-D QUDA_DIRAC_CLOVER=ON',
+                                      '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                                      '-D QUDA_DIRAC_STAGGERED=ON',
+                                      '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                                      '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                                      '-D QUDA_DIRAC_WILSON=ON',
+                                      '-D QUDA_FORCE_GAUGE=ON',
+                                      '-D QUDA_FORCE_HISQ=ON',
+                                      '-D QUDA_GPU_ARCH=sm_70',
+                                      '-D QUDA_INTERFACE_MILC=ON',
+                                      '-D QUDA_INTERFACE_QDP=ON',
+                                      '-D QUDA_LINK_HISQ=ON',
+                                      '-D QUDA_MPI=ON'],
+                          prefix='/usr/local/quda',
+                          repository='https://github.com/lattice/quda.git')
+        self.assertEqual(str(g),
+r'''# https://github.com/lattice/quda.git
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.8.0 https://github.com/lattice/quda.git quda && cd - && \
+    mkdir -p /var/tmp/quda/build && cd /var/tmp/quda/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/quda -D CMAKE_BUILD_TYPE=RELEASE -D QUDA_DIRAC_CLOVER=ON -D QUDA_DIRAC_DOMAIN_WALL=ON -D QUDA_DIRAC_STAGGERED=ON -D QUDA_DIRAC_TWISTED_CLOVER=ON -D QUDA_DIRAC_TWISTED_MASS=ON -D QUDA_DIRAC_WILSON=ON -D QUDA_FORCE_GAUGE=ON -D QUDA_FORCE_HISQ=ON -D QUDA_GPU_ARCH=sm_70 -D QUDA_INTERFACE_MILC=ON -D QUDA_INTERFACE_QDP=ON -D QUDA_LINK_HISQ=ON -D QUDA_MPI=ON /var/tmp/quda && \
+    cmake --build /var/tmp/quda/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/quda/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/quda''')
 
     @ubuntu
     @docker
