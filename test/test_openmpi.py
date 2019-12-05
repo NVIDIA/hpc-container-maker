@@ -143,6 +143,35 @@ ENV PATH=/usr/local/openmpi/bin:$PATH''')
 
     @ubuntu
     @docker
+    def test_pmi(self):
+        """pmi options"""
+        ompi = openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal',
+                       version='4.0.1')
+        self.assertEqual(str(ompi),
+r'''# OpenMPI version 4.0.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        file \
+        hwloc \
+        libnuma-dev \
+        make \
+        openssh-client \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.1.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-4.0.1 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-pmi=/usr/local/slurm-pmi2 --with-pmix=internal --with-verbs && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/openmpi-4.0.1.tar.bz2 /var/tmp/openmpi-4.0.1
+ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/openmpi/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         ompi = openmpi()
