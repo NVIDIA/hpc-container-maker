@@ -39,6 +39,9 @@ class apt_get(bb_base):
 
     # Parameters
 
+    aptitude: Boolean flag to specify whether `aptitude` should be
+    used instead of `apt-get`.  The default is False.
+
     download: Boolean flag to specify whether to download the deb
     packages instead of installing them.  The default is False.
 
@@ -77,6 +80,7 @@ class apt_get(bb_base):
 
         super(apt_get, self).__init__()
 
+        self.__aptitude = kwargs.get('aptitude', False)
         self.__commands = []
         self.__download = kwargs.get('download', False)
         self.__download_directory = kwargs.get('download_directory',
@@ -155,8 +159,14 @@ class apt_get(bb_base):
                     self.__commands.append(
                         'rm -rf {}'.format(self.__download_directory))
             else:
-                install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
-                install = install + ' \\\n'.join(packages)
-                self.__commands.append(install)
+                if self.__aptitude:
+                    self.__commands.append('DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude')
+                    install = 'aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost=\'100*canceled-actions,200*removals\' \\\n'
+                    install = install + ' \\\n'.join(packages)
+                    self.__commands.append(install)
+                else:
+                    install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
+                    install = install + ' \\\n'.join(packages)
+                    self.__commands.append(install)
 
             self.__commands.append('rm -rf /var/lib/apt/lists/*')

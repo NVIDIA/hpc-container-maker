@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.intel_psxe_runtime import intel_psxe_runtime
 
@@ -39,13 +39,14 @@ class Test_intel_psxe_runtime(unittest.TestCase):
             psxe_rt = intel_psxe_runtime()
             str(psxe_rt)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_eula(self):
         """eula"""
         psxe_rt = intel_psxe_runtime(eula=True)
         self.assertEqual(str(psxe_rt),
-r'''# Intel Parallel Studio XE runtime version 2019
+r'''# Intel Parallel Studio XE runtime version 2019.5-281
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -56,21 +57,24 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/2019/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2019 | apt-key add - && \
+RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/2019 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-psxe-runtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \
+    aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \
+        intel-psxe-runtime=2019.5-281 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bash.bashrc''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_psxevars_false(self):
         """psxevars is false"""
-        psxe_rt = intel_psxe_runtime(eula=True, psxevars=False)
+        psxe_rt = intel_psxe_runtime(eula=True, psxevars=False,
+                                     version='2019.5-281')
         self.assertEqual(str(psxe_rt),
-r'''# Intel Parallel Studio XE runtime version 2019
+r'''# Intel Parallel Studio XE runtime version 2019.5-281
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -81,11 +85,12 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/2019/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2019 | apt-key add - && \
+RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     echo "deb https://apt.repos.intel.com/2019 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-psxe-runtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \
+    aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \
+        intel-psxe-runtime=2019.5-281 && \
     rm -rf /var/lib/apt/lists/*
 ENV DAALROOT=/opt/intel/psxe_runtime/linux/daal \
     FI_PROVIDER_PATH=/opt/intel/psxe_runtime/linux/mpi/intel64/libfabric/lib/prov \
@@ -95,27 +100,30 @@ ENV DAALROOT=/opt/intel/psxe_runtime/linux/daal \
     MKLROOT=/opt/intel/psxe_runtime/linux/mkl \
     PATH=/opt/intel/psxe_runtime/linux/mpi/intel64/bin:/opt/intel/psxe_runtime/linux/mpi/intel64/libfabric/bin:$PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_component_off(self):
         """disable one of the runtimes"""
-        psxe_rt = intel_psxe_runtime(daal=False, eula=True)
+        psxe_rt = intel_psxe_runtime(daal=False, eula=True,
+                                     version='2019.5-281')
         self.assertEqual(str(psxe_rt),
-r'''# Intel Parallel Studio XE runtime version 2019
+r'''# Intel Parallel Studio XE runtime version 2019.5-281
 RUN yum install -y \
         man-db \
         openssh-clients \
         which && \
     rm -rf /var/cache/yum/*
-RUN rpm --import https://yum.repos.intel.com/2019/setup/RPM-GPG-KEY-intel-psxe-runtime-2019 && \
+RUN yum install -y nextgen-yum4 && \
+    rpm --import https://yum.repos.intel.com/2019/setup/RPM-GPG-KEY-intel-psxe-runtime-2019 && \
     yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/2019/setup/intel-psxe-runtime-2019.repo && \
-    yum install -y \
-        intel-icc-runtime \
-        intel-ifort-runtime \
-        intel-ipp-runtime \
-        intel-mkl-runtime \
-        intel-mpi-runtime \
-        intel-tbb-runtime && \
+    yum4 install -y \
+        intel-icc-runtime-64bit-2019.5-281 \
+        intel-ifort-runtime-64bit-2019.5-281 \
+        intel-ipp-runtime-64bit-2019.5-281 \
+        intel-mkl-runtime-64bit-2019.5-281 \
+        intel-mpi-runtime-64bit-2019.5-281 \
+        intel-tbb-runtime-64bit-2019.5-281 && \
     rm -rf /var/cache/yum/*
 RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bashrc''')

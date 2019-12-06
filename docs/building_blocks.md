@@ -87,6 +87,9 @@ used instead of `apt_get`.
 __Parameters__
 
 
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
+
 - __download__: Boolean flag to specify whether to download the deb
 packages instead of installing them.  The default is False.
 
@@ -1303,7 +1306,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.
+tarball version.  The default value is `2019.5-281`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1403,20 +1406,17 @@ Intel MPI.  For Ubuntu, the default values are
 distributions, the default values are `man-db`, `openssh-clients`,
 and `which`.
 
-- __version__: The version of the Intel Parallel Studio XE runtime to
-install.  Due to issues in the Intel apt / yum repositories, only
-the major version is used; within a major version, the most recent
-minor version will be installed.  The default value is
-`2019.4-243`.
-
 - __tbb__: Boolean flag to specify whether the Intel Threading Building
 Blocks runtime should be installed.  The default is True.
+
+- __version__: The version of the Intel Parallel Studio XE runtime to
+install.  The default value is `2019.5-281`.
 
 __Examples__
 
 
 ```python
-intel_psxe_runtime(eula=True, version='2018.4-274')
+intel_psxe_runtime(eula=True, version='2018.5-281')
 ```
 
 ```python
@@ -2627,6 +2627,9 @@ __Parameters__
 - __apt__: A list of Debian packages to install.  The default is an
 empty list.
 
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
+
 - __apt_keys__: A list of GPG keys to add.  The default is an empty
 list.
 
@@ -2671,6 +2674,10 @@ parameter is ignored if the Linux distribution is not RHEL-based.
 
 - __yum__: A list of RPM packages to install.  The default value is an
 empty list.
+
+- __yum4__: Boolean flag to specify whether `yum4` should be used
+instead of `yum`.  The default is False.  This parameter is only
+recognized if the CentOS version is 7.x.
 
 - __yum_keys__: A list of GPG keys to import.  The default is an empty
 list.
@@ -3338,6 +3345,10 @@ an empty list.
 
 - __scl__: - Boolean flag to specify whether to enable the Software
 Collections (SCL) repository.  The default is False.
+
+- __yum4__: Boolean flag to specify whether `yum4` should be used
+instead of `yum`.  The default is False.  This parameter is only
+recognized if the CentOS version is 7.x.
 
 __Examples__
 
