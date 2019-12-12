@@ -145,7 +145,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     using the [intel_psxe_runtime](#intel_psxe_runtime) building
     block.  This value is passed as its `version` parameter.  In
     general, the major version of the runtime should correspond to the
-    tarball version.
+    tarball version.  The default value is `2019.5-281`.
 
     tarball: Path to the Intel Parallel Studio XE tarball relative to
     the local build context.  The default value is empty.  This
@@ -193,7 +193,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/opt/intel')
         self.__psxevars = kwargs.get('psxevars', True)
-        self.__runtime_version = kwargs.get('runtime_version', '2019.4-243')
+        self.__runtime_version = kwargs.get('runtime_version', '2019.5-281')
         self.__tarball = kwargs.get('tarball', None)
         self.__tbb = kwargs.get('tbb', True)
         self.__wd = '/var/tmp' # working directory

@@ -140,10 +140,10 @@ ENV CPATH=/opt/intel/compilers_and_libraries/linux/daal/include:/opt/intel/compi
     @docker
     def test_runtime(self):
         """Runtime"""
-        psxe = intel_psxe(eula=True, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
+        psxe = intel_psxe(eula=True, tarball='parallel_studio_xe_2018_update1_professional_edition.tgz', runtime_version='2018.4-274')
         r = psxe.runtime()
         self.assertEqual(r,
-r'''# Intel Parallel Studio XE runtime version 2019
+r'''# Intel Parallel Studio XE runtime version 2018.4-274
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -154,11 +154,12 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/2019/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2019 | apt-key add - && \
-    echo "deb https://apt.repos.intel.com/2019 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN wget -qO - https://apt.repos.intel.com/2018/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2018 | apt-key add - && \
+    echo "deb [trusted=yes] https://apt.repos.intel.com/2018 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-psxe-runtime && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \
+    aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \
+        intel-psxe-runtime=2018.4-274 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bash.bashrc''')
 

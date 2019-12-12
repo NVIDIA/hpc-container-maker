@@ -43,6 +43,9 @@ class packages(bb_base):
     apt: A list of Debian packages to install.  The default is an
     empty list.
 
+    aptitude: Boolean flag to specify whether `aptitude` should be
+    used instead of `apt-get`.  The default is False.
+
     apt_keys: A list of GPG keys to add.  The default is an empty
     list.
 
@@ -88,6 +91,10 @@ class packages(bb_base):
     yum: A list of RPM packages to install.  The default value is an
     empty list.
 
+    yum4: Boolean flag to specify whether `yum4` should be used
+    instead of `yum`.  The default is False.  This parameter is only
+    recognized if the CentOS version is 7.x.
+
     yum_keys: A list of GPG keys to import.  The default is an empty
     list.
 
@@ -119,6 +126,7 @@ class packages(bb_base):
         self.__apt_keys = kwargs.get('apt_keys', [])
         self.__apt_ppas = kwargs.get('apt_ppas', [])
         self.__apt_repositories = kwargs.get('apt_repositories', [])
+        self.__aptitude = kwargs.get('aptitude', False)
         self.__download = kwargs.get('download', False)
         self.__download_directory = kwargs.get('download_directory',
                                                '/var/tmp/packages_download')
@@ -128,6 +136,7 @@ class packages(bb_base):
         self.__powertools = kwargs.get('powertools', False)
         self.__scl = kwargs.get('scl', False)
         self.__yum = kwargs.get('yum', [])
+        self.__yum4 = kwargs.get('yum4', False)
         self.__yum_keys = kwargs.get('yum_keys', [])
         self.__yum_repositories = kwargs.get('yum_repositories', [])
 
@@ -138,36 +147,33 @@ class packages(bb_base):
         """String representation of the building block"""
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if self.__apt:
-                self += apt_get(download=self.__download,
-                                download_directory=self.__download_directory,
-                                extract=self.__extract,
-                                keys=self.__apt_keys, ospackages=self.__apt,
-                                ppas=self.__apt_ppas,
-                                repositories=self.__apt_repositories)
+                ospackages = self.__apt
             else:
-                self += apt_get(download=self.__download,
-                                download_directory=self.__download_directory,
-                                extract=self.__extract,
-                                keys=self.__apt_keys,
-                                ospackages=self.__ospackages,
-                                ppas=self.__apt_ppas,
-                                repositories=self.__apt_repositories)
-        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if self.__yum:
-                self += yum(download=self.__download,
-                            download_directory=self.__download_directory,
-                            extract=self.__extract, epel=self.__epel,
-                            keys=self.__yum_keys,
-                            ospackages=self.__yum,
-                            powertools=self.__powertools, scl=self.__scl,
-                            repositories=self.__yum_repositories)
-            else:
-                self += yum(download=self.__download,
+                ospackages = self.__ospackages
+
+            self += apt_get(aptitude=self.__aptitude,
+                            download=self.__download,
                             download_directory=self.__download_directory,
                             extract=self.__extract,
-                            epel=self.__epel, keys=self.__yum_keys,
-                            ospackages=self.__ospackages,
-                            powertools=self.__powertools, scl=self.__scl,
-                            repositories=self.__yum_repositories)
+                            keys=self.__apt_keys,
+                            ospackages=ospackages,
+                            ppas=self.__apt_ppas,
+                            repositories=self.__apt_repositories)
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if self.__yum:
+                ospackages = self.__yum
+            else:
+                ospackages = self.__ospackages
+
+            self += yum(download=self.__download,
+                        download_directory=self.__download_directory,
+                        extract=self.__extract,
+                        epel=self.__epel,
+                        keys=self.__yum_keys,
+                        ospackages=ospackages,
+                        powertools=self.__powertools,
+                        scl=self.__scl,
+                        repositories=self.__yum_repositories,
+                        yum4=self.__yum4)
         else:
             raise RuntimeError('Unknown Linux distribution')

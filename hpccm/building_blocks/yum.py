@@ -73,6 +73,10 @@ class yum(bb_base):
     scl: - Boolean flag to specify whether to enable the Software
     Collections (SCL) repository.  The default is False.
 
+    yum4: Boolean flag to specify whether `yum4` should be used
+    instead of `yum`.  The default is False.  This parameter is only
+    recognized if the CentOS version is 7.x.
+
     # Examples
 
     ```python
@@ -98,6 +102,7 @@ class yum(bb_base):
         self.__powertools = kwargs.get('powertools', False)
         self.__repositories = kwargs.get('repositories', [])
         self.__scl = kwargs.get('scl', False)
+        self.__yum4 = kwargs.get('yum4', False)
 
         if hpccm.config.g_linux_distro != linux_distro.CENTOS: # pragma: no cover
             logging.warning('Using yum on a non-RHEL based Linux distribution')
@@ -126,6 +131,13 @@ class yum(bb_base):
 
     def __setup(self):
         """Construct the series of commands to execute"""
+
+        # Use yum version 4 is requested.  yum 4 is the default on
+        # CentOS 8.
+        yum = 'yum'
+        if self.__yum4 and hpccm.config.g_linux_version < StrictVersion('8.0'):
+            self.__commands.append('yum install -y nextgen-yum4')
+            yum = 'yum4'
 
         if self.__keys:
             self.__commands.append('rpm --import {}'.format(
@@ -199,7 +211,7 @@ class yum(bb_base):
                         'rm -rf {}'.format(self.__download_directory))
             else:
                 # Install packages
-                install = 'yum install -y \\\n'
+                install = '{} install -y \\\n'.format(yum)
                 install = install + ' \\\n'.join(packages)
                 self.__commands.append(install)
 
