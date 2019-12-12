@@ -3,20 +3,14 @@ MILC 7.8.1
 
 Contents:
   Ubuntu 16.04
-  CUDA version 9.0
+  CUDA version 10.1
   GNU compilers (upstream)
   OFED (upstream)
-  OpenMPI version 3.0.0
+  OpenMPI version 3.1.4
   QUDA version 0.8.0
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 # pylama: ignore=E0602
-import os
-from hpccm.templates.git import git
-from hpccm.templates.sed import sed
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
-from hpccm.templates.CMakeBuild import CMakeBuild
 
 gpu_arch = USERARG.get('GPU_ARCH', 'sm_60')
 
@@ -26,89 +20,65 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 ###############################################################################
 # Devel stage
 ###############################################################################
-Stage0.name = 'devel'
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04', _as=Stage0.name)
+Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04', _as='devel')
 
-Stage0 += packages(ospackages=['autoconf', 'automake', 'ca-certificates',
-                               'cmake', 'git'])
-
+Stage0 += gnu()
+Stage0 += cmake(eula=True)
 Stage0 += ofed()
-
-Stage0 += openmpi(configure_opts=['--enable-mpi-cxx'], prefix='/opt/openmpi',
-                  version='3.0.0')
+Stage0 += openmpi(version='3.1.4')
 
 # build QUDA
-g = git()
-cm = CMakeBuild()
-quda_cmds = [g.clone_step(repository='https://github.com/lattice/quda',
-                          branch='v0.8.0', path='/quda', directory='src'),
-             cm.configure_step(directory='/quda/src',
-                               build_directory='/quda/build', opts=[
-                                   '-DCMAKE_BUILD_TYPE=RELEASE',
-                                   '-DQUDA_DIRAC_CLOVER=ON',
-                                   '-DQUDA_DIRAC_DOMAIN_WALL=ON',
-                                   '-DQUDA_DIRAC_STAGGERED=ON',
-                                   '-DQUDA_DIRAC_TWISTED_CLOVER=ON',
-                                   '-DQUDA_DIRAC_TWISTED_MASS=ON',
-                                   '-DQUDA_DIRAC_WILSON=ON',
-                                   '-DQUDA_FORCE_GAUGE=ON',
-                                   '-DQUDA_FORCE_HISQ=ON',
-                                   '-DQUDA_GPU_ARCH={}'.format(gpu_arch),
-                                   '-DQUDA_INTERFACE_MILC=ON',
-                                   '-DQUDA_INTERFACE_QDP=ON',
-                                   '-DQUDA_LINK_HISQ=ON',
-                                   '-DQUDA_MPI=ON']),
-             cm.build_step()]
-Stage0 += shell(commands=quda_cmds)
+Stage0 += packages(ospackages=['ca-certificates', 'git'])
+Stage0 += generic_cmake(branch='v0.8.0',
+                        cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                                    '-D QUDA_DIRAC_CLOVER=ON',
+                                    '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                                    '-D QUDA_DIRAC_STAGGERED=ON',
+                                    '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                                    '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                                    '-D QUDA_DIRAC_WILSON=ON',
+                                    '-D QUDA_FORCE_GAUGE=ON',
+                                    '-D QUDA_FORCE_HISQ=ON',
+                                    '-D QUDA_GPU_ARCH={}'.format(gpu_arch),
+                                    '-D QUDA_INTERFACE_MILC=ON',
+                                    '-D QUDA_INTERFACE_QDP=ON',
+                                    '-D QUDA_LINK_HISQ=ON',
+                                    '-D QUDA_MPI=ON'],
+                        install=False,
+                        postinstall=['cp -a /var/tmp/quda/build/* /usr/local/quda'],
+                        preconfigure=['mkdir -p /usr/local/quda'],
+                        prefix='/usr/local/quda',
+                        repository='https://github.com/lattice/quda.git')
 
 # build MILC
-milc_version = '7.8.1'
-milc_cmds = ['mkdir -p /milc',
-             wget().download_step(url='http://www.physics.utah.edu/~detar/milc/milc_qcd-{}.tar.gz'.format(milc_version)),
-             tar().untar_step(
-                 tarball='/tmp/milc_qcd-{}.tar.gz'.format(milc_version),
-                 directory='/milc'),
-             'cd /milc/milc_qcd-{}/ks_imp_rhmc'.format(milc_version),
-             'cp ../Makefile .',
-             sed().sed_step(
-                 file='/milc/milc_qcd-{}/ks_imp_rhmc/Makefile'.format(
-                     milc_version),
-                 patterns=[r's/WANTQUDA\(.*\)=.*/WANTQUDA\1= true/g',
-                           r's/\(WANT_.*_GPU\)\(.*\)= .*/\1\2= true/g',
-                           r's/QUDA_HOME\(.*\)= .*/QUDA_HOME\1= \/quda\/build/g',
-                           r's/CUDA_HOME\(.*\)= .*/CUDA_HOME\1= \/usr\/local\/cuda/g',
-                           r's/#\?MPP = .*/MPP = true/g',
-                           r's/#\?CC = .*/CC = mpicc/g',
-                           r's/LD\(\s+\)= .*/LD\1= mpicxx/g',
-                           r's/PRECISION = [0-9]\+/PRECISION = 2/g',
-                           r's/WANTQIO = .*/WANTQIO = #true or blank.  Implies HAVEQMP./g',
-                           r's/CGEOM =.*-DFIX_NODE_GEOM.*/CGEOM = #-DFIX_NODE_GEOM/g']),
-             'C_INCLUDE_PATH=/quda/build/include make su3_rhmd_hisq']
-Stage0 += shell(commands=milc_cmds)
-Stage0 += environment(variables={
-    'PATH': '$PATH:/milc/milc_qcd-{}/ks_imp_rhmc'.format(milc_version)})
-
-# Include examples if they exist in the build context
-if os.path.isdir('recipes/milc/examples'):
-    Stage0 += copy(src='recipes/milc/examples', dest='/workspace/examples')
-
-Stage0 += workdir(directory='/workspace')
+Stage0 += generic_build(build=['cp Makefile ks_imp_rhmc',
+                               'cd ks_imp_rhmc',
+                               'make -j 1 su3_rhmd_hisq \
+                                CC=/usr/local/openmpi/bin/mpicc \
+                                LD=/usr/local/openmpi/bin/mpicxx \
+                                QUDA_HOME=/usr/local/quda \
+                                WANTQUDA=true \
+                                WANT_GPU=true \
+                                WANT_CL_BCG_GPU=true \
+                                WANT_FN_CG_GPU=true \
+                                WANT_FL_GPU=true \
+                                WANT_FF_GPU=true \
+                                WANT_GF_GPU=true \
+                                MPP=true \
+                                PRECISION=2 \
+                                WANTQIO=""'],
+                        install=['mkdir -p /usr/local/milc/bin',
+                                 'cp /var/tmp/milc_qcd/ks_imp_rhmc/su3_rhmd_hisq /usr/local/milc/bin'],
+                        branch='master',
+                        prefix='/usr/local/milc',
+                        repository='https://github.com/milc-qcd/milc_qcd')
+Stage0 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
 
 ###############################################################################
 # Release stage
 ###############################################################################
-Stage1 += baseimage(image='nvidia/cuda:9.0-base-ubuntu16.04')
+Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
 
-Stage1 += Stage0.runtime(_from=Stage0.name)
+Stage1 += Stage0.runtime(exclude=['generic_cmake'])
 
-Stage1 += copy(_from=Stage0.name,
-               src='/milc/milc_qcd-{}/ks_imp_rhmc/su3_rhmd_hisq'.format(
-                   milc_version),
-               dest='/milc/su3_rhmd_hisq')
-Stage1 += environment(variables={'PATH': '$PATH:/milc'})
-
-# Include examples if they exist in the build context
-if os.path.isdir('recipes/milc/examples'):
-    Stage1 += copy(src='recipes/milc/examples', dest='/workspace/examples')
-
-Stage1 += workdir(directory='/workspace')
+Stage1 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
