@@ -40,10 +40,12 @@ generate:
   - hpccm.building_blocks.packages+
   - hpccm.building_blocks.pgi+
   - hpccm.building_blocks.pip+
+  - hpccm.building_blocks.pmix+
   - hpccm.building_blocks.pnetcdf+
   - hpccm.building_blocks.python+
   - hpccm.building_blocks.scif+
   - hpccm.building_blocks.sensei+
+  - hpccm.building_blocks.slurm_pmi2+
   - hpccm.building_blocks.ucx+
   - hpccm.building_blocks.xpmem+
   - hpccm.building_blocks.yum+

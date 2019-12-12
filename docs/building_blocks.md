@@ -2555,6 +2555,18 @@ and `wget`.  For RHEL-based Linux distributions, the default
 values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
 `openssh-clients`, `perl`, `tar`, and `wget`.
 
+- __pmi__: Flag to control whether PMI is used by the build.  If True,
+adds `--with-pmi` to the list of `configure` options.  If a
+string, uses the value of the string as the PMI path, e.g.,
+`--with-pmi=/usr/local/slurm-pmi2`.  If False, does nothing.  The
+default is False.
+
+- __pmix__: Flag to control whether PMIX is used by the build.  If True,
+adds `--with-pmix` to the list of `configure` options.  If a
+string, uses the value of the string as the PMIX path, e.g.,
+`--with-pmix=/usr/local/pmix`.  If False, does nothing.  The
+default is False.
+
 - __prefix__: The top level install location.  The default value is
 `/usr/local/openmpi`.
 
@@ -2593,6 +2605,11 @@ openmpi(toolchain=p.toolchain)
 openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
         ospackages=['file', 'hwloc', 'libslurm-dev'])
 ```
+
+```python
+openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal')
+```
+
 
 ## runtime
 ```python
@@ -2840,6 +2857,71 @@ pip(packages=['hpccm'], pip='pip3')
 pip(requirements='requirements.txt')
 ```
 
+
+# pmix
+```python
+pmix(self, **kwargs)
+```
+The `pmix` building block configures, builds, and installs the
+[PMIX](https://github.com/openpmix/openpmix) component.
+
+__Parameters__
+
+
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH`, and `PATH`) should be modified to
+include PMIX. The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the PMIX library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the PMIX library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `file`, `hwloc`,
+`libevent-dev`, `make`, `tar`, and `wget`. For RHEL-based Linux
+distributions, the default values are `file`, `hwloc`,
+`libevent-devel`, `make`, `tar`, and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/pmix`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default value is empty.
+
+- __version__: The version of PMIX source to download.  The default value
+is `3.1.4`.
+
+__Examples__
+
+
+```python
+pmix(prefix='/opt/pmix/3.1.4', version='3.1.4')
+```
+
+
+## runtime
+```python
+pmix.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+p = pmix(...)
+Stage0 += p
+Stage1 += p.runtime()
+```
 
 # pnetcdf
 ```python
@@ -3110,6 +3192,68 @@ __Examples__
 s = sensei(...)
 Stage0 += s
 Stage1 += s.runtime()
+```
+
+# slurm_pmi2
+```python
+slurm_pmi2(self, **kwargs)
+```
+The `slurm_pmi2` building block configures, builds, and installs
+the PMI2 component from SLURM.
+
+Note: this building block does not install SLURM itself.
+
+__Parameters__
+
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
+PMI2. The default is False.
+
+- __ldconfig__: Boolean flag to specify whether the PMI2 library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the PMI2 library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  The default values are `bzip2`, `file`, `make`,
+`perl`, `tar`, and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/slurm-pmi2`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default value is empty.
+
+- __version__: The version of SLURM source to download.  The default
+value is `19.05.4`.
+
+__Examples__
+
+
+```python
+slurm_pmi2(prefix='/opt/pmi', version='19.05.4')
+```
+
+
+## runtime
+```python
+slurm_pmi2.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+p = slurm_pmi2(...)
+Stage0 += p
+Stage1 += p.runtime()
 ```
 
 # ucx
