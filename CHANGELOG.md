@@ -1,3 +1,15 @@
+# v19.12.0
+
+- Adds generic builder (`generic_build`), PMI (`slurm_pmi`), and PMIx
+  (`pmix`) building blocks
+- Fixes and enhancements for the generic GNU Autotools (`generic_autotools`),
+  generic CMake (`generic_cmake`), Intel Parallel Studio XE runtime
+  (`intel_psxe_runtime`), and NetCDF (`netcdf`) building blocks
+- Minor improvements and clarifications for Singularity multi-stage
+  recipes
+- Adds LAMMPS example recipe and updates GROMACS, MILC, and MPI bandwidth
+  example recipes
+
 # v19.11.0
 
 - Adds generic building blocks for GNU Autotools (`generic_autotools`)
