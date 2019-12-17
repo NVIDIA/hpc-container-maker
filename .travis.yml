@@ -25,7 +25,7 @@ matrix:
       language: shell
       python: 2.7
       before_install:
-        - choco install python --version 2.7.11 --params "PrependPath=1"
+        - choco install python --version 2.7.17 --params "PrependPath=1"
         - python -m pip install --upgrade pip six enum34
       env: PATH=/c/tools/python:/c/tools/python/Scripts:$PATH
     - name: "Python 3.6 on Windows"
