@@ -95,7 +95,8 @@ ENV CPATH=/usr/local/pmix/include:$CPATH \
 r'''# PMIX
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libevent-2.* && \
+        libevent-2.* \
+        libevent-pthreads-2.* && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/pmix /usr/local/pmix
 ENV CPATH=/usr/local/pmix/include:$CPATH \
