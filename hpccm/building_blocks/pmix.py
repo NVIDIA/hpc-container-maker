@@ -135,7 +135,7 @@ class pmix(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                                      'tar', 'wget']
                 if self.__check:
                     self.__ospackages.append('perl')
-            self.__runtime_ospackages = ['libevent']
+            self.__runtime_ospackages = ['libevent-2.*']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['file', 'hwloc', 'libevent-devel', 'make',
