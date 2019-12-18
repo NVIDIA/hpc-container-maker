@@ -55,6 +55,10 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
 
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
+
     configure_opts: List of options to pass to `configure`.  The
     default value is an empty list.
 
@@ -114,6 +118,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.__branch = kwargs.get('branch', None)
         self.__build_directory = kwargs.get('build_directory', None)
         self.__check = kwargs.get('check', False)
+        self.__commit = kwargs.get('commit', None)
         self.configure_opts = kwargs.get('configure_opts', [])
         self.__directory = kwargs.get('directory', None)
         self.__environment = kwargs.get('environment', {})
@@ -133,6 +138,9 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
         if self.__repository and self.__url:
             raise RuntimeError('cannot specify both a repository and a URL')
+
+        if self.__branch and self.__commit:
+            raise RuntimeError('cannot specify both a branch and a commit')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -185,7 +193,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         if self.__repository:
             # Clone git repository
             self.__commands.append(self.clone_step(
-                branch=self.__branch, path=self.__wd,
+                branch=self.__branch, commit=self.__commit, path=self.__wd,
                 repository=self.__repository))
 
             directory = posixpath.join(self.__wd, posixpath.splitext(

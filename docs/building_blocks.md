@@ -687,6 +687,10 @@ value is the source code location.
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is an empty list.
 
@@ -772,6 +776,10 @@ default is an empty list.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the default branch for the repository.
 
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
@@ -839,6 +847,10 @@ should be performed.  The default is False.
 
 - __cmake_opts__: List of options to pass to `cmake`.  The default value
 is an empty list.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
