@@ -58,6 +58,10 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
     cmake_opts: List of options to pass to `cmake`.  The default value
     is an empty list.
 
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
+
     directory: The source code location.  The default value is the
     basename of the downloaded package.  If the value is not an
     absolute path, then the temporary working directory is prepended.
@@ -137,6 +141,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
         self.__build_directory = kwargs.get('build_directory', 'build')
         self.__check = kwargs.get('check', False)
         self.cmake_opts = kwargs.get('cmake_opts', [])
+        self.__commit = kwargs.get('commit', None)
         self.__directory = kwargs.get('directory', None)
         self.__environment = kwargs.get('environment', {})
         self.__install = kwargs.get('install', True)
@@ -155,6 +160,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
 
         if self.__repository and self.__url:
             raise RuntimeError('cannot specify both a repository and a URL')
+
+        if self.__branch and self.__commit:
+            raise RuntimeError('cannot specify both a branch and a commit')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -207,7 +215,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
         if self.__repository:
             # Clone git repository
             self.__commands.append(self.clone_step(
-                branch=self.__branch, path=self.__wd,
+                branch=self.__branch, commit=self.__commit, path=self.__wd,
                 repository=self.__repository))
 
             directory = posixpath.join(self.__wd, posixpath.splitext(

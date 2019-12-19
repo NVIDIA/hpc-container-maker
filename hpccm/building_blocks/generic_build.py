@@ -50,6 +50,10 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
     `repository` parameter is specified.  The default is empty, i.e.,
     use the default branch for the repository.
 
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
+
     directory: The source code location.  The default value is the
     basename of the downloaded package.  If the value is not an
     absolute path, then the temporary working directory is prepended.
@@ -87,6 +91,7 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         self.__build = kwargs.get('build', [])
         self.__branch = kwargs.get('branch', None)
         self.__build_directory = kwargs.get('build_directory', 'build')
+        self.__commit = kwargs.get('commit', None)
         self.__directory = kwargs.get('directory', None)
         self.__install = kwargs.get('install', [])
         self.__prefix = kwargs.get('prefix', None)
@@ -101,6 +106,9 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
 
         if self.__repository and self.__url:
             raise RuntimeError('cannot specify both a repository and a URL')
+
+        if self.__branch and self.__commit:
+            raise RuntimeError('cannot specify both a branch and a commit')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -153,7 +161,7 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         if self.__repository:
             # Clone git repository
             self.__commands.append(self.clone_step(
-                branch=self.__branch, path=self.__wd,
+                branch=self.__branch, commit=self.__commit, path=self.__wd,
                 repository=self.__repository))
 
             directory = posixpath.join(self.__wd, posixpath.splitext(
