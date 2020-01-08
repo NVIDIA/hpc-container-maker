@@ -132,6 +132,8 @@ class Stage(object):
         for layer in self.__layers:
             runtime = getattr(layer, 'runtime', None)
             if callable(runtime) and layer.__class__.__name__ not in exclude:
-                instructions.append(layer.runtime(_from=_from))
+                inst = layer.runtime(_from=_from)
+                if inst:
+                    instructions.append(inst)
 
         return self.__separator.join(instructions)

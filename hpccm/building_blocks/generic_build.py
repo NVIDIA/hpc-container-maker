@@ -210,3 +210,5 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
             instructions.append(copy(_from=_from, src=self.__prefix,
                                      dest=self.__prefix))
             return '\n'.join(str(x) for x in instructions)
+        else:
+            return
