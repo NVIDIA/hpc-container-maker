@@ -92,7 +92,7 @@ RUN --mount=type=bind,target=/scif/apps/foo/src scif install /scif/recipes/{1}''
     def test_defaults_singularity(self):
         """Default scif building block"""
         s = scif(name='foo')
-        self.assertEqual(str(s), '%apprun foo\n    eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"')
+        self.assertEqual(str(s), '')
 
     @singularity
     def test_allsections_singularity(self):
@@ -113,7 +113,6 @@ r'''%appenv foo
 %apphelp foo
 My app
 %appinstall foo
-    for f in /.singularity.d/env/*; do . $f; done
     build_cmds
 %applabels foo
     A B
@@ -180,13 +179,10 @@ My app
 r'''%apphelp foo
 Python
 %appinstall foo
-    for f in /.singularity.d/env/*; do . $f; done
     yum install -y \
         python2 \
         python3
-    rm -rf /var/cache/yum/*
-%apprun foo
-    eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"''')
+    rm -rf /var/cache/yum/*''')
 
     @docker
     def test_runtime(self):

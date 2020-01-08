@@ -52,6 +52,10 @@ class scif(hpccm.base_object):
 
     _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+    _env: Boolean flag to specify whether the general container
+    environment should be also be loaded when executing a SCI-F
+    `%appinstall` block.  The default is False (Singularity specific).
+
     file: The SCI-F recipe file name.  The default value is the name
     parameter with the `.scif` suffix.
 
@@ -88,6 +92,7 @@ class scif(hpccm.base_object):
         self.__apprun = []
         self.__apptest = []
         self.__arguments = kwargs.get('_arguments')
+        self.__env = kwargs.get('_env', False)
         self.__name = kwargs.get('name', None)
         if not self.__name:
             raise RuntimeError('"name" must be defined')
@@ -151,14 +156,9 @@ class scif(hpccm.base_object):
             recipe.append(apphelp)
 
         if self.__appinstall:
-            _appenv = False
-            if hpccm.config.g_ctype == container_type.SINGULARITY:
-                # If the container type is Singularity, load the
-                # general container environment
-                _appenv = True
             appinstall = self.__appinstall[0].merge(self.__appinstall,
                                                     _app=self.__name,
-                                                    _appenv=_appenv)
+                                                    _appenv=self.__env)
             recipe.append(appinstall)
 
         if self.__applabels:
@@ -170,10 +170,6 @@ class scif(hpccm.base_object):
             apprun = self.__apprun[0].merge(self.__apprun,
                                             _app=self.__name)
             recipe.append(apprun)
-        else:
-            # Shell one liner to run a command if specified,
-            # otherwise start a shell
-            recipe.append(runscript(commands=['eval "if [[ $# -eq 0 ]]; then exec /bin/bash; else exec $@; fi"'], _args=False, _app=self.__name, _exec=False))
 
         if self.__apptest:
             apptest = self.__apptest[0].merge(self.__apptest,
