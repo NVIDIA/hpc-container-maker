@@ -3084,6 +3084,10 @@ __Parameters__
 
 - ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+- ___env__: Boolean flag to specify whether the general container
+environment should be also be loaded when executing a SCI-F
+`%appinstall` block.  The default is False (Singularity specific).
+
 - __file__: The SCI-F recipe file name.  The default value is the name
 parameter with the `.scif` suffix.
 
