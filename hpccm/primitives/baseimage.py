@@ -45,6 +45,9 @@ class baseimage(object):
     recipes, this value must be specified.  The default value is
     empty.
 
+    _bootstrap: The Singularity bootstrap agent.  This default value
+    is `docker` (Singularity specific).
+
     _distro: The underlying Linux distribution of the base image.
     Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
     `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
@@ -79,6 +82,7 @@ class baseimage(object):
         self.__arch = kwargs.get('_arch', '')
         self.__as = kwargs.get('AS', '') # Deprecated
         self.__as = kwargs.get('_as', self.__as)
+        self.__bootstrap = kwargs.get('_bootstrap', 'docker')
         self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
         self.__distro = kwargs.get('_distro', '')
         self.__docker_env = kwargs.get('_docker_env', True) # Singularity specific
@@ -152,7 +156,8 @@ class baseimage(object):
 
             return image
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
-            image = 'BootStrap: docker\nFrom: {}'.format(self.image)
+            image = 'BootStrap: {0}\nFrom: {1}'.format(self.__bootstrap,
+                                                       self.image)
 
             if (self.__as and
                 hpccm.config.g_singularity_version >= StrictVersion('3.2')):

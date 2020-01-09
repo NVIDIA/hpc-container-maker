@@ -129,6 +129,16 @@ Stage: dev
 %post
     . /.singularity.d/env/10-docker*.sh''')
 
+    @singularity
+    def test_bootstrap(self):
+      """Singularity bootstrap option"""
+      b = baseimage(image='foo.sif', _bootstrap='localimage')
+      self.assertEqual(str(b),
+r'''BootStrap: localimage
+From: foo.sif
+%post
+    . /.singularity.d/env/10-docker*.sh''')
+
     @docker
     def test_detect_ubuntu(self):
         """Base image Linux distribution detection"""
