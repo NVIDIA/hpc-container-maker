@@ -287,3 +287,5 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
             instructions.append(copy(_from=_from, src=self.prefix,
                                      dest=self.prefix))
             return '\n'.join(str(x) for x in instructions)
+        else:
+            return

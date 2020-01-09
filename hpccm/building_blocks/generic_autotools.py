@@ -265,3 +265,5 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             instructions.append(copy(_from=_from, src=self.prefix,
                                      dest=self.prefix))
             return '\n'.join(str(x) for x in instructions)
+        else:
+            return
