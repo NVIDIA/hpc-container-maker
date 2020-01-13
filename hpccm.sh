@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/bin/sh
 
-# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-
-from hpccm.cli import main
-
-if __name__ == '__main__':
-    main()
+python3 -m hpccm.cli $*
