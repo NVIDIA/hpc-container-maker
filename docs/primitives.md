@@ -17,6 +17,9 @@ determine the CPU architecture automatically.
 recipes, this value must be specified.  The default value is
 empty.
 
+- ___bootstrap__: The Singularity bootstrap agent.  This default value
+is `docker` (Singularity specific).
+
 - ___distro__: The underlying Linux distribution of the base image.
 Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
 `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
