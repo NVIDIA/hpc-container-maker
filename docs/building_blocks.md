@@ -1143,6 +1143,90 @@ Stage0 += h
 Stage1 += h.runtime()
 ```
 
+# hpcx
+```python
+hpcx(self, **kwargs)
+```
+The `hpcx` building block downloads and installs the [Mellanox
+HPC-X](https://www.mellanox.com/page/products_dyn?product_family=189&mtag=hpc-x)
+component.
+
+__Parameters__
+
+
+- __hpcxinit__: Mellanox HPC-X provides an environment script
+(`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
+`True`, the bashrc is modified to automatically source this
+environment script.  However, HPC-X is not automatically available
+to subsequent container image build steps; the environment is
+available when the container image is run.  To set the HPC-X
+environment in subsequent build steps you can explicitly call
+`source /usr/local/hpcx/hpcx-init.sh && hpcx_init` in each build
+step.  If this value is set to `False`, then the environment is
+set such that the environment is visible to both subsequent
+container image build steps and when the container image is run.
+However, the environment may differ slightly from that set by
+`hpcx-init.sh`.  The default value is `True`.
+
+- __inbox__: Boolean flag to specify whether to use Mellanox HPC-X built
+for Inbox OFED.  If the value is `True`, use Inbox OFED.  If the
+value is `False`, use Mellanox OFED.  The default is `False`.
+
+- __ldconfig__: Boolean flag to specify whether the Mellanox HPC-X
+library directories should be added dynamic linker cache.  If
+False, then `LD_LIBRARY_PATH` is modified to include the HPC-X
+library directories. This value is ignored if `hpcxinit` is
+`True`. The default value is False.
+
+- __mlnx_ofed__: The version of Mellanox OFED that should be matched.
+This value is ignored if Inbox OFED is selected.  The default
+value is `4.6-1.0.1.1`.
+
+- __multi_thread__: Boolean flag to specify whether the multi-threaded
+version of Mellanox HPC-X should be used.  The default is `False`.
+
+- __oslabel__: The Linux distribution label assigned by Mellanox to the
+tarball.  For Ubuntu, the default value is `ubuntu16.04` for
+Ubuntu 16.04 and `ubuntu18.04` for Ubuntu 18.04.  For RHEL-based
+Linux distributions, the default value is `redhat7.6` for version
+7 and `redhat8.0` for version 8.
+
+- __ospackages__: List of OS packages to install prior to installing
+Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
+`openssh-client`, `tar`, and `wget`.  For RHEL-based distributions
+the default values are `bzip2`, `openssh-clients`, `tar`, and
+`wget`.
+
+- __prefix__: The top level installation location.  The default value is
+`/usr/local/hpcx`.
+
+- __version__: The version of Mellanox HPC-X to install.  The default
+value is `2.5.0`.
+
+__Examples__
+
+
+```python
+hpcx(prefix='/usr/local/hpcx', version='2.5.0')
+```
+
+
+## runtime
+```python
+hpcx.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+h = hpcx(...)
+Stage0 += h
+Stage1 += h.runtime()
+```
+
 # intel_mpi
 ```python
 intel_mpi(self, **kwargs)

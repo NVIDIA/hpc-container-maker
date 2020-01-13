@@ -19,6 +19,7 @@ generate:
   - hpccm.building_blocks.generic_cmake+
   - hpccm.building_blocks.gnu+
   - hpccm.building_blocks.hdf5+
+  - hpccm.building_blocks.hpcx+
   - hpccm.building_blocks.intel_mpi+
   - hpccm.building_blocks.intel_psxe+
   - hpccm.building_blocks.intel_psxe_runtime+
