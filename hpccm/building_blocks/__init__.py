@@ -29,6 +29,7 @@ from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.generic_cmake import generic_cmake
 from hpccm.building_blocks.gnu import gnu
 from hpccm.building_blocks.hdf5 import hdf5
+from hpccm.building_blocks.hpcx import hpcx
 from hpccm.building_blocks.intel_mpi import intel_mpi
 from hpccm.building_blocks.intel_psxe import intel_psxe
 from hpccm.building_blocks.intel_psxe_runtime import intel_psxe_runtime

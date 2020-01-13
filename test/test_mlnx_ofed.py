@@ -55,7 +55,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     @x86_64
     @ubuntu18
     @docker
-    def test_defaults_ubuntu(self):
+    def test_defaults_ubuntu18(self):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
