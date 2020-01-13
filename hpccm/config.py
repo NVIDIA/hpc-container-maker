@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 from distutils.version import StrictVersion
 import logging
+import platform
 import sys
 
 from hpccm.common import cpu_arch
@@ -32,6 +33,10 @@ from hpccm.common import linux_distro
 
 # Global variables
 g_cpu_arch = cpu_arch.X86_64         # CPU architecture
+if platform.machine() == 'aarch64':
+  g_cpu_arch = cpu_arch.AARCH64
+elif platform.machine() == 'ppc64le':
+  g_cpu_arch = cpu_arch.PPC64LE
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
