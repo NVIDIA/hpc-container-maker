@@ -90,7 +90,6 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
 
         self.__build = kwargs.get('build', [])
         self.__branch = kwargs.get('branch', None)
-        self.__build_directory = kwargs.get('build_directory', 'build')
         self.__commit = kwargs.get('commit', None)
         self.__directory = kwargs.get('directory', None)
         self.__install = kwargs.get('install', [])
@@ -183,11 +182,7 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         remove = [directory]
         if self.__url:
             remove.append(posixpath.join(self.__wd, tarball))
-        if self.__build_directory:
-            if posixpath.isabs(self.__build_directory):
-                remove.append(self.__build_directory)
         self.__commands.append(self.cleanup_step(items=remove))
-
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
