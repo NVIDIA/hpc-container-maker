@@ -409,12 +409,11 @@ stage.  Building block settings defined in the first stage are
 automatically reflected in the second stage.
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-ompi = openmpi(infiniband=False, prefix='/opt/openmpi')
-Stage0 += ompi
+Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7', _as='devel')
+Stage0 += openmpi(infiniband=False, prefix='/opt/openmpi')
 
 Stage1 += baseimage(image='nvidia/cuda:9.0-base-centos7')
-Stage1 += ompi.runtime()
+Stage1 += Stage0.runtime()
 ```
 
 The [MILC example recipe](/recipes/milc/milc.py) demonstrates the
@@ -444,6 +443,13 @@ or later will generate a multi-stage definition file that will only
 build with Singularity version 3.2 or later.  A `version` less than
 3.2 will generate a portable definition file that works with any
 version of Singularity, but will not support multi-stage builds.
+
+Additionally, the first (build) stage must be named in order to build
+multi-stage Singularity containers.  The easiest way to do this is to
+specify the `_as` parameter of the
+[baseimage](/docs/primitives.md#baseimage) primitive.  This is not
+necessary for Docker since Docker implicitly names the first stage
+`0`, but is still a good practice.
 
 ```
 $ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py

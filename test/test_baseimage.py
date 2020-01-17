@@ -121,9 +121,21 @@ From: foo
         """Docker specified image naming"""
         b = baseimage(image='foo', _as='dev')
         self.assertEqual(str(b),
-r'''BootStrap: docker
+r'''# NOTE: this definition file depends on features only available in
+# Singularity 3.2 and later.
+BootStrap: docker
 From: foo
 Stage: dev
+%post
+    . /.singularity.d/env/10-docker*.sh''')
+
+    @singularity
+    def test_bootstrap(self):
+      """Singularity bootstrap option"""
+      b = baseimage(image='foo.sif', _bootstrap='localimage')
+      self.assertEqual(str(b),
+r'''BootStrap: localimage
+From: foo.sif
 %post
     . /.singularity.d/env/10-docker*.sh''')
 

@@ -96,6 +96,18 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
     `openssh-clients`, `perl`, `tar`, and `wget`.
 
+    pmi: Flag to control whether PMI is used by the build.  If True,
+    adds `--with-pmi` to the list of `configure` options.  If a
+    string, uses the value of the string as the PMI path, e.g.,
+    `--with-pmi=/usr/local/slurm-pmi2`.  If False, does nothing.  The
+    default is False.
+
+    pmix: Flag to control whether PMIX is used by the build.  If True,
+    adds `--with-pmix` to the list of `configure` options.  If a
+    string, uses the value of the string as the PMIX path, e.g.,
+    `--with-pmix=/usr/local/pmix`.  If False, does nothing.  The
+    default is False.
+
     prefix: The top level install location.  The default value is
     `/usr/local/openmpi`.
 
@@ -133,6 +145,11 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
             ospackages=['file', 'hwloc', 'libslurm-dev'])
     ```
+
+    ```python
+    openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -150,6 +167,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.directory = kwargs.get('directory', '')
         self.infiniband = kwargs.get('infiniband', True)
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__pmi = kwargs.get('pmi', False)
+        self.__pmix = kwargs.get('pmix', False)
         self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
         self.__runtime_ospackages = [] # Filled in by __distro()
 
@@ -234,6 +253,23 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 self.configure_opts.append('--with-cuda')
         else:
             self.configure_opts.append('--without-cuda')
+
+        # PMI
+        if self.__pmi:
+            if isinstance(self.__pmi, string_types):
+                # Use specified path
+                self.configure_opts.append('--with-pmi={}'.format(self.__pmi))
+            else:
+                self.configure_opts.append('--with-pmi')
+
+        # PMIX
+        if self.__pmix:
+            if isinstance(self.__pmix, string_types):
+                # Use specified path
+                self.configure_opts.append('--with-pmix={}'.format(
+                    self.__pmix))
+            else:
+                self.configure_opts.append('--with-pmix')
 
         # InfiniBand
         if self.infiniband:

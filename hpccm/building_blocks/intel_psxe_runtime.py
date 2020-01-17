@@ -100,19 +100,16 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     distributions, the default values are `man-db`, `openssh-clients`,
     and `which`.
 
-    version: The version of the Intel Parallel Studio XE runtime to
-    install.  Due to issues in the Intel apt / yum repositories, only
-    the major version is used; within a major version, the most recent
-    minor version will be installed.  The default value is
-    `2019.4-243`.
-
     tbb: Boolean flag to specify whether the Intel Threading Building
     Blocks runtime should be installed.  The default is True.
+
+    version: The version of the Intel Parallel Studio XE runtime to
+    install.  The default value is `2019.5-281`.
 
     # Examples
 
     ```python
-    intel_psxe_runtime(eula=True, version='2018.4-274')
+    intel_psxe_runtime(eula=True, version='2018.5-281')
     ```
 
     ```python
@@ -140,11 +137,12 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2019.4-243')
+        self.__version = kwargs.get('version', '2019.5-281')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()
-        self.__runtime_packages = []  # Filled in by __setup()
+        self.__apt = []               # Filled in by __setup()
+        self.__yum = []               # Filled in by __setup()
 
         if hpccm.config.g_cpu_arch != cpu_arch.X86_64: # pragma: no cover
             logging.warning('Using intel_psxe_runtime on a non-x86_64 processor')
@@ -161,7 +159,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     def __instructions(self):
         """Fill in container instructions"""
 
-        self += comment('Intel Parallel Studio XE runtime version {}'.format(self.__year))
+        self += comment('Intel Parallel Studio XE runtime version {}'.format(self.__version))
 
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
@@ -169,12 +167,25 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         if not self.__eula:
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
+        # The APT keys expired and had to be reissued.  They were only
+        # reissued for 2019 and later.  Blindly (and insecurely!) trust
+        # the 2018 and earlier repositories.
+        if int(self.__year) >= 2019:
+            apt_keys = ['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)]
+            apt_repositories = ['deb https://apt.repos.intel.com/{0} intel-psxe-runtime main'.format(self.__year)]
+        else:
+            apt_keys = ['https://apt.repos.intel.com/{0}/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-{0}'.format(self.__year)]
+            apt_repositories = ['deb [trusted=yes] https://apt.repos.intel.com/{0} intel-psxe-runtime main'.format(self.__year)]
+
         self += packages(
-            apt_keys=['https://apt.repos.intel.com/{0}/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-{0}'.format(self.__year)],
-            apt_repositories=['deb https://apt.repos.intel.com/{0} intel-psxe-runtime main'.format(self.__year)],
-            ospackages=self.__runtime_packages,
+            apt=self.__apt,
+            apt_keys=apt_keys,
+            apt_repositories=apt_repositories,
+            aptitude=True,
+            yum=self.__yum,
             yum_keys=['https://yum.repos.intel.com/{0}/setup/RPM-GPG-KEY-intel-psxe-runtime-{0}'.format(self.__year)],
-            yum_repositories=['https://yum.repos.intel.com/{0}/setup/intel-psxe-runtime-{0}.repo'.format(self.__year)])
+            yum_repositories=['https://yum.repos.intel.com/{0}/setup/intel-psxe-runtime-{0}.repo'.format(self.__year)],
+            yum4=True)
 
         # Set the environment
         if self.__psxevars:
@@ -272,27 +283,49 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
 
     def __setup(self):
         """Construct the list of packages, i.e., fill in
-           self.__runtime_packages"""
+           self.__apt and self.__yum"""
 
         if (self.__daal and self.__icc and self.__ifort and self.__ipp
             and self.__mkl and self.__mpi and self.__tbb):
             # Everything selected, so install the omnibus runtime package
-            self.__runtime_packages = ['intel-psxe-runtime']
+            self.__apt = ['intel-psxe-runtime={}'.format(self.__version)]
+            self.__yum = ['intel-psxe-runtime-{}'.format(self.__version)]
         else:
             if self.__daal:
-                self.__runtime_packages.append('intel-daal-runtime')
+                self.__apt.append(
+                    'intel-daal-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-daal-runtime-64bit-{}'.format(self.__version))
             if self.__icc:
-                self.__runtime_packages.append('intel-icc-runtime')
+                self.__apt.append(
+                    'intel-icc-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-icc-runtime-64bit-{}'.format(self.__version))
             if self.__ifort:
-                self.__runtime_packages.append('intel-ifort-runtime')
+                self.__apt.append(
+                    'intel-ifort-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-ifort-runtime-64bit-{}'.format(self.__version))
             if self.__ipp:
-                self.__runtime_packages.append('intel-ipp-runtime')
+                self.__apt.append(
+                    'intel-ipp-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-ipp-runtime-64bit-{}'.format(self.__version))
             if self.__mkl:
-                self.__runtime_packages.append('intel-mkl-runtime')
+                self.__apt.append(
+                    'intel-mkl-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-mkl-runtime-64bit-{}'.format(self.__version))
             if self.__mpi:
-                self.__runtime_packages.append('intel-mpi-runtime')
+                self.__apt.append(
+                    'intel-mpi-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-mpi-runtime-64bit-{}'.format(self.__version))
             if self.__tbb:
-                self.__runtime_packages.append('intel-tbb-runtime')
+                self.__apt.append(
+                    'intel-tbb-runtime={}'.format(self.__version))
+                self.__yum.append(
+                    'intel-tbb-runtime-64bit-{}'.format(self.__version))
 
         # Set the environment
         self.environment_variables = self.__environment()

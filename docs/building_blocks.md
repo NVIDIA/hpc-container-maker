@@ -87,6 +87,9 @@ used instead of `apt_get`.
 __Parameters__
 
 
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
+
 - __download__: Boolean flag to specify whether to download the deb
 packages instead of installing them.  The default is False.
 
@@ -674,11 +677,19 @@ builds, and installs a specified GNU Autotools enabled package.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
 - __build_directory__: The location to build the package.  The default
 value is the source code location.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is an empty list.
@@ -705,12 +716,15 @@ The default is an empty list.
 `/usr/local`. It is highly recommended not use use this default
 and instead set the prefix to a package specific directory.
 
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  This parameter must
-be specified.
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
 
 __Examples__
 
@@ -719,6 +733,12 @@ __Examples__
 generic_autotools(directory='tcl8.6.9/unix',
                   prefix='/usr/local/tcl',
                   url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
+```
+
+```python
+generic_autotools(preconfigure=['./autogen.sh'],
+                  prefix='/usr/local/zeromq',
+                  repository='https://github.com/zeromq/libzmq.git')
 ```
 
 
@@ -738,6 +758,73 @@ Stage0 += g
 Stage1 += g.runtime()
 ```
 
+# generic_build
+```python
+generic_build(self, **kwargs)
+```
+The `generic_build` building block downloads and builds
+a specified package.
+
+__Parameters__
+
+
+- __build__: List of shell commands to run in order to build the
+package.  The working directory is the source directory.  The
+default is an empty list.
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
+- __directory__: The source code location.  The default value is the
+basename of the downloaded package.  If the value is not an
+absolute path, then the temporary working directory is prepended.
+
+- __install__: List of shell commands to run in order to install the
+package.  The working directory is the source directory.  If
+`prefix` is defined, it will be automatically created if the list
+is non-empty.  The default is an empty list.
+
+- __prefix__: The top level install location.  The default value is
+empty. If defined then the location is copied as part of the
+runtime method.
+
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
+
+__Examples__
+
+
+```python
+generic_build(build=['make ARCH=sm_70'],
+              install=['cp stream /usr/local/bin/cuda-stream'],
+              repository='https://github.com/bcumming/cuda-stream')
+```
+
+
+## runtime
+```python
+generic_build.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+g = generic_build(...)
+Stage0 += g
+Stage1 += g.runtime()
+```
+
 # generic_cmake
 ```python
 generic_cmake(self, **kwargs)
@@ -748,11 +835,22 @@ builds, and installs a specified CMake enabled package.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
 
-- __configure_opts__: List of options to pass to `cmake`.  The default
-value is an empty list.
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default value
+is an empty list.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
@@ -776,12 +874,15 @@ default is an empty list.
 `/usr/local`. It is highly recommended not to use this default and
 instead set the prefix to a package specific directory.
 
+- __repository__: The git repository of the package to build.  One of
+this paramter or the `url` parameter must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  This parameter must
-be specified.
+- __url__: The URL of the tarball package to build.  One of this
+parameter or the `repository` parameter must be specified.
 
 __Examples__
 
@@ -798,6 +899,26 @@ generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
               directory='gromacs-2018.2',
               prefix='/usr/local/gromacs',
               url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+```
+
+```python
+generic_cmake(branch='v0.8.0',
+              cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                          '-D QUDA_DIRAC_CLOVER=ON',
+                          '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                          '-D QUDA_DIRAC_STAGGERED=ON',
+                          '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                          '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                          '-D QUDA_DIRAC_WILSON=ON',
+                          '-D QUDA_FORCE_GAUGE=ON',
+                          '-D QUDA_FORCE_HISQ=ON',
+                          '-D QUDA_GPU_ARCH=sm_70',
+                          '-D QUDA_INTERFACE_MILC=ON',
+                          '-D QUDA_INTERFACE_QDP=ON',
+                          '-D QUDA_LINK_HISQ=ON',
+                          '-D QUDA_MPI=ON'],
+              prefix='/usr/local/quda',
+              repository='https://github.com/lattice/quda.git')
 ```
 
 
@@ -1022,6 +1143,90 @@ Stage0 += h
 Stage1 += h.runtime()
 ```
 
+# hpcx
+```python
+hpcx(self, **kwargs)
+```
+The `hpcx` building block downloads and installs the [Mellanox
+HPC-X](https://www.mellanox.com/page/products_dyn?product_family=189&mtag=hpc-x)
+component.
+
+__Parameters__
+
+
+- __hpcxinit__: Mellanox HPC-X provides an environment script
+(`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
+`True`, the bashrc is modified to automatically source this
+environment script.  However, HPC-X is not automatically available
+to subsequent container image build steps; the environment is
+available when the container image is run.  To set the HPC-X
+environment in subsequent build steps you can explicitly call
+`source /usr/local/hpcx/hpcx-init.sh && hpcx_init` in each build
+step.  If this value is set to `False`, then the environment is
+set such that the environment is visible to both subsequent
+container image build steps and when the container image is run.
+However, the environment may differ slightly from that set by
+`hpcx-init.sh`.  The default value is `True`.
+
+- __inbox__: Boolean flag to specify whether to use Mellanox HPC-X built
+for Inbox OFED.  If the value is `True`, use Inbox OFED.  If the
+value is `False`, use Mellanox OFED.  The default is `False`.
+
+- __ldconfig__: Boolean flag to specify whether the Mellanox HPC-X
+library directories should be added dynamic linker cache.  If
+False, then `LD_LIBRARY_PATH` is modified to include the HPC-X
+library directories. This value is ignored if `hpcxinit` is
+`True`. The default value is False.
+
+- __mlnx_ofed__: The version of Mellanox OFED that should be matched.
+This value is ignored if Inbox OFED is selected.  The default
+value is `4.6-1.0.1.1`.
+
+- __multi_thread__: Boolean flag to specify whether the multi-threaded
+version of Mellanox HPC-X should be used.  The default is `False`.
+
+- __oslabel__: The Linux distribution label assigned by Mellanox to the
+tarball.  For Ubuntu, the default value is `ubuntu16.04` for
+Ubuntu 16.04 and `ubuntu18.04` for Ubuntu 18.04.  For RHEL-based
+Linux distributions, the default value is `redhat7.6` for version
+7 and `redhat8.0` for version 8.
+
+- __ospackages__: List of OS packages to install prior to installing
+Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
+`openssh-client`, `tar`, and `wget`.  For RHEL-based distributions
+the default values are `bzip2`, `openssh-clients`, `tar`, and
+`wget`.
+
+- __prefix__: The top level installation location.  The default value is
+`/usr/local/hpcx`.
+
+- __version__: The version of Mellanox HPC-X to install.  The default
+value is `2.5.0`.
+
+__Examples__
+
+
+```python
+hpcx(prefix='/usr/local/hpcx', version='2.5.0')
+```
+
+
+## runtime
+```python
+hpcx.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+h = hpcx(...)
+Stage0 += h
+Stage1 += h.runtime()
+```
+
 # intel_mpi
 ```python
 intel_mpi(self, **kwargs)
@@ -1197,7 +1402,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.
+tarball version.  The default value is `2019.5-281`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1297,20 +1502,17 @@ Intel MPI.  For Ubuntu, the default values are
 distributions, the default values are `man-db`, `openssh-clients`,
 and `which`.
 
-- __version__: The version of the Intel Parallel Studio XE runtime to
-install.  Due to issues in the Intel apt / yum repositories, only
-the major version is used; within a major version, the most recent
-minor version will be installed.  The default value is
-`2019.4-243`.
-
 - __tbb__: Boolean flag to specify whether the Intel Threading Building
 Blocks runtime should be installed.  The default is True.
+
+- __version__: The version of the Intel Parallel Studio XE runtime to
+install.  The default value is `2019.5-281`.
 
 __Examples__
 
 
 ```python
-intel_psxe_runtime(eula=True, version='2018.4-274')
+intel_psxe_runtime(eula=True, version='2018.5-281')
 ```
 
 ```python
@@ -2449,6 +2651,18 @@ and `wget`.  For RHEL-based Linux distributions, the default
 values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
 `openssh-clients`, `perl`, `tar`, and `wget`.
 
+- __pmi__: Flag to control whether PMI is used by the build.  If True,
+adds `--with-pmi` to the list of `configure` options.  If a
+string, uses the value of the string as the PMI path, e.g.,
+`--with-pmi=/usr/local/slurm-pmi2`.  If False, does nothing.  The
+default is False.
+
+- __pmix__: Flag to control whether PMIX is used by the build.  If True,
+adds `--with-pmix` to the list of `configure` options.  If a
+string, uses the value of the string as the PMIX path, e.g.,
+`--with-pmix=/usr/local/pmix`.  If False, does nothing.  The
+default is False.
+
 - __prefix__: The top level install location.  The default value is
 `/usr/local/openmpi`.
 
@@ -2488,6 +2702,11 @@ openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
         ospackages=['file', 'hwloc', 'libslurm-dev'])
 ```
 
+```python
+openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal')
+```
+
+
 ## runtime
 ```python
 openmpi.runtime(self, _from=u'0')
@@ -2520,6 +2739,9 @@ __Parameters__
 
 - __apt__: A list of Debian packages to install.  The default is an
 empty list.
+
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
 
 - __apt_keys__: A list of GPG keys to add.  The default is an empty
 list.
@@ -2565,6 +2787,10 @@ parameter is ignored if the Linux distribution is not RHEL-based.
 
 - __yum__: A list of RPM packages to install.  The default value is an
 empty list.
+
+- __yum4__: Boolean flag to specify whether `yum4` should be used
+instead of `yum`.  The default is False.  This parameter is only
+recognized if the CentOS version is 7.x.
 
 - __yum_keys__: A list of GPG keys to import.  The default is an empty
 list.
@@ -2735,6 +2961,71 @@ pip(requirements='requirements.txt')
 ```
 
 
+# pmix
+```python
+pmix(self, **kwargs)
+```
+The `pmix` building block configures, builds, and installs the
+[PMIX](https://github.com/openpmix/openpmix) component.
+
+__Parameters__
+
+
+- __check__: Boolean flag to specify whether the `make check` step
+should be performed.  The default is False.
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH`, and `PATH`) should be modified to
+include PMIX. The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the PMIX library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the PMIX library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `file`, `hwloc`,
+`libevent-dev`, `make`, `tar`, and `wget`. For RHEL-based Linux
+distributions, the default values are `file`, `hwloc`,
+`libevent-devel`, `make`, `tar`, and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/pmix`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default value is empty.
+
+- __version__: The version of PMIX source to download.  The default value
+is `3.1.4`.
+
+__Examples__
+
+
+```python
+pmix(prefix='/opt/pmix/3.1.4', version='3.1.4')
+```
+
+
+## runtime
+```python
+pmix.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+p = pmix(...)
+Stage0 += p
+Stage1 += p.runtime()
+```
+
 # pnetcdf
 ```python
 pnetcdf(self, **kwargs)
@@ -2877,6 +3168,10 @@ __Parameters__
 
 - ___arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+- ___env__: Boolean flag to specify whether the general container
+environment should be also be loaded when executing a SCI-F
+`%appinstall` block.  The default is False (Singularity specific).
+
 - __file__: The SCI-F recipe file name.  The default value is the name
 parameter with the `.scif` suffix.
 
@@ -3004,6 +3299,68 @@ __Examples__
 s = sensei(...)
 Stage0 += s
 Stage1 += s.runtime()
+```
+
+# slurm_pmi2
+```python
+slurm_pmi2(self, **kwargs)
+```
+The `slurm_pmi2` building block configures, builds, and installs
+the PMI2 component from SLURM.
+
+Note: this building block does not install SLURM itself.
+
+__Parameters__
+
+
+- __configure_opts__: List of options to pass to `configure`.  The
+default is an empty list.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
+PMI2. The default is False.
+
+- __ldconfig__: Boolean flag to specify whether the PMI2 library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the PMI2 library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  The default values are `bzip2`, `file`, `make`,
+`perl`, `tar`, and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/slurm-pmi2`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default value is empty.
+
+- __version__: The version of SLURM source to download.  The default
+value is `19.05.4`.
+
+__Examples__
+
+
+```python
+slurm_pmi2(prefix='/opt/pmi', version='19.05.4')
+```
+
+
+## runtime
+```python
+slurm_pmi2.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+p = slurm_pmi2(...)
+Stage0 += p
+Stage1 += p.runtime()
 ```
 
 # ucx
@@ -3232,6 +3589,10 @@ an empty list.
 
 - __scl__: - Boolean flag to specify whether to enable the Software
 Collections (SCL) repository.  The default is False.
+
+- __yum4__: Boolean flag to specify whether `yum4` should be used
+instead of `yum`.  The default is False.  This parameter is only
+recognized if the CentOS version is 7.x.
 
 __Examples__
 

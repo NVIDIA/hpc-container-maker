@@ -68,7 +68,7 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
         USERARG = userarg # alias
 
     # Consider just 2 stages for the time being
-    stages = [Stage(name='stage0'), Stage()]
+    stages = [Stage(), Stage()]
     Stage0 = stages[0] # alias # pylint: disable=unused-variable
     Stage1 = stages[1] # alias # pylint: disable=unused-variable
 

@@ -26,6 +26,7 @@ import posixpath
 import re
 
 import hpccm.templates.CMakeBuild
+import hpccm.templates.git
 import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
@@ -36,7 +37,7 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
+class generic_cmake(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
                     hpccm.templates.rm, hpccm.templates.tar,
                     hpccm.templates.wget):
     """The `generic_cmake` building block downloads, configures,
@@ -44,11 +45,22 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
 
     # Parameters
 
+    branch: The git branch to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the default branch for the repository.
+
     build_directory: The location to build the package.  The default
     value is a `build` subdirectory in the source code location.
 
-    configure_opts: List of options to pass to `cmake`.  The default
-    value is an empty list.
+    check: Boolean flag to specify whether the `make check` step
+    should be performed.  The default is False.
+
+    cmake_opts: List of options to pass to `cmake`.  The default value
+    is an empty list.
+
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
 
     directory: The source code location.  The default value is the
     basename of the downloaded package.  If the value is not an
@@ -72,12 +84,15 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
     `/usr/local`. It is highly recommended not to use this default and
     instead set the prefix to a package specific directory.
 
+    repository: The git repository of the package to build.  One of
+    this paramter or the `url` parameter must be specified.
+
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default is empty.
 
-    url: The URL of the tarball package to build.  This parameter must
-    be specified.
+    url: The URL of the tarball package to build.  One of this
+    parameter or the `repository` parameter must be specified.
 
     # Examples
 
@@ -95,6 +110,26 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
                   url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
     ```
 
+    ```python
+    generic_cmake(branch='v0.8.0',
+                  cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                              '-D QUDA_DIRAC_CLOVER=ON',
+                              '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                              '-D QUDA_DIRAC_STAGGERED=ON',
+                              '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                              '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                              '-D QUDA_DIRAC_WILSON=ON',
+                              '-D QUDA_FORCE_GAUGE=ON',
+                              '-D QUDA_FORCE_HISQ=ON',
+                              '-D QUDA_GPU_ARCH=sm_70',
+                              '-D QUDA_INTERFACE_MILC=ON',
+                              '-D QUDA_INTERFACE_QDP=ON',
+                              '-D QUDA_LINK_HISQ=ON',
+                              '-D QUDA_MPI=ON'],
+                  prefix='/usr/local/quda',
+                  repository='https://github.com/lattice/quda.git')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -102,22 +137,32 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
 
         super(generic_cmake, self).__init__(**kwargs)
 
+        self.__branch = kwargs.get('branch', None)
         self.__build_directory = kwargs.get('build_directory', 'build')
+        self.__check = kwargs.get('check', False)
         self.cmake_opts = kwargs.get('cmake_opts', [])
+        self.__commit = kwargs.get('commit', None)
         self.__directory = kwargs.get('directory', None)
         self.__environment = kwargs.get('environment', {})
         self.__install = kwargs.get('install', True)
         self.__make = kwargs.get('make', True)
         self.__postinstall = kwargs.get('postinstall', [])
         self.__preconfigure = kwargs.get('preconfigure', [])
+        self.__repository = kwargs.get('repository', None)
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__url = kwargs.get('url', None)
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
-        if not self.__url:
-            raise RuntimeError('must specify a URL')
+        if not self.__repository and not self.__url:
+            raise RuntimeError('must specify a repository or a URL')
+
+        if self.__repository and self.__url:
+            raise RuntimeError('cannot specify both a repository and a URL')
+
+        if self.__branch and self.__commit:
+            raise RuntimeError('cannot specify both a branch and a commit')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -128,40 +173,53 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
     def __instructions(self):
         """Fill in container instructions"""
 
-        self += comment(self.__url, reformat=False)
+        if self.__url:
+            self += comment(self.__url, reformat=False)
+        elif self.__repository:
+            self += comment(self.__repository, reformat=False)
         self += shell(commands=self.__commands)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # Set the name of the tarball, untarred package directory, and
-        # source directory inside the extracted directory
-        tarball = posixpath.basename(self.__url)
-        match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
-                          tarball)
-        if match:
-            pkgdir = match.group(1)
-        else:
-            raise RuntimeError('unrecognized package format')
-
-        # directory containing the unarchived package
-        if self.__directory:
-            if posixpath.isabs(self.__directory):
-                directory = self.__directory
+        if self.__url:
+            # Set the name of the tarball, untarred package directory, and
+            # source directory inside the extracted directory
+            tarball = posixpath.basename(self.__url)
+            match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
+                              tarball)
+            if match:
+                pkgdir = match.group(1)
             else:
-                directory = posixpath.join(self.__wd, self.__directory)
-        else:
-            directory = posixpath.join(self.__wd, pkgdir)
+                raise RuntimeError('unrecognized package format')
 
-        # Download source from web
-        self.__commands.append(self.download_step(url=self.__url,
-                                                  directory=self.__wd))
+            # directory containing the unarchived package
+            if self.__directory:
+                if posixpath.isabs(self.__directory):
+                    directory = self.__directory
+                else:
+                    directory = posixpath.join(self.__wd, self.__directory)
+            else:
+                directory = posixpath.join(self.__wd, pkgdir)
 
-        # Untar source package
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball),
-            directory=self.__wd))
+            # Download source from web
+            self.__commands.append(self.download_step(url=self.__url,
+                                                      directory=self.__wd))
+
+            # Untar source package
+            self.__commands.append(self.untar_step(
+                tarball=posixpath.join(self.__wd, tarball),
+                directory=self.__wd))
+
+        if self.__repository:
+            # Clone git repository
+            self.__commands.append(self.clone_step(
+                branch=self.__branch, commit=self.__commit, path=self.__wd,
+                repository=self.__repository))
+
+            directory = posixpath.join(self.__wd, posixpath.splitext(
+                posixpath.basename(self.__repository))[0])
 
         # Preconfigure setup
         if self.__preconfigure:
@@ -184,6 +242,10 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         if self.__make:
             self.__commands.append(self.build_step())
 
+        # Check the build
+        if self.__check:
+            self.__commands.append(self.build_step(target='check'))
+
         # Install
         if self.__install:
             self.__commands.append(self.build_step(target='install'))
@@ -195,7 +257,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
             self.__commands.extend(self.__postinstall)
 
         # Cleanup
-        remove = [posixpath.join(self.__wd, tarball), directory]
+        remove = [directory]
+        if self.__url:
+            remove.append(posixpath.join(self.__wd, tarball))
         if self.__build_directory:
             if posixpath.isabs(self.__build_directory):
                 remove.append(self.__build_directory)
@@ -214,8 +278,14 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         Stage1 += g.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment(self.__url, reformat=False))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        return '\n'.join(str(x) for x in instructions)
+        if self.prefix:
+            instructions = []
+            if self.__url:
+                instructions.append(comment(self.__url, reformat=False))
+            elif self.__repository:
+                instructions.append(comment(self.__repository, reformat=False))
+            instructions.append(copy(_from=_from, src=self.prefix,
+                                     dest=self.prefix))
+            return '\n'.join(str(x) for x in instructions)
+        else:
+            return
