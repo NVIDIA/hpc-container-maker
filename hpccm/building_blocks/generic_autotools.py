@@ -84,6 +84,9 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     `/usr/local`. It is highly recommended not use use this default
     and instead set the prefix to a package specific directory.
 
+    recursive: Initialize and checkout git submodules. `repository` parameter
+    must be specified. The default is False.
+
     repository: The git repository of the package to build.  One of
     this paramter or the `url` parameter must be specified.
 
@@ -126,6 +129,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.__make = kwargs.get('make', True)
         self.__postinstall = kwargs.get('postinstall', [])
         self.__preconfigure = kwargs.get('preconfigure', [])
+        self.__recursive = kwargs.get('recursive', False)
         self.__repository = kwargs.get('repository', None)
         self.__toolchain = kwargs.get('toolchain', toolchain())
         self.__url = kwargs.get('url', None)
@@ -194,7 +198,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             # Clone git repository
             self.__commands.append(self.clone_step(
                 branch=self.__branch, commit=self.__commit, path=self.__wd,
-                repository=self.__repository))
+                recursive=self.__recursive, repository=self.__repository))
 
             directory = posixpath.join(self.__wd, posixpath.splitext(
                 posixpath.basename(self.__repository))[0])

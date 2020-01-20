@@ -177,10 +177,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
                                       '-D QUDA_LINK_HISQ=ON',
                                       '-D QUDA_MPI=ON'],
                           prefix='/usr/local/quda',
+                          recursive=True,
                           repository='https://github.com/lattice/quda.git')
         self.assertEqual(str(g),
 r'''# https://github.com/lattice/quda.git
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.8.0 https://github.com/lattice/quda.git quda && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.8.0 --recursive https://github.com/lattice/quda.git quda && cd - && \
     mkdir -p /var/tmp/quda/build && cd /var/tmp/quda/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/quda -D CMAKE_BUILD_TYPE=RELEASE -D QUDA_DIRAC_CLOVER=ON -D QUDA_DIRAC_DOMAIN_WALL=ON -D QUDA_DIRAC_STAGGERED=ON -D QUDA_DIRAC_TWISTED_CLOVER=ON -D QUDA_DIRAC_TWISTED_MASS=ON -D QUDA_DIRAC_WILSON=ON -D QUDA_FORCE_GAUGE=ON -D QUDA_FORCE_HISQ=ON -D QUDA_GPU_ARCH=sm_70 -D QUDA_INTERFACE_MILC=ON -D QUDA_INTERFACE_QDP=ON -D QUDA_LINK_HISQ=ON -D QUDA_MPI=ON /var/tmp/quda && \
     cmake --build /var/tmp/quda/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/quda/build --target install -- -j$(nproc) && \
