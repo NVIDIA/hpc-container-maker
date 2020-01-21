@@ -1,3 +1,14 @@
+# v20.1.0
+
+- Adds Mellanox HPC-X (`hpcx`) building block
+- Fixes and enhancements for the NetCDF (`netcdf`), SCI-F (`scif`), and
+  generic (`generic_autotools`, `generic_build`, `generic_cmake`)
+  building blocks
+- Add support for non-Docker Singularity bootstrap sources
+- New parameter in the `git` template for submodule support
+- Set the default platform architecture to match the runtime architecture
+- Replaced Python wrapper script with a shell script (`hpccm.sh`)
+
 # v19.12.0
 
 - Adds generic builder (`generic_build`), PMI (`slurm_pmi`), and PMIx
