@@ -144,14 +144,15 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
-    def test_repository(self):
-        """test repository option"""
+    def test_repository_recursive(self):
+        """test repository and recusive option"""
         g = generic_autotools(preconfigure=['./autogen.sh'],
                               prefix='/usr/local/zeromq',
+                              recursive=True,
                               repository='https://github.com/zeromq/libzmq.git')
         self.assertEqual(str(g),
 r'''# https://github.com/zeromq/libzmq.git
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/zeromq/libzmq.git libzmq && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --recursive https://github.com/zeromq/libzmq.git libzmq && cd - && \
     cd /var/tmp/libzmq && \
     ./autogen.sh && \
     cd /var/tmp/libzmq &&   ./configure --prefix=/usr/local/zeromq && \

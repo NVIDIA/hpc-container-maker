@@ -68,7 +68,7 @@ class git(hpccm.base_object):
         return
 
     def clone_step(self, branch=None, commit=None, directory='', path='/tmp',
-                   repository=None, verify=None, lfs=False):
+                   repository=None, verify=None, lfs=False, recursive=False):
         """Clone a git repository"""
 
         if not repository:
@@ -92,6 +92,10 @@ class git(hpccm.base_object):
         # Commit has precedence over branch
         if branch and not commit:
             opts.append('--branch {}'.format(branch))
+
+        # recursive clone with submodules
+        if recursive:
+            opts.append('--recursive')
 
         opt_string = ' '.join(opts)
 

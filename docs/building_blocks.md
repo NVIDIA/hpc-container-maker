@@ -716,6 +716,9 @@ The default is an empty list.
 `/usr/local`. It is highly recommended not use use this default
 and instead set the prefix to a package specific directory.
 
+- __recursive__: Initialize and checkout git submodules. `repository` parameter
+must be specified. The default is False.
+
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
 
@@ -792,6 +795,9 @@ is non-empty.  The default is an empty list.
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
 runtime method.
+
+- __recursive__: Initialize and checkout git submodules. `repository` parameter
+must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
@@ -873,6 +879,9 @@ default is an empty list.
 - __prefix__: The top level install location.  The default value is
 `/usr/local`. It is highly recommended not to use this default and
 instead set the prefix to a package specific directory.
+
+- __recursive__: Initialize and checkout git submodules. `repository` parameter
+must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.

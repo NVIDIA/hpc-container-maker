@@ -79,15 +79,16 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/b
 
     @ubuntu
     @docker
-    def test_prefix(self):
-        """prefix option"""
+    def test_prefix_recursive(self):
+        """prefix and recursive option"""
         g = generic_build(build=['make ARCH=sm_70'],
                           install=['cp stream /usr/local/cuda-stream/bin/cuda-stream'],
                           prefix='/usr/local/cuda-stream/bin',
+                          recursive=True,
                           repository='https://github.com/bcumming/cuda-stream')
         self.assertEqual(str(g),
 r'''# https://github.com/bcumming/cuda-stream
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/bcumming/cuda-stream cuda-stream && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --recursive https://github.com/bcumming/cuda-stream cuda-stream && cd - && \
     cd /var/tmp/cuda-stream && \
     make ARCH=sm_70 && \
     mkdir -p /usr/local/cuda-stream/bin && \
