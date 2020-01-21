@@ -40,12 +40,13 @@ class Test_git(unittest.TestCase):
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git'),
                          'mkdir -p /tmp && cd /tmp && git clone --depth=1 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
 
-    def test_branch(self):
-        """git with specified branch"""
+    def test_branch_recursive(self):
+        """git with specified branch and recursive"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
-                                      branch='master'),
-                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+                                      branch='master',
+                                      recursive=True),
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch master --recursive https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
 
     def test_commit(self):
         """git with specified commit"""

@@ -67,6 +67,9 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
     empty. If defined then the location is copied as part of the
     runtime method.
 
+    recursive: Initialize and checkout git submodules. `repository` parameter
+    must be specified. The default is False.
+
     repository: The git repository of the package to build.  One of
     this paramter or the `url` parameter must be specified.
 
@@ -94,6 +97,7 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         self.__directory = kwargs.get('directory', None)
         self.__install = kwargs.get('install', [])
         self.__prefix = kwargs.get('prefix', None)
+        self.__recursive = kwargs.get('recursive', False)
         self.__repository = kwargs.get('repository', None)
         self.__url = kwargs.get('url', None)
 
@@ -161,7 +165,7 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
             # Clone git repository
             self.__commands.append(self.clone_step(
                 branch=self.__branch, commit=self.__commit, path=self.__wd,
-                repository=self.__repository))
+                recursive=self.__recursive, repository=self.__repository))
 
             directory = posixpath.join(self.__wd, posixpath.splitext(
                 posixpath.basename(self.__repository))[0])
