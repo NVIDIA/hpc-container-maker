@@ -122,7 +122,9 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         self.configure_opts = kwargs.get('configure_opts', [])
 
-        self.__baseurl = 'ftp://ftp.unidata.ucar.edu/pub/netcdf'
+        self.__c_baseurl = 'https://github.com/Unidata/netcdf-c/archive'
+        self.__cxx_baseurl = 'https://github.com/Unidata/netcdf-cxx4/archive'
+        self.__fortran_baseurl = 'https://github.com/Unidata/netcdf-fortran/archive'
         self.__check = kwargs.get('check', False)
         self.__cxx = kwargs.get('cxx', True)
         self.__fortran = kwargs.get('fortran', True)
@@ -209,13 +211,15 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         if not toolchain.LDFLAGS:
             toolchain.LDFLAGS = '-L{}/lib'.format(self.__hdf5_dir)
 
-        # Version 4.7.0 changed the package name
-        if LooseVersion(self.__version) >= LooseVersion('4.7.0'):
+        # Version 4.3.1 changed the package name
+        if LooseVersion(self.__version) >= LooseVersion('4.3.1'):
             pkgname = 'netcdf-c'
+            tarball = 'v{0}.tar.gz'.format(self.__version)
         else:
             pkgname = 'netcdf'
-        tarball = '{0}-{1}.tar.gz'.format(pkgname, self.__version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
+            tarball = '{0}-{1}.tar.gz'.format(pkgname, self.__version)
+
+        url = '{0}/{1}'.format(self.__c_baseurl, tarball)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,
@@ -257,16 +261,23 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # without impacting the original.
         toolchain = _copy(self.__toolchain)
 
-        # Need to tell it where to find NetCDF
+        # Need to tell it where to find NetCDF and HDF5
         if not toolchain.CPPFLAGS:
-            toolchain.CPPFLAGS = '-I{}/include'.format(self.prefix)
+            toolchain.CPPFLAGS = '-I{0}/include -I{1}/include'.format(self.prefix, self.__hdf5_dir)
         if not toolchain.LDFLAGS:
             toolchain.LDFLAGS = '-L{}/lib'.format(self.prefix)
         if not toolchain.LD_LIBRARY_PATH:
             toolchain.LD_LIBRARY_PATH = '{}/lib:$LD_LIBRARY_PATH'.format(self.prefix)
 
-        tarball = '{0}-{1}.tar.gz'.format(pkg, version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
+        if pkg == 'netcdf-cxx4':
+            baseurl = self.__cxx_baseurl
+        elif pkg == 'netcdf-fortran':
+            baseurl = self.__fortran_baseurl
+        else:
+            raise RuntimeError('unrecognized package name: "{}"'.format(pkg))
+
+        tarball = 'v{0}.tar.gz'.format(version)
+        url = '{0}/{1}'.format(baseurl, tarball)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url,
