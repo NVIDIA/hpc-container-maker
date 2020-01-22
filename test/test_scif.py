@@ -59,6 +59,7 @@ class Test_scif(unittest.TestCase):
         s = scif(name='foo', file=scif_file.name)
         self.assertEqual(str(s),
 r'''# SCI-F "foo"
+ARG SCIF_foo_HASH=d41d8cd98f00b204e9800998ecf8427e
 COPY {0} /scif/recipes/{1}
 RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
                                              os.path.basename(scif_file.name)))
@@ -78,6 +79,7 @@ RUN scif install /scif/recipes/{1}'''.format(scif_file.name,
                  name='foo')
         self.assertEqual(str(s),
 r'''# SCI-F "foo"
+ARG SCIF_foo_HASH=d41d8cd98f00b204e9800998ecf8427e
 COPY {0} /scif/recipes/{1}
 RUN --mount=type=bind,target=/scif/apps/foo/src scif install /scif/recipes/{1}'''.format(scif_file.name,
                                              os.path.basename(scif_file.name)))

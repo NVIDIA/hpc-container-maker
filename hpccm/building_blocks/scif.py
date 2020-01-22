@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import hashlib
 import logging # pylint: disable=unused-import
 import os
 import posixpath
@@ -30,6 +31,7 @@ import hpccm.config
 from hpccm.common import container_type
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.raw import raw
 from hpccm.primitives.runscript import runscript
 from hpccm.primitives.shell import shell
 
@@ -222,12 +224,23 @@ class scif(hpccm.base_object):
             # Restore original container format
             hpccm.config.g_ctype = preserved_ctype
 
+            # Calculate md5 hash of SCI-F recipe file contents
+            hash_md5 = hashlib.md5()
+            with open(self.__scif_file, "rb") as f:
+                for chunk in iter(lambda: f.read(4096), b""):
+                    hash_md5.update(chunk)
+
             # Container instructions to copy the SCI-F recipe file
             # into the container and then run scif
+            # The computed hash of the scif file invalidates the Docker
+            # cache during build if the contents changed
             c_scif_file = posixpath.join('/scif/recipes',
                                          os.path.basename(self.__scif_file))
             instructions = []
             instructions.append(comment('SCI-F "{}"'.format(self.__name)))
+            instructions.append(
+                raw(docker='ARG SCIF_{}_HASH={}'.format(self.__name,
+                                                        hash_md5.hexdigest())))
             instructions.append(
                 copy(src=self.__scif_file, dest=c_scif_file))
             instructions.append(
