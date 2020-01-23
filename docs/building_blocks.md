@@ -2467,6 +2467,73 @@ Stage0 += n
 Stage1 += n.runtime()
 ```
 
+# nvshmem
+```python
+nvshmem(self, **kwargs)
+```
+The `nvshmem` building block builds and installs the
+[NVSHMEM](https://developer.nvidia.com/nvshmem) component.
+
+__Parameters__
+
+
+- __cuda__: Flag to specify the CUDA path.  The default value is
+`/usr/local/cuda`.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
+include NVSHMEM. The default is True.
+
+- __hydra__: Boolean flag to specify whether the Hydra process launcher
+should be installed.  If True, adds `automake` to the list of OS
+packages.  The default is True.
+
+- __make_variables__: List of environment variables and values, in `A=B`
+format, to set when building NVSHMEM.  The default is an empty
+list.
+
+- __mpi__: Flag to specify the path to the MPI installation.  The
+default is empty, i.e., do not build NVSHMEM with MPI support.
+
+- __ospackages__: List of OS packages to install prior to building.  The
+default values are `make` and `wget`.
+
+- __perftests__: Boolean flag to specify whether the performance test
+programs should be built and installed.  The default is False.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/nvshmem`.
+
+- __tests__: Boolean flag to specify whether the functionality test
+programs should be built and installed.  The default is False.
+
+- __version__: The version of NVSHMEM source to download.  The default
+value is `x.y`.
+
+__Examples__
+
+
+```python
+nvshmem(prefix='/opt/nvshmem/x.y', version='x.y')
+```
+
+
+## runtime
+```python
+nvshmem.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+n = nvshmem(...)
+Stage0 += n
+Stage1 += n.runtime()
+```
+
 # ofed
 ```python
 ofed(self, **kwargs)
