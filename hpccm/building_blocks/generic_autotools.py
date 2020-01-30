@@ -66,6 +66,16 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     basename of the downloaded package.  If the value is not an
     absolute path, then the temporary working directory is prepended.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     install: Boolean flag to specify whether the `make install` step
     should be performed.  The default is True.
 
@@ -96,6 +106,17 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
     url: The URL of the tarball package to build.  One of this
     parameter or the `repository` parameter must be specified.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 

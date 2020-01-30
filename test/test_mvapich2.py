@@ -136,7 +136,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mvapich2-2.3.1 &&   ./configure --prefix=/usr/local/mvapich2 --disable-mcast --disable-cuda && \
+    cd /var/tmp/mvapich2-2.3.1 &&   ./configure --prefix=/usr/local/mvapich2 --disable-cuda --disable-mcast && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/mvapich2-2.3.1.tar.gz /var/tmp/mvapich2-2.3.1

@@ -49,7 +49,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
@@ -73,7 +73,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
@@ -99,7 +99,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-verbs=/ofed --with-rdmacm=/ofed --with-xpmem=/xpmem && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-rdmacm=/ofed --with-verbs=/ofed --with-xpmem=/xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
@@ -124,7 +124,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-verbs --with-rdmacm --with-xpmem && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-rdmacm --with-verbs --with-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
@@ -149,7 +149,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --without-gdrcopy --without-knem --without-verbs --without-rdmacm --without-xpmem && \
+    cd /var/tmp/ucx-1.5.2 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --without-cuda --without-gdrcopy --without-knem --without-rdmacm --without-verbs --without-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
@@ -174,7 +174,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/ucx/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
@@ -199,7 +199,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.4.0/ucx-1.4.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.4.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --with-cuda=/usr/local/cuda && \
+    cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0''')
@@ -221,7 +221,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&  CFLAGS=-Wno-error=format ./configure --prefix=/usr/local/ucx --enable-optimizations --disable-logging --disable-debug --disable-assertions --disable-params-check --disable-doxygen-doc --without-cuda --with-knem=/usr/local/knem && \
+    cd /var/tmp/ucx-1.5.2 &&  CFLAGS=-Wno-error=format ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-knem=/usr/local/knem --without-cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2

@@ -19,6 +19,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
+from six import string_types
 from six.moves import shlex_quote
 
 import logging # pylint: disable=unused-import
@@ -46,6 +47,19 @@ class ConfigureMake(hpccm.base_object):
                                             {'CC': True, 'CXX': True,
                                              'F77': True, 'F90': True,
                                              'FC': True})
+
+        # Process --disable, --enable, --with, and --without options
+        self.__opts = []
+        for k in kwargs:
+            # handles both --with and --without
+            if (k.startswith('disable') or k.startswith('enable') or
+                k.startswith('with')) and kwargs.get(k):
+                opt = '--{}'.format(k.replace('_', '-'))
+
+                if isinstance(kwargs.get(k), string_types):
+                    self.__opts.append('{0}={1}'.format(opt, kwargs.get(k)))
+                else:
+                    self.__opts.append(opt)
 
     def build_step(self, parallel=None):
         """Generate make command line string"""
@@ -129,9 +143,20 @@ class ConfigureMake(hpccm.base_object):
 
         configure_env = ' '.join(e)
 
-        if not opts and self.configure_opts:
-            opts = self.configure_opts
-        configure_opts = ' '.join(opts)
+        # Build set of configuration command line options
+        optlist = []
+        if not opts:
+            if self.configure_opts:
+                optlist.extend(self.configure_opts)
+            if self.__opts:
+                optlist.extend(self.__opts)
+        else:
+            optlist = opts
+
+        # Remove duplicates and sort options
+        configure_opts = ' '.join(sorted(list(set(optlist))))
+
+        # Prefix is always the first option
         if self.prefix:
             configure_opts = '--prefix={0:s} {1}'.format(self.prefix,
                                                          configure_opts)
