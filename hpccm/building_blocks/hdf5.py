@@ -64,6 +64,16 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     defined, the source in the local build context will be used rather
     than downloading the source from the web.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
     include HDF5. The default is True.
@@ -88,6 +98,17 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
     version: The version of HDF5 source to download.  This value is
     ignored if `directory` is set.  The default value is `1.10.5`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 
