@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import LooseVersion
-import logging # pylint: disable=unused-import
 import posixpath
 from copy import copy as _copy
 

@@ -34,7 +34,6 @@ from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
 class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     """The `intel_mpi` building block downloads and installs the [Intel

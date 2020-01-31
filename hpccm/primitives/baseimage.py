@@ -26,7 +26,7 @@ import re
 
 import hpccm.config
 
-from hpccm.common import container_type, linux_distro
+from hpccm.common import container_type
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 

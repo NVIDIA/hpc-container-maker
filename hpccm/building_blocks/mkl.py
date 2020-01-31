@@ -22,8 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
-import os
-import re
 
 import hpccm.config
 import hpccm.templates.envvars
@@ -33,10 +31,8 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
 class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     """The `mkl` building block downloads and installs the [Intel Math

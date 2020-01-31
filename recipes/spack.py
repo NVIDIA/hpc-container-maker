@@ -10,7 +10,6 @@ $ nvidia-docker run --rm -ti gromacs.spack bash -l
 container:/> spack load gromacs
 """
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
-import os
 from hpccm.templates.git import git
 
 spack_branch = 'master'

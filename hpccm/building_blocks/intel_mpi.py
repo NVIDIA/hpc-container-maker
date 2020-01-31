@@ -22,9 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import LooseVersion
-import logging # pylint: disable=unused-import
-import os
-import re
+import logging
 
 import hpccm.config
 import hpccm.templates.envvars
@@ -34,7 +32,6 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
@@ -102,6 +99,10 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
         self.version = kwargs.get('version', '2019.4-070')
 
         self.__bashrc = ''      # Filled in by __distro()
+
+        # Output toolchain
+        self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
+                                   F90='mpif90', FC='mpifc')
 
         if hpccm.config.g_cpu_arch != cpu_arch.X86_64: # pragma: no cover
             logging.warning('Using intel_mpi on a non-x86_64 processor')
