@@ -116,8 +116,11 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     pgi: Boolean flag to specify whether a PGI build should be used.
     The default value is False.
 
+    release: The release of MVAPICH2-GDR to download.  The value is
+    ignored is `package` is set.  The default value is `2`.
+
     version: The version of MVAPICH2-GDR to download.  The value is
-    ignored if `package` is set.  The default value is `2.3.1`.  Due
+    ignored if `package` is set.  The default value is `2.3.3`.  Due
     to differences in the packaging scheme, versions prior to 2.3 are
     not supported.
 
@@ -148,10 +151,11 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__mofed_version = kwargs.get('mlnx_ofed_version', '4.5')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__package = kwargs.get('package', '')
-        self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-1.el7.{4}.rpm'
+        self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-{4}.el7.{5}.rpm'
         self.__pgi = kwargs.get('pgi', False)
         self.__pgi_version = kwargs.get('pgi_version', '18.10')
-        self.version = kwargs.get('version', '2.3.1')
+        self.__release = kwargs.get('release', '2')
+        self.version = kwargs.get('version', '2.3.3')
         self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
@@ -251,7 +255,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             # Package filename
             package = self.__package_template.format(
                 cuda_string, mofed_string, compiler_string, self.version,
-                self.__arch)
+                self.__release, self.__arch)
 
         self.__install_path = self.__install_path_template.format(
             self.version, cuda_string, mofed_string, compiler_string)

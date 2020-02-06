@@ -119,7 +119,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of MVAPICH2 source to download.  This value
-    is ignored if `directory` is set.  The default value is `2.3.1`.
+    is ignored if `directory` is set.  The default value is `2.3.3`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -171,7 +171,7 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3.1')
+        self.version = kwargs.get('version', '2.3.3')
 
         self.__commands = []              # Filled in by __setup()
 

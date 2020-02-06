@@ -38,16 +38,16 @@ class Test_cmake(unittest.TestCase):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.14.5
+r'''# CMake version 3.16.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -57,15 +57,15 @@ ENV PATH=/usr/local/bin:$PATH''')
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.14.5
+r'''# CMake version 3.16.3
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -75,16 +75,16 @@ ENV PATH=/usr/local/bin:$PATH''')
         """Accept EULA"""
         c = cmake(eula=True)
         self.assertEqual(str(c),
-r'''# CMake version 3.14.5
+r'''# CMake version 3.16.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.14.5-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
-    rm -rf /var/tmp/cmake-3.14.5-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -116,6 +116,7 @@ ENV PATH=/usr/local/bin:$PATH''')
 r'''# CMake version 3.14.5
 RUN yum install -y \
         make \
+        openssl-devel \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \
@@ -136,6 +137,7 @@ ENV PATH=/usr/local/bin:$PATH''')
 r'''# CMake version 3.14.5
 RUN yum install -y \
         make \
+        openssl-devel \
         wget && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \

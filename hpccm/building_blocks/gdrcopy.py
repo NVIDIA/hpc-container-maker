@@ -61,7 +61,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/gdrcopy`.
 
     version: The version of gdrcopy source to download.  The default
-    value is `1.3`.
+    value is `2.0`.
 
     # Examples
 
@@ -79,7 +79,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/gdrcopy')
-        self.__version = kwargs.get('version', '1.3')
+        self.__version = kwargs.get('version', '2.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

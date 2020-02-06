@@ -44,7 +44,7 @@ class Test_intel_mpi(unittest.TestCase):
         """Default intel_mpi building block"""
         impi = intel_mpi(eula=True)
         self.assertEqual(str(impi),
-r'''# Intel MPI version 2019.4-070
+r'''# Intel MPI version 2019.6-088
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -58,7 +58,7 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-mpi-2019.4-070 && \
+        intel-mpi-2019.6-088 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')
 
@@ -68,7 +68,7 @@ RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivar
         """Default intel_mpi building block"""
         impi = intel_mpi(eula=True)
         self.assertEqual(str(impi),
-r'''# Intel MPI version 2019.4-070
+r'''# Intel MPI version 2019.6-088
 RUN yum install -y \
         man-db \
         openssh-clients && \
@@ -77,7 +77,7 @@ RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW
     yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
     yum install -y \
-        intel-mpi-2019.4-070 && \
+        intel-mpi-2019.6-088 && \
     rm -rf /var/cache/yum/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bashrc''')
 
@@ -111,7 +111,7 @@ RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivar
         """mpivars is False"""
         impi = intel_mpi(eula=True, mpivars=False)
         self.assertEqual(str(impi),
-r'''# Intel MPI version 2019.4-070
+r'''# Intel MPI version 2019.6-088
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -125,7 +125,7 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-mpi-2019.4-070 && \
+        intel-mpi-2019.6-088 && \
     rm -rf /var/lib/apt/lists/*
 ENV FI_PROVIDER_PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov \
     I_MPI_ROOT=/opt/intel/compilers_and_libraries/linux/mpi \
@@ -139,7 +139,7 @@ ENV FI_PROVIDER_PATH=/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfab
         impi = intel_mpi(eula=True)
         r = impi.runtime()
         self.assertEqual(r,
-r'''# Intel MPI version 2019.4-070
+r'''# Intel MPI version 2019.6-088
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -153,6 +153,6 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     echo "deb https://apt.repos.intel.com/mpi all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-mpi-2019.4-070 && \
+        intel-mpi-2019.6-088 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/compilers_and_libraries/linux/mpi/intel64/bin/mpivars.sh intel64" >> /etc/bash.bashrc''')

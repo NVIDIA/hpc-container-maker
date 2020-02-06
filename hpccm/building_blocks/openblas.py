@@ -73,7 +73,7 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of OpenBLAS source to download.  The default
-    value is `0.3.6`.
+    value is `0.3.7`.
 
     # Examples
 
@@ -100,7 +100,7 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                                       'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/openblas')
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '0.3.6')
+        self.__version = kwargs.get('version', '0.3.7')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

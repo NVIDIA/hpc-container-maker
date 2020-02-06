@@ -37,18 +37,18 @@ class Test_gdrcopy(unittest.TestCase):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
-r'''# GDRCOPY version 1.3
+r'''# GDRCOPY version 2.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v1.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/gdrcopy-1.3 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.0 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/v1.3.tar.gz /var/tmp/gdrcopy-1.3
+    rm -rf /var/tmp/v2.0.tar.gz /var/tmp/gdrcopy-2.0
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
@@ -59,17 +59,17 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
-r'''# GDRCOPY version 1.3
+r'''# GDRCOPY version 2.0
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v1.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/gdrcopy-1.3 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.0 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/v1.3.tar.gz /var/tmp/gdrcopy-1.3
+    rm -rf /var/tmp/v2.0.tar.gz /var/tmp/gdrcopy-2.0
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
