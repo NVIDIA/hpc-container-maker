@@ -35,9 +35,9 @@ implementation will always be installed.  The default is
 
 - __ospackages__: List of OS packages to install prior to installing Arm
 Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
-`lmod`, `python`, `tar`, `wget`.  For RHEL-based Linux
+`lmod`, `python`, `tar`, `tcl`, and `wget`.  For RHEL-based Linux
 distributions, the default values are `glibc-devel`, `Lmod`,
-`tar`, `wget`.
+`tar`, and `wget`.
 
 - __prefix__: The top level install prefix.  The default value is
 `/opt/arm`.

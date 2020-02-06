@@ -76,9 +76,9 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
     ospackages: List of OS packages to install prior to installing Arm
     Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
-    `lmod`, `python`, `tar`, `wget`.  For RHEL-based Linux
+    `lmod`, `python`, `tar`, `tcl`, and `wget`.  For RHEL-based Linux
     distributions, the default values are `glibc-devel`, `Lmod`,
-    `tar`, `wget`.
+    `tar`, and `wget`.
 
     prefix: The top level install prefix.  The default value is
     `/opt/arm`.
@@ -175,7 +175,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
             if not self.__ospackages:
                 self.__ospackages = ['libc6-dev', 'lmod', 'python', 'tar',
-                                     'wget']
+                                     'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):

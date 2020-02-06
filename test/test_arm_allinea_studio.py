@@ -45,6 +45,7 @@ RUN apt-get update -y && \
         lmod \
         python \
         tar \
+        tcl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-0/Ubuntu16.04/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar && \
@@ -120,6 +121,7 @@ RUN apt-get update -y && \
         lmod \
         python \
         tar \
+        tcl \
         wget && \
     rm -rf /var/lib/apt/lists/*
 COPY Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp
