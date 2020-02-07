@@ -70,7 +70,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     distributions, the default is an empty list.
 
     version: The version of MKL to install.  The default value is
-    `2019.4-070`.
+    `2020.0-088`.
 
     # Examples
 
@@ -92,7 +92,8 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
 
         self.__mklvars = kwargs.get('mklvars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2019.4-070')
+        self.__version = kwargs.get('version', '2020.0-088')
+        self.__year = '2019' # Also used by 2018 and 2020 versions
 
         self.__bashrc = ''      # Filled in by __distro()
 
@@ -108,7 +109,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     def __instructions(self):
         """Fill in container instructions"""
 
-        self += comment('MKL version {}'.format(self.version))
+        self += comment('MKL version {}'.format(self.__version))
 
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
@@ -117,10 +118,10 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
         self += packages(
-            apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             apt_repositories=['deb https://apt.repos.intel.com/mkl all main'],
-            ospackages=['intel-mkl-64bit-{}'.format(self.version)],
-            yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            ospackages=['intel-mkl-64bit-{}'.format(self.__version)],
+            yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             yum_repositories=['https://yum.repos.intel.com/mkl/setup/intel-mkl.repo'])
 
         # Set the environment

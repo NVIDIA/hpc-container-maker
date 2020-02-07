@@ -190,10 +190,10 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://f
     cd /var/tmp && \
     mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/MentorEmbedded/nvptx-newlib nvptx-newlib && cd - && \
     ln -s /var/tmp/nvptx-newlib/newlib /var/tmp/gcc-9.1.0/newlib && \
-    mkdir -p /var/tmp/accel_objdir && cd /var/tmp/accel_objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --enable-languages=c,c++,fortran,lto --target=nvptx-none --enable-as-accelerator-for=x86_64-pc-linux-gnu --disable-sjlj-exceptions --enable-newlib-io-long-long --disable-multilib && \
+    mkdir -p /var/tmp/accel_objdir && cd /var/tmp/accel_objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --disable-multilib --disable-sjlj-exceptions --enable-as-accelerator-for=x86_64-pc-linux-gnu --enable-languages=c,c++,fortran,lto --enable-newlib-io-long-long --target=nvptx-none && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    mkdir -p /var/tmp/objdir && cd /var/tmp/objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --disable-multilib --with-cuda-driver=/usr/local/cuda --enable-offload-targets=nvptx-none=/usr/local/gnu/nvptx-none --enable-languages=c,c++,fortran,lto && \
+    mkdir -p /var/tmp/objdir && cd /var/tmp/objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --disable-multilib --enable-languages=c,c++,fortran,lto --enable-offload-targets=nvptx-none=/usr/local/gnu/nvptx-none --with-cuda-driver=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/gcc-9.1.0.tar.xz /var/tmp/gcc-9.1.0 /var/tmp/objdir && \

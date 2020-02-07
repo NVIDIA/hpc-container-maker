@@ -44,7 +44,7 @@ class Test_mkl(unittest.TestCase):
         """Default mkl building block"""
         m = mkl(eula=True)
         self.assertEqual(str(m),
-r'''# MKL version 2019.4-070
+r'''# MKL version 2020.0-088
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -56,7 +56,7 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-mkl-64bit-2019.4-070 && \
+        intel-mkl-64bit-2020.0-088 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
 
@@ -66,12 +66,12 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
         """Default mkl building block"""
         m = mkl(eula=True)
         self.assertEqual(str(m),
-r'''# MKL version 2019.4-070
+r'''# MKL version 2020.0-088
 RUN rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
     yum install -y yum-utils && \
     yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && \
     yum install -y \
-        intel-mkl-64bit-2019.4-070 && \
+        intel-mkl-64bit-2020.0-088 && \
     rm -rf /var/cache/yum/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bashrc''')
 
@@ -101,7 +101,7 @@ RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')
     @docker
     def test_mklvars(self):
         """mklvars is False"""
-        m = mkl(eula=True, mklvars=False)
+        m = mkl(eula=True, mklvars=False, version='2019.4-070')
         self.assertEqual(str(m),
 r'''# MKL version 2019.4-070
 RUN apt-get update -y && \
@@ -129,7 +129,7 @@ ENV CPATH=/opt/intel/mkl/include:$CPATH \
         m = mkl(eula=True)
         r = m.runtime()
         self.assertEqual(r,
-r'''# MKL version 2019.4-070
+r'''# MKL version 2020.0-088
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -141,6 +141,6 @@ RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-P
     echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        intel-mkl-64bit-2019.4-070 && \
+        intel-mkl-64bit-2020.0-088 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/mkl/bin/mklvars.sh intel64" >> /etc/bash.bashrc''')

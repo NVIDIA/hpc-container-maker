@@ -38,7 +38,7 @@ class Test_mlnx_ofed(unittest.TestCase):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.6-1.0.1.1
+r'''# Mellanox OFED version 4.7-3.2.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         findutils \
@@ -47,10 +47,10 @@ RUN apt-get update -y && \
         libnuma1 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
-    find /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
-    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.7-3.2.9.0/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
+    find /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64''')
 
     @x86_64
     @ubuntu18
@@ -59,7 +59,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.6-1.0.1.1
+r'''# Mellanox OFED version 4.7-3.2.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         findutils \
@@ -68,10 +68,10 @@ RUN apt-get update -y && \
         libnuma1 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz -C /var/tmp -z && \
-    find /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
-    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu18.04-x86_64''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.7-3.2.9.0/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu18.04-x86_64.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu18.04-x86_64.tgz -C /var/tmp -z && \
+    find /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu18.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu18.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu18.04-x86_64''')
 
     @x86_64
     @centos
@@ -80,7 +80,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.6-1.0.1.1
+r'''# Mellanox OFED version 4.7-3.2.9.0
 RUN yum install -y \
         findutils \
         libnl \
@@ -88,17 +88,17 @@ RUN yum install -y \
         numactl-libs \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-x86_64.tgz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-x86_64.tgz -C /var/tmp -z && \
-    find /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-x86_64 -regextype posix-extended -type f -regex ".*(libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs|libibverbs-devel|libibverbs-utils|libmlx4|libmlx4-devel|libmlx5|libmlx5-devel|librdmacm|librdmacm-devel)-[0-9].*x86_64.rpm" -not -path "*UPSTREAM*" -exec rpm --install {} + && \
-    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-rhel7.2-x86_64''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.7-3.2.9.0/MLNX_OFED_LINUX-4.7-3.2.9.0-rhel7.2-x86_64.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-rhel7.2-x86_64.tgz -C /var/tmp -z && \
+    find /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-rhel7.2-x86_64 -regextype posix-extended -type f -regex ".*(libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs|libibverbs-devel|libibverbs-utils|libmlx4|libmlx4-devel|libmlx5|libmlx5-devel|librdmacm|librdmacm-devel)-[0-9].*x86_64.rpm" -not -path "*UPSTREAM*" -exec rpm --install {} + && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-rhel7.2-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-rhel7.2-x86_64''')
 
     @x86_64
     @ubuntu
     @docker
     def test_prefix_ubuntu(self):
         """Prefix option"""
-        mofed = mlnx_ofed(prefix='/opt/ofed')
+        mofed = mlnx_ofed(prefix='/opt/ofed', version='4.6-1.0.1.1')
         self.assertEqual(str(mofed),
 r'''# Mellanox OFED version 4.6-1.0.1.1
 RUN apt-get update -y && \
@@ -121,7 +121,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     @docker
     def test_prefix_centos(self):
         """Prefix option"""
-        mofed = mlnx_ofed(prefix='/opt/ofed')
+        mofed = mlnx_ofed(prefix='/opt/ofed', version='4.6-1.0.1.1')
         self.assertEqual(str(mofed),
 r'''# Mellanox OFED version 4.6-1.0.1.1
 RUN yum install -y \
@@ -185,7 +185,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
     @docker
     def test_aarch64_centos(self):
         """aarch64"""
-        mofed = mlnx_ofed()
+        mofed = mlnx_ofed(version='4.6-1.0.1.1')
         self.assertEqual(str(mofed),
 r'''# Mellanox OFED version 4.6-1.0.1.1
 RUN yum install -y \
@@ -270,7 +270,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
         mofed = mlnx_ofed()
         r = mofed.runtime()
         self.assertEqual(r,
-r'''# Mellanox OFED version 4.6-1.0.1.1
+r'''# Mellanox OFED version 4.7-3.2.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         findutils \
@@ -279,10 +279,10 @@ RUN apt-get update -y && \
         libnuma1 \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.6-1.0.1.1/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
-    find /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
-    rm -rf /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.6-1.0.1.1-ubuntu16.04-x86_64''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://content.mellanox.com/ofed/MLNX_OFED-4.7-3.2.9.0/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz -C /var/tmp -z && \
+    find /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64 -regextype posix-extended -type f -regex ".*(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1)_.*_amd64.deb" -not -path "*UPSTREAM*" -exec dpkg --install {} + && \
+    rm -rf /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64.tgz /var/tmp/MLNX_OFED_LINUX-4.7-3.2.9.0-ubuntu16.04-x86_64''')
 
     @x86_64
     @ubuntu
@@ -292,7 +292,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://c
         mofed = mlnx_ofed(prefix='/opt/ofed')
         r = mofed.runtime()
         self.assertEqual(r,
-r'''# Mellanox OFED version 4.6-1.0.1.1
+r'''# Mellanox OFED version 4.7-3.2.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         findutils \

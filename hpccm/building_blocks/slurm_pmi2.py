@@ -52,6 +52,16 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
     configure_opts: List of options to pass to `configure`.  The
     default is an empty list.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
     PMI2. The default is False.
@@ -73,7 +83,18 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
     default value is empty.
 
     version: The version of SLURM source to download.  The default
-    value is `19.05.4`.
+    value is `19.05.5`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 
@@ -95,7 +116,7 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
                                                       'perl', 'tar', 'wget'])
         self.prefix = kwargs.get('prefix', '/usr/local/slurm-pmi2')
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '19.05.4')
+        self.__version = kwargs.get('version', '19.05.5')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

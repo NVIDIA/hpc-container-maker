@@ -108,8 +108,16 @@ class Test_ConfigureMake(unittest.TestCase):
 
         # Function arguments override constructor
         configure = cm.configure_step(opts=['--without-foo', '--with-bar'])
-        self.assertEqual(configure, './configure --prefix=/usr/local --without-foo --with-bar')
+        self.assertEqual(configure, './configure --prefix=/usr/local --with-bar --without-foo')
 
         # Use constructor arguments
         configure = cm.configure_step()
         self.assertEqual(configure, './configure --prefix=/usr/local --with-foo --without-bar')
+
+    def test_kwargs(self):
+        """kwargs"""
+        cm = ConfigureMake(disable_long_option=True, enable_foo=True,
+                           with_foo=True, with_foo2='/usr',
+                           without_bar=True, prefix=None)
+        configure = cm.configure_step()
+        self.assertEqual(configure, './configure --disable-long-option --enable-foo --with-foo --with-foo2=/usr --without-bar')

@@ -59,6 +59,16 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     configure_opts: List of options to pass to `configure`.  The
     default is an empty list.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
     MPICH. The default is True.
@@ -82,7 +92,18 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of MPICH source to download.  The default
-    value is `3.3.1`.
+    value is `3.3.2`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 
@@ -113,7 +134,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # MPICH does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '3.3.1')
+        self.version = kwargs.get('version', '3.3.2')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

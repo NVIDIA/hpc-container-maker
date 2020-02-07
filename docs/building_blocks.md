@@ -12,31 +12,32 @@ to use this building block.
 As a side effect, a toolchain is created containing the Arm
 Allinea Studio compilers.  The toolchain can be passed to other
 operations that want to build using the Arm Allinea Studio
-compilers.
+compilers.  However, the environment is not automatically
+configured for the Arm Allinea Studio compilers.  The desired
+environment module must be manually loaded, e.g., `module load
+Generic-AArch64/RHEL/7/arm-linux-compiler/20.0`.
 
 __Parameters__
 
 
-- __armpl_generic_aarch64_only__: Boolean flag to specify whether only
-the aarch64-generic version of the Arm Performance Libraries
-should be installed.  If False, then all variants of the Arm
-Performance Libraries, e.g., Cortex-A72, Generic-SVE,
-ThunderX2CN99, and Generic-AArch64 are installed, but note that
-this will very significantly increase the size of the container
-image. The default is True.
-
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
-should be modified to include Arm Allinea Studio. The default is
-True.
+(`MODULEPATH`) should be modified to include Arm Allinea
+Studio. The default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [Arm End User License Agreement](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula).
 The default value is `False`.
 
+- __microarchitectures__: List of microarchitectures to install.
+Available values are `generic`, `generic-sve`, `neoverse-n1`, and
+`thunderx2t99`.  Irrespective of this setting, the generic
+implementation will always be installed.  The default is
+`generic`.
+
 - __ospackages__: List of OS packages to install prior to installing Arm
 Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
-`python`, `tar`, `wget`.  For RHEL-based Linux distributions, the
-default values are `glibc-devel`, `tar`, `wget`.
+`lmod`, `python`, `tar`, `tcl`, and `wget`.  For RHEL-based Linux
+distributions, the default values are `glibc-devel`, `Lmod`,
+`tar`, and `wget`.
 
 - __prefix__: The top level install prefix.  The default value is
 `/opt/arm`.
@@ -47,13 +48,16 @@ defined, the tarball in the local build context will be used
 rather than downloading the tarball from the web.
 
 - __version__: The version of Arm Allinea Studio to install.  The
-default value is `19.3`.
+default value is `20.0`.  Due to differences in the packaging
+scheme, versions prior to 20.0 are not supported.
 
 __Examples__
 
 
 ```python
-arm_allinea_studio(eula=True, version='19.3')
+arm_allinea_studio(eula=True,
+                   microarchitectures=['generic', 'thunderx2t99'],
+                   version='20.0')
 ```
 
 
@@ -165,7 +169,7 @@ repository.  For versions of Boost older than 1.63.0, the
 SourceForge repository should be used.  The default is False.
 
 - __version__: The version of Boost source to download.  The default
-value is `1.70.0`.
+value is `1.72.0`.
 
 __Examples__
 
@@ -301,6 +305,16 @@ run.  The default is False.
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is `--with-hdf5=/usr/local/hdf5` and `--with-zlib`.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __prefix__: The top level install location.  The default value is
 `/usr/local/cgns`.
 
@@ -316,6 +330,17 @@ default is empty.
 
 - __version__: The version of CGNS source to download.  The default
 value is `3.4.0`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -432,18 +457,20 @@ building from source.  The default is an empty list.
 The default value is `False`.
 
 - __ospackages__: List of OS packages to install prior to installing.
-The default value is `wget`.
+The default values are `make` and `wget`.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local`.
 
 - __source__: Boolean flag to specify whether to build CMake from
-source.  For x86_64 processors, the default is False, i.e., use
-the available pre-compiled package.  For all other processors, the
-default is True.
+source.  If True, includes the `libssl-dev` package in the list of
+OS packages for Ubuntu, and `openssl-devel` for RHEL-based
+distributions.  For x86_64 processors, the default is False, i.e.,
+use the available pre-compiled package.  For all other processors,
+the default is True.
 
 - __version__: The version of CMake to download.  The default value is
-`3.14.5`.
+`3.16.3`.
 
 __Examples__
 
@@ -551,6 +578,16 @@ local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH`) should be modified to include FFTW. The
 default is True.
@@ -575,6 +612,17 @@ default is empty.
 
 - __version__: The version of FFTW source to download.  This value is
 ignored if `directory` is set.  The default value is `3.3.8`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -641,7 +689,7 @@ default values are `make` and `wget`.
 `/usr/local/gdrcopy`.
 
 - __version__: The version of gdrcopy source to download.  The default
-value is `1.3`.
+value is `2.0`.
 
 __Examples__
 
@@ -698,6 +746,16 @@ default value is an empty list.
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
 
@@ -728,6 +786,17 @@ default is empty.
 
 - __url__: The URL of the tarball package to build.  One of this
 parameter or the `repository` parameter must be specified.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -1090,6 +1159,16 @@ local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
 include HDF5. The default is True.
@@ -1113,7 +1192,18 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of HDF5 source to download.  This value is
-ignored if `directory` is set.  The default value is `1.10.5`.
+ignored if `directory` is set.  The default value is `1.10.6`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -1189,7 +1279,7 @@ library directories. This value is ignored if `hpcxinit` is
 
 - __mlnx_ofed__: The version of Mellanox OFED that should be matched.
 This value is ignored if Inbox OFED is selected.  The default
-value is `4.6-1.0.1.1`.
+value is `4.7-1.0.0.1`.
 
 - __multi_thread__: Boolean flag to specify whether the multi-threaded
 version of Mellanox HPC-X should be used.  The default is `False`.
@@ -1279,7 +1369,7 @@ Intel MPI.  For Ubuntu, the default values are
 the default values are `man-db` and `openssh-clients`.
 
 - __version__: The version of Intel MPI to install.  The default value
-is `2019.4-070`.
+is `2019.6-088`.
 
 __Examples__
 
@@ -1411,7 +1501,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.  The default value is `2019.5-281`.
+tarball version.  The default value is `2020.0-008`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1515,7 +1605,7 @@ and `which`.
 Blocks runtime should be installed.  The default is True.
 
 - __version__: The version of the Intel Parallel Studio XE runtime to
-install.  The default value is `2019.5-281`.
+install.  The default value is `2020.0-008`.
 
 __Examples__
 
@@ -1588,13 +1678,13 @@ empty list.
 is `/usr/local/julia`.
 
 - __version__: The version of Julia to install.  The default value is
-`1.2.0`.
+`1.3.1`.
 
 __Examples__
 
 
 ```python
-julia(prefix='/usr/local/julia', version='1.2.0')
+julia(prefix='/usr/local/julia', version='1.3.1')
 ```
 
 ```python
@@ -1935,7 +2025,7 @@ MKL.  For Ubuntu, the default values are `apt-transport-https`,
 distributions, the default is an empty list.
 
 - __version__: The version of MKL to install.  The default value is
-`2019.4-070`.
+`2020.0-088`.
 
 __Examples__
 
@@ -2005,7 +2095,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.6-1.0.1.1`.
+value is `4.7-3.2.9.0`.
 
 __Examples__
 
@@ -2051,6 +2141,16 @@ testing` steps should be performed.  The default is False.
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 MPICH. The default is True.
@@ -2074,7 +2174,18 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MPICH source to download.  The default
-value is `3.3.1`.
+value is `3.3.2`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -2129,7 +2240,8 @@ parameter for more information.
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
 versions to install.  The default values are `3.3-1.0.4.0`,
 `3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`
+`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
+`4.7-3.2.9.0`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -2199,6 +2311,16 @@ the local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 MVAPICH2. The default is True.
@@ -2227,7 +2349,18 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MVAPICH2 source to download.  This value
-is ignored if `directory` is set.  The default value is `2.3.1`.
+is ignored if `directory` is set.  The default value is `2.3.3`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -2344,8 +2477,11 @@ MVAPICH2-GDR version).
 - __pgi__: Boolean flag to specify whether a PGI build should be used.
 The default value is False.
 
+- __release__: The release of MVAPICH2-GDR to download.  The value is
+ignored is `package` is set.  The default value is `2`.
+
 - __version__: The version of MVAPICH2-GDR to download.  The value is
-ignored if `package` is set.  The default value is `2.3.1`.  Due
+ignored if `package` is set.  The default value is `2.3.3`.  Due
 to differences in the packaging scheme, versions prior to 2.3 are
 not supported.
 
@@ -2400,6 +2536,16 @@ default value is an empty list.
 - __cxx__: Boolean flag to specify whether the NetCDF C++ library should
 be installed.  The default is True.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 NetCDF. The default is True.
@@ -2430,13 +2576,24 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of NetCDF to download.  The default value is
-`4.7.0`.
+`4.7.3`.
 
 - __version_cxx__: The version of NetCDF C++ to download.  The default
-value is `4.3.0`.
+value is `4.3.1`.
 
 - __version_fortran__: The version of NetCDF Fortran to download.  The
-default value is `4.4.5`.
+default value is `4.5.2`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -2574,7 +2731,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.6`.
+value is `0.3.7`.
 
 __Examples__
 
@@ -2639,6 +2796,16 @@ local build context.  The default value is empty.  If this is
 defined, the source in the local build context will be used rather
 than downloading the source from the web.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 OpenMPI. The default is True.
@@ -2687,7 +2854,18 @@ list of `configure` options.  The default is False.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`4.0.1`.
+`4.0.3rc3`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -2986,6 +3164,16 @@ should be performed.  The default is False.
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LD_LIBRARY_PATH`, and `PATH`) should be modified to
 include PMIX. The default is True.
@@ -3010,6 +3198,17 @@ default value is empty.
 
 - __version__: The version of PMIX source to download.  The default value
 is `3.1.4`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -3053,6 +3252,16 @@ should be performed.  The default is False.
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--enable-shared`.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 PnetCDF. The default is True.
@@ -3074,7 +3283,18 @@ used.  The default is to use the standard MPI compiler wrappers,
 e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
 
 - __version__: The version of PnetCDF source to download.  The default
-value is `1.11.2`.
+value is `1.12.1`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -3325,6 +3545,16 @@ __Parameters__
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
 PMI2. The default is False.
@@ -3346,7 +3576,18 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of SLURM source to download.  The default
-value is `19.05.4`.
+value is `19.05.5`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 
@@ -3400,6 +3641,16 @@ the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
 path is used.  If False, adds `--without-cuda` to the list of
 `configure` options.  The default value is an empty string.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 UCX. The default is True.
@@ -3451,7 +3702,18 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.5.2`.
+is `1.7.0`.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 - __xpmem__: Flag to control whether XPMEM is used by the build.  If
 True, adds `--with-xpmem` to the list of `configure` options.  If
@@ -3508,6 +3770,16 @@ __Parameters__
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--disable-kernel-module`.
 
+- __disable_FEATURE__: Flags to control disabling features when
+configuring.  For instance, `disable_foo=True` maps to
+`--disable-foo`.  Underscores in the parameter name are converted
+to dashes.
+
+- __enable_FEATURE[=ARG]__: Flags to control enabling features when
+configuring.  For instance, `enable_foo=True` maps to
+`--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+Underscores in the parameter name are converted to dashes.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
 to include XPMEM. The default is True.
@@ -3527,6 +3799,17 @@ and building.  The default value are `autoconf`, `automake`,
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
+
+- __with_PACKAGE[=ARG]__: Flags to control optional packages when
+configuring.  For instance, `with_foo=True` maps to `--with-foo`
+and `with_foo='/usr/local/foo'` maps to
+`--with-foo=/usr/local/foo`.  Underscores in the parameter name
+are converted to dashes.
+
+- __without_PACKAGE__: Flags to control optional packages when
+configuring.  For instance `without_foo=True` maps to
+`--without-foo`.  Underscores in the parameter name are converted
+to dashes.
 
 __Examples__
 

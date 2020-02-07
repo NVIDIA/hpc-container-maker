@@ -40,7 +40,7 @@ class Test_openblas(unittest.TestCase):
         tc = toolchain(CC='gcc', FC='gfortran')
         o = openblas(toolchain=tc)
         self.assertEqual(str(o),
-r'''# OpenBLAS version 0.3.6
+r'''# OpenBLAS version 0.3.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
@@ -48,11 +48,11 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.6 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.7.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.7.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/OpenBLAS-0.3.7 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
     make install PREFIX=/usr/local/openblas && \
-    rm -rf /var/tmp/v0.3.6.tar.gz /var/tmp/OpenBLAS-0.3.6
+    rm -rf /var/tmp/v0.3.7.tar.gz /var/tmp/OpenBLAS-0.3.7
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
