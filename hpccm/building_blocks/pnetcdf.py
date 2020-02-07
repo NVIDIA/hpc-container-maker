@@ -89,7 +89,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
 
     version: The version of PnetCDF source to download.  The default
-    value is `1.11.2`.
+    value is `1.12.1`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -132,7 +132,7 @@ class pnetcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                                       toolchain(CC='mpicc', CXX='mpicxx',
                                                 F77='mpif77', F90='mpif90',
                                                 FC='mpifort'))
-        self.__version = kwargs.get('version', '1.11.2')
+        self.__version = kwargs.get('version', '1.12.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

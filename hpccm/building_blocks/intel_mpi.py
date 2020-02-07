@@ -78,7 +78,7 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     the default values are `man-db` and `openssh-clients`.
 
     version: The version of Intel MPI to install.  The default value
-    is `2019.4-070`.
+    is `2019.6-088`.
 
     # Examples
 
@@ -99,7 +99,8 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
 
         self.__mpivars = kwargs.get('mpivars', True)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.version = kwargs.get('version', '2019.4-070')
+        self.__version = kwargs.get('version', '2019.6-088')
+        self.__year = '2019' # Also used by 2018 versions
 
         self.__bashrc = ''      # Filled in by __distro()
 
@@ -115,7 +116,7 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     def __instructions(self):
         """Fill in container instructions"""
 
-        self += comment('Intel MPI version {}'.format(self.version))
+        self += comment('Intel MPI version {}'.format(self.__version))
 
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
@@ -124,10 +125,10 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
         self += packages(
-            apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             apt_repositories=['deb https://apt.repos.intel.com/mpi all main'],
-            ospackages=['intel-mpi-{}'.format(self.version)],
-            yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB'],
+            ospackages=['intel-mpi-{}'.format(self.__version)],
+            yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             yum_repositories=['https://yum.repos.intel.com/mpi/setup/intel-mpi.repo'])
 
         # Set the environment
@@ -141,7 +142,7 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mpivars
             # environment script.
-            if LooseVersion(self.version) >= LooseVersion('2019.0'):
+            if LooseVersion(self.__version) >= LooseVersion('2019.0'):
               self.environment_variables={
                   'FI_PROVIDER_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov',
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',

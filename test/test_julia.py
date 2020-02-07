@@ -38,16 +38,16 @@ class Test_julia(unittest.TestCase):
         """Default julia building block"""
         j = julia()
         self.assertEqual(str(j),
-r'''# Julia version 1.2.0
+r'''# Julia version 1.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-x86_64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
-    rm -rf /var/tmp/julia-1.2.0-linux-x86_64.tar.gz /var/tmp/julia-1.2.0
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.1-linux-x86_64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.3.1-linux-x86_64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.3.1 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.3.1-linux-x86_64.tar.gz /var/tmp/julia-1.3.1
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
@@ -58,16 +58,16 @@ ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
         """aarch64"""
         j = julia()
         self.assertEqual(str(j),
-r'''# Julia version 1.2.0
+r'''# Julia version 1.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.2/julia-1.2.0-linux-aarch64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-aarch64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
-    rm -rf /var/tmp/julia-1.2.0-linux-aarch64.tar.gz /var/tmp/julia-1.2.0
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.3/julia-1.3.1-linux-aarch64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.3.1-linux-aarch64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.3.1 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.3.1-linux-aarch64.tar.gz /var/tmp/julia-1.3.1
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
@@ -77,7 +77,8 @@ ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     def test_depot_history_packages(self):
         """depot, history, and packages options"""
         j = julia(depot='~/.julia-ngc', history='/tmp/julia_history.jl',
-                  packages=['CUDAnative', 'CuArrays'])
+                  packages=['CUDAnative', 'CuArrays'],
+                  version='1.2.0')
         self.assertEqual(str(j),
 r'''# Julia version 1.2.0
 RUN apt-get update -y && \
@@ -100,7 +101,7 @@ ENV JULIA_HISTORY=/tmp/julia_history.jl \
     @docker
     def test_cuda_ldconfig(self):
         """cuda and ldconfig options"""
-        j = julia(cuda=True, ldconfig=True)
+        j = julia(cuda=True, ldconfig=True, version='1.2.0')
         self.assertEqual(str(j),
 r'''# Julia version 1.2.0
 RUN apt-get update -y && \

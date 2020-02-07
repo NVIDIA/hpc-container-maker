@@ -97,7 +97,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of HDF5 source to download.  This value is
-    ignored if `directory` is set.  The default value is `1.10.5`.
+    ignored if `directory` is set.  The default value is `1.10.6`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -146,7 +146,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.10.5')
+        self.__version = kwargs.get('version', '1.10.6')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

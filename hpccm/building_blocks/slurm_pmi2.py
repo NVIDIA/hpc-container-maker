@@ -86,7 +86,7 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
     default value is empty.
 
     version: The version of SLURM source to download.  The default
-    value is `19.05.4`.
+    value is `19.05.5`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -119,7 +119,7 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
                                                       'perl', 'tar', 'wget'])
         self.prefix = kwargs.get('prefix', '/usr/local/slurm-pmi2')
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '19.05.4')
+        self.__version = kwargs.get('version', '19.05.5')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

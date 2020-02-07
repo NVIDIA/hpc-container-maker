@@ -94,7 +94,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of MPICH source to download.  The default
-    value is `3.3.1`.
+    value is `3.3.2`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -136,7 +136,7 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # MPICH does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '3.3.1')
+        self.version = kwargs.get('version', '3.3.2')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

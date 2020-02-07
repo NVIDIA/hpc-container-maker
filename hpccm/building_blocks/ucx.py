@@ -132,7 +132,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default value is empty.
 
     version: The version of UCX source to download.  The default value
-    is `1.5.2`.
+    is `1.7.0`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -189,7 +189,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.5.2')
+        self.__version = kwargs.get('version', '1.7.0')
         self.__xpmem = kwargs.get('xpmem', '')
 
         self.__commands = [] # Filled in by __setup()

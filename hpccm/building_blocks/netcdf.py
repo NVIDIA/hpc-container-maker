@@ -104,13 +104,13 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of NetCDF to download.  The default value is
-    `4.7.0`.
+    `4.7.3`.
 
     version_cxx: The version of NetCDF C++ to download.  The default
-    value is `4.3.0`.
+    value is `4.3.1`.
 
     version_fortran: The version of NetCDF Fortran to download.  The
-    default value is `4.4.5`.
+    default value is `4.5.2`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -154,9 +154,9 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.prefix = kwargs.get('prefix', '/usr/local/netcdf')
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '4.7.0')
-        self.__version_cxx = kwargs.get('version_cxx', '4.3.0')
-        self.__version_fortran = kwargs.get('version_fortran', '4.4.5')
+        self.__version = kwargs.get('version', '4.7.3')
+        self.__version_cxx = kwargs.get('version_cxx', '4.3.1')
+        self.__version_fortran = kwargs.get('version_fortran', '4.5.2')
         self.__wd = '/var/tmp'
 
         self.__commands = [] # Filled in by __setup()
