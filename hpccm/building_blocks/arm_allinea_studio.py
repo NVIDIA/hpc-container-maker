@@ -21,8 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion, StrictVersion
-import logging # pylint: disable=unused-import
+from distutils.version import StrictVersion
 import os
 import posixpath
 import re

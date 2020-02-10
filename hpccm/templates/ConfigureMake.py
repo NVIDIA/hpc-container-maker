@@ -22,11 +22,9 @@ from __future__ import print_function
 from six import string_types
 from six.moves import shlex_quote
 
-import logging # pylint: disable=unused-import
+import copy
 
 import hpccm.base_object
-
-from hpccm.toolchain import toolchain
 
 class ConfigureMake(hpccm.base_object):
     """Template for autotools configure / make / make install workflow"""
@@ -87,8 +85,7 @@ class ConfigureMake(hpccm.base_object):
             else:
                 change_directory = 'cd {} && '.format(directory)
 
-        e = []
-        e.extend(environment)
+        e = copy.copy(environment)
         if toolchain:
             if toolchain.CC and self.toolchain_control.get('CC'):
                 e.append('CC={}'.format(toolchain.CC))

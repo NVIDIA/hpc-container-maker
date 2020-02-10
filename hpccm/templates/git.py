@@ -57,7 +57,7 @@ class git(hpccm.base_object):
         with open(os.devnull, 'w') as DEVNULL:
             p = subprocess.Popen(command, shell=True, stdout=DEVNULL,
                                  stderr=DEVNULL)
-        o = p.communicate()
+        p.communicate()
 
         if p.returncode != 0:
             if fatal:
