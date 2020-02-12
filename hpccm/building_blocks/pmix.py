@@ -172,8 +172,7 @@ class pmix(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

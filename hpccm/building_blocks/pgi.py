@@ -320,7 +320,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             tarball = 'pgi-community-linux-{}-latest.tar.gz'.format(
                 self.__arch_pkg)
 
-            self.__commands.append(self.download_step(
+            self.__commands.append(self.wget_step(
                 url=self.__url_template.format(self.__arch_pkg),
                 outfile=posixpath.join(self.__wd, tarball),
                 referer=self.__referer, directory=self.__wd))

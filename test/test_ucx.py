@@ -228,6 +228,35 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
+    @x86_64
+    @ubuntu
+    @docker
+    def test_git_repository(self):
+        u = ucx(branch='v1.8.x',
+                repository='https://github.com/openucx/ucx.git')
+        self.assertEqual(str(u),
+r'''# UCX https://github.com/openucx/ucx.git v1.8.x
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        binutils-dev \
+        file \
+        git \
+        libnuma-dev \
+        libtool \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v1.8.x https://github.com/openucx/ucx.git ucx && cd - && \
+    cd /var/tmp/ucx && ./autogen.sh && \
+    cd /var/tmp/ucx &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/ucx
+ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/ucx/bin:$PATH''')
+
     @ubuntu
     @docker
     def test_runtime(self):

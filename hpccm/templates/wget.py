@@ -35,8 +35,8 @@ class wget(hpccm.base_object):
         self.wget_opts = kwargs.get('opts', ['-q', '-nc',
                                              '--no-check-certificate'])
 
-    def download_step(self, outfile=None, referer=None, url=None,
-                      directory='/tmp'):
+    def wget_step(self, outfile=None, referer=None, url=None,
+                  directory='/tmp'):
         """Generate wget command line string"""
 
         if not url:

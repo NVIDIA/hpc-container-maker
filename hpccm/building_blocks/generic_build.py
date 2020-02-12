@@ -152,8 +152,8 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
                 directory = posixpath.join(self.__wd, pkgdir)
 
             # Download source from web
-            self.__commands.append(self.download_step(url=self.__url,
-                                                      directory=self.__wd))
+            self.__commands.append(self.wget_step(url=self.__url,
+                                                  directory=self.__wd))
 
             # Untar source package
             self.__commands.append(self.untar_step(

@@ -88,33 +88,6 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
-    def test_directory(self):
-        """Directory in local build context"""
-        ompi = openmpi(directory='openmpi-3.0.0')
-        self.assertEqual(str(ompi),
-r'''# OpenMPI
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        bzip2 \
-        file \
-        hwloc \
-        libnuma-dev \
-        make \
-        openssh-client \
-        perl \
-        tar \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-COPY openmpi-3.0.0 /var/tmp/openmpi-3.0.0
-RUN cd /var/tmp/openmpi-3.0.0 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
-    make -j$(nproc) && \
-    make -j$(nproc) install && \
-    rm -rf /var/tmp/openmpi-3.0.0
-ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
-    PATH=/usr/local/openmpi/bin:$PATH''')
-
-    @ubuntu
-    @docker
     def test_ldconfig(self):
         """ldconfig option"""
         ompi = openmpi(ldconfig=True, version='3.1.2')
@@ -167,6 +140,39 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/openmpi-4.0.1.tar.bz2 /var/tmp/openmpi-4.0.1
+ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/openmpi/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_git_repository(self):
+        """git repository"""
+        ompi = openmpi(branch='v4.0.x',
+                       repository='https://github.com/open-mpi/ompi.git')
+        self.assertEqual(str(ompi),
+r'''# OpenMPI https://github.com/open-mpi/ompi.git v4.0.x
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        bzip2 \
+        file \
+        git \
+        hwloc \
+        libnuma-dev \
+        libtool \
+        make \
+        openssh-client \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v4.0.x --recursive https://github.com/open-mpi/ompi.git ompi && cd - && \
+    cd /var/tmp/ompi && ./autogen.pl && \
+    cd /var/tmp/ompi &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/ompi
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 

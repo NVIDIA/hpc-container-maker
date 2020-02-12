@@ -27,11 +27,10 @@ from six import string_types
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
@@ -43,12 +42,10 @@ from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
 class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-              hpccm.templates.ldconfig, hpccm.templates.rm,
-              hpccm.templates.tar, hpccm.templates.wget):
+              hpccm.templates.downloader, hpccm.templates.ldconfig,
+              hpccm.templates.rm):
     """The `openmpi` building block configures, builds, and installs the
-    [OpenMPI](https://www.open-mpi.org) component.  Depending on the
-    parameters, the source will be downloaded from the web (default)
-    or copied from a source directory in the local build context.
+    [OpenMPI](https://www.open-mpi.org) component.
 
     As a side effect, a toolchain is created containing the MPI
     compiler wrappers.  The tool can be passed to other operations
@@ -56,8 +53,16 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
     # Parameters
 
+    branch: The git branch to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the default branch for the repository.
+
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
+
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
 
     configure_opts: List of options to pass to `configure`.  The
     default values are `--disable-getpwuid` and
@@ -68,11 +73,6 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     options, otherwise adds `--without-cuda`.  If the toolchain
     specifies `CUDA_HOME`, then that path is used.  The default value
     is True.
-
-    directory: Path to the unpackaged source directory relative to the
-    local build context.  The default value is empty.  If this is
-    defined, the source in the local build context will be used rather
-    than downloading the source from the web.
 
     disable_FEATURE: Flags to control disabling features when
     configuring.  For instance, `disable_foo=True` maps to
@@ -103,7 +103,9 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     `hwloc`, `libnuma-dev`, `make`, `openssh-client`, `perl`, `tar`,
     and `wget`.  For RHEL-based Linux distributions, the default
     values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
-    `openssh-clients`, `perl`, `tar`, and `wget`.
+    `openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
+    parameter is set, then `autoconf`, `automake`, `git`, and
+    `libtool` are also included.
 
     pmi: Flag to control whether PMI is used by the build.  If True,
     adds `--with-pmi` to the list of `configure` options.  If a
@@ -120,6 +122,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     prefix: The top level install location.  The default value is
     `/usr/local/openmpi`.
 
+    repository: The location of the git repository that should be used
+    to build OpenMPI.  The default is empty, i.e., use the release
+    package specified by `version`.
+
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default is empty.
@@ -129,6 +135,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     string, uses the value of the string as the UCX path, e.g.,
     `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
     list of `configure` options.  The default is False.
+
+    url: The loation of the tarball that should be used to build
+    OpenMPI.  The default is empty, i.e., use the release package
+    specified by `version`.
 
     version: The version of OpenMPI source to download.  This
     value is ignored if `directory` is set.  The default value is
@@ -153,7 +163,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     ```
 
     ```python
-    openmpi(directory='sources/openmpi-3.0.0')
+    openmpi(repository='https://github.com/open-mpi/ompi.git')
     ```
 
     ```python
@@ -177,14 +187,13 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(openmpi, self).__init__(**kwargs)
 
-        self.baseurl = kwargs.get('baseurl',
+        self.__baseurl = kwargs.get('baseurl',
                                   'https://www.open-mpi.org/software/ompi')
         self.__check = kwargs.get('check', False)
         self.configure_opts = kwargs.get('configure_opts',
                                          ['--disable-getpwuid',
                                           '--enable-orterun-prefix-by-default'])
         self.cuda = kwargs.get('cuda', True)
-        self.directory = kwargs.get('directory', '')
         self.infiniband = kwargs.get('infiniband', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__pmi = kwargs.get('pmi', False)
@@ -194,7 +203,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.version = kwargs.get('version', '4.0.3rc3')
+        self.__version = kwargs.get('version', '4.0.3rc3')
         self.__ucx = kwargs.get('ucx', False)
 
         self.__commands = [] # Filled in by __setup()
@@ -216,15 +225,18 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     def __instructions(self):
         """Fill in container instructions"""
 
-        if self.directory:
-            self += comment('OpenMPI')
+        if self.repository:
+            if self.branch:
+                self += comment('OpenMPI {} {}'.format(self.repository,
+                                                       self.branch))
+            elif self.commit:
+                self += comment('OpenMPI {} {}'.format(self.repository,
+                                                       self.commit))
+            else:
+                self += comment('OpenMPI {}'.format(self.repository))
         else:
-            self += comment('OpenMPI version {}'.format(self.version))
+            self += comment('OpenMPI version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        if self.directory:
-            # Use source from local build context
-            self += copy(src=self.directory,
-                         dest=posixpath.join(self.__wd, self.directory))
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
 
@@ -237,12 +249,20 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 self.__ospackages = ['bzip2', 'file', 'hwloc', 'libnuma-dev',
                                      'make', 'openssh-client', 'perl',
                                      'tar', 'wget']
+
+                if self.repository:
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'git', 'libtool'])
             self.__runtime_ospackages = ['hwloc', 'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['bzip2', 'file', 'hwloc', 'make',
                                      'numactl-devel', 'openssh-clients',
                                      'perl', 'tar', 'wget']
+
+                if self.repository:
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'git', 'libtool'])
             self.__runtime_ospackages = ['hwloc', 'openssh-clients']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
@@ -253,16 +273,20 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
            self.__commands"""
 
         build_environment = []
+        remove = []
 
-        # The download URL has the format contains vMAJOR.MINOR in the
-        # path and the tarball contains MAJOR.MINOR.REVISION, so pull
-        # apart the full version to get the MAJOR and MINOR components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.version)
-        major_minor = 'v{0}.{1}'.format(match.groupdict()['major'],
-                                        match.groupdict()['minor'])
-        tarball = 'openmpi-{}.tar.bz2'.format(self.version)
-        url = '{0}/{1}/downloads/{2}'.format(self.baseurl, major_minor,
-                                             tarball)
+        if not self.repository and not self.url:
+            # The download URL has the format contains vMAJOR.MINOR in the
+            # path and the tarball contains MAJOR.MINOR.REVISION, so pull
+            # apart the full version to get the MAJOR and MINOR components.
+            match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
+            major_minor = 'v{0}.{1}'.format(match.groupdict()['major'],
+                                            match.groupdict()['minor'])
+            tarball = 'openmpi-{}.tar.bz2'.format(self.__version)
+            url = '{0}/{1}/downloads/{2}'.format(self.__baseurl, major_minor,
+                                                 tarball)
+            self.url = url
+            remove.append(posixpath.join(self.__wd, tarball))
 
         # CUDA
         if self.cuda:
@@ -319,29 +343,29 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 if not self.__toolchain.LD_LIBRARY_PATH:
                     build_environment.append('LD_LIBRARY_PATH="{}:$LD_LIBRARY_PATH"'.format(posixpath.join(cuda_home, 'lib64', 'stubs')))
 
-        if self.directory:
-            # Use source from local build context
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd, self.directory),
-                toolchain=self.__toolchain))
-        else:
-            # Download source from web
-            self.__commands.append(self.download_step(url=url,
-                                                      directory=self.__wd))
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd,
-                                         'openmpi-{}'.format(self.version)),
-                environment=build_environment,
-                toolchain=self.__toolchain))
+        # Download source from web
+        self.__commands.append(self.download_step(recursive=True,
+                                                  wd=self.__wd))
 
+        # Generate configure script
+        if self.repository:
+            self.__commands.append('cd {} && ./autogen.pl'.format(
+                self.src_directory))
+
+        # Configure
+        self.__commands.append(self.configure_step(
+            directory=self.src_directory,
+            environment=build_environment,
+            toolchain=self.__toolchain))
+
+        # Build
         self.__commands.append(self.build_step())
 
+        # Check
         if self.__check:
             self.__commands.append(self.check_step())
 
+        # Install
         self.__commands.append(self.install_step())
 
         # Set library path
@@ -351,16 +375,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
-        if self.directory:
-            # Using source from local build context, cleanup directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, self.directory)]))
-        else:
-            # Using downloaded source, cleanup tarball and directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, tarball),
-                       posixpath.join(self.__wd,
-                                      'openmpi-{}'.format(self.version))]))
+        # Cleanup
+        if self.src_directory:
+            remove.append(self.src_directory)
+        self.__commands.append(self.cleanup_step(items=remove))
 
         # Set the environment
         self.environment_variables['PATH'] = '{}:$PATH'.format(

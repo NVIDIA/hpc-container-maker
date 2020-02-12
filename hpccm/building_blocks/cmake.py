@@ -139,8 +139,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
 
         self.__commands.append('mkdir -p {}'.format(self.__prefix))
         # Run the runfile
@@ -181,8 +180,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             raise RuntimeError('Unknown Linux distribution')
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

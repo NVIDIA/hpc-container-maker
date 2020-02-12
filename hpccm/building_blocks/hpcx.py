@@ -202,8 +202,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
 
         # "Install"
         self.__commands.append(self.untar_step(
