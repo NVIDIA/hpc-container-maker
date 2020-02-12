@@ -2827,8 +2827,8 @@ and building.  For Ubuntu, the default values are `bzip2`, `file`,
 and `wget`.  For RHEL-based Linux distributions, the default
 values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
 `openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
-parameter is set, then `autoconf`, `automake`, `git`, and
-`libtool` are also included.
+parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+`git`, and `libtool` are also included.
 
 - __pmi__: Flag to control whether PMI is used by the build.  If True,
 adds `--with-pmi` to the list of `configure` options.  If a
@@ -3712,8 +3712,8 @@ and building.  For Ubuntu, the default values are `binutils-dev`,
 `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
 distributions, the default values are `binutils-devel`, `file`,
 `make`, `numactl-devel`, and `wget`.  If the `repository`
-parameter is set, then `autoconf`, `automake`, `git`, and
-`libtool` are also included.
+parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+`git`, and `libtool` are also included.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/ucx`.

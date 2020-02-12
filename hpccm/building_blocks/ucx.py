@@ -130,8 +130,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
     `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
     distributions, the default values are `binutils-devel`, `file`,
     `make`, `numactl-devel`, and `wget`.  If the `repository`
-    parameter is set, then `autoconf`, `automake`, `git`, and
-    `libtool` are also included.
+    parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+    `git`, and `libtool` are also included.
 
     prefix: The top level install location.  The default value is
     `/usr/local/ucx`.
@@ -253,7 +253,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
                                      'make', 'wget']
 
                 if self.repository:
-                    self.__ospackages.extend(['autoconf', 'automake', 'git',
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'ca-certificates', 'git',
                                               'libtool'])
 
             if hpccm.config.g_linux_version >= StrictVersion('18.0'):
@@ -266,7 +267,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
                                      'numactl-devel', 'wget']
 
                 if self.repository:
-                    self.__ospackages.extend(['autoconf', 'automake', 'git',
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'ca-certificates', 'git',
                                               'libtool'])
 
             self.__runtime_ospackages = ['binutils']

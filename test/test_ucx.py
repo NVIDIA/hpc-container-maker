@@ -241,6 +241,7 @@ RUN apt-get update -y && \
         autoconf \
         automake \
         binutils-dev \
+        ca-certificates \
         file \
         git \
         libnuma-dev \

@@ -104,8 +104,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     and `wget`.  For RHEL-based Linux distributions, the default
     values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
     `openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
-    parameter is set, then `autoconf`, `automake`, `git`, and
-    `libtool` are also included.
+    parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+    `git`, and `libtool` are also included.
 
     pmi: Flag to control whether PMI is used by the build.  If True,
     adds `--with-pmi` to the list of `configure` options.  If a
@@ -252,7 +252,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
                 if self.repository:
                     self.__ospackages.extend(['autoconf', 'automake',
-                                              'git', 'libtool'])
+                                              'ca-certificates', 'git',
+                                              'libtool'])
             self.__runtime_ospackages = ['hwloc', 'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
@@ -262,7 +263,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
                 if self.repository:
                     self.__ospackages.extend(['autoconf', 'automake',
-                                              'git', 'libtool'])
+                                              'ca-certificates', 'git',
+                                              'libtool'])
             self.__runtime_ospackages = ['hwloc', 'openssh-clients']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

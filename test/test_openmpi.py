@@ -156,6 +156,7 @@ RUN apt-get update -y && \
         autoconf \
         automake \
         bzip2 \
+        ca-certificates \
         file \
         git \
         hwloc \
