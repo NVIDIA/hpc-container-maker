@@ -67,9 +67,7 @@ class yum(bb_base):
     PowerTools repository.  The default is False.  This parameter is
     only recognized if the distribution version is 8.x.
 
-    release_stream: Boolean flag to specify whether to enable the
-    [CentOS release
-    stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+    release_stream: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
     repository.  The default is False.  This parameter is only
     recognized if the distribution version is 8.x.
 

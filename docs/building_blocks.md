@@ -2968,9 +2968,7 @@ is specified.  The default value is an empty list.
 PowerTools repository.  The default is False.  This parameter is
 ignored if the Linux distribution is not RHEL-based.
 
-- __release_stream__: Boolean flag to specify whether to enable the
-[CentOS release
-- __stream](https__://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+- __release_stream__: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
 repository.  The default is False.  This parameter is only
 recognized if the Linux distribution is RHEL-based and the version
 is 8.x.
@@ -3884,9 +3882,7 @@ empty list.
 PowerTools repository.  The default is False.  This parameter is
 only recognized if the distribution version is 8.x.
 
-- __release_stream__: Boolean flag to specify whether to enable the
-[CentOS release
-- __stream](https__://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+- __release_stream__: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
 repository.  The default is False.  This parameter is only
 recognized if the distribution version is 8.x.
 

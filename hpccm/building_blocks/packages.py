@@ -82,9 +82,7 @@ class packages(bb_base):
     PowerTools repository.  The default is False.  This parameter is
     ignored if the Linux distribution is not RHEL-based.
 
-    release_stream: Boolean flag to specify whether to enable the
-    [CentOS release
-    stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+    release_stream: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
     repository.  The default is False.  This parameter is only
     recognized if the Linux distribution is RHEL-based and the version
     is 8.x.
