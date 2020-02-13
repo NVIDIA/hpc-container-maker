@@ -1,5 +1,5 @@
 r"""
-GROMACS 2019.4
+GROMACS 2020
 
 Contents:
   Ubuntu 16.04
@@ -9,10 +9,10 @@ Contents:
   OpenMPI version 3.1.4
 """
 
-gromacs_version = USERARG.get('gromacs', '2019.4')
+gromacs_version = USERARG.get('gromacs', '2020')
 
 Stage0 += comment(__doc__.strip(), reformat=False)
-Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04')
+Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04', _as='build')
 
 Stage0 += python(python3=False)
 
@@ -42,9 +42,15 @@ Stage0 += label(metadata={'gromacs.version': gromacs_version})
 ######
 # Runtime image stage
 ######
-Stage1 += baseimage(image='nvidia/cuda:10.1-runtime-ubuntu16.04')
+Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
 
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(_from='build')
+
+# Singularity 3.5.3 will not copy symlinks from another stage, so
+# use the full real path to libcufft.
+Stage1 += copy(_from='build',
+               src='/usr/local/cuda/targets/x86_64-linux/lib/libcufft.so.10.1.1.243',
+               dest='/usr/local/cuda/lib64/libcufft.so.10')
 
 Stage1 += environment(variables={'PATH': '$PATH:/usr/local/gromacs/bin'})
 
