@@ -23,11 +23,9 @@ from __future__ import print_function
 import posixpath
 import re
 
-from hpccm.templates.git import git
-from hpccm.templates.tar import tar
-from hpccm.templates.wget import wget
+import hpccm.base_object
 
-class downloader(git, tar, wget):
+class downloader(hpccm.base_object):
     """Template for downloading source code"""
 
     def __init__(self, **kwargs):
@@ -54,14 +52,17 @@ class downloader(git, tar, wget):
 
         if self.url:
             # Download tarball
-            commands.append(self.wget_step(url=self.url, directory=wd))
+            commands.append(hpccm.templates.wget().wget_step(
+                url=self.url, directory=wd))
 
             if unpack:
                 # Unpack tarball
                 tarball = posixpath.join(wd, posixpath.basename(self.url))
-                commands.append(self.untar_step(tarball, directory=wd))
+                commands.append(hpccm.templates.tar().untar_step(
+                    tarball, directory=wd))
 
-                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
+                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)'
+                                  r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
                                   tarball)
                 if match:
                     # Set directory where to find source
@@ -72,11 +73,9 @@ class downloader(git, tar, wget):
 
         elif self.repository:
             # Clone git repository
-            commands.append(self.clone_step(branch=self.branch,
-                                            commit=self.commit,
-                                            path=wd,
-                                            recursive=recursive,
-                                            repository=self.repository))
+            commands.append(hpccm.templates.git().clone_step(
+                branch=self.branch, commit=self.commit, path=wd,
+                recursive=recursive, repository=self.repository))
 
             # Set directory where to find source
             self.src_directory = posixpath.join(wd, posixpath.splitext(
