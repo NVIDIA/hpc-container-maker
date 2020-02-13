@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
@@ -319,18 +320,41 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         elif self.__version and not self.__source:
             # Setup the environment so that the alternate compiler version
             # is the new default
+            alternatives = {}
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
                 if self.__cc:
-                    self.__commands.append('update-alternatives --install /usr/bin/gcc gcc $(which gcc-{}) 30'.format(self.__version))
+                    alternatives['gcc'] = '$(which gcc-{})'.format(
+                        self.__version)
                 if self.__cxx:
-                    self.__commands.append('update-alternatives --install /usr/bin/g++ g++ $(which g++-{}) 30'.format(self.__version))
+                    alternatives['g++'] = '$(which g++-{})'.format(
+                        self.__version)
                 if self.__fortran:
-                    self.__commands.append('update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-{}) 30'.format(self.__version))
-                self.__commands.append('update-alternatives --install /usr/bin/gcov gcov $(which gcov-{}) 30'.format(self.__version))
+                    alternatives['gfortran'] = '$(which gfortran-{})'.format(
+                        self.__version)
+                alternatives['gcov'] = '$(which gcov-{})'.format(
+                    self.__version)
             elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-                self.environment_variables['PATH'] = '/opt/rh/devtoolset-{}/root/usr/bin:$PATH'.format(self.__version)
+                # Default for CentOS 7
+                toolset_path = '/opt/rh/devtoolset-{}/root/usr/bin'.format(
+                    self.__version)
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    # CentOS 8
+                    toolset_path = '/opt/rh/gcc-toolset-{}/root/usr/bin'.format(self.__version)
+
+                if self.__cc:
+                    alternatives['gcc'] = posixpath.join(toolset_path, 'gcc')
+                if self.__cxx:
+                    alternatives['g++'] = posixpath.join(toolset_path, 'g++')
+                if self.__fortran:
+                    alternatives['gfortran'] = posixpath.join(toolset_path,
+                                                              'gfortran')
+                alternatives['gcov'] = posixpath.join(toolset_path, 'gcov')
+
             else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
+
+            for tool,alt in sorted(alternatives.items()):
+                self.__commands.append('update-alternatives --install {0} {1} {2} 30'.format(posixpath.join('/usr/bin', tool), tool, alt))
 
     def __instructions(self):
         """Fill in container instructions"""
@@ -342,6 +366,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             # Installing from package repository
             self += packages(apt=self.__compiler_debs,
                              apt_ppas=self.__extra_repo_apt,
+                             release_stream=bool(self.__version), # True/False
                              scl=bool(self.__version), # True / False
                              yum=self.__compiler_rpms)
         if self.__commands:
@@ -380,9 +405,17 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             self.__compiler_debs = [
                 '{0}-{1}'.format(x, self.__version)
                 for x in self.__compiler_debs]
-            self.__compiler_rpms = [
-                'devtoolset-{1}-{0}'.format(x, self.__version)
-                for x in self.__compiler_rpms]
+
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                # CentOS 8
+                self.__compiler_rpms = [
+                    'gcc-toolset-{1}-{0}'.format(x, self.__version)
+                    for x in self.__compiler_rpms]
+            else:
+                # CentOS 7
+                self.__compiler_rpms = [
+                    'devtoolset-{1}-{0}'.format(x, self.__version)
+                    for x in self.__compiler_rpms]
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -414,6 +447,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             instructions.append(
                 packages(apt=self.__runtime_debs,
                          apt_ppas=self.__extra_repo_apt,
+                         release_stream=bool(self.__version), # True / False
                          scl=bool(self.__version), # True / False
                          yum=self.__runtime_rpms))
 

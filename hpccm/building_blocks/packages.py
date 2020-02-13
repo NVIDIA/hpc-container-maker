@@ -82,9 +82,17 @@ class packages(bb_base):
     PowerTools repository.  The default is False.  This parameter is
     ignored if the Linux distribution is not RHEL-based.
 
+    release_stream: Boolean flag to specify whether to enable the
+    [CentOS release
+    stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+    repository.  The default is False.  This parameter is only
+    recognized if the Linux distribution is RHEL-based and the version
+    is 8.x.
+
     scl: Boolean flag to specify whether to enable the Software
     Collections (SCL) repository.  The default is False.  This
-    parameter is ignored if the Linux distribution is not RHEL-based.
+    parameter is only recognized if the Linux distribution is
+    RHEL-based and the version is 7.x.
 
     yum: A list of RPM packages to install.  The default value is an
     empty list.
@@ -132,6 +140,7 @@ class packages(bb_base):
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__powertools = kwargs.get('powertools', False)
+        self.__release_stream = kwargs.get('release_stream', False)
         self.__scl = kwargs.get('scl', False)
         self.__yum = kwargs.get('yum', [])
         self.__yum4 = kwargs.get('yum4', False)
@@ -170,6 +179,7 @@ class packages(bb_base):
                         keys=self.__yum_keys,
                         ospackages=ospackages,
                         powertools=self.__powertools,
+                        release_stream=self.__release_stream,
                         scl=self.__scl,
                         repositories=self.__yum_repositories,
                         yum4=self.__yum4)

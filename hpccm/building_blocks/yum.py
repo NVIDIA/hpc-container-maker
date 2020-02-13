@@ -65,17 +65,24 @@ class yum(bb_base):
 
     powertools: Boolean flag to specify whether to enable the
     PowerTools repository.  The default is False.  This parameter is
-    only recognized if the CentOS version is 8.x.
+    only recognized if the distribution version is 8.x.
+
+    release_stream: Boolean flag to specify whether to enable the
+    [CentOS release
+    stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+    repository.  The default is False.  This parameter is only
+    recognized if the distribution version is 8.x.
 
     repositories: A list of yum repositories to add.  The default is
     an empty list.
 
     scl: - Boolean flag to specify whether to enable the Software
-    Collections (SCL) repository.  The default is False.
+    Collections (SCL) repository.  The default is False.  This
+    parameter is only recognized if the distribution version is 7.x.
 
     yum4: Boolean flag to specify whether `yum4` should be used
     instead of `yum`.  The default is False.  This parameter is only
-    recognized if the CentOS version is 7.x.
+    recognized if the distribution version is 7.x.
 
     # Examples
 
@@ -100,6 +107,7 @@ class yum(bb_base):
         self.__keys = kwargs.get('keys', [])
         self.ospackages = kwargs.get('ospackages', [])
         self.__powertools = kwargs.get('powertools', False)
+        self.__release_stream = kwargs.get('release_stream', False)
         self.__repositories = kwargs.get('repositories', [])
         self.__scl = kwargs.get('scl', False)
         self.__yum4 = kwargs.get('yum4', False)
@@ -171,7 +179,14 @@ class yum(bb_base):
                 self.__commands.append('yum install -y dnf-utils')
             self.__commands.append('yum-config-manager --set-enabled PowerTools')
 
-        if self.__scl:
+        if (self.__release_stream and
+            hpccm.config.g_linux_version >= StrictVersion('8.0')):
+            # This needs to be a discrete, preliminary step so that
+            # packages from release stream are available to be installed.
+            self.__commands.append('yum install -y centos-release-stream')
+
+        if (self.__scl and
+            hpccm.config.g_linux_version < StrictVersion('8.0')):
             # This needs to be a discrete, preliminary step so that
             # packages from SCL are available to be installed.
             self.__commands.append('yum install -y centos-release-scl')

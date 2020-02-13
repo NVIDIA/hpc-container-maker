@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, centos8, docker, ubuntu
 
 from hpccm.building_blocks.gnu import gnu
 
@@ -74,14 +74,14 @@ RUN apt-get update -y && \
         gcc-7 \
         gfortran-7 && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/gcc gcc $(which gcc-7) 30 && \
-    update-alternatives --install /usr/bin/g++ g++ $(which g++-7) 30 && \
-    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-7) 30 && \
-    update-alternatives --install /usr/bin/gcov gcov $(which gcov-7) 30''')
+RUN update-alternatives --install /usr/bin/g++ g++ $(which g++-7) 30 && \
+    update-alternatives --install /usr/bin/gcc gcc $(which gcc-7) 30 && \
+    update-alternatives --install /usr/bin/gcov gcov $(which gcov-7) 30 && \
+    update-alternatives --install /usr/bin/gfortran gfortran $(which gfortran-7) 30''')
 
     @centos
     @docker
-    def test_version_centos(self):
+    def test_version_centos7(self):
         """GNU compiler version"""
         g = gnu(extra_repository=True, version='7')
         self.assertEqual(str(g),
@@ -92,7 +92,28 @@ RUN yum install -y centos-release-scl && \
         devtoolset-7-gcc-c++ \
         devtoolset-7-gcc-gfortran && \
     rm -rf /var/cache/yum/*
-ENV PATH=/opt/rh/devtoolset-7/root/usr/bin:$PATH''')
+RUN update-alternatives --install /usr/bin/g++ g++ /opt/rh/devtoolset-7/root/usr/bin/g++ 30 && \
+    update-alternatives --install /usr/bin/gcc gcc /opt/rh/devtoolset-7/root/usr/bin/gcc 30 && \
+    update-alternatives --install /usr/bin/gcov gcov /opt/rh/devtoolset-7/root/usr/bin/gcov 30 && \
+    update-alternatives --install /usr/bin/gfortran gfortran /opt/rh/devtoolset-7/root/usr/bin/gfortran 30''')
+
+    @centos8
+    @docker
+    def test_version_centos8(self):
+        """GNU compiler version"""
+        g = gnu(version='9')
+        self.assertEqual(str(g),
+r'''# GNU compiler
+RUN yum install -y centos-release-stream && \
+    yum install -y \
+        gcc-toolset-9-gcc \
+        gcc-toolset-9-gcc-c++ \
+        gcc-toolset-9-gcc-gfortran && \
+    rm -rf /var/cache/yum/*
+RUN update-alternatives --install /usr/bin/g++ g++ /opt/rh/gcc-toolset-9/root/usr/bin/g++ 30 && \
+    update-alternatives --install /usr/bin/gcc gcc /opt/rh/gcc-toolset-9/root/usr/bin/gcc 30 && \
+    update-alternatives --install /usr/bin/gcov gcov /opt/rh/gcc-toolset-9/root/usr/bin/gcov 30 && \
+    update-alternatives --install /usr/bin/gfortran gfortran /opt/rh/gcc-toolset-9/root/usr/bin/gfortran 30''')
 
     @ubuntu
     @docker
