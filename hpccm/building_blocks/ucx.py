@@ -283,9 +283,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
 
         if not self.repository and not self.url:
             tarball = 'ucx-{}.tar.gz'.format(self.__version)
-            url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version,
-                                        tarball)
-            self.url = url
+            self.url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version,
+                                             tarball)
             remove.append(posixpath.join(self.__wd, tarball))
 
         # CUDA

@@ -285,9 +285,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             major_minor = 'v{0}.{1}'.format(match.groupdict()['major'],
                                             match.groupdict()['minor'])
             tarball = 'openmpi-{}.tar.bz2'.format(self.__version)
-            url = '{0}/{1}/downloads/{2}'.format(self.__baseurl, major_minor,
-                                                 tarball)
-            self.url = url
+            self.url = '{0}/{1}/downloads/{2}'.format(
+                self.__baseurl, major_minor, tarball)
             remove.append(posixpath.join(self.__wd, tarball))
 
         # CUDA
