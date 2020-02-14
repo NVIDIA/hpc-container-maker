@@ -2968,9 +2968,15 @@ is specified.  The default value is an empty list.
 PowerTools repository.  The default is False.  This parameter is
 ignored if the Linux distribution is not RHEL-based.
 
+- __release_stream__: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+repository.  The default is False.  This parameter is only
+recognized if the Linux distribution is RHEL-based and the version
+is 8.x.
+
 - __scl__: Boolean flag to specify whether to enable the Software
 Collections (SCL) repository.  The default is False.  This
-parameter is ignored if the Linux distribution is not RHEL-based.
+parameter is only recognized if the Linux distribution is
+RHEL-based and the version is 7.x.
 
 - __yum__: A list of RPM packages to install.  The default value is an
 empty list.
@@ -3874,17 +3880,22 @@ empty list.
 
 - __powertools__: Boolean flag to specify whether to enable the
 PowerTools repository.  The default is False.  This parameter is
-only recognized if the CentOS version is 8.x.
+only recognized if the distribution version is 8.x.
+
+- __release_stream__: Boolean flag to specify whether to enable the [CentOS release stream](https://wiki.centos.org/Manuals/ReleaseNotes/CentOSStream)
+repository.  The default is False.  This parameter is only
+recognized if the distribution version is 8.x.
 
 - __repositories__: A list of yum repositories to add.  The default is
 an empty list.
 
 - __scl__: - Boolean flag to specify whether to enable the Software
-Collections (SCL) repository.  The default is False.
+Collections (SCL) repository.  The default is False.  This
+parameter is only recognized if the distribution version is 7.x.
 
 - __yum4__: Boolean flag to specify whether `yum4` should be used
 instead of `yum`.  The default is False.  This parameter is only
-recognized if the CentOS version is 7.x.
+recognized if the distribution version is 7.x.
 
 __Examples__
 
