@@ -2846,8 +2846,9 @@ default is False.
 `/usr/local/openmpi`.
 
 - __repository__: The location of the git repository that should be used
-to build OpenMPI.  The default is empty, i.e., use the release
-package specified by `version`.
+- __to build OpenMPI.  If True, then use the default `https__://github.com/open-mpi/ompi.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
@@ -3719,7 +3720,8 @@ parameter is set, then `autoconf`, `automake`, `ca-certificates`,
 `/usr/local/ucx`.
 
 - __repository__: The location of the git repository that should be used
-to build UCX.  The default is empty, i.e., use the release package
+- __to build UCX.  If True, then use the default `https__://github.com/openucx/ucx.git`
+repository.  The default is empty, i.e., use the release package
 specified by `version`.
 
 - __toolchain__: The toolchain object.  This should be used if

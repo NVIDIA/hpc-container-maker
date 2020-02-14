@@ -123,8 +123,9 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     `/usr/local/openmpi`.
 
     repository: The location of the git repository that should be used
-    to build OpenMPI.  The default is empty, i.e., use the release
-    package specified by `version`.
+    to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
+    repository.  The default is empty, i.e., use the release package
+    specified by `version`.
 
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
@@ -194,6 +195,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                                          ['--disable-getpwuid',
                                           '--enable-orterun-prefix-by-default'])
         self.cuda = kwargs.get('cuda', True)
+        self.__default_repository = 'https://github.com/open-mpi/ompi.git'
         self.infiniband = kwargs.get('infiniband', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__pmi = kwargs.get('pmi', False)
@@ -276,6 +278,10 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         build_environment = []
         remove = []
+
+        # Use the default repository if set to True
+        if self.repository is True:
+            self.repository = self.__default_repository
 
         if not self.repository and not self.url:
             # The download URL has the format contains vMAJOR.MINOR in the

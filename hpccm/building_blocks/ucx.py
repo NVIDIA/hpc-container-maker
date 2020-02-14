@@ -137,7 +137,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
     `/usr/local/ucx`.
 
     repository: The location of the git repository that should be used
-    to build UCX.  The default is empty, i.e., use the release package
+    to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
+    repository.  The default is empty, i.e., use the release package
     specified by `version`.
 
     toolchain: The toolchain object.  This should be used if
@@ -204,6 +205,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
 
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/openucx/ucx/releases/download')
         self.__cuda = kwargs.get('cuda', True)
+        self.__default_repository = 'https://github.com/openucx/ucx.git'
         self.__gdrcopy = kwargs.get('gdrcopy', '')
         self.__knem = kwargs.get('knem', '')
         self.__ofed = kwargs.get('ofed', '')
@@ -280,6 +282,10 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
            self.__commands"""
 
         remove = []
+
+        # Use the default repository if set to True
+        if self.repository is True:
+            self.repository = self.__default_repository
 
         if not self.repository and not self.url:
             tarball = 'ucx-{}.tar.gz'.format(self.__version)
