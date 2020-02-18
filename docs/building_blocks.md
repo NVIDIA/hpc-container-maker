@@ -2845,8 +2845,7 @@ default is False.
 - __prefix__: The top level install location.  The default value is
 `/usr/local/openmpi`.
 
-- __repository__: The location of the git repository that should be used
-- __to build OpenMPI.  If True, then use the default `https__://github.com/open-mpi/ompi.git`
+- __repository__: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
 repository.  The default is empty, i.e., use the release package
 specified by `version`.
 

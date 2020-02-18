@@ -222,7 +222,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                            self.__url_string, tarball)
 
             # Download source from web
-            self.__commands.append(self.wget_step(url=url, directory=self.__wd))
+            self.__commands.append(self.download_step(url=url,
+                                                      directory=self.__wd))
 
         # Untar package
         self.__commands.append(self.untar_step(

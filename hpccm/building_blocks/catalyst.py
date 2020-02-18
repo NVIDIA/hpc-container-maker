@@ -208,7 +208,7 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
         url = self.__url.format(major_minor, tarball)
 
         # Download source from web
-        self.__commands.append(self.wget_step(
+        self.__commands.append(self.download_step(
             url=url,
             directory=self.__wd,
             outfile=posixpath.join(self.__wd, tarball)))

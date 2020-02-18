@@ -221,7 +221,7 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                              tarball)
 
         # Download and unpackage
-        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

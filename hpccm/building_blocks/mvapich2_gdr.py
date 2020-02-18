@@ -263,7 +263,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         # Download source from web
         url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, self.version,
                                        mofed_string, package)
-        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Install the package
         self.__commands.append(

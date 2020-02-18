@@ -170,7 +170,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             self.__bootstrap_opts.append('--without-libraries=python')
 
         # Download source from web
-        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

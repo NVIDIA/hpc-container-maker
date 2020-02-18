@@ -52,7 +52,7 @@ class downloader(hpccm.base_object):
 
         if self.url:
             # Download tarball
-            commands.append(hpccm.templates.wget().wget_step(
+            commands.append(hpccm.templates.wget().download_step(
                 url=self.url, directory=wd))
 
             if unpack:

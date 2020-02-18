@@ -122,8 +122,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     prefix: The top level install location.  The default value is
     `/usr/local/openmpi`.
 
-    repository: The location of the git repository that should be used
-    to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
+    repository: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
     repository.  The default is empty, i.e., use the release package
     specified by `version`.
 

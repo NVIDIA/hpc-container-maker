@@ -201,7 +201,7 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = self.__url.format(self.__version, buildscript)
 
         # Download source from web
-        self.__commands.append(self.wget_step(url=url, directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Set options
         env = []
