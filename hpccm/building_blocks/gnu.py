@@ -202,8 +202,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # Download source from web
         tarball = 'gcc-{0}.tar.xz'.format(self.__version)
         url = '{0}/gcc-{1}/{2}'.format(self.__baseurl, self.__version, tarball)
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Unpackage
         self.__commands.append(self.untar_step(

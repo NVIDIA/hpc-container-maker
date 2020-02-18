@@ -149,8 +149,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         url = '{0}/{1}'.format(self.__baseurl, miniconda)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Install
         install_args = ['-p {}'.format(self.__prefix)]

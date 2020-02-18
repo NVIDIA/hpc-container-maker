@@ -2767,9 +2767,7 @@ Stage1 += o.runtime()
 openmpi(self, **kwargs)
 ```
 The `openmpi` building block configures, builds, and installs the
-[OpenMPI](https://www.open-mpi.org) component.  Depending on the
-parameters, the source will be downloaded from the web (default)
-or copied from a source directory in the local build context.
+[OpenMPI](https://www.open-mpi.org) component.
 
 As a side effect, a toolchain is created containing the MPI
 compiler wrappers.  The tool can be passed to other operations
@@ -2778,8 +2776,16 @@ that want to build using the MPI compiler wrappers.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--disable-getpwuid` and
@@ -2790,11 +2796,6 @@ performed.  If True, adds `--with-cuda` to the list of `configure`
 options, otherwise adds `--without-cuda`.  If the toolchain
 specifies `CUDA_HOME`, then that path is used.  The default value
 is True.
-
-- __directory__: Path to the unpackaged source directory relative to the
-local build context.  The default value is empty.  If this is
-defined, the source in the local build context will be used rather
-than downloading the source from the web.
 
 - __disable_FEATURE__: Flags to control disabling features when
 configuring.  For instance, `disable_foo=True` maps to
@@ -2825,7 +2826,9 @@ and building.  For Ubuntu, the default values are `bzip2`, `file`,
 `hwloc`, `libnuma-dev`, `make`, `openssh-client`, `perl`, `tar`,
 and `wget`.  For RHEL-based Linux distributions, the default
 values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
-`openssh-clients`, `perl`, `tar`, and `wget`.
+`openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
+parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+`git`, and `libtool` are also included.
 
 - __pmi__: Flag to control whether PMI is used by the build.  If True,
 adds `--with-pmi` to the list of `configure` options.  If a
@@ -2842,6 +2845,10 @@ default is False.
 - __prefix__: The top level install location.  The default value is
 `/usr/local/openmpi`.
 
+- __repository__: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
@@ -2851,6 +2858,10 @@ adds `--with-ucx` to the list of `configure` options.  If a
 string, uses the value of the string as the UCX path, e.g.,
 `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
 list of `configure` options.  The default is False.
+
+- __url__: The loation of the tarball that should be used to build
+OpenMPI.  The default is empty, i.e., use the release package
+specified by `version`.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
@@ -2876,7 +2887,7 @@ openmpi(cuda=False, infiniband=False, prefix='/opt/openmpi/2.1.2',
 ```
 
 ```python
-openmpi(directory='sources/openmpi-3.0.0')
+openmpi(repository='https://github.com/open-mpi/ompi.git')
 ```
 
 ```python
@@ -3635,6 +3646,14 @@ this building block.
 __Parameters__
 
 
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
 - __configure_opts__: List of options to pass to `configure`.  The
 default values are `--enable-optimizations`, `--disable-logging`,
 `--disable-debug`, `--disable-assertions`,
@@ -3698,14 +3717,24 @@ not.
 and building.  For Ubuntu, the default values are `binutils-dev`,
 `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
 distributions, the default values are `binutils-devel`, `file`,
-`make`, `numactl-devel`, and `wget`.
+`make`, `numactl-devel`, and `wget`.  If the `repository`
+parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+`git`, and `libtool` are also included.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/ucx`.
 
+- __repository__: The location of the git repository that should be used to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default value is empty.
+
+- __url__: The loation of the tarball that should be used to build UCX.
+The default is empty, i.e., use the release package specified by
+`version`.
 
 - __version__: The version of UCX source to download.  The default value
 is `1.7.0`.
@@ -3740,6 +3769,10 @@ ucx(cuda=False, prefix='/opt/ucx/1.4.0', version='1.4.0')
 ```python
 ucx(cuda='/usr/local/cuda', gdrcopy='/usr/local/gdrcopy',
     knem='/usr/local/knem', xpmem='/usr/local/xpmem')
+```
+
+```python
+ucx(repository='https://github.com/openucx/ucx.git')
 ```
 
 
