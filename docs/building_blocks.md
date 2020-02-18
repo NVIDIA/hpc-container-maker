@@ -3718,8 +3718,7 @@ parameter is set, then `autoconf`, `automake`, `ca-certificates`,
 - __prefix__: The top level install location.  The default value is
 `/usr/local/ucx`.
 
-- __repository__: The location of the git repository that should be used
-- __to build UCX.  If True, then use the default `https__://github.com/openucx/ucx.git`
+- __repository__: The location of the git repository that should be used to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
 repository.  The default is empty, i.e., use the release package
 specified by `version`.
 

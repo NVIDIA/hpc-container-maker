@@ -136,8 +136,7 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
     prefix: The top level install location.  The default value is
     `/usr/local/ucx`.
 
-    repository: The location of the git repository that should be used
-    to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
+    repository: The location of the git repository that should be used to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
     repository.  The default is empty, i.e., use the release package
     specified by `version`.
 
