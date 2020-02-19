@@ -21,8 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -151,8 +149,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         url = '{0}/{1}'.format(self.__baseurl, miniconda)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Install
         install_args = ['-p {}'.format(self.__prefix)]

@@ -29,11 +29,10 @@ import posixpath
 
 import hpccm.config
 import hpccm.templates.ConfigureMake
+import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
 import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
@@ -45,9 +44,9 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-          hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-          hpccm.templates.wget):
+class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
+          hpccm.templates.envvars, hpccm.templates.ldconfig,
+          hpccm.templates.rm):
     """The `ucx` building block configures, builds, and installs the
     [UCX](https://github.com/openucx/ucx) component.
 
@@ -58,6 +57,14 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     this building block.
 
     # Parameters
+
+    branch: The git branch to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the default branch for the repository.
+
+    commit: The git commit to clone.  Only recognized if the
+    `repository` parameter is specified.  The default is empty, i.e.,
+    use the latest commit on the default branch for the repository.
 
     configure_opts: List of options to pass to `configure`.  The
     default values are `--enable-optimizations`, `--disable-logging`,
@@ -70,6 +77,16 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     the CUDA path.  If the toolchain specifies `CUDA_HOME`, then that
     path is used.  If False, adds `--without-cuda` to the list of
     `configure` options.  The default value is an empty string.
+
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
 
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
@@ -112,17 +129,38 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     and building.  For Ubuntu, the default values are `binutils-dev`,
     `file`, `libnuma-dev`, `make`, and `wget`. For RHEL-based Linux
     distributions, the default values are `binutils-devel`, `file`,
-    `make`, `numactl-devel`, and `wget`.
+    `make`, `numactl-devel`, and `wget`.  If the `repository`
+    parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+    `git`, and `libtool` are also included.
 
     prefix: The top level install location.  The default value is
     `/usr/local/ucx`.
+
+    repository: The location of the git repository that should be used to build UCX.  If True, then use the default `https://github.com/openucx/ucx.git`
+    repository.  The default is empty, i.e., use the release package
+    specified by `version`.
 
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default value is empty.
 
+    url: The loation of the tarball that should be used to build UCX.
+    The default is empty, i.e., use the release package specified by
+    `version`.
+
     version: The version of UCX source to download.  The default value
-    is `1.5.2`.
+    is `1.7.0`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     xpmem: Flag to control whether XPMEM is used by the build.  If
     True, adds `--with-xpmem` to the list of `configure` options.  If
@@ -144,6 +182,10 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         knem='/usr/local/knem', xpmem='/usr/local/xpmem')
     ```
 
+    ```python
+    ucx(repository='https://github.com/openucx/ucx.git')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -162,13 +204,14 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/openucx/ucx/releases/download')
         self.__cuda = kwargs.get('cuda', True)
+        self.__default_repository = 'https://github.com/openucx/ucx.git'
         self.__gdrcopy = kwargs.get('gdrcopy', '')
         self.__knem = kwargs.get('knem', '')
         self.__ofed = kwargs.get('ofed', '')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.5.2')
+        self.__version = kwargs.get('version', '1.7.0')
         self.__xpmem = kwargs.get('xpmem', '')
 
         self.__commands = [] # Filled in by __setup()
@@ -186,7 +229,17 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     def __instructions(self):
         """Fill in container instructions"""
 
-        self += comment('UCX version {}'.format(self.__version))
+        if self.repository:
+            if self.branch:
+                self += comment('UCX {} {}'.format(self.repository,
+                                                   self.branch))
+            elif self.commit:
+                self += comment('UCX {} {}'.format(self.repository,
+                                                   self.commit))
+            else:
+                self += comment('UCX {}'.format(self.repository))
+        else:
+            self += comment('UCX version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -199,6 +252,12 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             if not self.__ospackages:
                 self.__ospackages = ['binutils-dev', 'file', 'libnuma-dev',
                                      'make', 'wget']
+
+                if self.repository:
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'ca-certificates', 'git',
+                                              'libtool'])
+
             if hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 self.__runtime_ospackages = ['libbinutils']
             else:
@@ -207,6 +266,12 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             if not self.__ospackages:
                 self.__ospackages = ['binutils-devel', 'file', 'make',
                                      'numactl-devel', 'wget']
+
+                if self.repository:
+                    self.__ospackages.extend(['autoconf', 'automake',
+                                              'ca-certificates', 'git',
+                                              'libtool'])
+
             self.__runtime_ospackages = ['binutils']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
@@ -215,8 +280,17 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        tarball = 'ucx-{}.tar.gz'.format(self.__version)
-        url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version, tarball)
+        remove = []
+
+        # Use the default repository if set to True
+        if self.repository is True:
+            self.repository = self.__default_repository
+
+        if not self.repository and not self.url:
+            tarball = 'ucx-{}.tar.gz'.format(self.__version)
+            self.url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version,
+                                             tarball)
+            remove.append(posixpath.join(self.__wd, tarball))
 
         # CUDA
         if self.__cuda:
@@ -288,15 +362,16 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 self.__toolchain.CFLAGS = '-Wno-error=format'
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
+        self.__commands.append(self.download_step(wd=self.__wd))
+
+        # Generate configure script
+        if self.repository:
+            self.__commands.append('cd {} && ./autogen.sh'.format(
+                self.src_directory))
 
         # Configure and build
         self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd, 'ucx-{}'.format(
-                self.__version)),
+            directory=self.src_directory,
             toolchain=self.__toolchain))
         self.__commands.append(self.build_step())
         self.__commands.append(self.install_step())
@@ -309,10 +384,9 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
 
         # Cleanup tarball and directory
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  'ucx-{}'.format(self.__version))]))
+        if self.src_directory:
+            remove.append(self.src_directory)
+        self.__commands.append(self.cleanup_step(items=remove))
 
         # Set the environment
         self.environment_variables['PATH'] = '{}:$PATH'.format(

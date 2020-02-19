@@ -20,7 +20,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -56,7 +55,8 @@ class multi_ofed(bb_base):
     mlnx_versions: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
     versions to install.  The default values are `3.3-1.0.4.0`,
     `3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-    `4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`
+    `4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
+    `4.7-3.2.9.0`.
 
     ospackages: List of OS packages to install prior to installing
     OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -93,7 +93,7 @@ class multi_ofed(bb_base):
                                            '4.0-2.0.0.1', '4.1-1.0.2.0',
                                            '4.2-1.2.0.0', '4.3-1.0.1.0',
                                            '4.4-2.0.7.0', '4.5-1.0.1.0',
-                                           '4.6-1.0.1.1'])
+                                           '4.6-1.0.1.1', '4.7-3.2.9.0'])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/ofed')
         self.__symlink = kwargs.get('symlink', False)

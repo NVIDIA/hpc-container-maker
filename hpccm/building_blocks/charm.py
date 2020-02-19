@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import LooseVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -171,8 +170,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # Charm++ does not install nicely into a separate directory,
         # even with "--destination".  So just untar it into the

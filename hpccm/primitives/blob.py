@@ -83,7 +83,7 @@ class blob(object):
                     b = f.read()
             else:
                 logging.warning('Blob file not specified')
-        except:
+        except IOError:
             logging.error('Error opening blob {}'.format(path))
 
         return b

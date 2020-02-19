@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import LooseVersion
-import logging # pylint: disable=unused-import
 import posixpath
 from copy import copy as _copy
 
@@ -64,6 +63,16 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     cxx: Boolean flag to specify whether the NetCDF C++ library should
     be installed.  The default is True.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
     NetCDF. The default is True.
@@ -94,13 +103,24 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     default is empty.
 
     version: The version of NetCDF to download.  The default value is
-    `4.7.0`.
+    `4.7.3`.
 
     version_cxx: The version of NetCDF C++ to download.  The default
-    value is `4.3.0`.
+    value is `4.3.1`.
 
     version_fortran: The version of NetCDF Fortran to download.  The
-    default value is `4.4.5`.
+    default value is `4.5.2`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 
@@ -133,9 +153,9 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.prefix = kwargs.get('prefix', '/usr/local/netcdf')
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '4.7.0')
-        self.__version_cxx = kwargs.get('version_cxx', '4.3.0')
-        self.__version_fortran = kwargs.get('version_fortran', '4.4.5')
+        self.__version = kwargs.get('version', '4.7.3')
+        self.__version_cxx = kwargs.get('version_cxx', '4.3.1')
+        self.__version_fortran = kwargs.get('version_fortran', '4.5.2')
         self.__wd = '/var/tmp'
 
         self.__commands = [] # Filled in by __setup()
@@ -222,8 +242,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         url = '{0}/{1}'.format(self.__c_baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
@@ -280,8 +299,7 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         url = '{0}/{1}'.format(baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

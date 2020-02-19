@@ -24,7 +24,6 @@ from __future__ import print_function
 from six import string_types
 
 from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -157,8 +156,7 @@ class kokkos(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

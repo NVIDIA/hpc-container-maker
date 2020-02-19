@@ -21,7 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 import re
 
@@ -36,7 +35,6 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
@@ -80,12 +78,12 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     is `/usr/local/julia`.
 
     version: The version of Julia to install.  The default value is
-    `1.2.0`.
+    `1.3.1`.
 
     # Examples
 
     ```python
-    julia(prefix='/usr/local/julia', version='1.2.0')
+    julia(prefix='/usr/local/julia', version='1.3.1')
     ```
 
     ```python
@@ -109,7 +107,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', ['tar', 'wget'])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/julia')
-        self.__version = kwargs.get('version', '1.2.0')
+        self.__version = kwargs.get('version', '1.3.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -162,8 +160,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                        major_minor, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

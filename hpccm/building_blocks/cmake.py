@@ -32,7 +32,7 @@ import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
-from hpccm.common import cpu_arch
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 from hpccm.primitives.environment import environment
@@ -51,18 +51,20 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     The default value is `False`.
 
     ospackages: List of OS packages to install prior to installing.
-    The default value is `wget`.
+    The default values are `make` and `wget`.
 
     prefix: The top level install location.  The default value is
     `/usr/local`.
 
     source: Boolean flag to specify whether to build CMake from
-    source.  For x86_64 processors, the default is False, i.e., use
-    the available pre-compiled package.  For all other processors, the
-    default is True.
+    source.  If True, includes the `libssl-dev` package in the list of
+    OS packages for Ubuntu, and `openssl-devel` for RHEL-based
+    distributions.  For x86_64 processors, the default is False, i.e.,
+    use the available pre-compiled package.  For all other processors,
+    the default is True.
 
     version: The version of CMake to download.  The default value is
-    `3.14.5`.
+    `3.16.3`.
 
     # Examples
 
@@ -93,7 +95,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__source = kwargs.get('source', False)
-        self.__version = kwargs.get('version', '3.14.5')
+        self.__version = kwargs.get('version', '3.16.3')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -112,7 +114,6 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self += shell(commands=self.__commands)
         self += environment(variables={'PATH': '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))})
-
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -138,8 +139,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         self.__commands.append('mkdir -p {}'.format(self.__prefix))
         # Run the runfile
@@ -171,9 +171,16 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         tarball = 'cmake-{}.tar.gz'.format(self.__version)
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
 
+        # Include SSL packages
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            self.__ospackages.append('libssl-dev')
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            self.__ospackages.append('openssl-devel')
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

@@ -21,7 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.templates.envvars
@@ -61,7 +60,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/gdrcopy`.
 
     version: The version of gdrcopy source to download.  The default
-    value is `1.3`.
+    value is `2.0`.
 
     # Examples
 
@@ -79,7 +78,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__baseurl = kwargs.get('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/gdrcopy')
-        self.__version = kwargs.get('version', '1.3')
+        self.__version = kwargs.get('version', '2.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -106,8 +105,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
         self.__commands.append('cd {}'.format(

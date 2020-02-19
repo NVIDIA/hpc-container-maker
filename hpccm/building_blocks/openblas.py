@@ -21,7 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -73,7 +72,7 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of OpenBLAS source to download.  The default
-    value is `0.3.6`.
+    value is `0.3.7`.
 
     # Examples
 
@@ -100,7 +99,7 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                                       'wget'])
         self.__prefix = kwargs.get('prefix', '/usr/local/openblas')
         self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '0.3.6')
+        self.__version = kwargs.get('version', '0.3.7')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -146,8 +145,7 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = '{0}/{1}'.format(self.__baseurl, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 
