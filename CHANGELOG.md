@@ -8,13 +8,13 @@
   (`mvapich2`), MVAPICH2-GDR (`mvapich2-gdr`), NetCDF (`netcdf`),
   OpenBLAS (`openblas`), OpenMPI (`openmpi`), PnetCDF (`pnetcdf`),
   PMI (`slurm_pmi2`), and UCX (`ucx`) building blocks.
-- Added git capabilities to the OpenMPI (`openmpi`) and UCX (`ucx`)
+- Adds git capabilities to the OpenMPI (`openmpi`) and UCX (`ucx`)
   building blocks.
 - Fix issue with versioned GNU compilers on CentOS 8.
 - Added support for arbitrary Autotools feature and package flags to
   the `ConfigureMake` template and all derived building blocks.
-- Updated the GROMACS example recipe.
-- Resolved items flagged by the code scan.
+- Updates the GROMACS example recipe.
+- Resolves items flagged by the code scan.
 
 # v20.1.0
 
