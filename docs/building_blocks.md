@@ -2624,11 +2624,11 @@ Stage0 += n
 Stage1 += n.runtime()
 ```
 
-# nvhpc
+# nvcompiler
 ```python
-nvhpc(self, **kwargs)
+nvcompiler(self, **kwargs)
 ```
-The `nvhpc` building block downloads and installs the NVIDIA HPC
+The `nvcompiler` building block downloads and installs the NVIDIA HPC
 SDK.  Currently, the only option is to install the latest
 community edition.
 
@@ -2674,7 +2674,7 @@ downloading the NVIDIA HPC SDK rather than using a tarball in the
 local build context).
 
 - __prefix__: The top level install prefix.  The default value is
-`/opt/nv`.
+`/opt/nvidia`.
 
 - __system_cuda__: Boolean flag to specify whether the NVIDIA HPC SDK
 should use the system CUDA.  If False, the version(s) of CUDA
@@ -2694,22 +2694,22 @@ __Examples__
 
 
 ```python
-nvhpc(eula=True)
+nvcompiler(eula=True)
 ```
 
 ```python
-nvhpc(eula=True, tarball='nvlinux-2020-201-x86_64.tar.gz')
+nvcompiler(eula=True, tarball='nvlinux-2020-201-x86_64.tar.gz')
 ```
 
 ```python
-n = nvhpc(eula=True)
+n = nvcompiler(eula=True)
 openmpi(..., toolchain=n.toolchain, ...)
 ```
 
 
 ## runtime
 ```python
-nvhpc.runtime(self, _from=u'0')
+nvcompiler.runtime(self, _from=u'0')
 ```
 Generate the set of instructions to install the runtime specific
 components from a build in a previous stage.
@@ -2718,7 +2718,7 @@ __Examples__
 
 
 ```python
-n = nvhpc(...)
+n = nvcompiler(...)
 Stage0 += n
 Stage1 += n.runtime()
 ```
