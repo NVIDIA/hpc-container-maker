@@ -54,6 +54,16 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     configure_opts: List of options to pass to `configure`.  The
     default values are `--disable-kernel-module`.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
     to include XPMEM. The default is True.
@@ -73,6 +83,17 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default is empty.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 

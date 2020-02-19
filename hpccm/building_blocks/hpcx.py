@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 import re
 
@@ -75,7 +74,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     mlnx_ofed: The version of Mellanox OFED that should be matched.
     This value is ignored if Inbox OFED is selected.  The default
-    value is `4.6-1.0.1.1`.
+    value is `4.7-1.0.0.1`.
 
     multi_thread: Boolean flag to specify whether the multi-threaded
     version of Mellanox HPC-X should be used.  The default is `False`.
@@ -117,7 +116,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__bashrc = '' # Filled in by __distro()
         self.__hpcxinit = kwargs.get('hpcxinit', True)
         self.__inbox = kwargs.get('inbox', False)
-        self.__mlnx_ofed = kwargs.get('mlnx_ofed', '4.6-1.0.1.1')
+        self.__mlnx_ofed = kwargs.get('mlnx_ofed', '4.7-1.0.0.1')
         self.__multi_thread = kwargs.get('multi_thread', False)
         self.__oslabel = kwargs.get('oslabel', '') # Filled in by __distro()
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
@@ -203,8 +202,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
 
         # "Install"
         self.__commands.append(self.untar_step(

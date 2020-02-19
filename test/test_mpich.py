@@ -38,7 +38,7 @@ class Test_mpich(unittest.TestCase):
         """Default mpich building block"""
         m = mpich()
         self.assertEqual(str(m),
-r'''# MPICH version 3.3.1
+r'''# MPICH version 3.3.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
@@ -49,12 +49,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.1/mpich-3.3.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mpich-3.3.1 &&   ./configure --prefix=/usr/local/mpich && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mpich-3.3.1.tar.gz /var/tmp/mpich-3.3.1
+    rm -rf /var/tmp/mpich-3.3.2.tar.gz /var/tmp/mpich-3.3.2
 ENV LD_LIBRARY_PATH=/usr/local/mpich/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mpich/bin:$PATH''')
 
@@ -64,7 +64,7 @@ ENV LD_LIBRARY_PATH=/usr/local/mpich/lib:$LD_LIBRARY_PATH \
         """Default mpich building block"""
         m = mpich()
         self.assertEqual(str(m),
-r'''# MPICH version 3.3.1
+r'''# MPICH version 3.3.2
 RUN yum install -y \
         file \
         gzip \
@@ -74,12 +74,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.1/mpich-3.3.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/mpich-3.3.1 &&   ./configure --prefix=/usr/local/mpich && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mpich-3.3.1.tar.gz /var/tmp/mpich-3.3.1
+    rm -rf /var/tmp/mpich-3.3.2.tar.gz /var/tmp/mpich-3.3.2
 ENV LD_LIBRARY_PATH=/usr/local/mpich/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mpich/bin:$PATH''')
 

@@ -1,3 +1,21 @@
+# v20.2.0
+
+- Refresh default component versions for the Arm Allinea Studio
+  (`arm_allinea_studio`), Boost (`boost`), CMake (`cmake`), gdrcopy
+  (`gdrcopy`), HDF5(`hdf5`), Intel MPI (`intel_mpi`), Intel Parallel
+  Studio runtime (`intel_psxe_runtime`), Julia (`julia`), MKL
+  (`mkl`), Mellanox OFED (`mlnx_ofed`), MPICH (`mpich`), MVAPICH2
+  (`mvapich2`), MVAPICH2-GDR (`mvapich2-gdr`), NetCDF (`netcdf`),
+  OpenBLAS (`openblas`), OpenMPI (`openmpi`), PnetCDF (`pnetcdf`),
+  PMI (`slurm_pmi2`), and UCX (`ucx`) building blocks.
+- Adds git capabilities to the OpenMPI (`openmpi`) and UCX (`ucx`)
+  building blocks.
+- Fix issue with versioned GNU compilers on CentOS 8.
+- Added support for arbitrary Autotools feature and package flags to
+  the `ConfigureMake` template and all derived building blocks.
+- Updates the GROMACS example recipe.
+- Resolves items flagged by the code scan.
+
 # v20.1.0
 
 - Adds Mellanox HPC-X (`hpcx`) building block

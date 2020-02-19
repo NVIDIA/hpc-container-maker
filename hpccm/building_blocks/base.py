@@ -20,8 +20,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
-
 import hpccm.base_object
 
 class bb_base(hpccm.base_object):
@@ -32,26 +30,26 @@ class bb_base(hpccm.base_object):
 
         super(bb_base, self).__init__(**kwargs)
 
-        self.__instructions = []
+        self.__instructions_bb = []
 
     def __iadd__(self, instruction):
         """Add the instruction to the list of instructions.  Allows "+="
         syntax."""
 
         if isinstance(instruction, list):
-            self.__instructions.extend(instruction)
+            self.__instructions_bb.extend(instruction)
         else:
-            self.__instructions.append(instruction)
+            self.__instructions_bb.append(instruction)
         return self
 
     def __getitem__(self, key):
         """Return the specified element from the list of instructions"""
-        return self.__instructions[key]
+        return self.__instructions_bb[key]
 
     def __len__(self):
         """Return the size of the list of instructions"""
-        return len(self.__instructions)
+        return len(self.__instructions_bb)
 
     def __str__(self):
         """String representation of the building block"""
-        return '\n'.join(str(x) for x in self.__instructions if str(x))
+        return '\n'.join(str(x) for x in self.__instructions_bb if str(x))

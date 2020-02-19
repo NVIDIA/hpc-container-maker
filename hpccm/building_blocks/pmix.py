@@ -21,10 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from six import string_types
-
-from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -58,6 +54,16 @@ class pmix(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     configure_opts: List of options to pass to `configure`.  The
     default is an empty list.
 
+    disable_FEATURE: Flags to control disabling features when
+    configuring.  For instance, `disable_foo=True` maps to
+    `--disable-foo`.  Underscores in the parameter name are converted
+    to dashes.
+
+    enable_FEATURE[=ARG]: Flags to control enabling features when
+    configuring.  For instance, `enable_foo=True` maps to
+    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+    Underscores in the parameter name are converted to dashes.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LD_LIBRARY_PATH`, and `PATH`) should be modified to
     include PMIX. The default is True.
@@ -82,6 +88,17 @@ class pmix(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
     version: The version of PMIX source to download.  The default value
     is `3.1.4`.
+
+    with_PACKAGE[=ARG]: Flags to control optional packages when
+    configuring.  For instance, `with_foo=True` maps to `--with-foo`
+    and `with_foo='/usr/local/foo'` maps to
+    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+    are converted to dashes.
+
+    without_PACKAGE: Flags to control optional packages when
+    configuring.  For instance `without_foo=True` maps to
+    `--without-foo`.  Underscores in the parameter name are converted
+    to dashes.
 
     # Examples
 
@@ -155,8 +172,7 @@ class pmix(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version, tarball)
 
         # Download source from web
-        self.__commands.append(self.download_step(url=url,
-                                                  directory=self.__wd))
+        self.__commands.append(self.download_step(url=url, directory=self.__wd))
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
 

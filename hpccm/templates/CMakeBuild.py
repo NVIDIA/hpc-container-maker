@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from six.moves import shlex_quote
 
-import logging  # pylint: disable=unused-import
+import copy
 import posixpath
 
 import hpccm.base_object
@@ -73,8 +73,7 @@ class CMakeBuild(hpccm.base_object):
         # Cache this for the build step
         self.__build_directory = build_directory
 
-        e = []
-        e.extend(environment)
+        e = copy.copy(environment)
         if toolchain:
             if toolchain.CC and self.toolchain_control.get('CC'):
                 e.append('CC={}'.format(toolchain.CC))

@@ -34,7 +34,6 @@ from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
 class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     """The `intel_mpi` building block downloads and installs the [Intel
@@ -104,7 +103,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     Blocks runtime should be installed.  The default is True.
 
     version: The version of the Intel Parallel Studio XE runtime to
-    install.  The default value is `2019.5-281`.
+    install.  The default value is `2020.0-008`.
 
     # Examples
 
@@ -137,7 +136,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2019.5-281')
+        self.__version = kwargs.get('version', '2020.0-008')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()
@@ -266,6 +265,10 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
                     basepath, 'mpi', 'intel64', 'libfabric', 'lib'))
                 path.append(posixpath.join(basepath, 'mpi', 'intel64',
                                            'libfabric', 'bin'))
+
+            if LooseVersion(self.__version) >= LooseVersion('2020'):
+                ld_library_path.append(posixpath.join(
+                    basepath, 'mpi', 'intel64', 'lib', 'release'))
 
         if self.__tbb:
             ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',

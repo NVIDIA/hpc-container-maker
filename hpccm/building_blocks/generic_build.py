@@ -21,22 +21,18 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 import re
 
-import hpccm.templates.git
+import hpccm.templates.downloader
 import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.shell import shell
 
-class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
-                    hpccm.templates.tar, hpccm.templates.wget):
+class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
     """The `generic_build` building block downloads and builds
     a specified package.
 
@@ -92,26 +88,13 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         super(generic_build, self).__init__(**kwargs)
 
         self.__build = kwargs.get('build', [])
-        self.__branch = kwargs.get('branch', None)
-        self.__commit = kwargs.get('commit', None)
         self.__directory = kwargs.get('directory', None)
         self.__install = kwargs.get('install', [])
         self.__prefix = kwargs.get('prefix', None)
         self.__recursive = kwargs.get('recursive', False)
-        self.__repository = kwargs.get('repository', None)
-        self.__url = kwargs.get('url', None)
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
-
-        if not self.__repository and not self.__url:
-            raise RuntimeError('must specify a repository or a URL')
-
-        if self.__repository and self.__url:
-            raise RuntimeError('cannot specify both a repository and a URL')
-
-        if self.__branch and self.__commit:
-            raise RuntimeError('cannot specify both a branch and a commit')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -122,70 +105,45 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
     def __instructions(self):
         """Fill in container instructions"""
 
-        if self.__url:
-            self += comment(self.__url, reformat=False)
-        elif self.__repository:
-            self += comment(self.__repository, reformat=False)
+        if self.url:
+            self += comment(self.url, reformat=False)
+        elif self.repository:
+            self += comment(self.repository, reformat=False)
         self += shell(commands=self.__commands)
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        if self.__url:
-            # Set the name of the tarball, untarred package directory, and
-            # source directory inside the extracted directory
-            tarball = posixpath.basename(self.__url)
-            match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
-                              tarball)
-            if match:
-                pkgdir = match.group(1)
+        # Get source
+        self.__commands.append(self.download_step(recursive=self.__recursive,
+                                                  wd=self.__wd))
+
+        # directory containing the unarchived package
+        if self.__directory:
+            if posixpath.isabs(self.__directory):
+                self.src_directory = self.__directory
             else:
-                raise RuntimeError('unrecognized package format')
-
-            # directory containing the unarchived package
-            if self.__directory:
-                if posixpath.isabs(self.__directory):
-                    directory = self.__directory
-                else:
-                    directory = posixpath.join(self.__wd, self.__directory)
-            else:
-                directory = posixpath.join(self.__wd, pkgdir)
-
-            # Download source from web
-            self.__commands.append(self.download_step(url=self.__url,
-                                                      directory=self.__wd))
-
-            # Untar source package
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-
-        if self.__repository:
-            # Clone git repository
-            self.__commands.append(self.clone_step(
-                branch=self.__branch, commit=self.__commit, path=self.__wd,
-                recursive=self.__recursive, repository=self.__repository))
-
-            directory = posixpath.join(self.__wd, posixpath.splitext(
-                posixpath.basename(self.__repository))[0])
+                self.src_directory = posixpath.join(self.__wd,
+                                                    self.__directory)
 
         # Build
         if self.__build:
-            self.__commands.append('cd {}'.format(directory))
+            self.__commands.append('cd {}'.format(self.src_directory))
             self.__commands.extend(self.__build)
 
         # Install
         if self.__install:
             if self.__prefix:
                 self.__commands.append('mkdir -p {}'.format(self.__prefix))
-            self.__commands.append('cd {}'.format(directory))
+            self.__commands.append('cd {}'.format(self.src_directory))
             self.__commands.extend(self.__install)
 
         # Cleanup
-        remove = [directory]
-        if self.__url:
-            remove.append(posixpath.join(self.__wd, tarball))
+        remove = [self.src_directory]
+        if self.url:
+            remove.append(posixpath.join(self.__wd,
+                                         posixpath.basename(self.url)))
         self.__commands.append(self.cleanup_step(items=remove))
 
     def runtime(self, _from='0'):
@@ -202,10 +160,10 @@ class generic_build(bb_base, hpccm.templates.git, hpccm.templates.rm,
         """
         if self.__prefix:
             instructions = []
-            if self.__url:
-                instructions.append(comment(self.__url, reformat=False))
-            elif self.__repository:
-                instructions.append(comment(self.__repository, reformat=False))
+            if self.url:
+                instructions.append(comment(self.url, reformat=False))
+            elif self.repository:
+                instructions.append(comment(self.repository, reformat=False))
             instructions.append(copy(_from=_from, src=self.__prefix,
                                      dest=self.__prefix))
             return '\n'.join(str(x) for x in instructions)

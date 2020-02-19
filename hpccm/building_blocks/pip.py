@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -95,7 +94,7 @@ class pip(bb_base, hpccm.templates.rm):
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below
 
-        if self.__ospackages == None:
+        if self.__ospackages is None:
             if self.__pip.startswith('pip3'):
                 self.__debs.extend(['python3-pip', 'python3-setuptools',
                                     'python3-wheel'])

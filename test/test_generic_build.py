@@ -64,14 +64,6 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/b
 
     @ubuntu
     @docker
-    def test_both_branch_and_commit(self):
-        """both branch and commit"""
-        with self.assertRaises(RuntimeError):
-            g = generic_build(branch='dev', commit='deadbeef',
-                              repository='foo')
-
-    @ubuntu
-    @docker
     def test_invalid_package(self):
         """invalid package url"""
         with self.assertRaises(RuntimeError):

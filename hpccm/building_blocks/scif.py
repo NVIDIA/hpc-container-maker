@@ -30,7 +30,6 @@ import hpccm.config
 from hpccm.common import container_type
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
-from hpccm.primitives.runscript import runscript
 from hpccm.primitives.shell import shell
 
 class scif(hpccm.base_object):
@@ -194,7 +193,7 @@ class scif(hpccm.base_object):
             for i in iter(iterable):
                 for f in self.__iter_flatten(i):
                     yield f
-        except:
+        except TypeError:
             # not iterable
             yield iterable
 
