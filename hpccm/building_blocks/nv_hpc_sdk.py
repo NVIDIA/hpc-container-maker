@@ -40,11 +40,10 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
+class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                  hpccm.templates.tar, hpccm.templates.wget):
-    """The `nvcompiler` building block downloads and installs the NVIDIA HPC
-    SDK.  Currently, the only option is to install the latest
-    community edition.
+    """The `nv_hpc_sdk` building block downloads and installs the NVIDIA
+    HPC SDK.  Currently, the only option is to install from a tarball.
 
     You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
     building block.
@@ -73,18 +72,21 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
     NVIDIA HPC SDK.  The default value is `False`.
 
+    license: The license to use to activate the NVIDIA HPC SDK.  If
+    the string contains a `@` the license is interpreted as a network
+    license, e.g., `12345@lic-server`.  Otherwise, the string is
+    interpreted as the path to the license file relative to the local
+    build context.  The default value is empty.
+
     mpi: Boolean flag to specify whether the MPI component should be
     installed.  If True, MPI will be installed.  The default value is
     False.
 
     ospackages: List of OS packages to install prior to installing the
     NVIDIA HPC SDK.  For Ubuntu, the default values are `gcc`, `g++`,
-    `gfortran`, `libnuma1`, and also `wget` (if downloading the NVIDIA
-    HPC SDK rather than using a tarball in the local build context).
-    For RHEL-based Linux distributions, the default values are `gcc`,
-    `gcc-c++`, `gcc-gfortran`, `numactl-libs`, and also `wget` (if
-    downloading the NVIDIA HPC SDK rather than using a tarball in the
-    local build context).
+    `gfortran`, and `libnuma1`.  For RHEL-based Linux distributions,
+    the default values are `gcc`, `gcc-c++`, `gcc-gfortran`, and
+    `numactl-libs`.
 
     prefix: The top level install prefix.  The default value is
     `/opt/nvidia`.
@@ -95,26 +97,18 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     value is False.
 
     tarball: Path to the NVIDIA HPC SDK tarball relative to the local
-    build context.  The default value is empty.  If this is defined,
-    the tarball in the local build context will be used rather than
-    downloading the tarball from the web.
-
-    version: The version of the NVIDIA HPC SDK to use.  Note this
-    value is currently only used when setting the environment and does
-    not control the version downloaded.  The default value is `20.1`.
+    build context.  The default value is empty.  This option is
+    required.
 
     # Examples
 
     ```python
-    nvcompiler(eula=True)
+    nv_hpc_sdk(eula=True, license='port@host',
+               tarball='nvlinux-2020-201-x86_64.tar.gz')
     ```
 
     ```python
-    nvcompiler(eula=True, tarball='nvlinux-2020-201-x86_64.tar.gz')
-    ```
-
-    ```python
-    n = nvcompiler(eula=True)
+    n = nv_hpc_sdk(eula=True, ...)
     openmpi(..., toolchain=n.toolchain, ...)
     ```
 
@@ -123,13 +117,11 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        super(nvcompiler, self).__init__(**kwargs)
+        super(nv_hpc_sdk, self).__init__(**kwargs)
 
         self.__arch_directory = None # Filled in __cpu_arch()
         self.__arch_pkg = None # Filled in by __cpu_arch()
         self.__commands = [] # Filled in by __setup()
-        self.__libnuma_path = '' # Filled in __distro()
-        self.__runtime_commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the NVIDIA HPC
         # SDK End-User License Agreement
@@ -137,19 +129,18 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)
+        self.__license = kwargs.get('license', None)
+        self.__libnuma_path = '' # Filled in __distro()
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
+        self.__runtime_commands = [] # Filled in by __setup()
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/nvidia')
-        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
         self.__tarball = kwargs.get('tarball', '')
-        self.__url_template = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-{}'
-
-        # The version is fragile since the latest version is
-        # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '20.1')
+        self.__version = ''
         self.__wd = '/var/tmp' # working directory
+        self.__year = '' # Filled in by __version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
@@ -160,11 +151,16 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # Set the Linux distribution specific parameters
         self.__distro()
 
+        # Figure out the version information
+        self.__get_version()
+
         # Set paths used extensively
         self.__basepath = posixpath.join(self.__prefix, self.__arch_directory,
                                          self.__version, 'compilers')
+        # Use the year to avoid symlink issues in multi-stage Singularity
+        # builds
         self.__mpipath = posixpath.join(self.__prefix, self.__arch_directory,
-                                        self.__version, 'mpi', 'openmpi-4.0.2')
+                                        self.__year, 'mpi', 'openmpi-4.0.2')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -182,10 +178,13 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                          dest=posixpath.join(self.__wd,
                                              posixpath.basename(self.__tarball)))
         else:
-            # Downloading, so need wget
-            self.__ospackages.append('wget')
+            raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
+        if self.__license and not '@' in self.__license:
+            # License file
+            self += copy(src=self.__license, dest=posixpath.join(
+                self.__prefix, posixpath.basename(self.__license)))
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
 
@@ -299,6 +298,23 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         return e
 
+    def __get_version(self):
+        """Figure out the version information"""
+
+        if self.__tarball:
+            # Figure out the version from the tarball name
+            match = re.match(r'nvlinux_\d+_(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
+                             self.__tarball)
+            if (match and match.groupdict()['year'] and
+                match.groupdict()['month']):
+                self.__version = '{0}.{1}'.format(match.groupdict()['year'],
+                                                  match.groupdict()['month'])
+                self.__year = '20' + match.groupdict()['year']
+            else:
+                raise RuntimeError('could not parse version from tarball')
+        else:
+            raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
+
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
@@ -306,32 +322,13 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__tarball:
             # Use tarball from local build context
             tarball = posixpath.basename(self.__tarball)
-
-            # Figure out the version from the tarball name
-            match = re.match(r'nvlinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
-                             tarball)
-            if match and match.groupdict()['year'] and match.groupdict()['month']:
-                self.__version = '{0}.{1}'.format(match.groupdict()['year'],
-                                                  match.groupdict()['month'])
         else:
-            raise RuntimeError('download not implemented yet')
-            # The URL would normally result in a downloaded file with
-            # the name 'downloader.php?file=nvcompiler-community-linux-x64'.
-            # Also, the version downloaded cannot be controlled, it
-            # will always be the 'latest'.  Use a synthetic tarball
-            # filename.
-            tarball = 'nvcompiler-community-linux-{}-latest.tar.gz'.format(
-                self.__arch_pkg)
-
-            self.__commands.append(self.download_step(
-                url=self.__url_template.format(self.__arch_pkg),
-                outfile=posixpath.join(self.__wd, tarball),
-                referer=self.__referer, directory=self.__wd))
+            raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
 
         self.__commands.append(self.untar_step(
             args=['--no-same-owner'], # TODO: workaround?
             tarball=posixpath.join(self.__wd, tarball),
-            directory=posixpath.join(self.__wd, 'nvcompiler')))
+            directory=posixpath.join(self.__wd, 'nv_hpc_sdk')))
 
         flags = {'NVCOMPILER_ACCEPT_EULA': 'accept',
                  'NVCOMPILER_INSTALL_DIR': self.__prefix,
@@ -353,7 +350,7 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                for key, val in sorted(flags.items()))
 
         self.__commands.append('cd {0} && {1} ./install'.format(
-            posixpath.join(self.__wd, 'nvcompiler'), flag_string))
+            posixpath.join(self.__wd, 'nv_hpc_sdk'), flag_string))
 
         # Create siterc to specify use of the system CUDA
         siterc = posixpath.join(self.__basepath, 'bin', 'siterc')
@@ -380,7 +377,7 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd, 'nvcompiler')]))
+                   posixpath.join(self.__wd, 'nv_hpc_sdk')]))
 
         # libnuma.so and libnuma.so.1 must be symlinks to the system
         # libnuma library.  They are originally symlinks, but Docker
@@ -398,6 +395,14 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.environment_variables = self.__environment()
         self.runtime_environment_variables = self.__environment(runtime=True)
 
+        # License activation
+        if self.__license:
+            if '@' in self.__license:
+                self.environment_variables['LM_LICENSE_FILE'] = self.__license
+            else:
+                self.environment_variables['LM_LICENSE_FILE'] = posixpath.join(
+                    self.__prefix, posixpath.basename(self.__license))
+
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -405,7 +410,7 @@ class nvcompiler(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # Examples
 
         ```python
-        n = nvcompiler(...)
+        n = nv_hpc_sdk(...)
         Stage0 += n
         Stage1 += n.runtime()
         ```
