@@ -2651,9 +2651,9 @@ The default value is `False`.
 
 - __extended_environment__: Boolean flag to specify whether an extended
 set of environment variables should be defined.  If True, the
-- __following environment variables will be defined__: `CC`, `CPP`,
-`CXX`, `F77`, `F90`, `FC`, and `MODULEPATH`.  In addition, if the
-MPI component is selected then `PGI_OPTL_INCLUDE_DIRS` and
+following environment variables `CC`, `CPP`, `CXX`, `F77`, `F90`,
+`FC`, and `MODULEPATH` will be defined.  In addition, if the MPI
+component is selected then `PGI_OPTL_INCLUDE_DIRS` and
 `PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
 `LD_LIBRARY_PATH` will include the MPI component.  If False, then
 only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
