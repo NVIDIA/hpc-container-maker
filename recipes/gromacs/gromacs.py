@@ -44,13 +44,9 @@ Stage0 += label(metadata={'gromacs.version': gromacs_version})
 ######
 Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
 
-Stage1 += Stage0.runtime(_from='build')
+Stage1 += packages(ospackages=['cuda-cufft-10-1'])
 
-# Singularity 3.5.3 will not copy symlinks from another stage, so
-# use the full real path to libcufft.
-Stage1 += copy(_from='build',
-               src='/usr/local/cuda/targets/x86_64-linux/lib/libcufft.so.10.1.1.243',
-               dest='/usr/local/cuda/lib64/libcufft.so.10')
+Stage1 += Stage0.runtime(_from='build')
 
 Stage1 += environment(variables={'PATH': '$PATH:/usr/local/gromacs/bin'})
 
