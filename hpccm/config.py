@@ -58,8 +58,22 @@ def get_cpu_architecture():
   else: # pragma: no cover
     raise RuntimeError('Unrecognized processor architecture')
 
-def set_container_format(ctype):
+def get_format():
+  """Return the container format string for the currently configured
+  format, e.g., `bash`, `docker`, or `singularity`."""
 
+  this = sys.modules[__name__]
+
+  if this.g_ctype == container_type.BASH:
+    return 'bash'
+  elif this.g_ctype == container_type.DOCKER:
+    return 'docker'
+  elif this.g_ctype == container_type.SINGULARITY:
+    return 'singularity'
+  else: # pragma: no cover
+    raise RuntimeError('Unrecognized format')
+
+def set_container_format(ctype):
   """Set the container format
 
   # Arguments
@@ -71,6 +85,7 @@ def set_container_format(ctype):
 
   RuntimeError: invalid container type argument
   """
+
   this = sys.modules[__name__]
   if ctype == 'docker':
     this.g_ctype = container_type.DOCKER

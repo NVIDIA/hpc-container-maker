@@ -8,6 +8,12 @@ Return the architecture string for the currently configured CPU
 architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
 
 
+## get_format
+```python
+get_format()
+```
+Return the container format string for the currently configured
+format, e.g., `bash`, `docker`, or `singularity`.
 ## set_container_format
 ```python
 set_container_format(ctype)
