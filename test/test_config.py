@@ -23,7 +23,7 @@ from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import docker, singularity
+from helpers import bash, docker, singularity
 
 import hpccm.config
 
@@ -175,3 +175,18 @@ class Test_config(unittest.TestCase):
         """Set CPU architecture to invalid value"""
         hpccm.config.set_cpu_architecture('invalid')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.X86_64)
+
+    @bash
+    def test_get_format_bash(self):
+        """Get container format"""
+        self.assertEqual(hpccm.config.get_format(), 'bash')
+
+    @docker
+    def test_get_format_docker(self):
+        """Get container format"""
+        self.assertEqual(hpccm.config.get_format(), 'docker')
+
+    @singularity
+    def test_get_format_singularity(self):
+        """Get container format"""
+        self.assertEqual(hpccm.config.get_format(), 'singularity')
