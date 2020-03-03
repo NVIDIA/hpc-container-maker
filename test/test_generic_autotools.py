@@ -120,8 +120,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         tc = toolchain(CC='gcc', CXX='g++', FC='gfortran')
         g = generic_autotools(
             build_directory='/tmp/build',
+            build_environment={'FOO': 'BAR'},
             directory='/var/tmp/tcl8.6.9/unix',
-            environment={'FOO': 'BAR'},
             prefix='/usr/local/tcl',
             toolchain=tc,
             url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')

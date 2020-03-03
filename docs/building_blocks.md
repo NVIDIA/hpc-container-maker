@@ -732,6 +732,10 @@ use the default branch for the repository.
 - __build_directory__: The location to build the package.  The default
 value is the source code location.
 
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -741,6 +745,11 @@ use the latest commit on the default branch for the repository.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is an empty list.
+
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
@@ -756,8 +765,18 @@ configuring.  For instance, `enable_foo=True` maps to
 `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
 Underscores in the parameter name are converted to dashes.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -779,6 +798,10 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
