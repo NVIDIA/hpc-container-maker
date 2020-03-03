@@ -45,6 +45,7 @@ __all__ = ['apt_get',
            'mvapich2_gdr',
            'mvapich2',
            'netcdf',
+           'nsight_systems',
            'nvshmem',
            'ofed',
            'openblas',
@@ -93,6 +94,7 @@ from hpccm.building_blocks.multi_ofed import multi_ofed
 from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 from hpccm.building_blocks.mvapich2 import mvapich2
 from hpccm.building_blocks.netcdf import netcdf
+from hpccm.building_blocks.nsight_systems import nsight_systems
 from hpccm.building_blocks.nvshmem import nvshmem
 from hpccm.building_blocks.ofed import ofed
 from hpccm.building_blocks.openblas import openblas

@@ -2624,6 +2624,31 @@ Stage0 += n
 Stage1 += n.runtime()
 ```
 
+# nsight_systems
+```python
+nsight_systems(self, **kwargs)
+```
+The `nsight_systems` building block downloads and installs the
+[NVIDIA Nsight Systems
+profiler]](https://developer.nvidia.com/nsight-systems).
+
+__Parameters__
+
+
+- __cli__: Boolean flag to specify whether the command line only (CLI)
+package should be installed.  The default is True.
+
+- __version__: The version of Nsight Systems to install.  The default
+value is `2020.1.1`.
+
+__Examples__
+
+
+```python
+nsight_systems(version='2020.1.1')
+```
+
+
 # nvshmem
 ```python
 nvshmem(self, **kwargs)
