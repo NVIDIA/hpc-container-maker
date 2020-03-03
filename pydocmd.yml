@@ -35,6 +35,7 @@ generate:
   - hpccm.building_blocks.mvapich2+
   - hpccm.building_blocks.mvapich2_gdr+
   - hpccm.building_blocks.netcdf+
+  - hpccm.building_blocks.nsight_systems+
   - hpccm.building_blocks.nv_hpc_sdk+
   - hpccm.building_blocks.ofed+
   - hpccm.building_blocks.openblas+
