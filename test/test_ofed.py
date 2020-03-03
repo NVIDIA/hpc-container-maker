@@ -40,7 +40,7 @@ class Test_ofed(unittest.TestCase):
         self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t xenial \
         dapl2-utils \
         ibutils \
         ibverbs-utils \
@@ -71,7 +71,7 @@ RUN apt-get update -y && \
         self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t bionic \
         dapl2-utils \
         ibutils \
         ibverbs-providers \
@@ -96,7 +96,7 @@ RUN apt-get update -y && \
         o = ofed()
         self.assertEqual(str(o),
 r'''# OFED
-RUN yum install -y \
+RUN yum install -y --disablerepo=mlnx\* \
         dapl \
         dapl-devel \
         ibutils \
@@ -122,7 +122,7 @@ RUN yum install -y \
 r'''# OFED
 RUN yum install -y dnf-utils && \
     yum-config-manager --set-enabled PowerTools && \
-    yum install -y \
+    yum install -y --disablerepo=mlnx\* \
         libibmad \
         libibmad-devel \
         libibumad \
@@ -149,7 +149,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN apt-get update -y && \
     mkdir -m 777 -p /var/tmp/packages_download && cd /var/tmp/packages_download && \
-    DEBIAN_FRONTEND=noninteractive apt-get download -y \
+    DEBIAN_FRONTEND=noninteractive apt-get download -y --no-install-recommends -t xenial \
         dapl2-utils \
         ibutils \
         ibverbs-utils \
@@ -184,7 +184,7 @@ RUN mkdir -p /etc/libibverbs.d''')
         self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t xenial \
         ibutils \
         ibverbs-utils \
         infiniband-diags \
@@ -210,7 +210,7 @@ RUN apt-get update -y && \
         self.assertEqual(str(o),
 r'''# OFED
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t xenial \
         dapl2-utils \
         ibutils \
         ibverbs-utils \
@@ -240,7 +240,7 @@ RUN apt-get update -y && \
         self.assertEqual(r,
 r'''# OFED
 RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t xenial \
         dapl2-utils \
         ibutils \
         ibverbs-utils \

@@ -89,6 +89,7 @@ class ofed(bb_base):
         super(ofed, self).__init__(**kwargs)
 
         self.__deppackages = []  # Filled in by __distro()
+        self.__extra_opts = []   # Filled in by __distro()
         self.__ospackages = []   # Filled in by __distro()
         self.__powertools = False # enable the CentOS PowerTools repo
         self.__prefix = kwargs.get('prefix', None)
@@ -108,7 +109,12 @@ class ofed(bb_base):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             self.__deppackages = ['libnl-3-200', 'libnl-route-3-200',
                                  'libnuma1']
+
             if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                # Give priority to packages from the Ubuntu repositories over
+                # vendor repositories
+                self.__extra_opts = ['-t bionic']
+
                 self.__ospackages= ['dapl2-utils', 'ibutils',
                                     'ibverbs-providers', 'ibverbs-utils',
                                     'infiniband-diags',
@@ -118,6 +124,10 @@ class ofed(bb_base):
                                     'librdmacm1', 'librdmacm-dev',
                                     'rdmacm-utils']
             else:
+                # Give priority to packages from the Ubuntu repositories over
+                # vendor repositories
+                self.__extra_opts = ['-t xenial']
+
                 self.__ospackages = ['dapl2-utils', 'ibutils', 'ibverbs-utils',
                                      'infiniband-diags',
                                      'libdapl2', 'libdapl-dev',
@@ -128,6 +138,7 @@ class ofed(bb_base):
                                      'libmlx5-1', 'libmlx5-dev',
                                      'librdmacm1', 'librdmacm-dev',
                                      'rdmacm-utils']
+
                 if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
                     # Ubuntu 16.04 for ARM is missing these packages
                     for missing in ['dapl2-utils', 'libdapl2', 'libdapl-dev',
@@ -140,8 +151,10 @@ class ofed(bb_base):
                         if missing in self.__ospackages:
                             self.__ospackages.remove(missing)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
+            self.__extra_opts = [r'--disablerepo=mlnx\*']
+
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                self.__deppackages = ['libnl3', 'numactl-libs']
                 self.__ospackages = ['libibmad', 'libibmad-devel',
                                      'libibumad', 'libibverbs',
                                      'libibverbs-utils', 'libmlx5',
@@ -149,6 +162,7 @@ class ofed(bb_base):
                                      'rdma-core', 'rdma-core-devel']
                 self.__powertools = True
             else:
+                self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
                 self.__ospackages = ['dapl', 'dapl-devel', 'ibutils',
                                      'libibcm', 'libibmad', 'libibmad-devel',
                                      'libmlx5', 'libibumad', 'libibverbs',
@@ -165,7 +179,8 @@ class ofed(bb_base):
 
             # Extract to a prefix - not a "real" package manager install
             self += packages(ospackages=self.__deppackages)
-            self += packages(download=True, extract=self.__prefix,
+            self += packages(download=True, extra_opts=self.__extra_opts,
+                             extract=self.__prefix,
                              ospackages=self.__ospackages,
                              powertools=self.__powertools)
 
@@ -187,7 +202,8 @@ class ofed(bb_base):
             self += shell(commands=commands)
         else:
             # Install packages using package manager
-            self += packages(ospackages=self.__ospackages,
+            self += packages(extra_opts=self.__extra_opts,
+                             ospackages=self.__ospackages,
                              powertools=self.__powertools)
 
     def runtime(self, _from='0'):

@@ -68,7 +68,7 @@ r'''RUN wget -qO - https://www.example.com/key.pub | apt-key add - && \
         self.assertEqual(str(a),
 r'''RUN apt-get update -y && \
     mkdir -m 777 -p /tmp/download && cd /tmp/download && \
-    DEBIAN_FRONTEND=noninteractive apt-get download -y \
+    DEBIAN_FRONTEND=noninteractive apt-get download -y --no-install-recommends \
         libibverbs1 && \
     rm -rf /var/lib/apt/lists/*''')
 
@@ -81,7 +81,7 @@ r'''RUN apt-get update -y && \
         self.assertEqual(str(a),
 r'''RUN apt-get update -y && \
     mkdir -m 777 -p /var/tmp/apt_get_download && cd /var/tmp/apt_get_download && \
-    DEBIAN_FRONTEND=noninteractive apt-get download -y \
+    DEBIAN_FRONTEND=noninteractive apt-get download -y --no-install-recommends \
         libibverbs1 && \
     mkdir -p /usr/local/ofed && \
     find /var/tmp/apt_get_download -regextype posix-extended -type f -regex "/var/tmp/apt_get_download/(libibverbs1).*deb" -exec dpkg --extract {} /usr/local/ofed \; && \
