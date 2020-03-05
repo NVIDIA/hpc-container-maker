@@ -127,6 +127,12 @@ class llvm(bb_base, hpccm.templates.envvars):
                 self.__runtime_rpms = [
                     x.format(self.__version)
                     for x in self.__runtime_rpms_versioned]
+        else:
+            if hpccm.config.g_linux_distro == linux_distro.CENTOS:
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    self.__runtime_rpms.append('libomp')
+                else:
+                    self.__runtime_rpms.append('libgomp')
 
         self.__distro()
 
