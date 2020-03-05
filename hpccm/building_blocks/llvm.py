@@ -87,7 +87,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         super(llvm, self).__init__(**kwargs)
 
         self.__extra_repo = kwargs.get('extra_repository', False)
-        self.__version = kwargs.get('version', '')
+        self.__version = kwargs.get('version', None)
 
         self.__commands = []       # Filled in below
         self.__compiler_debs = ['clang', 'libomp-dev']
