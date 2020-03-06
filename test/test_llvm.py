@@ -67,7 +67,7 @@ ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH''')
     @docker
     def test_defaults_centos8(self):
         """Default llvm building block"""
-        l = llvm()
+        l = llvm(version='8')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN yum install -y \
@@ -75,7 +75,7 @@ RUN yum install -y \
         gcc-c++ && \
     rm -rf /var/cache/yum/*
 RUN yum install -y \
-        clang && \
+        llvm-toolset-8.0.1 && \
     rm -rf /var/cache/yum/*
 ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 

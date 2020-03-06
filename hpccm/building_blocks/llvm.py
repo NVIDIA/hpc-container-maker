@@ -86,108 +86,100 @@ class llvm(bb_base, hpccm.templates.envvars):
 
         super(llvm, self).__init__(**kwargs)
 
-        self.__extra_repo = kwargs.get('extra_repository', False)
-        self.__version = kwargs.get('version', None)
-
         self.__commands = []       # Filled in below
-        self.__compiler_debs = ['clang', 'libomp-dev']
-        self.__compiler_debs_versioned = ['clang-{}', 'libomp-dev']
-        self.__compiler_rpms = ['clang']
-        self.__compiler_rpms_versioned = ['llvm-toolset-{}-clang',
-                                          'llvm-toolset-{}-libomp-devel']
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.__runtime_debs = ['libclang1', 'libomp5']
-        self.__runtime_rpms = ['llvm-libs']
-        self.__runtime_rpms_versioned = ['llvm-toolset-{}-runtime',
-                                         'llvm-toolset-{}-libomp',
-                                         'llvm-toolset-{}-compiler-rt']
+        self.__compiler_debs = []  # Filled in below
+        self.__compiler_rpms = []  # Filled in below
+        self.__extra_repo = kwargs.get('extra_repository', False)
+        self.__ospackages = kwargs.get('ospackages', []) # Filled in below
+        self.__runtime_debs = []   # Filled in below
+        self.__runtime_rpms = []   # Filled in below
+        self.__version = kwargs.get('version', None)
 
         # Output toolchain
         self.toolchain = toolchain()
         self.toolchain.CC = 'clang'
         self.toolchain.CXX = 'clang++'
 
-        # Install an alternate version, i.e., not the default for
-        # the Linux distribution
-        if self.__version:
-            # Adjust package names based on specified version
-            self.__compiler_debs = [
-                x.format(self.__version)
-                for x in self.__compiler_debs_versioned]
-
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                # Multiple versions are not available for CentOS 8.
-                self.__compiler_rpms = ['llvm-toolset-8.0.1']
-                self.__runtime_rpms = ['llvm-libs-8.0.1', 'libomp']
-            else:
-                # CentOS 7
-                self.__compiler_rpms = [
-                    x.format(self.__version)
-                    for x in self.__compiler_rpms_versioned]
-                self.__runtime_rpms = [
-                    x.format(self.__version)
-                    for x in self.__runtime_rpms_versioned]
-        else:
-            if hpccm.config.g_linux_distro == linux_distro.CENTOS:
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    self.__runtime_rpms.append('libomp')
-                else:
-                    self.__runtime_rpms.append('libgomp')
-
-        self.__distro()
+        # Set the packages to install based on the Linux distribution
+        # and CPU architecture
+        self.__setup()
 
         # Fill in container instructions
         self.__instructions()
 
-    def __distro(self):
-        """Based on the Linux distribution, set values accordingly.  A user
-        specified value overrides any defaults."""
+    def __setup(self):
+        """Based on the Linux dsitribution and CPU architecture, set values
+        accordingly."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-            # Setup the environment so that the alternate compiler version
-            # is the new default
+            self.__ospackages = []
+
             if self.__version:
+                self.__compiler_debs = ['clang-{}'.format(self.__version),
+                                        'libomp-dev']
+                self.__runtime_debs = ['libclang1', 'libomp5']
+
+                # Setup the environment so that the alternate compiler
+                # version is the new default
                 self.__commands.append('update-alternatives --install /usr/bin/clang clang $(which clang-{}) 30'.format(self.__version))
                 self.__commands.append('update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-{}) 30'.format(self.__version))
+            else:
+                self.__compiler_debs = ['clang', 'libomp-dev']
+                self.__runtime_debs = ['libclang1', 'libomp5']
+
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             # Dependencies on the GNU compiler
-            if not self.__ospackages:
-                self.__ospackages = ['gcc', 'gcc-c++']
+            self.__ospackages = ['gcc', 'gcc-c++']
 
-            # Setup the environment so that the alternate compiler version
-            # is the new default
+            # Version that appears in paths below
+            compiler_version = ''
+
             if self.__version:
-                if hpccm.config.g_linux_version < StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    # Multiple versions are not available for CentOS 8
+                    self.__compiler_rpms = ['llvm-toolset-8.0.1']
+                    self.__runtime_rpms = ['llvm-libs-8.0.1', 'libomp']
+                    compiler_version = '8'
+                else:
                     # CentOS 7
+                    self.__compiler_rpms = [
+                        'llvm-toolset-{}-clang'.format(self.__version),
+                        'llvm-toolset-{}-libomp-devel'.format(self.__version)]
+                    self.__runtime_rpms = [
+                        'llvm-toolset-{}-runtime'.format(self.__version),
+                        'llvm-toolset-{}-libomp'.format(self.__version),
+                        'llvm-toolset-{}-compiler-rt'.format(self.__version)]
+                    compiler_version = '4.8.2'
+
+                    # Setup environment for devtoolset
                     self.environment_variables['PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version)
                     self.environment_variables['LD_LIBRARY_PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)
+            else:
+                self.__compiler_rpms = ['clang']
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    # CentOS 8
+                    self.__runtime_rpms = ['llvm-libs', 'libomp']
+                    compiler_version = '8'
+                else:
+                    # CentOS 7
+                    self.__runtime_rpms = ['llvm-libs', 'libgomp']
+                    compiler_version = '4.8.2'
 
+            # The default llvm configuration for CentOS is unable to
+            # locate some gcc components. Setup the necessary gcc
+            # environment.
             if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-                # The default llvm configuration for CentOS on aarch64
-                # processors is unable to locate some gcc
-                # components. Setup the necessary gcc environment.
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    self.environment_variables['COMPILER_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/8:$COMPILER_PATH'
-                    self.environment_variables['CPATH'] = '/usr/include/c++/8:/usr/include/c++/8/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/8/include:$CPATH'
-                    self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/8'
-                else:
-                    self.environment_variables['COMPILER_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH'
-                    self.environment_variables['CPATH'] = '/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/4.8.2/include:$CPATH'
-                    self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/4.8.2'
+                self.environment_variables['COMPILER_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/{}:$COMPILER_PATH'.format(compiler_version)
+                self.environment_variables['CPATH'] = '/usr/include/c++/{0}:/usr/include/c++/{0}/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/{0}/include:$CPATH'.format(compiler_version)
+                self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/{}'.format(compiler_version)
             elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-                # The default llvm configuration for CentOS on x86_64
-                # processors is unable to locate some gcc
-                # components. Setup the necessary gcc environment.
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    self.environment_variables['CPATH'] = '/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH'.format(self.__version)
-                else:
-                    self.environment_variables['CPATH'] = '/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH'.format(self.__version)
+                self.environment_variables['CPATH'] = '/usr/lib/gcc/x86_64-redhat-linux/{}/include:$CPATH'.format(compiler_version)
             else:
                 # Packages for CentOS + PPC64LE are not available
                 raise RuntimeError('Unsupported processor architecture')
 
         else: # pragma: no cover
-                raise RuntimeError('Unknown Linux distribution')
+            raise RuntimeError('unknown Linux distribution')
 
     def __instructions(self):
         """Fill in container instructions"""
