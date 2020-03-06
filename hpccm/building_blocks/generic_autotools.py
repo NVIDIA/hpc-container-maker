@@ -289,5 +289,5 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
                 instructions.append(environment(
                     variables=self.environment_step(runtime=True)))
             return '\n'.join(str(x) for x in instructions)
-        else:
+        else: # pragma: no cover
             return
