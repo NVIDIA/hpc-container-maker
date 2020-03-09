@@ -875,14 +875,29 @@ use the default branch for the repository.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
+
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
 
 - __install__: List of shell commands to run in order to install the
 package.  The working directory is the source directory.  If
 `prefix` is defined, it will be automatically created if the list
 is non-empty.  The default is an empty list.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
@@ -893,6 +908,10 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __url__: The URL of the tarball package to build.  One of this
 parameter or the `repository` parameter must be specified.
@@ -940,6 +959,10 @@ use the default branch for the repository.
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
 
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -950,12 +973,27 @@ is an empty list.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -977,6 +1015,10 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The

@@ -25,14 +25,19 @@ import posixpath
 import re
 
 import hpccm.templates.downloader
+import hpccm.templates.envvars
+import hpccm.templates.ldconfig
 import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
+class generic_build(bb_base, hpccm.templates.downloader,
+                    hpccm.templates.envvars, hpccm.templates.ldconfig,
+                    hpccm.templates.rm):
     """The `generic_build` building block downloads and builds
     a specified package.
 
@@ -50,14 +55,29 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
     `repository` parameter is specified.  The default is empty, i.e.,
     use the latest commit on the default branch for the repository.
 
+    devel_environment: Dictionary of environment variables and values,
+    e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+    stage after the package is built and installed.  The default is an
+    empty dictionary.
+
     directory: The source code location.  The default value is the
     basename of the downloaded package.  If the value is not an
     absolute path, then the temporary working directory is prepended.
+
+    environment: Boolean flag to specify whether the environment
+    should be modified (see `devel_environment` and
+    `runtime_environment`).  The default is True.
 
     install: List of shell commands to run in order to install the
     package.  The working directory is the source directory.  If
     `prefix` is defined, it will be automatically created if the list
     is non-empty.  The default is an empty list.
+
+    ldconfig: Boolean flag to specify whether the library directory
+    should be added dynamic linker cache.  The default value is False.
+
+    libdir: The path relative to the install prefix to use when
+    configuring the dynamic linker cache.  The default value is `lib`.
 
     prefix: The top level install location.  The default value is
     empty. If defined then the location is copied as part of the
@@ -68,6 +88,10 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
 
     repository: The git repository of the package to build.  One of
     this paramter or the `url` parameter must be specified.
+
+    runtime_environment: Dictionary of environment variables and
+    values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+    stage.  The default is an empty dictionary.
 
     url: The URL of the tarball package to build.  One of this
     parameter or the `repository` parameter must be specified.
@@ -89,9 +113,12 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
 
         self.__build = kwargs.get('build', [])
         self.__directory = kwargs.get('directory', None)
+        self.environment_variables = kwargs.get('devel_environment', {})
         self.__install = kwargs.get('install', [])
+        self.__libdir = kwargs.get('libdir', 'lib')
         self.__prefix = kwargs.get('prefix', None)
         self.__recursive = kwargs.get('recursive', False)
+        self.runtime_environment_variables = kwargs.get('runtime_environment', {})
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -110,6 +137,7 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
         elif self.repository:
             self += comment(self.repository, reformat=False)
         self += shell(commands=self.__commands)
+        self += environment(variables=self.environment_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -139,6 +167,11 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
             self.__commands.append('cd {}'.format(self.src_directory))
             self.__commands.extend(self.__install)
 
+        # Set library path
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(
+                directory=posixpath.join(self.__prefix, self.__libdir)))
+
         # Cleanup
         remove = [self.src_directory]
         if self.url:
@@ -166,6 +199,12 @@ class generic_build(bb_base, hpccm.templates.downloader, hpccm.templates.rm):
                 instructions.append(comment(self.repository, reformat=False))
             instructions.append(copy(_from=_from, src=self.__prefix,
                                      dest=self.__prefix))
+            if self.ldconfig:
+                instructions.append(shell(commands=[self.ldcache_step(
+                    directory=posixpath.join(self.__prefix, self.__libdir))]))
+            if self.runtime_environment_variables:
+                instructions.append(environment(
+                    variables=self.environment_step(runtime=True)))
             return '\n'.join(str(x) for x in instructions)
-        else:
+        else: #pragma: no cover
             return
