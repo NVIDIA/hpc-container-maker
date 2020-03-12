@@ -23,6 +23,7 @@ from hpccm.common import container_type
 from hpccm.common import linux_distro
 
 from hpccm.Stage import Stage
+from hpccm.recipe import include
 from hpccm.recipe import recipe
 from hpccm.toolchain import toolchain
 
