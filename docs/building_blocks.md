@@ -1932,8 +1932,8 @@ __Parameters__
 
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include the
-LLVM compilers. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
+include the LLVM compilers. The default is True.
 
 - __extra_repository__: Boolean flag to specify whether to enable an
 extra package repository containing addition LLVM compiler
