@@ -276,7 +276,7 @@ demonstrate running the program on a single node.
 ```
 $ hpccm --recipe mpi_bandwidth.py --format docker > Dockerfile
 $ sudo docker build -t mpi_bandwidth -f Dockerfile .
-$ sudo docker run --rm -it mpirun --allow-run-as-root -n 2 /usr/local/bin/mpi_bandwidth
+$ sudo docker run --rm -it mpi_bandwidth mpirun --allow-run-as-root -n 2 /usr/local/bin/mpi_bandwidth
 ```
 
 ```
