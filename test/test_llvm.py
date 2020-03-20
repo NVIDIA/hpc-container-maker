@@ -84,23 +84,27 @@ ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
     @docker
     def test_version_ubuntu(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, version='6.0')
+        l = llvm(extra_repository=True, extra_tools=True, version='6.0')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         clang-6.0 \
+        clang-format-6.0 \
+        clang-tidy-6.0 \
         libomp-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-6.0) 30''')
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-6.0) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-6.0) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-6.0) 30''')
 
     @x86_64
     @centos
     @docker
     def test_version_centos(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, version='7')
+        l = llvm(extra_repository=True, extra_tools=True, version='7')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN yum install -y \
@@ -110,6 +114,7 @@ RUN yum install -y \
 RUN yum install -y centos-release-scl && \
     yum install -y \
         llvm-toolset-7-clang \
+        llvm-toolset-7-clang-tools-extra \
         llvm-toolset-7-libomp-devel && \
     rm -rf /var/cache/yum/*
 ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH \
@@ -161,6 +166,40 @@ ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/8:$COMPILER_PATH \
         """ppc64le"""
         with self.assertRaises(RuntimeError):
             llvm()
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_extra_tools_ubuntu(self):
+        """clang-format and clang-tidy"""
+        l = llvm(extra_tools=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang \
+        clang-format \
+        clang-tidy \
+        libomp-dev && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_extra_tools_centos8(self):
+        """Default llvm building block"""
+        l = llvm(extra_tools=True, version='8')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang-tools-extra-8.0.1 \
+        llvm-toolset-8.0.1 && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 
     @x86_64
     @ubuntu
