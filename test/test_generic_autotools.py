@@ -115,13 +115,13 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
-    def test_environment_and_toolchain(self):
-        """environment and toolchain"""
+    def test_build_environment_and_toolchain(self):
+        """build environment and toolchain"""
         tc = toolchain(CC='gcc', CXX='g++', FC='gfortran')
         g = generic_autotools(
             build_directory='/tmp/build',
+            build_environment={'FOO': 'BAR'},
             directory='/var/tmp/tcl8.6.9/unix',
-            environment={'FOO': 'BAR'},
             prefix='/usr/local/tcl',
             toolchain=tc,
             url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
@@ -151,6 +151,38 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --recursive https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/libzmq''')
+
+    @ubuntu
+    @docker
+    def test_ldconfig_and_environment(self):
+        """ldconfig and environment"""
+        g = generic_autotools(
+            devel_environment={'CPATH': '/usr/local/zeromq/include:$CPATH',
+                               'PATH': '/usr/local/zeromq/bin:$PATH'},
+            ldconfig=True,
+            preconfigure=['./autogen.sh'],
+            prefix='/usr/local/zeromq',
+            repository='https://github.com/zeromq/libzmq.git',
+            runtime_environment={'PATH': '/usr/local/zeromq/bin:$PATH'})
+        self.assertEqual(str(g),
+r'''# https://github.com/zeromq/libzmq.git
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/zeromq/libzmq.git libzmq && cd - && \
+    cd /var/tmp/libzmq && \
+    ./autogen.sh && \
+    cd /var/tmp/libzmq &&   ./configure --prefix=/usr/local/zeromq && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    echo "/usr/local/zeromq/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/libzmq
+ENV CPATH=/usr/local/zeromq/include:$CPATH \
+    PATH=/usr/local/zeromq/bin:$PATH''')
+
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/zeromq/libzmq.git
+COPY --from=0 /usr/local/zeromq /usr/local/zeromq
+RUN echo "/usr/local/zeromq/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig
+ENV PATH=/usr/local/zeromq/bin:$PATH''')
 
     @ubuntu
     @docker
