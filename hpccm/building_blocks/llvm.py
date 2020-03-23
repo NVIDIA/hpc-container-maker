@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import StrictVersion
+import logging
 
 import hpccm.config
 import hpccm.templates.envvars
@@ -53,6 +54,9 @@ class llvm(bb_base, hpccm.templates.envvars):
     `ppa:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
     distributions, setting this flag to True enables the Software
     Collections (SCL) repository.  The default is False.
+
+    extra_tools: Boolean flag to specify whether to also install
+    `clang-format` and `clang-tidy`.  The default is False.
 
     version: The version of the LLVM compilers to install.  Note that
     the version refers to the Linux distribution packaging, not the
@@ -90,6 +94,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         self.__compiler_debs = []  # Filled in below
         self.__compiler_rpms = []  # Filled in below
         self.__extra_repo = kwargs.get('extra_repository', False)
+        self.__extra_tools = kwargs.get('extra_tools', False)
         self.__ospackages = kwargs.get('ospackages', []) # Filled in below
         self.__runtime_debs = []   # Filled in below
         self.__runtime_rpms = []   # Filled in below
@@ -123,9 +128,21 @@ class llvm(bb_base, hpccm.templates.envvars):
                 # version is the new default
                 self.__commands.append('update-alternatives --install /usr/bin/clang clang $(which clang-{}) 30'.format(self.__version))
                 self.__commands.append('update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-{}) 30'.format(self.__version))
+
+                # Install and configure clang-format and clang-tidy
+                if self.__extra_tools:
+                    self.__compiler_debs.append('clang-format-{}'.format(
+                        self.__version))
+                    self.__compiler_debs.append('clang-tidy-{}'.format(
+                        self.__version))
+                    self.__commands.append('update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-{}) 30'.format(self.__version))
+                    self.__commands.append('update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-{}) 30'.format(self.__version))
             else:
                 self.__compiler_debs = ['clang', 'libomp-dev']
                 self.__runtime_debs = ['libclang1', 'libomp5']
+
+                if self.__extra_tools:
+                    self.__compiler_debs.extend(['clang-format', 'clang-tidy'])
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             # Dependencies on the GNU compiler
@@ -140,6 +157,9 @@ class llvm(bb_base, hpccm.templates.envvars):
                     self.__compiler_rpms = ['llvm-toolset-8.0.1']
                     self.__runtime_rpms = ['llvm-libs-8.0.1', 'libomp']
                     compiler_version = '8'
+
+                    if self.__extra_tools:
+                        self.__compiler_rpms.append('clang-tools-extra-8.0.1')
                 else:
                     # CentOS 7
                     self.__compiler_rpms = [
@@ -151,6 +171,9 @@ class llvm(bb_base, hpccm.templates.envvars):
                         'llvm-toolset-{}-compiler-rt'.format(self.__version)]
                     compiler_version = '4.8.2'
 
+                    if self.__extra_tools:
+                        self.__compiler_rpms.append('llvm-toolset-{}-clang-tools-extra'.format(self.__version))
+
                     # Setup environment for devtoolset
                     self.environment_variables['PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/bin:$PATH'.format(self.__version)
                     self.environment_variables['LD_LIBRARY_PATH'] = '/opt/rh/llvm-toolset-{}/root/usr/lib64:$LD_LIBRARY_PATH'.format(self.__version)
@@ -160,10 +183,16 @@ class llvm(bb_base, hpccm.templates.envvars):
                     # CentOS 8
                     self.__runtime_rpms = ['llvm-libs', 'libomp']
                     compiler_version = '8'
+
+                    if self.__extra_tools:
+                        self.__compiler_rpms.append('clang-tools-extra')
                 else:
                     # CentOS 7
                     self.__runtime_rpms = ['llvm-libs', 'libgomp']
                     compiler_version = '4.8.2'
+
+                    if self.__extra_tools: # pragma: no cover
+                        logging.warning('llvm extra tools are not available for default CentOS 7, specify a LLVM version')
 
             # The default llvm configuration for CentOS is unable to
             # locate some gcc components. Setup the necessary gcc

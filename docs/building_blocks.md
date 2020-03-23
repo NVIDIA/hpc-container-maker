@@ -2007,6 +2007,9 @@ packages.  For Ubuntu, setting this flag to True enables the
 distributions, setting this flag to True enables the Software
 Collections (SCL) repository.  The default is False.
 
+- __extra_tools__: Boolean flag to specify whether to also install
+`clang-format` and `clang-tidy`.  The default is False.
+
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
 actual compiler version.  For Ubuntu, the version is appended to
