@@ -89,7 +89,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     `numactl-libs`.
 
     prefix: The top level install prefix.  The default value is
-    `/opt/nvidia`.
+    `/opt/nvidia/hpcsdk`.
 
     system_cuda: Boolean flag to specify whether the NVIDIA HPC SDK
     should use the system CUDA.  If False, the version(s) of CUDA
@@ -104,7 +104,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
     ```python
     nv_hpc_sdk(eula=True, license='port@host',
-               tarball='nvlinux-2020-201-x86_64.tar.gz')
+               tarball='nvhpc_2020_204_Linux_x86_64.tar.gz')
     ```
 
     ```python
@@ -120,7 +120,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         super(nv_hpc_sdk, self).__init__(**kwargs)
 
         self.__arch_directory = None # Filled in __cpu_arch()
-        self.__arch_pkg = None # Filled in by __cpu_arch()
         self.__commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the NVIDIA HPC
@@ -130,12 +129,11 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         self.__extended_environment = kwargs.get('extended_environment', False)
         self.__license = kwargs.get('license', None)
-        self.__libnuma_path = '' # Filled in __distro()
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_commands = [] # Filled in by __setup()
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__prefix = kwargs.get('prefix', '/opt/nvidia')
+        self.__prefix = kwargs.get('prefix', '/opt/nvidia/hpcsdk')
         self.__system_cuda = kwargs.get('system_cuda', False)
         self.__tarball = kwargs.get('tarball', '')
         self.__version = ''
@@ -160,7 +158,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # Use the year to avoid symlink issues in multi-stage Singularity
         # builds
         self.__mpipath = posixpath.join(self.__prefix, self.__arch_directory,
-                                        self.__year, 'mpi', 'openmpi-4.0.2')
+                                        self.__year, 'mpi', 'openmpi-3.1.5')
 
         # Construct the series of steps to execute
         self.__setup()
@@ -193,14 +191,11 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         specified value overrides any defaults."""
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            self.__arch_directory = 'linuxarm64'
-            self.__arch_pkg = 'arm64' # TODO: just a guess
+            self.__arch_directory = 'Linux_aarch64'
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_directory = 'linuxpower'
-            self.__arch_pkg = 'openpower'
+            self.__arch_directory = 'Linux_ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__arch_directory = 'linux86-64-llvm'
-            self.__arch_pkg = 'x64'
+            self.__arch_directory = 'Linux_x86_64'
         else: # pragma: no cover
             raise RuntimeError('Unknown CPU architecture')
 
@@ -216,7 +211,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.__runtime_ospackages = ['libnuma1']
             if self.__mpi:
                 self.__runtime_ospackages.append('openssh-client')
-            self.__libnuma_path = '/usr/lib/x86_64-linux-gnu'
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['gcc', 'gcc-c++', 'gcc-gfortran',
@@ -226,7 +220,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.__runtime_ospackages = ['numactl-libs']
             if self.__mpi:
                 self.__runtime_ospackages.append('openssh-clients')
-            self.__libnuma_path = '/usr/lib64'
         else:
             raise RuntimeError('Unknown Linux distribution')
 
@@ -303,7 +296,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         if self.__tarball:
             # Figure out the version from the tarball name
-            match = re.match(r'nvlinux_\d+_(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
+            match = re.search(r'nvhpc_\d+_(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
                              self.__tarball)
             if (match and match.groupdict()['year'] and
                 match.groupdict()['month']):
@@ -326,7 +319,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
 
         self.__commands.append(self.untar_step(
-            args=['--no-same-owner'], # TODO: workaround?
             tarball=posixpath.join(self.__wd, tarball),
             directory=posixpath.join(self.__wd, 'nv_hpc_sdk')))
 
@@ -358,38 +350,16 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.__commands.append(
                 'echo "set CUDAROOT=/usr/local/cuda;" >> {}'.format(siterc))
 
-        # Create siterc to respect LIBRARY_PATH
-        # https://www.pgroup.com/support/faq.htm#lib_path_ldflags
-        self.__commands.append(r'echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> {}'.format(siterc))
-        self.__commands.append(r'echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> {}'.format(siterc))
-        self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
-
-        # TODO: temporary (?) workarounds
-        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__commands.append('ln -sf {0} {1}'.format(
-                'libnuma.so',
-                posixpath.join(self.__basepath, 'lib', 'libnuma.so.1')))
-        if hpccm.config.g_cpu_arch != cpu_arch.AARCH64:
-            self.__commands.append('ln -sf {0} {1}'.format(
-                posixpath.join('..', 'lib', 'libomp', 'libomptarget.so'),
-                posixpath.join(self.__basepath, 'REDIST', 'libomptarget.so')))
+            # Create siterc to respect LIBRARY_PATH
+            # https://www.pgroup.com/support/faq.htm#lib_path_ldflags
+            self.__commands.append(r'echo "variable LIBRARY_PATH is environment(LIBRARY_PATH);" >> {}'.format(siterc))
+            self.__commands.append(r'echo "variable library_path is default(\$if(\$LIBRARY_PATH,\$foreach(ll,\$replace(\$LIBRARY_PATH,":",), -L\$ll)));" >> {}'.format(siterc))
+            self.__commands.append(r'echo "append LDLIBARGS=\$library_path;" >> {}'.format(siterc))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
             items=[posixpath.join(self.__wd, tarball),
                    posixpath.join(self.__wd, 'nv_hpc_sdk')]))
-
-        # libnuma.so and libnuma.so.1 must be symlinks to the system
-        # libnuma library.  They are originally symlinks, but Docker
-        # "COPY -from" copies the file pointed to by the symlink,
-        # converting them to files, so recreate the symlinks.
-        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__runtime_commands.append('ln -sf {0} {1}'.format(
-                posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
-                posixpath.join(self.__basepath, 'lib', 'libnuma.so')))
-            self.__runtime_commands.append('ln -sf {0} {1}'.format(
-                posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
-                posixpath.join(self.__basepath, 'lib', 'libnuma.so.1')))
 
         # Set the environment
         self.environment_variables = self.__environment()
