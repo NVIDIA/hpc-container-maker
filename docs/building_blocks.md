@@ -799,6 +799,8 @@ must be specified. The default is False.
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
 
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
@@ -909,6 +911,8 @@ must be specified. The default is False.
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
 
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
@@ -1015,6 +1019,8 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
