@@ -48,6 +48,10 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    environment: Boolean flag to specify whether the environment
+    should be modified to include HPC-X. This option is only
+    recognized if `hpcxinit` is False. The default is True.
+
     hpcxinit: Mellanox HPC-X provides an environment script
     (`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
     `True`, the bashrc is modified to automatically source this
