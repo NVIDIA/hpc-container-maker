@@ -119,6 +119,8 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     repository: The git repository of the package to build.  One of
     this paramter or the `url` parameter must be specified.
 
+    _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
     runtime_environment: Dictionary of environment variables and
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
@@ -174,6 +176,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.__postinstall = kwargs.get('postinstall', [])
         self.__preconfigure = kwargs.get('preconfigure', [])
         self.__recursive = kwargs.get('recursive', False)
+        self.__run_arguments = kwargs.get('_run_arguments', None)
         self.runtime_environment_variables = kwargs.get('runtime_environment', {})
         self.__toolchain = kwargs.get('toolchain', toolchain())
 
@@ -193,7 +196,8 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             self += comment(self.url, reformat=False)
         elif self.repository:
             self += comment(self.repository, reformat=False)
-        self += shell(commands=self.__commands)
+        self += shell(_arguments=self.__run_arguments,
+                      commands=self.__commands)
         self += environment(variables=self.environment_step())
 
     def __setup(self):
