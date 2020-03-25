@@ -5,6 +5,9 @@ include test/bad_recipe.py
 include test/docker.blob
 include test/global_vars_recipe.py
 include test/helpers.py
+include test/include1.py
+include test/include2.py
+include test/include3.py
 include test/singularity.blob
 graft docs
 graft recipes
