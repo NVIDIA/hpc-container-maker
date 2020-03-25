@@ -253,3 +253,19 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/openmpi-2.1.2.tar.bz2 /var/tmp/openmpi-2.1.2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
+
+    def test_include(self):
+        """recipe include"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, 'include3.py')
+        r = recipe(rf)
+        self.assertEqual(r.strip(),
+r'''FROM ubuntu:16.04
+
+# GNU compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        g++ \
+        gcc \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*''')

@@ -21,15 +21,16 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import posixpath
 
 import hpccm.config
-import posixpath
+import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.common import linux_distro
 from hpccm.primitives.shell import shell
 
-class apt_get(bb_base):
+class apt_get(bb_base, hpccm.templates.wget):
     """The `apt_get` building block specifies the set of operating system
     packages to install.  This building block should only be used on
     images that use the Debian package manager (e.g., Ubuntu).
@@ -85,8 +86,10 @@ class apt_get(bb_base):
         self.__download = kwargs.get('download', False)
         self.__download_directory = kwargs.get('download_directory',
                                                '/var/tmp/apt_get_download')
+        self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])
+        self.__opts = ['-y', '--no-install-recommends']
         self.ospackages = kwargs.get('ospackages', [])
         self.__ppas = kwargs.get('ppas', [])
         self.__repositories = kwargs.get('repositories', [])
@@ -108,6 +111,12 @@ class apt_get(bb_base):
     def __setup(self):
         """Construct the series of commands to execute"""
 
+        if self.__extra_opts:
+            self.__opts.extend(self.__extra_opts)
+
+        apt_get_download = 'DEBIAN_FRONTEND=noninteractive apt-get download {}'.format(' '.join(self.__opts))
+        apt_get_install = 'DEBIAN_FRONTEND=noninteractive apt-get install {}'.format(' '.join(self.__opts))
+
         if self.__keys:
             for key in self.__keys:
                 self.__commands.append(
@@ -116,14 +125,21 @@ class apt_get(bb_base):
         if self.__ppas:
             # Need to install apt-add-repository
             self.__commands.extend(['apt-get update -y',
-                                    'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common'])
+                                    apt_get_install + ' software-properties-common'])
             for ppa in self.__ppas:
                 self.__commands.append('apt-add-repository {} -y'.format(ppa))
 
         if self.__repositories:
             for repo in self.__repositories:
-                self.__commands.append(
-                    'echo "{}" >> /etc/apt/sources.list.d/hpccm.list'.format(repo))
+                if repo.startswith('http'):
+                    # Repository is a URL to a repository configuration file
+                    self.__commands.append(
+                        self.download_step(directory='/etc/apt/sources.list.d',
+                                           url=repo))
+                else:
+                    # Repository is a configuration string
+                    self.__commands.append(
+                        'echo "{}" >> /etc/apt/sources.list.d/hpccm.list'.format(repo))
 
         if self.ospackages:
             packages = []
@@ -139,10 +155,7 @@ class apt_get(bb_base):
                 # Ubuntu 18: Download is performed unsandboxed as root as file
                 self.__commands.append('mkdir -m 777 -p {0} && cd {0}'.format(
                     self.__download_directory))
-
-                download = 'DEBIAN_FRONTEND=noninteractive apt-get download -y \\\n'
-                download = download + ' \\\n'.join(packages)
-                self.__commands.append(download)
+                self.__commands.append(apt_get_download + ' \\\n' + ' \\\n'.join(packages))
 
                 if self.__extract:
                     # Extract the packages to a prefix - not a "real"
@@ -160,13 +173,11 @@ class apt_get(bb_base):
                         'rm -rf {}'.format(self.__download_directory))
             else:
                 if self.__aptitude:
-                    self.__commands.append('DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude')
+                    self.__commands.append(apt_get_install + ' aptitude')
                     install = 'aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost=\'100*canceled-actions,200*removals\' \\\n'
                     install = install + ' \\\n'.join(packages)
                     self.__commands.append(install)
                 else:
-                    install = 'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \\\n'
-                    install = install + ' \\\n'.join(packages)
-                    self.__commands.append(install)
+                    self.__commands.append(apt_get_install + ' \\\n' + ' \\\n'.join(packages))
 
             self.__commands.append('rm -rf /var/lib/apt/lists/*')

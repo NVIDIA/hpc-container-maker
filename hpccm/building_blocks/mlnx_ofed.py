@@ -91,29 +91,18 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         super(mlnx_ofed, self).__init__(**kwargs)
 
-        self.__arch_download = None # Filled in __cpu_arch()
-        self.__arch_pkg = None # Filled in by __cpu_arch()
-        self.__baseurl = kwargs.get('baseurl',
-                                    'http://content.mellanox.com/ofed')
-        self.__label = None  # Filled in by __setup()
+        self.__deppackages = [] # Filled in by __distro()
+        self.__key = 'https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox'
         self.__oslabel = kwargs.get('oslabel', '')
-        self.__ospackages = kwargs.get('ospackages', [])
+        self.__ospackages = kwargs.get('ospackages',
+                                       ['ca-certificates', 'gnupg', 'wget'])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', None)
         self.__symlink = kwargs.get('symlink', False)
         self.__version = kwargs.get('version', '4.7-3.2.9.0')
 
-        self.__commands = []
-        self.__wd = '/var/tmp'
-
-        # Set the CPU architecture specific parameters
-        self.__cpu_arch()
-
         # Set the Linux distribution specific parameters
         self.__distro()
-
-        # Construct the series of steps to execute
-        self.__setup()
 
         # Fill in container instructions
         self.__instructions()
@@ -122,47 +111,51 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         """Fill in container instructions"""
 
         self += comment('Mellanox OFED version {}'.format(self.__version))
-        self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
 
-    def __cpu_arch(self):
-        """Based on the CPU architecture, set values accordingly.  A user
-        specified value overrides any defaults."""
+        if self.__prefix:
+            self += packages(ospackages=self.__deppackages + self.__ospackages)
+        else:
+            self += packages(ospackages=self.__ospackages)
 
-        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            self.__arch_download = 'aarch64'
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_pkg = 'arm64'
-            else:
-                self.__arch_pkg = 'aarch64'
-        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_download = 'ppc64le'
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_pkg = 'ppc64el'
-            else:
-                self.__arch_pkg = 'ppc64le'
-        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__arch_download = 'x86_64'
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_pkg = 'amd64'
-            else:
-                self.__arch_pkg = 'x86_64'
-        else: # pragma: no cover
-            raise RuntimeError('Unknown CPU architecture')
+        self += packages(
+            apt_keys=[self.__key],
+            apt_repositories=['https://linux.mellanox.com/public/repo/mlnx_ofed/{0}/{1}/mellanox_mlnx_ofed.list'.format(self.__version, self.__oslabel)],
+            download=bool(self.__prefix),
+            extract=self.__prefix,
+            ospackages=self.__packages,
+            yum_keys=[self.__key],
+            yum_repositories=['https://linux.mellanox.com/public/repo/mlnx_ofed/{0}/{1}/mellanox_mlnx_ofed.repo'.format(self.__version, self.__oslabel)])
+
+        if self.__prefix:
+            commands = []
+            if self.__symlink:
+                commands.append('mkdir -p {0} && cd {0}'.format(
+                    posixpath.join(self.__prefix, 'lib')))
+                # Prune the symlink directory itself and any debug
+                # libraries
+                commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
+                commands.append('cd {0} && ln -s usr/bin bin && ln -s usr/include include'.format(
+                    self.__prefix))
+
+            # Suppress warnings from libibverbs
+            commands.append('mkdir -p /etc/libibverbs.d')
+
+            self += shell(commands=commands)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
            specified value overrides any defaults."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            self.__deppackages = ['libnl-3-200', 'libnl-route-3-200',
+                                 'libnuma1']
+
             if not self.__oslabel:
                 if hpccm.config.g_linux_version >= StrictVersion('18.0'):
                     self.__oslabel = 'ubuntu18.04'
                 else:
                     self.__oslabel = 'ubuntu16.04'
-            if not self.__ospackages:
-                self.__ospackages = ['findutils', 'libnl-3-200',
-                                     'libnl-route-3-200', 'libnuma1', 'wget']
+
             if not self.__packages:
                 self.__packages = ['libibverbs1', 'libibverbs-dev',
                                    'ibverbs-utils',
@@ -172,27 +165,21 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5-1', 'libmlx5-dev',
                                    'librdmacm-dev', 'librdmacm1']
 
-            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-{2}'.format(
-                self.__version, self.__oslabel, self.__arch_download)
-
-            self.__installer = 'dpkg --install'
-            self.__extractor_template = 'dpkg --extract {0} {1}'
-
-            self.__pkglist = '.*(' + '|'.join(sorted(self.__packages)) + ')_.*_{}.deb'.format(self.__arch_pkg)
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                self.__deppackages = ['libnl3', 'numactl-libs']
+            else:
+                self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
+
             if not self.__oslabel:
-                if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-                    self.__oslabel = 'rhel7.6alternate'
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    self.__oslabel = 'rhel8.0'
                 else:
-                    if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                        self.__oslabel = 'rhel8.0'
+                    if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+                        self.__oslabel = 'rhel7.6alternate'
                     else:
                         self.__oslabel = 'rhel7.2'
-            if not self.__ospackages:
-                self.__ospackages = ['findutils', 'libnl3', 'numactl-libs',
-                                     'wget']
-                if hpccm.config.g_linux_version < StrictVersion('8.0'):
-                    self.__ospackages.append('libnl')
+
             if not self.__packages:
                 self.__packages = ['libibverbs', 'libibverbs-devel',
                                    'libibverbs-utils',
@@ -202,63 +189,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
                                    'libmlx5', 'libmlx5-devel',
                                    'librdmacm-devel', 'librdmacm']
 
-            self.__label = 'MLNX_OFED_LINUX-{0}-{1}-{2}'.format(
-                self.__version, self.__oslabel, self.__arch_download)
-
-            self.__installer = 'rpm --install'
-            self.__extractor_template = 'sh -c "rpm2cpio {0} | cpio -idm"'
-
-            self.__pkglist = '.*(' + '|'.join(sorted(self.__packages)) + ')-[0-9].*{}.rpm'.format(self.__arch_pkg)
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        tarball = '{}.tgz'.format(self.__label)
-        url = '{0}/MLNX_OFED-{1}/{2}'.format(self.__baseurl, self.__version,
-                                             tarball)
-
-        # Download and unpackage
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        # Install packages
-        if self.__prefix:
-            # Extract to a directory
-            # Suppress warnings from libibverbs
-            self.__commands.append('mkdir -p /etc/libibverbs.d')
-            self.__commands.append('mkdir -p {0} && cd {0}'.format(
-                self.__prefix))
-            self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -not -path "*UPSTREAM*" -exec {2} \;'.format(
-                posixpath.join(self.__wd, self.__label),
-                self.__pkglist,
-                self.__extractor_template.format('{}', self.__prefix)))
-
-            # library symlinks
-            if self.__symlink:
-                self.__commands.append('mkdir -p {0} && cd {0}'.format(
-                    posixpath.join(self.__prefix, 'lib')))
-                # Prune the symlink directory itself and any debug
-                # libraries
-                self.__commands.append('find .. -path ../lib -prune -o -name "*valgrind*" -prune -o -name "lib*.so*" -exec ln -s {} \;')
-                self.__commands.append('cd {0} && ln -s usr/bin bin && ln -s usr/include include'.format(
-                    self.__prefix))
-        else:
-            # Install in the normal system locations
-
-            # MLNX OFED version 4.7 and later split the packages into
-            # several subdirectories.  Exclude the upstream packages.
-            self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -not -path "*UPSTREAM*" -exec {2} {{}} +'.format(
-                posixpath.join(self.__wd, self.__label),
-                self.__pkglist, self.__installer))
-
-        # Cleanup
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd, self.__label)]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -277,8 +209,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             instructions.append(comment('Mellanox OFED version {}'.format(
                 self.__version)))
 
-            if self.__ospackages:
-                instructions.append(packages(ospackages=self.__ospackages))
+            if self.__deppackages:
+                instructions.append(packages(ospackages=self.__deppackages))
 
             # Suppress warnings from libibverbs
             instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))

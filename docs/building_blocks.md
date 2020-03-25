@@ -732,6 +732,10 @@ use the default branch for the repository.
 - __build_directory__: The location to build the package.  The default
 value is the source code location.
 
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -741,6 +745,11 @@ use the latest commit on the default branch for the repository.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is an empty list.
+
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
@@ -756,8 +765,18 @@ configuring.  For instance, `enable_foo=True` maps to
 `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
 Underscores in the parameter name are converted to dashes.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -779,6 +798,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
@@ -852,14 +877,29 @@ use the default branch for the repository.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
+
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
 
 - __install__: List of shell commands to run in order to install the
 package.  The working directory is the source directory.  If
 `prefix` is defined, it will be automatically created if the list
 is non-empty.  The default is an empty list.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
@@ -870,6 +910,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __url__: The URL of the tarball package to build.  One of this
 parameter or the `repository` parameter must be specified.
@@ -917,6 +963,10 @@ use the default branch for the repository.
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
 
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -927,12 +977,27 @@ is an empty list.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -954,6 +1019,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
@@ -1252,6 +1323,10 @@ component.
 
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+should be modified to include HPC-X. This option is only
+recognized if `hpcxinit` is False. The default is True.
 
 - __hpcxinit__: Mellanox HPC-X provides an environment script
 (`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
@@ -1932,8 +2007,8 @@ __Parameters__
 
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include the
-LLVM compilers. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
+include the LLVM compilers. The default is True.
 
 - __extra_repository__: Boolean flag to specify whether to enable an
 extra package repository containing addition LLVM compiler
@@ -1941,6 +2016,9 @@ packages.  For Ubuntu, setting this flag to True enables the
 - __`ppa__:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
 distributions, setting this flag to True enables the Software
 Collections (SCL) repository.  The default is False.
+
+- __extra_tools__: Boolean flag to specify whether to also install
+`clang-format` and `clang-tidy`.  The default is False.
 
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
@@ -2238,10 +2316,9 @@ OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
 parameter for more information.
 
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
-versions to install.  The default values are `3.3-1.0.4.0`,
-`3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
-`4.7-3.2.9.0`.
+versions to install.  The default values are `3.4-2.0.0.0`,
+`4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
+`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and `4.7-3.2.9.0`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,

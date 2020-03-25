@@ -134,6 +134,7 @@ class packages(bb_base):
         self.__download = kwargs.get('download', False)
         self.__download_directory = kwargs.get('download_directory',
                                                '/var/tmp/packages_download')
+        self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__epel = kwargs.get('epel', False)
         self.__ospackages = kwargs.get('ospackages', [])
@@ -159,6 +160,7 @@ class packages(bb_base):
             self += apt_get(aptitude=self.__aptitude,
                             download=self.__download,
                             download_directory=self.__download_directory,
+                            extra_opts=self.__extra_opts,
                             extract=self.__extract,
                             keys=self.__apt_keys,
                             ospackages=ospackages,
@@ -172,6 +174,7 @@ class packages(bb_base):
 
             self += yum(download=self.__download,
                         download_directory=self.__download_directory,
+                        extra_opts=self.__extra_opts,
                         extract=self.__extract,
                         epel=self.__epel,
                         keys=self.__yum_keys,

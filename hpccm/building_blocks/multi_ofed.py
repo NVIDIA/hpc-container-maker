@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
@@ -53,10 +54,9 @@ class multi_ofed(bb_base):
     parameter for more information.
 
     mlnx_versions: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
-    versions to install.  The default values are `3.3-1.0.4.0`,
-    `3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-    `4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
-    `4.7-3.2.9.0`.
+    versions to install.  The default values are `3.4-2.0.0.0`,
+    `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
+    `4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and `4.7-3.2.9.0`.
 
     ospackages: List of OS packages to install prior to installing
     OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -89,11 +89,11 @@ class multi_ofed(bb_base):
         self.__mlnx_oslabel = kwargs.get('mlnx_oslabel', '')
         self.__mlnx_packages = kwargs.get('mlnx_packages', [])
         self.__mlnx_versions = kwargs.get('mlnx_versions',
-                                          ['3.3-1.0.4.0', '3.4-2.0.0.0',
-                                           '4.0-2.0.0.1', '4.1-1.0.2.0',
-                                           '4.2-1.2.0.0', '4.3-1.0.1.0',
-                                           '4.4-2.0.7.0', '4.5-1.0.1.0',
-                                           '4.6-1.0.1.1', '4.7-3.2.9.0'])
+                                          ['3.4-2.0.0.0', '4.0-2.0.0.1',
+                                           '4.1-1.0.2.0', '4.2-1.2.0.0',
+                                           '4.3-1.0.1.0', '4.4-1.0.0.0',
+                                           '4.5-1.0.1.0', '4.6-1.0.1.1',
+                                           '4.7-3.2.9.0'])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/ofed')
         self.__symlink = kwargs.get('symlink', False)
@@ -113,7 +113,10 @@ class multi_ofed(bb_base):
                                      'libnuma1']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['libnl', 'libnl3', 'numactl-libs']
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    self.__ospackages = ['libnl3', 'numactl-libs']
+                else:
+                    self.__ospackages = ['libnl', 'libnl3', 'numactl-libs']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 

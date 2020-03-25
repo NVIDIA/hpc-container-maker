@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, ubuntu, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -41,7 +41,8 @@ class Test_llvm(unittest.TestCase):
 r'''# LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang && \
+        clang \
+        libomp-dev && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -58,29 +59,52 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN yum install -y \
         clang && \
-    rm -rf /var/cache/yum/*''')
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_defaults_centos8(self):
+        """Default llvm building block"""
+        l = llvm(version='8')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        llvm-toolset-8.0.1 && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 
     @x86_64
     @ubuntu
     @docker
     def test_version_ubuntu(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, version='6.0')
+        l = llvm(extra_repository=True, extra_tools=True, version='6.0')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-6.0 && \
+        clang-6.0 \
+        clang-format-6.0 \
+        clang-tidy-6.0 \
+        libomp-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-6.0) 30''')
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-6.0) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-6.0) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-6.0) 30''')
 
     @x86_64
     @centos
     @docker
     def test_version_centos(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, version='7')
+        l = llvm(extra_repository=True, extra_tools=True, version='7')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN yum install -y \
@@ -89,9 +113,12 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN yum install -y centos-release-scl && \
     yum install -y \
-        llvm-toolset-7-clang && \
+        llvm-toolset-7-clang \
+        llvm-toolset-7-clang-tools-extra \
+        llvm-toolset-7-libomp-devel && \
     rm -rf /var/cache/yum/*
-ENV LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64:$LD_LIBRARY_PATH \
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/rh/llvm-toolset-7/root/usr/lib64:$LD_LIBRARY_PATH \
     PATH=/opt/rh/llvm-toolset-7/root/usr/bin:$PATH''')
 
     @aarch64
@@ -110,8 +137,69 @@ RUN yum install -y \
         clang && \
     rm -rf /var/cache/yum/*
 ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH \
-    CPATH=/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:$CPATH \
+    CPATH=/usr/include/c++/4.8.2:/usr/include/c++/4.8.2/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/4.8.2/include:$CPATH \
     LIBRARY_PATH=/usr/lib/gcc/aarch64-redhat-linux/4.8.2''')
+
+    @aarch64
+    @centos8
+    @docker
+    def test_aarch64_centos8(self):
+        """aarch64"""
+        l = llvm()
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang && \
+    rm -rf /var/cache/yum/*
+ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/8:$COMPILER_PATH \
+    CPATH=/usr/include/c++/8:/usr/include/c++/8/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/8/include:$CPATH \
+    LIBRARY_PATH=/usr/lib/gcc/aarch64-redhat-linux/8''')
+
+    @ppc64le
+    @centos
+    @docker
+    def test_ppc64le_centos(self):
+        """ppc64le"""
+        with self.assertRaises(RuntimeError):
+            llvm()
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_extra_tools_ubuntu(self):
+        """clang-format and clang-tidy"""
+        l = llvm(extra_tools=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang \
+        clang-format \
+        clang-tidy \
+        libomp-dev && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_extra_tools_centos8(self):
+        """Default llvm building block"""
+        l = llvm(extra_tools=True, version='8')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang-tools-extra-8.0.1 \
+        llvm-toolset-8.0.1 && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 
     @x86_64
     @ubuntu
@@ -124,7 +212,8 @@ ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/4.8.2:$COMPILER_PATH \
 r'''# LLVM compiler runtime
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libclang1 && \
+        libclang1 \
+        libomp5 && \
     rm -rf /var/lib/apt/lists/*''')
 
     def test_toolchain(self):
