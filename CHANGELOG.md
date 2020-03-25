@@ -1,3 +1,17 @@
+# v20.3.0
+
+- Adds Nsight Systems (`nsight_systems`) building block.
+- Updates the Mellanox OFED (`mlnx_ofed`) building block to use the
+  package repositories.
+- Fixes and enhancements to the LLVM (`llvm`) building block for OpenMP
+  and optionally install `clang-format` and `clang-tidy`.
+- Fixes and enhancements to the generic building blocks (`generic_autotools`,
+  `generic_build`, and `generic_cmake`) to add environment, ldconfig, and
+  Docker `RUN` argument options.
+- Adds the ability to include recipes in other recipes.
+- Adds `get_format` helper to query the output format in a recipe.
+- Updates the GROMACS example recipe.
+
 # v20.2.0
 
 - Refresh default component versions for the Arm Allinea Studio
