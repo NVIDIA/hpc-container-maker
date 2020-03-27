@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
 
 from hpccm.building_blocks.nsight_systems import nsight_systems
 
@@ -38,7 +38,7 @@ class Test_nsight_systems(unittest.TestCase):
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.1.1
+r'''# NVIDIA Nsight Systems 2020.2.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -50,7 +50,7 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
     echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2020.1.1 && \
+        nsight-systems-cli-2020.2.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -60,12 +60,12 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.1.1
+r'''# NVIDIA Nsight Systems 2020.2.1
 RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/7fa2af80.pub && \
     yum install -y dnf-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/x86_64 && \
     yum install -y \
-        nsight-systems-cli-2020.1.1 && \
+        nsight-systems-cli-2020.2.1 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -73,9 +73,9 @@ RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/
     @docker
     def test_version(self):
         """Version option"""
-        n = nsight_systems(version='2019.6.1')
+        n = nsight_systems(version='2020.1.1')
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2019.6.1
+r'''# NVIDIA Nsight Systems 2020.1.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -87,7 +87,7 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
     echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2019.6.1 && \
+        nsight-systems-cli-2020.1.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -147,4 +147,19 @@ RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/
     yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/ppc64 && \
     yum install -y \
         nsight-systems-cli-2020.1.1 && \
+    rm -rf /var/cache/yum/*''')
+
+    @aarch64
+    @centos
+    @docker
+    def test_aarch64_centos(self):
+        """Power"""
+        n = nsight_systems(version='2020.2.1')
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Systems 2020.2.1
+RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2af80.pub && \
+    yum install -y yum-utils && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/arm64 && \
+    yum install -y \
+        nsight-systems-cli-2020.2.1 && \
     rm -rf /var/cache/yum/*''')
