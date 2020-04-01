@@ -41,12 +41,12 @@ class nsight_systems(bb_base):
     package should be installed.  The default is True.
 
     version: The version of Nsight Systems to install.  The default
-    value is `2020.1.1`.
+    value is `2020.2.1`.
 
     # Examples
 
     ```python
-    nsight_systems(version='2020.1.1')
+    nsight_systems(version='2020.2.1')
     ```
 
     """
@@ -61,7 +61,7 @@ class nsight_systems(bb_base):
         self.__cli = kwargs.get('cli', True)
         self.__distro_label = ''     # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__version = kwargs.get('version', '2020.1.1')
+        self.__version = kwargs.get('version', '2020.2.1')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -96,7 +96,10 @@ class nsight_systems(bb_base):
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_repo_label = 'arm64'
+            self.__arch_key_label = 'x86_64' # https://developer.nvidia.com/cuda-toolkit/arm
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_repo_label = 'ppc64'
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
                 self.__arch_key_label = 'ppc64el'
