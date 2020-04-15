@@ -50,7 +50,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
@@ -71,7 +71,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
@@ -93,7 +93,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-mpi --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
@@ -116,7 +116,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/fftw/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8''')
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz''')
 
     @aarch64
     @ubuntu
@@ -137,7 +137,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @ppc64le
@@ -159,7 +159,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
@@ -172,25 +172,4 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
         self.assertEqual(r,
 r'''# FFTW
 COPY --from=0 /usr/local/fftw /usr/local/fftw
-ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
-
-    @x86_64
-    @ubuntu
-    @docker
-    def test_directory(self):
-        """Directory in local build context"""
-        f = fftw(directory='fftw-3.3.7')
-        self.assertEqual(str(f),
-r'''# FFTW
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        file \
-        make \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-COPY fftw-3.3.7 /var/tmp/fftw-3.3.7
-RUN cd /var/tmp/fftw-3.3.7 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
-    make -j$(nproc) && \
-    make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.7
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')

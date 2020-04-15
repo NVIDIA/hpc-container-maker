@@ -26,25 +26,16 @@ import posixpath
 from copy import copy as _copy
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
-class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-             hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-             hpccm.templates.wget):
+class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `netcdf` building block downloads, configures, builds, and
     installs the
     [NetCDF](https://www.unidata.ucar.edu/software/netcdf/) component.
@@ -74,14 +65,11 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     Underscores in the parameter name are converted to dashes.
 
     environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    NetCDF. The default is True.
+    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
+    modified to include NetCDF. The default is True.
 
     fortran: Boolean flag to specify whether the NetCDF Fortran
     library should be installed.  The default is True.
-
-    hdf5_dir: Path to the location where HDF5 is installed in the
-    container image.  The default value is `/usr/local/hdf5`.
 
     ldconfig: Boolean flag to specify whether the NetCDF library
     directory should be added dynamic linker cache.  If False, then
@@ -140,61 +128,79 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(netcdf, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts', [])
-
-        self.__c_baseurl = 'https://github.com/Unidata/netcdf-c/archive'
-        self.__cxx_baseurl = 'https://github.com/Unidata/netcdf-cxx4/archive'
-        self.__fortran_baseurl = 'https://github.com/Unidata/netcdf-fortran/archive'
-        self.__check = kwargs.get('check', False)
-        self.__cxx = kwargs.get('cxx', True)
-        self.__fortran = kwargs.get('fortran', True)
-        self.__hdf5_dir = kwargs.get('hdf5_dir', '/usr/local/hdf5')
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.prefix = kwargs.get('prefix', '/usr/local/netcdf')
+        self.__baseurl_c = 'https://github.com/Unidata/netcdf-c/archive'
+        self.__baseurl_cxx = 'https://github.com/Unidata/netcdf-cxx4/archive'
+        self.__baseurl_fortran = 'https://github.com/Unidata/netcdf-fortran/archive'
+        self.__check = kwargs.pop('check', False)
+        self.__cxx = kwargs.pop('cxx', True)
+        self.__fortran = kwargs.pop('fortran', True)
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/netcdf')
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '4.7.3')
-        self.__version_cxx = kwargs.get('version_cxx', '4.3.1')
-        self.__version_fortran = kwargs.get('version_fortran', '4.5.2')
-        self.__wd = '/var/tmp'
-
-        self.__commands = [] # Filled in by __setup()
+        self.__version = kwargs.pop('version', '4.7.3')
+        self.__version_cxx = kwargs.pop('version_cxx', '4.3.1')
+        self.__version_fortran = kwargs.pop('version_fortran', '4.5.2')
 
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # C interface (required)
-        self.__setup()
+        # Set the download specific parameters
+        self.__download()
 
-        # C++ interface (optional)
-        if self.__cxx:
-            self.__setup_optional(pkg='netcdf-cxx4',
-                                  version=self.__version_cxx)
+        # Setup the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib'))
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Fotran interface (optional)
-        if self.__fortran:
-            self.__setup_optional(pkg='netcdf-fortran',
-                                  version=self.__version_fortran)
-
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
+        # Setup build configuration
         comments = ['NetCDF version {}'.format(self.__version)]
+        self.__bb = [generic_autotools(
+            check=self.__check,
+            comment=False,
+            devel_environment=self.environment_variables,
+            directory=self.__directory_c,
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url=self.__url_c,
+            **kwargs)]
+
+        # Setup optional CXX build configuration
         if self.__cxx:
             comments.append('NetCDF C++ version {}'.format(self.__version_cxx))
+            self.__bb.append(generic_autotools(
+                check=self.__check,
+                comment=False,
+                directory='netcdf-cxx4-{}'.format(self.__version_cxx),
+                # Checks fail when using parallel make.  Disable it.
+                parallel=1 if self.__check else '$(nproc)',
+                prefix=self.__prefix,
+                url='{0}/v{1}.tar.gz'.format(self.__baseurl_cxx,
+                                             self.__version_cxx),
+                **kwargs))
+
+        # Setup optional Fortran build configuration
         if self.__fortran:
             comments.append('NetCDF Fortran version {}'.format(self.__version_fortran))
+            self.__bb.append(generic_autotools(
+                check=self.__check,
+                comment=False,
+                directory='netcdf-fortran-{}'.format(self.__version_fortran),
+                # Checks fail when using parallel make.  Disable it.
+                parallel=1 if self.__check else '$(nproc)',
+                prefix=self.__prefix,
+                url='{0}/v{1}.tar.gz'.format(self.__baseurl_fortran,
+                                             self.__version_fortran),
+                **kwargs))
+
+        # Container instructions
         self += comment(', '.join(comments))
-
-        if self.__ospackages:
-            self += packages(ospackages=self.__ospackages)
-
-        self += shell(commands=self.__commands)
-
-        self += environment(variables=self.environment_step())
+        self += packages(ospackages=self.__ospackages)
+        self += [bb for bb in self.__bb]
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -217,19 +223,8 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        # Create a copy of the toolchain so that it can be modified
-        # without impacting the original.
-        toolchain = _copy(self.__toolchain)
-
-        # Need to tell it where to find HDF5
-        if not toolchain.CPPFLAGS:
-            toolchain.CPPFLAGS = '-I{}/include'.format(self.__hdf5_dir)
-        if not toolchain.LDFLAGS:
-            toolchain.LDFLAGS = '-L{}/lib'.format(self.__hdf5_dir)
+    def __download(self):
+        """Set download source based on user parameters"""
 
         # Version 4.3.1 changed the package name
         if LooseVersion(self.__version) >= LooseVersion('4.3.1'):
@@ -239,92 +234,8 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             pkgname = 'netcdf'
             tarball = '{0}-{1}.tar.gz'.format(pkgname, self.__version)
 
-        url = '{0}/{1}'.format(self.__c_baseurl, tarball)
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd,
-                                     '{0}-{1}'.format(pkgname, self.__version)),
-            toolchain=toolchain))
-
-        self.__commands.append(self.build_step())
-
-        # Check the build
-        if self.__check:
-            self.__commands.append(self.check_step())
-
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  '{0}-{1}'.format(pkgname, self.__version))]))
-
-        # Set the environment
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
-
-    def __setup_optional(self, pkg='', version=''):
-        # Create a copy of the toolchain so that it can be modified
-        # without impacting the original.
-        toolchain = _copy(self.__toolchain)
-
-        # Need to tell it where to find NetCDF and HDF5
-        if not toolchain.CPPFLAGS:
-            toolchain.CPPFLAGS = '-I{0}/include -I{1}/include'.format(self.prefix, self.__hdf5_dir)
-        if not toolchain.LDFLAGS:
-            toolchain.LDFLAGS = '-L{}/lib'.format(self.prefix)
-        if not toolchain.LD_LIBRARY_PATH:
-            toolchain.LD_LIBRARY_PATH = '{}/lib:$LD_LIBRARY_PATH'.format(self.prefix)
-
-        if pkg == 'netcdf-cxx4':
-            baseurl = self.__cxx_baseurl
-        elif pkg == 'netcdf-fortran':
-            baseurl = self.__fortran_baseurl
-        else:
-            raise RuntimeError('unrecognized package name: "{}"'.format(pkg))
-
-        tarball = 'v{0}.tar.gz'.format(version)
-        url = '{0}/{1}'.format(baseurl, tarball)
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd,
-                                     '{0}-{1}'.format(pkg, version)),
-            toolchain=toolchain))
-
-        self.__commands.append(self.build_step())
-
-        # Check the build
-        if self.__check:
-            # Checks fail when using parallel make.  Disable it
-            # temporarily.
-            _parallel = self.parallel
-            self.parallel = 1
-            self.__commands.append(self.check_step())
-            self.parallel = _parallel
-
-        self.__commands.append(self.install_step())
-
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  '{0}-{1}'.format(pkg, version))]))
+        self.__directory_c = '{0}-{1}'.format(pkgname, self.__version)
+        self.__url_c = '{0}/{1}'.format(self.__baseurl_c, tarball)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -341,11 +252,5 @@ class netcdf(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         instructions = []
         instructions.append(comment('NetCDF'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb[0].runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

@@ -48,10 +48,11 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://parallel-netcdf.github.io/Release/pnetcdf-1.12.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/pnetcdf-1.12.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/pnetcdf-1.12.1 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
-    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' /var/tmp/pnetcdf-1.12.1/libtool && \
+    cd /var/tmp/pnetcdf-1.12.1 && \
+    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' libtool && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/pnetcdf-1.12.1.tar.gz /var/tmp/pnetcdf-1.12.1
+    rm -rf /var/tmp/pnetcdf-1.12.1 /var/tmp/pnetcdf-1.12.1.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/pnetcdf/bin:$PATH''')
 
@@ -72,11 +73,12 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://parallel-netcdf.github.io/Release/parallel-netcdf-1.10.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/parallel-netcdf-1.10.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/parallel-netcdf-1.10.0 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
-    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' /var/tmp/parallel-netcdf-1.10.0/libtool && \
+    cd /var/tmp/parallel-netcdf-1.10.0 && \
+    sed -i -e 's#pic_flag=""#pic_flag=" -fpic -DPIC"#' -e 's#wl=""#wl="-Wl,"#' libtool && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/pnetcdf/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/parallel-netcdf-1.10.0.tar.gz /var/tmp/parallel-netcdf-1.10.0
+    rm -rf /var/tmp/parallel-netcdf-1.10.0 /var/tmp/parallel-netcdf-1.10.0.tar.gz
 ENV PATH=/usr/local/pnetcdf/bin:$PATH''')
 
     @ubuntu

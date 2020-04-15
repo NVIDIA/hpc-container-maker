@@ -52,7 +52,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.7.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.7.0.tar.gz /var/tmp/ucx-1.7.0
+    rm -rf /var/tmp/ucx-1.7.0 /var/tmp/ucx-1.7.0.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -76,7 +76,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.7.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.7.0.tar.gz /var/tmp/ucx-1.7.0
+    rm -rf /var/tmp/ucx-1.7.0 /var/tmp/ucx-1.7.0.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -102,7 +102,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.7.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/cuda --with-gdrcopy=/gdrcopy --with-knem=/knem --with-rdmacm=/ofed --with-verbs=/ofed --with-xpmem=/xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.7.0.tar.gz /var/tmp/ucx-1.7.0
+    rm -rf /var/tmp/ucx-1.7.0 /var/tmp/ucx-1.7.0.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -127,7 +127,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.7.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda --with-gdrcopy --with-knem --with-rdmacm --with-verbs --with-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.7.0.tar.gz /var/tmp/ucx-1.7.0
+    rm -rf /var/tmp/ucx-1.7.0 /var/tmp/ucx-1.7.0.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -152,7 +152,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.7.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --without-cuda --without-gdrcopy --without-knem --without-rdmacm --without-verbs --without-xpmem && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.7.0.tar.gz /var/tmp/ucx-1.7.0
+    rm -rf /var/tmp/ucx-1.7.0 /var/tmp/ucx-1.7.0.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -178,7 +178,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/ucx/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0
+    rm -rf /var/tmp/ucx-1.4.0 /var/tmp/ucx-1.4.0.tar.gz
 ENV PATH=/usr/local/ucx/bin:$PATH''')
 
     @x86_64
@@ -202,7 +202,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.4.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.4.0.tar.gz /var/tmp/ucx-1.4.0''')
+    rm -rf /var/tmp/ucx-1.4.0 /var/tmp/ucx-1.4.0.tar.gz''')
 
     @ppc64le
     @centos
@@ -224,7 +224,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/ucx-1.5.2 &&  CFLAGS=-Wno-error=format ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-knem=/usr/local/knem --without-cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.5.2.tar.gz /var/tmp/ucx-1.5.2
+    rm -rf /var/tmp/ucx-1.5.2 /var/tmp/ucx-1.5.2.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/ucx/bin:$PATH''')
 
@@ -249,7 +249,8 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/openucx/ucx.git ucx && cd - && \
-    cd /var/tmp/ucx && ./autogen.sh && \
+    cd /var/tmp/ucx && \
+    ./autogen.sh && \
     cd /var/tmp/ucx &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
@@ -279,7 +280,8 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v1.8.x https://github.com/openucx-fork/ucx.git ucx && cd - && \
-    cd /var/tmp/ucx && ./autogen.sh && \
+    cd /var/tmp/ucx && \
+    ./autogen.sh && \
     cd /var/tmp/ucx &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \

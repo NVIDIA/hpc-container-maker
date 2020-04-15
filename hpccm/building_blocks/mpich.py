@@ -23,27 +23,20 @@ from __future__ import print_function
 
 import posixpath
 import re
+from copy import copy as _copy
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-            hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-            hpccm.templates.wget):
+class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `mpich` building block configures, builds, and installs the
     [MPICH](https://www.mpich.org) component.
 
@@ -122,43 +115,68 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(mpich, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl',
+        self.__baseurl = kwargs.pop('baseurl',
                                     'https://www.mpich.org/static/downloads')
-        self.__check = kwargs.get('check', False)
-        self.configure_opts = kwargs.get('configure_opts', [])
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.prefix = kwargs.get('prefix', '/usr/local/mpich')
+        self.__check = kwargs.pop('check', False)
+        self.__configure_opts = kwargs.pop('configure_opts', [])
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/mpich')
         self.__runtime_ospackages = [] # Filled in by __distro()
         # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        # MPICH does not accept F90
-        self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
-                                  'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '3.3.2')
-
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        self.__version = kwargs.pop('version', '3.3.2')
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Set the configuration options
+        self.__configure()
+
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Set the environment variables
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Fill in container instructions
-        self.__instructions()
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            check=self.__check,
+            comment=False,
+            configure_opts=self.__configure_opts,
+            devel_environment=self.environment_variables,
+            # Run test suite (must be after install)
+            postinstall=['cd /var/tmp/mpich-{}'.format(self.__version),
+                         'RUNTESTS_SHOWPROGRESS=1 make testing'] if self.__check else None,
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            toolchain=self.__toolchain,
+            url='{0}/{1}/mpich-{1}.tar.gz'.format(self.__baseurl,
+                                                  self.__version),
+            **kwargs)
 
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        self += comment('MPICH version {}'.format(self.version))
+        # Container instructions
+        self += comment('MPICH version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
+
+    def __configure(self):
+        """Setup configure options based on user parameters"""
+
+        # Create a copy of hte toolchain so that it can be modified
+        # without impacting the original
+        self.__toolchain = _copy(self.__toolchain)
+
+        # MPICH does not accept F90
+        self.__toolchain.F90 = ''
+
+        # Workaround issue with the PGI compiler
+        # https://lists.mpich.org/pipermail/discuss/2017-July/005235.html
+        if self.__toolchain.CC and re.match('.*pgcc', self.__toolchain.CC):
+            self.__configure_opts.append('--disable-fast')
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -177,63 +195,6 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        build_environment = []
-
-        tarball = 'mpich-{}.tar.gz'.format(self.version)
-        url = '{0}/{1}/{2}'.format(self.__baseurl, self.version, tarball)
-
-        # Workaround issue with the PGI compiler
-        # https://lists.mpich.org/pipermail/discuss/2017-July/005235.html
-        if self.__toolchain.CC and re.match('.*pgcc', self.__toolchain.CC):
-            self.configure_opts.append('--disable-fast')
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        # Configure
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd,
-                                     'mpich-{}'.format(self.version)),
-            environment=build_environment,
-            toolchain=self.__toolchain))
-
-        # Build
-        self.__commands.append(self.build_step())
-
-        # Check
-        if self.__check:
-            self.__commands.append(self.check_step())
-
-        # Install
-        self.__commands.append(self.install_step())
-
-        # Run test suite (must be after install)
-        if self.__check:
-            self.__commands.append('RUNTESTS_SHOWPROGRESS=1 make testing')
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  'mpich-{}'.format(self.version))]))
-
-        # Set the environment
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
-
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -248,11 +209,5 @@ class mpich(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         instructions = []
         instructions.append(comment('MPICH'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

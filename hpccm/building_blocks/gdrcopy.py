@@ -25,19 +25,13 @@ import posixpath
 
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 
-class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
-              hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `gdrcopy` building block builds and installs the user space
     library from the [gdrcopy](https://github.com/NVIDIA/gdrcopy)
     component.
@@ -75,64 +69,39 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(gdrcopy, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
-        self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])
-        self.__prefix = kwargs.get('prefix', '/usr/local/gdrcopy')
-        self.__version = kwargs.get('version', '2.0')
+        # Parameters
+        self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
+        self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/gdrcopy')
+        self.__version = kwargs.pop('version', '2.0')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
-
-        # Construct the series of steps to execute
-        self.__setup()
-
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        self += comment('GDRCOPY version {}'.format(self.__version))
-        self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        tarball = 'v{}.tar.gz'.format(self.__version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-        self.__commands.append('cd {}'.format(
-            posixpath.join(self.__wd, 'gdrcopy-{}'.format(self.__version))))
-
-        # Work around "install -D" issue on CentOS
-        self.__commands.append('mkdir -p {0}/include {0}/lib64'.format(self.__prefix))
-
-        self.__commands.append('make PREFIX={} lib lib_install'.format(self.__prefix))
-
-        # Set library path
-        libpath = posixpath.join(self.__prefix, 'lib64')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup tarball and directory
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  'gdrcopy-{}'.format(self.__version))]))
-
-        # Set the environment
+        # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
             posixpath.join(self.__prefix, 'include'))
-        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib64'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib64'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
+                posixpath.join(self.__prefix, 'lib64'))
+
+        # Setup build configuration
+        self.__bb = generic_build(
+            # Work around "install -D" issue on CentOS
+            build=['mkdir -p {0}/include {0}/lib64'.format(self.__prefix),
+                   'make PREFIX={} lib lib_install'.format(self.__prefix)],
+            comment=False,
+            devel_environment=self.environment_variables,
+            directory='gdrcopy-{}'.format(self.__version),
+            libdir='lib64',
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version),
+            **kwargs)
+
+        # Container instructions
+        self += comment('GDRCOPY version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += self.__bb
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -146,13 +115,8 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         Stage1 += g.runtime()
         ```
         """
+
         instructions = []
         instructions.append(comment('GDRCOPY'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.__prefix, 'lib64'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

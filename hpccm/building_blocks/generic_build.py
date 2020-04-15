@@ -114,6 +114,7 @@ class generic_build(bb_base, hpccm.templates.downloader,
         super(generic_build, self).__init__(**kwargs)
 
         self.__build = kwargs.get('build', [])
+        self.__comment = kwargs.get('comment', True)
         self.__directory = kwargs.get('directory', None)
         self.environment_variables = kwargs.get('devel_environment', {})
         self.__install = kwargs.get('install', [])
@@ -135,10 +136,11 @@ class generic_build(bb_base, hpccm.templates.downloader,
     def __instructions(self):
         """Fill in container instructions"""
 
-        if self.url:
-            self += comment(self.url, reformat=False)
-        elif self.repository:
-            self += comment(self.repository, reformat=False)
+        if self.__comment:
+            if self.url:
+                self += comment(self.url, reformat=False)
+            elif self.repository:
+                self += comment(self.repository, reformat=False)
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -197,10 +199,11 @@ class generic_build(bb_base, hpccm.templates.downloader,
         """
         if self.__prefix:
             instructions = []
-            if self.url:
-                instructions.append(comment(self.url, reformat=False))
-            elif self.repository:
-                instructions.append(comment(self.repository, reformat=False))
+            if self.__comment:
+                if self.url:
+                    instructions.append(comment(self.url, reformat=False))
+                elif self.repository:
+                    instructions.append(comment(self.repository, reformat=False))
             instructions.append(copy(_from=_from, src=self.__prefix,
                                      dest=self.__prefix))
             if self.ldconfig:

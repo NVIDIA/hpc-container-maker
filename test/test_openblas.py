@@ -50,9 +50,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.7.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.7.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.7 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
+    cd /var/tmp/OpenBLAS-0.3.7 && \
+    make CC=gcc FC=gfortran USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS-0.3.7 && \
     make install PREFIX=/usr/local/openblas && \
-    rm -rf /var/tmp/v0.3.7.tar.gz /var/tmp/OpenBLAS-0.3.7
+    rm -rf /var/tmp/OpenBLAS-0.3.7 /var/tmp/v0.3.7.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @x86_64
@@ -73,10 +76,13 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.3 && make CC=gcc FC=gfortran USE_OPENMP=1 && \
+    cd /var/tmp/OpenBLAS-0.3.3 && \
+    make CC=gcc FC=gfortran USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS-0.3.3 && \
     make install PREFIX=/usr/local/openblas && \
     echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/v0.3.3.tar.gz /var/tmp/OpenBLAS-0.3.3''')
+    rm -rf /var/tmp/OpenBLAS-0.3.3 /var/tmp/v0.3.3.tar.gz''')
 
     @aarch64
     @ubuntu
@@ -95,9 +101,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.6 && make  TARGET=ARMV8 USE_OPENMP=1 && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
+    make TARGET=ARMV8 USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
     make install PREFIX=/usr/local/openblas && \
-    rm -rf /var/tmp/v0.3.6.tar.gz /var/tmp/OpenBLAS-0.3.6
+    rm -rf /var/tmp/OpenBLAS-0.3.6 /var/tmp/v0.3.6.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @ppc64le
@@ -117,9 +126,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/OpenBLAS-0.3.6 && make  TARGET=POWER8 USE_OPENMP=1 && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
+    make TARGET=POWER8 USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
     make install PREFIX=/usr/local/openblas && \
-    rm -rf /var/tmp/v0.3.6.tar.gz /var/tmp/OpenBLAS-0.3.6
+    rm -rf /var/tmp/OpenBLAS-0.3.6 /var/tmp/v0.3.6.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/openblas/lib:$LD_LIBRARY_PATH''')
 
     @x86_64

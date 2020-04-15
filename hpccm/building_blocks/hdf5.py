@@ -25,25 +25,16 @@ import posixpath
 import re
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
-class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-           hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-           hpccm.templates.wget):
+class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `hdf5` building block downloads, configures, builds, and
     installs the [HDF5](http://www.hdfgroup.org) component.  Depending
     on the parameters, the source will be downloaded from the web
@@ -74,8 +65,8 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     Underscores in the parameter name are converted to dashes.
 
     environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-    include HDF5. The default is True.
+    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
+    should be modified to include HDF5. The default is True.
 
     ldconfig: Boolean flag to specify whether the HDF5 library
     directory should be added dynamic linker cache.  If False, then
@@ -128,6 +119,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
                                      '--enable-profiling=yes'])
     ```
+
     """
 
     def __init__(self, **kwargs):
@@ -135,47 +127,48 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(hdf5, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts',
-                                         ['--enable-cxx', '--enable-fortran'])
-        self.prefix = kwargs.get('prefix', '/usr/local/hdf5')
-
-        self.__baseurl = kwargs.get('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
-        self.__check = kwargs.get('check', False)
-        self.__directory = kwargs.get('directory', '')
-        self.__ospackages = kwargs.get('ospackages', [])
+        self.__baseurl = kwargs.pop('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
+        self.__check = kwargs.pop('check', False)
+        self.__configure_opts = kwargs.pop('configure_opts',
+                                           ['--enable-cxx',
+                                            '--enable-fortran'])
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/hdf5')
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.10.6')
-
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__version = kwargs.pop('version', '1.10.6')
 
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Set the download specific parameters
+        self.__download()
 
-        # Fill in container instructions
-        self.__instructions()
+        # Set the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['HDF5_DIR'] = self.__prefix
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib'))
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-    def __instructions(self):
-        """Fill in container instructions"""
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            check=self.__check,
+            configure_opts=self.__configure_opts,
+            comment=False,
+            devel_environment=self.environment_variables,
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url=self.__url,
+            **kwargs)
 
-        if self.__directory:
-            self += comment('HDF5')
-        else:
-            self += comment('HDF5 version {}'.format(self.__version))
-
+        # Container instructions
+        self += comment('HDF5 version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-
-        if self.__directory:
-            # Use source from local build context
-            self += copy(src=self.__directory,
-                         dest=posixpath.join(self.__wd, self.__directory))
-
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -196,7 +189,7 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __setup(self):
+    def __download(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
@@ -207,57 +200,8 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         major_minor = '{0}.{1}'.format(match.groupdict()['major'],
                                        match.groupdict()['minor'])
         tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
-        url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(self.__baseurl,
-                                                     major_minor,
-                                                     self.__version, tarball)
-
-        if self.__directory:
-            # Use source from local build context
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd, self.__directory),
-                toolchain=self.__toolchain))
-        else:
-            # Download source from web
-            self.__commands.append(self.download_step(url=url,
-                                                      directory=self.__wd))
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd,
-                                         'hdf5-{}'.format(self.__version)),
-                toolchain=self.__toolchain))
-
-        self.__commands.append(self.build_step())
-
-        # Check the build
-        if self.__check:
-            self.__commands.append(self.check_step())
-
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        if self.__directory:
-            # Using source from local build context, cleanup directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, self.__directory)]))
-        else:
-            # Using downloaded source, cleanup tarball and directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, tarball),
-                       posixpath.join(self.__wd,
-                                      'hdf5-{}'.format(self.__version))]))
-
-        # Set the environment
-        self.environment_variables['HDF5_DIR'] = self.prefix
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
+        self.__url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(
+            self.__baseurl, major_minor, self.__version, tarball)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -274,11 +218,5 @@ class hdf5(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         instructions = []
         instructions.append(comment('HDF5'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

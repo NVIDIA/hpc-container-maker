@@ -167,12 +167,14 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.__build_directory = kwargs.get('build_directory', None)
         self.__build_environment = kwargs.get('build_environment', {})
         self.__check = kwargs.get('check', False)
+        self.__comment = kwargs.get('comment', True)
         self.configure_opts = kwargs.get('configure_opts', [])
         self.__directory = kwargs.get('directory', None)
         self.environment_variables = kwargs.get('devel_environment', {})
         self.__install = kwargs.get('install', True)
         self.__libdir = kwargs.get('libdir', 'lib')
         self.__make = kwargs.get('make', True)
+        self.__postconfigure = kwargs.get('postconfigure', [])
         self.__postinstall = kwargs.get('postinstall', [])
         self.__preconfigure = kwargs.get('preconfigure', [])
         self.__recursive = kwargs.get('recursive', False)
@@ -192,10 +194,11 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     def __instructions(self):
         """Fill in container instructions"""
 
-        if self.url:
-            self += comment(self.url, reformat=False)
-        elif self.repository:
-            self += comment(self.repository, reformat=False)
+        if self.__comment:
+            if self.url:
+                self += comment(self.url, reformat=False)
+            elif self.repository:
+                self += comment(self.repository, reformat=False)
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -232,6 +235,13 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             build_directory=self.__build_directory,
             directory=self.src_directory, environment=build_environment,
             toolchain=self.__toolchain))
+
+        # Post configure setup
+        if self.__postconfigure:
+            # Assume the postconfigure commands should be run from the
+            # source directory
+            self.__commands.append('cd {}'.format(self.src_directory))
+            self.__commands.extend(self.__postconfigure)
 
         # Build
         if self.__make:
@@ -280,10 +290,12 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         """
         if self.prefix:
             instructions = []
-            if self.url:
-                instructions.append(comment(self.url, reformat=False))
-            elif self.repository:
-                instructions.append(comment(self.repository, reformat=False))
+            if self.__comment:
+                if self.url:
+                    instructions.append(comment(self.url, reformat=False))
+                elif self.repository:
+                    instructions.append(comment(self.repository,
+                                                reformat=False))
             instructions.append(copy(_from=_from, src=self.prefix,
                                      dest=self.prefix))
             if self.ldconfig:

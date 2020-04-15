@@ -23,25 +23,15 @@ from __future__ import print_function
 
 import posixpath
 
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
-class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
-                 hpccm.templates.envvars,
-                 hpccm.templates.ldconfig, hpccm.templates.rm,
-                 hpccm.templates.tar, hpccm.templates.wget):
+class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `slurm_pmi2` building block configures, builds, and installs
     the PMI2 component from SLURM.
 
@@ -109,69 +99,36 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
 
         super(slurm_pmi2, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl', 'https://download.schedmd.com/slurm')
-        self.configure_opts = kwargs.get('configure_opts', [])
-        self.environment = kwargs.get('environment', False)
-        self.__ospackages = kwargs.get('ospackages', ['bzip2', 'file', 'make',
+        self.__baseurl = kwargs.pop('baseurl', 'https://download.schedmd.com/slurm')
+        self.__environment = kwargs.pop('environment', False)
+        self.__ospackages = kwargs.pop('ospackages', ['bzip2', 'file', 'make',
                                                       'perl', 'tar', 'wget'])
-        self.prefix = kwargs.get('prefix', '/usr/local/slurm-pmi2')
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '19.05.5')
+        self.__prefix = kwargs.pop('prefix', '/usr/local/slurm-pmi2')
+        self.__version = kwargs.pop('version', '19.05.5')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Setup the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include', 'slurm'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            comment=False,
+            devel_environment=self.environment_variables,
+            environment=self.__environment,
+            install=False,
+            make=False,
+            postconfigure=['make -C contribs/pmi2 install'],
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url='{0}/slurm-{1}.tar.bz2'.format(self.__baseurl, self.__version),
+            **kwargs)
 
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
+        # Container instructions
         self += comment('SLURM PMI2 version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        tarball = 'slurm-{}.tar.bz2'.format(self.__version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        # Configure, but do not build SLURM itself
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd, 'slurm-{}'.format(
-                self.__version)),
-            toolchain=self.__toolchain))
-
-        # Build and install PMI2
-        self.__commands.append('make -C contribs/pmi2 install')
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Set the environment
-        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
-            posixpath.join(self.prefix, 'include', 'slurm'))
-
-        # Cleanup tarball and directory
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  'slurm-{}'.format(self.__version))]))
+        self += self.__bb
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -187,11 +144,5 @@ class slurm_pmi2(bb_base, hpccm.templates.ConfigureMake,
         """
         instructions = []
         instructions.append(comment('SLURM PMI2'))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
-        return '\n'.join(str(x) for x in instructions)
+        instructions.append(self.__bb.runtime(_from=_from))
+        return '\n'.join(str(x) for x in instructions).rstrip()

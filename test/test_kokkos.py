@@ -49,11 +49,16 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-2.9.00/build && cd /var/tmp/kokkos-2.9.00/build && \
-    /var/tmp/kokkos-2.9.00/generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    mkdir build && \
+    cd build && \
+    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
     make kokkoslib -j$(nproc) && \
+    mkdir -p /usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    cd build && \
     make install -j$(nproc) && \
-    rm -rf /var/tmp/2.9.00.tar.gz /var/tmp/kokkos-2.9.00
+    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos
@@ -74,11 +79,16 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-2.9.00/build && cd /var/tmp/kokkos-2.9.00/build && \
-    /var/tmp/kokkos-2.9.00/generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    mkdir build && \
+    cd build && \
+    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
     make kokkoslib -j$(nproc) && \
+    mkdir -p /usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    cd build && \
     make install -j$(nproc) && \
-    rm -rf /var/tmp/2.9.00.tar.gz /var/tmp/kokkos-2.9.00
+    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos8
@@ -101,11 +111,16 @@ RUN yum install -y dnf-utils && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-2.9.00/build && cd /var/tmp/kokkos-2.9.00/build && \
-    /var/tmp/kokkos-2.9.00/generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    mkdir build && \
+    cd build && \
+    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
     make kokkoslib -j$(nproc) && \
+    mkdir -p /usr/local/kokkos && \
+    cd /var/tmp/kokkos-2.9.00 && \
+    cd build && \
     make install -j$(nproc) && \
-    rm -rf /var/tmp/2.9.00.tar.gz /var/tmp/kokkos-2.9.00
+    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @ubuntu

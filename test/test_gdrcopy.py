@@ -48,7 +48,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/gdrcopy-2.0 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/v2.0.tar.gz /var/tmp/gdrcopy-2.0
+    rm -rf /var/tmp/gdrcopy-2.0 /var/tmp/v2.0.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
@@ -69,7 +69,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/gdrcopy-2.0 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/v2.0.tar.gz /var/tmp/gdrcopy-2.0
+    rm -rf /var/tmp/gdrcopy-2.0 /var/tmp/v2.0.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
@@ -92,7 +92,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
     echo "/usr/local/gdrcopy/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/v1.3.tar.gz /var/tmp/gdrcopy-1.3
+    rm -rf /var/tmp/gdrcopy-1.3 /var/tmp/v1.3.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
 
