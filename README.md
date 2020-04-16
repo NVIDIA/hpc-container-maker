@@ -1,3 +1,8 @@
+![Python 3](https://github.com/NVIDIA/hpc-container-maker/workflows/Python%203/badge.svg)
+![Python 2](https://github.com/NVIDIA/hpc-container-maker/workflows/Python%202/badge.svg)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/NVIDIA/hpc-container-maker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/NVIDIA/hpc-container-maker/context:python)
+![License](https://img.shields.io/github/license/NVIDIA/hpc-container-maker)
+
 # HPC Container Maker
 
 HPC Container Maker (HPCCM - pronounced H-P-see-M) is an open source

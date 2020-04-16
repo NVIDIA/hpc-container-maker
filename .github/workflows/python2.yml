@@ -23,5 +23,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install six enum34
 
-    - name: Run unit tests 
+    - name: Run unit tests
       run: bash ./runtests.sh
