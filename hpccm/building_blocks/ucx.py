@@ -28,25 +28,20 @@ import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
-          hpccm.templates.envvars, hpccm.templates.ldconfig,
-          hpccm.templates.rm):
+class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
+          hpccm.templates.ldconfig):
     """The `ucx` building block configures, builds, and installs the
     [UCX](https://github.com/openucx/ucx) component.
 
@@ -193,42 +188,56 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
 
         super(ucx, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts',
-                                         ['--enable-optimizations',
-                                          '--disable-logging',
-                                          '--disable-debug',
-                                          '--disable-assertions',
-                                          '--disable-params-check',
-                                          '--disable-doxygen-doc'])
-        self.prefix = kwargs.get('prefix', '/usr/local/ucx')
-
-        self.__baseurl = kwargs.get('baseurl', 'https://github.com/openucx/ucx/releases/download')
-        self.__cuda = kwargs.get('cuda', True)
+        # Parameters
+        self.__baseurl = kwargs.pop('baseurl', 'https://github.com/openucx/ucx/releases/download')
+        self.__configure_opts = kwargs.pop('configure_opts',
+                                           ['--enable-optimizations',
+                                            '--disable-logging',
+                                            '--disable-debug',
+                                            '--disable-assertions',
+                                            '--disable-params-check',
+                                            '--disable-doxygen-doc'])
+        self.__cuda = kwargs.pop('cuda', True)
         self.__default_repository = 'https://github.com/openucx/ucx.git'
-        self.__gdrcopy = kwargs.get('gdrcopy', '')
-        self.__knem = kwargs.get('knem', '')
-        self.__ofed = kwargs.get('ofed', '')
-        self.__ospackages = kwargs.get('ospackages', [])
+        self.__gdrcopy = kwargs.pop('gdrcopy', '')
+        self.__knem = kwargs.pop('knem', '')
+        self.__ofed = kwargs.pop('ofed', '')
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/ucx')
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '1.7.0')
-        self.__xpmem = kwargs.get('xpmem', '')
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        self.__version = kwargs.pop('version', '1.7.0')
+        self.__xpmem = kwargs.pop('xpmem', '')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Set the configure options
+        self.__configure()
 
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Set the download specific parameters
+        self.__download()
+        kwargs['repository'] = self.repository
+        kwargs['url'] = self.url
 
-        # Fill in container instructions
-        self.__instructions()
+        # Setup the environment variables
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-    def __instructions(self):
-        """Fill in container instructions"""
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            comment=False,
+            configure_opts=self.__configure_opts,
+            devel_environment=self.environment_variables,
+            preconfigure=['./autogen.sh'] if self.repository else None,
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            toolchain=self.__toolchain,
+            **kwargs)
 
+        # Container instructions
         if self.repository:
             if self.branch:
                 self += comment('UCX {} {}'.format(self.repository,
@@ -241,8 +250,80 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
         else:
             self += comment('UCX version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
+
+    def __configure(self):
+        """Setup configure options based on user parameters"""
+
+        # CUDA
+        if self.__cuda:
+            if isinstance(self.__cuda, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-cuda={}'.format(self.__cuda))
+            elif self.__toolchain.CUDA_HOME:
+                self.__configure_opts.append(
+                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
+            else:
+                # Default location
+                self.__configure_opts.append('--with-cuda=/usr/local/cuda')
+        else:
+            self.__configure_opts.append('--without-cuda')
+
+        # GDRCOPY
+        if self.__gdrcopy:
+            if isinstance(self.__gdrcopy, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-gdrcopy={}'.format(self.__gdrcopy))
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.__configure_opts.append('--with-gdrcopy')
+        elif self.__gdrcopy == False:
+            self.__configure_opts.append('--without-gdrcopy')
+
+        # KNEM
+        if self.__knem:
+            if isinstance(self.__knem, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-knem={}'.format(self.__knem))
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.__configure_opts.append('--with-knem')
+        elif self.__knem == False:
+            self.__configure_opts.append('--without-knem')
+
+        # OFED
+        if self.__ofed:
+            if isinstance(self.__ofed, string_types):
+                # Use specified path
+                self.__configure_opts.extend(
+                    ['--with-verbs={}'.format(self.__ofed),
+                     '--with-rdmacm={}'.format(self.__ofed)])
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.__configure_opts.extend(['--with-verbs', '--with-rdmacm'])
+        elif self.__ofed == False:
+            self.__configure_opts.extend(['--without-verbs',
+                                          '--without-rdmacm'])
+
+        # XPMEM
+        if self.__xpmem:
+            if isinstance(self.__xpmem, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-xpmem={}'.format(self.__xpmem))
+            else:
+                # Boolean, let UCX try to figure out where to find it
+                self.__configure_opts.append('--with-xpmem')
+        elif self.__xpmem == False:
+            self.__configure_opts.append('--without-xpmem')
+
+        # Workaround for format warning considered an error on Power
+        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if not self.__toolchain.CFLAGS:
+                self.__toolchain.CFLAGS = '-Wno-error=format'
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -276,11 +357,8 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        remove = []
+    def __download(self):
+        """Set download source based on user parameters"""
 
         # Use the default repository if set to True
         if self.repository is True:
@@ -290,107 +368,6 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
             tarball = 'ucx-{}.tar.gz'.format(self.__version)
             self.url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version,
                                              tarball)
-            remove.append(posixpath.join(self.__wd, tarball))
-
-        # CUDA
-        if self.__cuda:
-            if isinstance(self.__cuda, string_types):
-                # Use specified path
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__cuda))
-            elif self.__toolchain.CUDA_HOME:
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
-            else:
-                # Default location
-                self.configure_opts.append('--with-cuda=/usr/local/cuda')
-        else:
-            self.configure_opts.append('--without-cuda')
-
-        # GDRCOPY
-        if self.__gdrcopy:
-            if isinstance(self.__gdrcopy, string_types):
-                # Use specified path
-                self.configure_opts.append(
-                    '--with-gdrcopy={}'.format(self.__gdrcopy))
-            else:
-                # Boolean, let UCX try to figure out where to find it
-                self.configure_opts.append('--with-gdrcopy')
-        elif self.__gdrcopy == False:
-            self.configure_opts.append('--without-gdrcopy')
-
-        # KNEM
-        if self.__knem:
-            if isinstance(self.__knem, string_types):
-                # Use specified path
-                self.configure_opts.append(
-                    '--with-knem={}'.format(self.__knem))
-            else:
-                # Boolean, let UCX try to figure out where to find it
-                self.configure_opts.append('--with-knem')
-        elif self.__knem == False:
-            self.configure_opts.append('--without-knem')
-
-        # OFED
-        if self.__ofed:
-            if isinstance(self.__ofed, string_types):
-                # Use specified path
-                self.configure_opts.extend(
-                    ['--with-verbs={}'.format(self.__ofed),
-                     '--with-rdmacm={}'.format(self.__ofed)])
-            else:
-                # Boolean, let UCX try to figure out where to find it
-                self.configure_opts.extend(['--with-verbs', '--with-rdmacm'])
-        elif self.__ofed == False:
-            self.configure_opts.extend(['--without-verbs', '--without-rdmacm'])
-
-        # XPMEM
-        if self.__xpmem:
-            if isinstance(self.__xpmem, string_types):
-                # Use specified path
-                self.configure_opts.append(
-                    '--with-xpmem={}'.format(self.__xpmem))
-            else:
-                # Boolean, let UCX try to figure out where to find it
-                self.configure_opts.append('--with-xpmem')
-        elif self.__xpmem == False:
-            self.configure_opts.append('--without-xpmem')
-
-        # Workaround for format warning considered an error on Power
-        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            if not self.__toolchain.CFLAGS:
-                self.__toolchain.CFLAGS = '-Wno-error=format'
-
-        # Download source from web
-        self.__commands.append(self.download_step(wd=self.__wd))
-
-        # Generate configure script
-        if self.repository:
-            self.__commands.append('cd {} && ./autogen.sh'.format(
-                self.src_directory))
-
-        # Configure and build
-        self.__commands.append(self.configure_step(
-            directory=self.src_directory,
-            toolchain=self.__toolchain))
-        self.__commands.append(self.build_step())
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup tarball and directory
-        if self.src_directory:
-            remove.append(self.src_directory)
-        self.__commands.append(self.cleanup_step(items=remove))
-
-        # Set the environment
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -407,11 +384,5 @@ class ucx(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.downloader,
         instructions = []
         instructions.append(comment('UCX'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

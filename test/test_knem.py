@@ -44,8 +44,10 @@ RUN apt-get update -y && \
         git && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.3 https://gforge.inria.fr/git/knem/knem.git knem && cd - && \
+    mkdir -p /usr/local/knem && \
+    cd /var/tmp/knem && \
     mkdir -p /usr/local/knem/include && \
-    cp /var/tmp/knem/common/*.h /usr/local/knem/include && \
+    cp common/*.h /usr/local/knem/include && \
     rm -rf /var/tmp/knem
 ENV CPATH=/usr/local/knem/include:$CPATH''')
 
@@ -61,8 +63,10 @@ RUN yum install -y \
         git && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.3 https://gforge.inria.fr/git/knem/knem.git knem && cd - && \
+    mkdir -p /usr/local/knem && \
+    cd /var/tmp/knem && \
     mkdir -p /usr/local/knem/include && \
-    cp /var/tmp/knem/common/*.h /usr/local/knem/include && \
+    cp common/*.h /usr/local/knem/include && \
     rm -rf /var/tmp/knem
 ENV CPATH=/usr/local/knem/include:$CPATH''')
 

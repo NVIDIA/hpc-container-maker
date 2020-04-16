@@ -54,7 +54,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mpich-3.3.2.tar.gz /var/tmp/mpich-3.3.2
+    rm -rf /var/tmp/mpich-3.3.2 /var/tmp/mpich-3.3.2.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/mpich/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mpich/bin:$PATH''')
 
@@ -79,7 +79,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/mpich-3.3.2.tar.gz /var/tmp/mpich-3.3.2
+    rm -rf /var/tmp/mpich-3.3.2 /var/tmp/mpich-3.3.2.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/mpich/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/mpich/bin:$PATH''')
 
@@ -106,7 +106,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/mpich/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/mpich-3.3.tar.gz /var/tmp/mpich-3.3
+    rm -rf /var/tmp/mpich-3.3 /var/tmp/mpich-3.3.tar.gz
 ENV PATH=/usr/local/mpich/bin:$PATH''')
 
     @ubuntu

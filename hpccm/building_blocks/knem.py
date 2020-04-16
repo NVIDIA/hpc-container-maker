@@ -23,20 +23,14 @@ from __future__ import print_function
 
 import posixpath
 
-import hpccm.config
 import hpccm.templates.envvars
-import hpccm.templates.git
-import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 
-class knem(bb_base, hpccm.templates.envvars, hpccm.templates.git,
-           hpccm.templates.rm):
+class knem(bb_base, hpccm.templates.envvars):
     """The `knem` building block install the headers from the
     [KNEM](http://knem.gforge.inria.fr) component.
 
@@ -67,50 +61,32 @@ class knem(bb_base, hpccm.templates.envvars, hpccm.templates.git,
 
         super(knem, self).__init__(**kwargs)
 
-        self.__ospackages = kwargs.get('ospackages', ['ca-certificates', 'git'])
-        self.__prefix = kwargs.get('prefix', '/usr/local/knem')
-        self.__repository = kwargs.get('repository', 'https://gforge.inria.fr/git/knem/knem.git')
-        self.__version = kwargs.get('version', '1.1.3')
+        self.__ospackages = kwargs.pop('ospackages',
+                                       ['ca-certificates', 'git'])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/knem')
+        self.__repository = kwargs.pop('repository', 'https://gforge.inria.fr/git/knem/knem.git')
+        self.__version = kwargs.pop('version', '1.1.3')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
-
-        # Construct the series of steps to execute
-        self.__setup()
-
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        self += comment('KNEM version {}'.format(self.__version))
-        self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        # Clone source
-        self.__commands.append(self.clone_step(
-            branch='knem-{}'.format(self.__version),
-            repository=self.__repository,
-            path=self.__wd, directory='knem'))
-
-        # Copy header(s)
-        self.__commands.append('mkdir -p {}/include'.format(self.__prefix))
-        self.__commands.append('cp {0}/common/*.h {1}/include'.format(
-            posixpath.join(self.__wd, 'knem'), self.__prefix))
-
-        # Cleanup directory
-        self.__commands.append(self.cleanup_step(
-                   [posixpath.join(self.__wd, 'knem')]))
-
-        # Set the environment
+        # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
             posixpath.join(self.__prefix, 'include'))
+
+        # Setup build configuration
+        self.__bb = generic_build(
+            branch='knem-{}'.format(self.__version),
+            comment=False,
+            devel_environment=self.environment_variables,
+            install=['mkdir -p {}/include'.format(self.__prefix),
+                     'cp common/*.h {}/include'.format(self.__prefix)],
+            runtime_environment=self.environment_variables,
+            prefix=self.__prefix,
+            repository=self.__repository,
+            **kwargs)
+
+        # Container instructions
+        self += comment('KNEM version {}'.format(self.__version))
+        self += packages(ospackages=self.__ospackages)
+        self += self.__bb
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -126,7 +102,5 @@ class knem(bb_base, hpccm.templates.envvars, hpccm.templates.git,
         """
         instructions = []
         instructions.append(comment('KNEM'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

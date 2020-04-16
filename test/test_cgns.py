@@ -50,7 +50,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/CGNS-3.4.0/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/v3.4.0.tar.gz /var/tmp/v3.4.0''')
+    rm -rf /var/tmp/CGNS-3.4.0/src /var/tmp/v3.4.0.tar.gz''')
 
     @centos
     @docker
@@ -71,7 +71,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/CGNS-3.4.0/src &&  FLIBS='-Wl,--no-as-needed -ldl' LIBS='-Wl,--no-as-needed -ldl' ./configure --prefix=/usr/local/cgns --with-hdf5=/usr/local/hdf5 --with-zlib && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/v3.4.0.tar.gz /var/tmp/v3.4.0''')
+    rm -rf /var/tmp/CGNS-3.4.0/src /var/tmp/v3.4.0.tar.gz''')
 
     @ubuntu
     @docker

@@ -24,6 +24,9 @@ import posixpath
 import re
 
 import hpccm.base_object
+import hpccm.config
+
+from hpccm.common import container_type
 
 class downloader(hpccm.base_object):
     """Template for downloading source code"""
@@ -81,4 +84,11 @@ class downloader(hpccm.base_object):
             self.src_directory = posixpath.join(wd, posixpath.splitext(
                 posixpath.basename(self.repository))[0])
 
-        return ' && \\\n    '.join(commands)
+        if hpccm.config.g_ctype == container_type.DOCKER:
+            return ' && \\\n    '.join(commands)
+        elif hpccm.config.g_ctype == container_type.SINGULARITY:
+            return '\n    '.join(commands)
+        elif hpccm.config.g_ctype == container_type.BASH:
+            return '\n'.join(commands)
+        else:
+            raise RuntimeError('Unknown container type')

@@ -21,27 +21,18 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging # pylint: disable=unused-import
 import posixpath
 
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
-import hpccm.templates.git
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-            hpccm.templates.ldconfig, hpccm.templates.git, hpccm.templates.rm,
-            hpccm.templates.tar):
+class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `xpmem` building block builds and installs the user space
     library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
     component.
@@ -108,70 +99,42 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(xpmem, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts',
-                                         ['--disable-kernel-module'])
-        self.prefix = kwargs.get('prefix', '/usr/local/xpmem')
-
-        self.__branch = kwargs.get('branch', 'master')
-        self.__ospackages = kwargs.get('ospackages', ['autoconf', 'automake',
+        # Parameters
+        self.__branch = kwargs.pop('branch', 'master')
+        self.__configure_opts = kwargs.pop('configure_opts',
+                                           ['--disable-kernel-module'])
+        self.__ospackages = kwargs.pop('ospackages', ['autoconf', 'automake',
                                                       'ca-certificates',
                                                       'file', 'git',
                                                       'libtool', 'make'])
-        self.__repository = kwargs.get('repository',
+        self.__prefix = kwargs.pop('prefix', '/usr/local/xpmem')
+        self.__repository = kwargs.pop('repository',
                                        'https://gitlab.com/hjelmn/xpmem.git')
-        self.__toolchain = kwargs.get('toolchain', toolchain())
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Setup the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            branch=self.__branch,
+            comment=False,
+            configure_opts=self.__configure_opts,
+            devel_environment=self.environment_variables,
+            preconfigure=['autoreconf --install'],
+            prefix=self.__prefix,
+            repository=self.__repository,
+            runtime_environment=self.environment_variables,
+            **kwargs)
 
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
+        # Container instructions
         self += comment('XPMEM branch {}'.format(self.__branch))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        # Clone source
-        self.__commands.append(self.clone_step(
-            branch=self.__branch, repository=self.__repository,
-            path=self.__wd, directory='xpmem'))
-        # Build
-        self.__commands.append('cd {} && autoreconf --install'.format(
-            posixpath.join(self.__wd, 'xpmem')))
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd, 'xpmem'),
-            toolchain=self.__toolchain))
-
-        self.__commands.append(self.build_step())
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup directory
-        self.__commands.append(self.cleanup_step(
-                   [posixpath.join(self.__wd, 'xpmem')]))
-
-        # Set the environment
-        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
-            posixpath.join(self.prefix, 'include'))
-        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
-            posixpath.join(self.prefix, 'lib'))
+        self += self.__bb
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -187,11 +150,5 @@ class xpmem(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         """
         instructions = []
         instructions.append(comment('XPMEM'))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

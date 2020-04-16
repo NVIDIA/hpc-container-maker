@@ -51,9 +51,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
     cd /var/tmp/hdf5-1.10.6 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.10.6.tar.bz2 /var/tmp/hdf5-1.10.6
-ENV HDF5_DIR=/usr/local/hdf5 \
+    rm -rf /var/tmp/hdf5-1.10.6 /var/tmp/hdf5-1.10.6.tar.bz2
+ENV CPATH=/usr/local/hdf5/include:$CPATH \
+    HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/hdf5/lib:$LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
     @centos
@@ -75,9 +77,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
     cd /var/tmp/hdf5-1.10.6 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.10.6.tar.bz2 /var/tmp/hdf5-1.10.6
-ENV HDF5_DIR=/usr/local/hdf5 \
+    rm -rf /var/tmp/hdf5-1.10.6 /var/tmp/hdf5-1.10.6.tar.bz2
+ENV CPATH=/usr/local/hdf5/include:$CPATH \
+    HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/hdf5/lib:$LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
     @ubuntu
@@ -101,8 +105,10 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/hdf5/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/hdf5-1.10.4.tar.bz2 /var/tmp/hdf5-1.10.4
-ENV HDF5_DIR=/usr/local/hdf5 \
+    rm -rf /var/tmp/hdf5-1.10.4 /var/tmp/hdf5-1.10.4.tar.bz2
+ENV CPATH=/usr/local/hdf5/include:$CPATH \
+    HDF5_DIR=/usr/local/hdf5 \
+    LIBRARY_PATH=/usr/local/hdf5/lib:$LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
 
     @ubuntu
@@ -118,30 +124,8 @@ RUN apt-get update -y && \
         zlib1g && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/hdf5 /usr/local/hdf5
-ENV HDF5_DIR=/usr/local/hdf5 \
+ENV CPATH=/usr/local/hdf5/include:$CPATH \
+    HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
-    PATH=/usr/local/hdf5/bin:$PATH''')
-
-    @ubuntu
-    @docker
-    def test_directory(self):
-        """Directory in local build context"""
-        h = hdf5(directory='hdf5-1.10.1')
-        self.assertEqual(str(h),
-r'''# HDF5
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        bzip2 \
-        file \
-        make \
-        wget \
-        zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/*
-COPY hdf5-1.10.1 /var/tmp/hdf5-1.10.1
-RUN cd /var/tmp/hdf5-1.10.1 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
-    make -j$(nproc) && \
-    make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.10.1
-ENV HDF5_DIR=/usr/local/hdf5 \
-    LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/hdf5/lib:$LIBRARY_PATH \
     PATH=/usr/local/hdf5/bin:$PATH''')
