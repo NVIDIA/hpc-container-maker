@@ -1241,8 +1241,8 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-include HDF5. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
+should be modified to include HDF5. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the HDF5 library
 directory should be added dynamic linker cache.  If False, then
@@ -1296,6 +1296,7 @@ hdf5(toolchain=p.toolchain)
 hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
                                  '--enable-profiling=yes'])
 ```
+
 
 ## runtime
 ```python
@@ -2063,6 +2064,64 @@ Stage0 += l
 Stage1 += l.runtime()
 ```
 
+# magma
+```python
+magma(self, **kwargs)
+```
+The `magma` building block configures, builds, and installs the
+[MAGMA](https://icl.cs.utk.edu/magma) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+Either the [MKL](#mkl) or [OpenBLAS](#openblas) building block
+should also be installed.
+
+__Parameters__
+
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default value
+is an empty list.
+
+- __gpu_target__: List of GPU architectures to compile.  The default
+values are `Pascal`, `Volta`, and `Turing`.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  The default values are `tar` and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/magma`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __version__: The version of MAGMA source to download.  The default
+value is `2.5.3`.
+
+__Examples__
+
+
+```python
+magma(prefix='/opt/magma', version='2.5.3')
+```
+
+
+## runtime
+```python
+magma.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+m = magma(...)
+Stage0 += m
+Stage1 += m.runtime()
+```
+
 # mkl
 ```python
 mkl(self, **kwargs)
@@ -2624,14 +2683,11 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-NetCDF. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
+modified to include NetCDF. The default is True.
 
 - __fortran__: Boolean flag to specify whether the NetCDF Fortran
 library should be installed.  The default is True.
-
-- __hdf5_dir__: Path to the location where HDF5 is installed in the
-container image.  The default value is `/usr/local/hdf5`.
 
 - __ldconfig__: Boolean flag to specify whether the NetCDF library
 directory should be added dynamic linker cache.  If False, then
