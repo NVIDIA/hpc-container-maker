@@ -24,7 +24,6 @@ from __future__ import print_function
 from six import string_types
 
 from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config

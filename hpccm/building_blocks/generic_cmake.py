@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import posixpath
-import re
 
 import hpccm.templates.CMakeBuild
 import hpccm.templates.downloader
