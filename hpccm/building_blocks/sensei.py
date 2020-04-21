@@ -121,6 +121,7 @@ class sensei(bb_base, hpccm.templates.git):
 
         # Setup build configuration
         self.__bb = generic_cmake(
+            base_annotation=self.__class__.__name__,
             branch=self.__branch,
             comment=False,
             cmake_opts=self.__cmake_opts,

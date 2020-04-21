@@ -73,6 +73,7 @@ class knem(bb_base, hpccm.templates.envvars):
 
         # Setup build configuration
         self.__bb = generic_build(
+            base_annotation=self.__class__.__name__,
             branch='knem-{}'.format(self.__version),
             comment=False,
             devel_environment=self.environment_variables,

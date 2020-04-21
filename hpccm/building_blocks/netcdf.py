@@ -160,6 +160,8 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         # Setup build configuration
         comments = ['NetCDF version {}'.format(self.__version)]
         self.__bb = [generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             check=self.__check,
             comment=False,
             devel_environment=self.environment_variables,
@@ -173,6 +175,8 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         if self.__cxx:
             comments.append('NetCDF C++ version {}'.format(self.__version_cxx))
             self.__bb.append(generic_autotools(
+                annotations={'version': self.__version_cxx},
+                base_annotation='{}-cxx4'.format(self.__class__.__name__),
                 check=self.__check,
                 comment=False,
                 directory='netcdf-cxx4-{}'.format(self.__version_cxx),
@@ -187,6 +191,8 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         if self.__fortran:
             comments.append('NetCDF Fortran version {}'.format(self.__version_fortran))
             self.__bb.append(generic_autotools(
+                annotations={'version': self.__version_fortran},
+                base_annotation='{}-fortran'.format(self.__class__.__name__),
                 check=self.__check,
                 comment=False,
                 directory='netcdf-fortran-{}'.format(self.__version_fortran),

@@ -114,6 +114,8 @@ class kokkos(bb_base, hpccm.templates.envvars):
 
         # Setup build configuration
         self.__bb = generic_build(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             build=['mkdir build',
                    'cd build',
                    '../generate_makefile.bash {}'.format(

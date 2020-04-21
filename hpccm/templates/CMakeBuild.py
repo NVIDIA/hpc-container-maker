@@ -137,4 +137,10 @@ class CMakeBuild(hpccm.base_object):
         cmd = '{0}{1}cmake {2}{3}'.format(
             change_directory, configure_env, configure_opts, src_directory)
 
+        # Add an annotation if the caller inherits from the annotate template
+        if callable(getattr(self, 'add_annotation', None)):
+            self.add_annotation('cmake', '{1}cmake {2}'.format(
+                change_directory, configure_env, configure_opts,
+                src_directory).strip())
+
         return cmd.strip() # trim whitespace

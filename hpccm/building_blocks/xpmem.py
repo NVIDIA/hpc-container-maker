@@ -121,6 +121,7 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            base_annotation=self.__class__.__name__,
             branch=self.__branch,
             comment=False,
             configure_opts=self.__configure_opts,

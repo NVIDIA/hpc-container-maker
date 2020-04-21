@@ -124,6 +124,8 @@ class pmix(bb_base,hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             check=self.__check,
             comment=False,
             devel_environment=self.environment_variables,

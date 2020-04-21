@@ -110,9 +110,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @centos
     @docker
-    def test_environment_ldconfig(self):
+    def test_environment_ldconfig_annotate(self):
         """ldconfig and environment options"""
-        g = generic_build(branch='v0.3.6',
+        g = generic_build(annotate=True,
+                          base_annotation='openblas',
+                          branch='v0.3.6',
                           build=['make USE_OPENMP=1'],
                           devel_environment={'CPATH': '/usr/local/openblas/include:$CPATH'},
                           install=['make install PREFIX=/usr/local/openblas'],
@@ -130,14 +132,18 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.3.6 http
     make install PREFIX=/usr/local/openblas && \
     echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/OpenBLAS
-ENV CPATH=/usr/local/openblas/include:$CPATH''')
+ENV CPATH=/usr/local/openblas/include:$CPATH
+LABEL hpccm.openblas.branch=v0.3.6 \
+    hpccm.openblas.repository=https://github.com/xianyi/OpenBLAS.git''')
 
         r = g.runtime()
         self.assertEqual(r,
 r'''# https://github.com/xianyi/OpenBLAS.git
 COPY --from=0 /usr/local/openblas /usr/local/openblas
 RUN echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig
-ENV CPATH=/usr/local/openblas/include:$CPATH''')
+ENV CPATH=/usr/local/openblas/include:$CPATH
+LABEL hpccm.openblas.branch=v0.3.6 \
+    hpccm.openblas.repository=https://github.com/xianyi/OpenBLAS.git''')
 
     @ubuntu
     @docker

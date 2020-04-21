@@ -228,6 +228,8 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version} if not self.repository else {},
+            base_annotation=self.__class__.__name__,
             comment=False,
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,

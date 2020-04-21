@@ -25,6 +25,7 @@ import posixpath
 import re
 
 import hpccm.templates.CMakeBuild
+import hpccm.templates.annotate
 import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -34,12 +35,14 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
 class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
-                    hpccm.templates.downloader, hpccm.templates.envvars,
-                    hpccm.templates.ldconfig, hpccm.templates.rm):
+                    hpccm.templates.annotate, hpccm.templates.downloader,
+                    hpccm.templates.envvars, hpccm.templates.ldconfig,
+                    hpccm.templates.rm):
     """The `generic_cmake` building block downloads, configures,
     builds, and installs a specified CMake enabled package.
 
@@ -165,6 +168,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
 
         super(generic_cmake, self).__init__(**kwargs)
 
+        self.__annotations = kwargs.get('annotations', {})
         self.__build_directory = kwargs.get('build_directory', 'build')
         self.__build_environment = kwargs.get('build_environment', {})
         self.__check = kwargs.get('check', False)
@@ -202,6 +206,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
+        self += label(metadata=self.annotate_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -259,6 +264,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
             self.__commands.append(self.ldcache_step(
                 directory=posixpath.join(self.prefix, self.__libdir)))
 
+        for key,value in self.__annotations.items():
+            self.add_annotation(key, value)
+
         # Cleanup
         remove = [self.src_directory]
         if self.url:
@@ -298,6 +306,8 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
             if self.runtime_environment_variables:
                 instructions.append(environment(
                     variables=self.environment_step(runtime=True)))
+            if self.annotate:
+                instructions.append(label(metadata=self.annotate_step()))
             return '\n'.join(str(x) for x in instructions)
         else: # pragma: no cover
             return

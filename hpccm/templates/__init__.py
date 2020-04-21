@@ -16,6 +16,7 @@ from __future__ import absolute_import
 
 from hpccm.templates.CMakeBuild import CMakeBuild
 from hpccm.templates.ConfigureMake import ConfigureMake
+from hpccm.templates.annotate import annotate
 from hpccm.templates.downloader import downloader
 from hpccm.templates.envvars import envvars
 from hpccm.templates.git import git
