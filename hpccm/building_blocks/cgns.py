@@ -43,6 +43,9 @@ class cgns(bb_base):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     check: Boolean flag to specify whether the test cases should be
     run.  The default is False.
 

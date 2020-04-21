@@ -44,6 +44,9 @@ class multi_ofed(bb_base, hpccm.templates.annotate):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     inbox: Boolean flag to specify whether to install the 'inbox' OFED
     distributed by the Linux distribution.  The default is True.
 

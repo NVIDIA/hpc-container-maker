@@ -45,6 +45,9 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
     RHEL-based Linux distributions, the default value is `rhel7.2` for

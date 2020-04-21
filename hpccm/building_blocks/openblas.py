@@ -40,6 +40,9 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
     OpenBLAS. The default is True.

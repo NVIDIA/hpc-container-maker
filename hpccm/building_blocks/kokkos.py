@@ -41,6 +41,9 @@ class kokkos(bb_base, hpccm.templates.envvars):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     arch: Flag to set the target architecture. If set adds
     `--arch=value` to the list of `generate_makefile.bash` options.
     The default value is `Pascal60`, i.e., sm_60.  If a cuda aware

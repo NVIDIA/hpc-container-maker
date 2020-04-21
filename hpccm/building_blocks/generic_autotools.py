@@ -48,6 +48,12 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
+    annotations: Dictionary of additional annotations to include.  The
+    default is an empty dictionary.
+
     branch: The git branch to clone.  Only recognized if the
     `repository` parameter is specified.  The default is empty, i.e.,
     use the default branch for the repository.

@@ -46,6 +46,9 @@ class sensei(bb_base, hpccm.templates.git):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     branch: The branch of SENSEI to use.  The default value is
     `v2.1.1`.
 

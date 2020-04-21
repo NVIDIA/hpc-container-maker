@@ -36,6 +36,9 @@ class knem(bb_base, hpccm.templates.envvars):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`) should be modified to include knem. The default is True.
 

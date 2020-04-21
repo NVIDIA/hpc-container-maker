@@ -55,6 +55,9 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
 

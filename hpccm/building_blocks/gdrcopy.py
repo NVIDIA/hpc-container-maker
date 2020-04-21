@@ -38,6 +38,9 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
     modified to include the gdrcopy. The default is True.

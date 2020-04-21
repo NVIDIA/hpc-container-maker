@@ -45,6 +45,12 @@ class generic_build(bb_base, hpccm.templates.annotate,
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
+    annotations: Dictionary of additional annotations to include.  The
+    default is an empty dictionary.
+
     build: List of shell commands to run in order to build the
     package.  The working directory is the source directory.  The
     default is an empty list.
