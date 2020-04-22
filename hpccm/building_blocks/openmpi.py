@@ -137,7 +137,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of OpenMPI source to download.  This
     value is ignored if `directory` is set.  The default value is
-    `4.0.3rc3`.
+    `4.0.3`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -198,7 +198,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__runtime_ospackages = [] # Filled in by __distro()
         # Input toolchain, i.e., what to use when building
         self.__toolchain = kwargs.pop('toolchain', toolchain())
-        self.__version = kwargs.pop('version', '4.0.3rc3')
+        self.__version = kwargs.pop('version', '4.0.3')
         self.__ucx = kwargs.pop('ucx', False)
 
         # Output toolchain

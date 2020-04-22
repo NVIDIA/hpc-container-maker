@@ -1241,8 +1241,8 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-include HDF5. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
+should be modified to include HDF5. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the HDF5 library
 directory should be added dynamic linker cache.  If False, then
@@ -1296,6 +1296,7 @@ hdf5(toolchain=p.toolchain)
 hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
                                  '--enable-profiling=yes'])
 ```
+
 
 ## runtime
 ```python
@@ -2173,7 +2174,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.7-3.2.9.0`.
+value is `5.0-2.1.8.0`.
 
 __Examples__
 
@@ -2318,7 +2319,8 @@ parameter for more information.
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
 versions to install.  The default values are `3.4-2.0.0.0`,
 `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
-`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and `4.7-3.2.9.0`.
+`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, and
+`5.0-2.1.8.0`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -2624,14 +2626,11 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-NetCDF. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
+modified to include NetCDF. The default is True.
 
 - __fortran__: Boolean flag to specify whether the NetCDF Fortran
 library should be installed.  The default is True.
-
-- __hdf5_dir__: Path to the location where HDF5 is installed in the
-container image.  The default value is `/usr/local/hdf5`.
 
 - __ldconfig__: Boolean flag to specify whether the NetCDF library
 directory should be added dynamic linker cache.  If False, then
@@ -2967,7 +2966,7 @@ specified by `version`.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`4.0.3rc3`.
+`4.0.3`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3839,7 +3838,7 @@ The default is empty, i.e., use the release package specified by
 `version`.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.7.0`.
+is `1.8.0`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
