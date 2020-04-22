@@ -36,6 +36,9 @@ class knem(bb_base, hpccm.templates.envvars):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`) should be modified to include knem. The default is True.
 
@@ -73,6 +76,7 @@ class knem(bb_base, hpccm.templates.envvars):
 
         # Setup build configuration
         self.__bb = generic_build(
+            base_annotation=self.__class__.__name__,
             branch='knem-{}'.format(self.__version),
             comment=False,
             devel_environment=self.environment_variables,

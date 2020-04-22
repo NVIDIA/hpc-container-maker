@@ -39,6 +39,9 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     branch: The branch of XPMEM to use.  The default value is
     `master`.
 
@@ -121,6 +124,7 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            base_annotation=self.__class__.__name__,
             branch=self.__branch,
             comment=False,
             configure_opts=self.__configure_opts,

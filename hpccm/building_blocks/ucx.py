@@ -24,7 +24,6 @@ from __future__ import print_function
 from six import string_types
 
 from distutils.version import StrictVersion
-import logging # pylint: disable=unused-import
 import posixpath
 
 import hpccm.config
@@ -52,6 +51,9 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     this building block.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     branch: The git branch to clone.  Only recognized if the
     `repository` parameter is specified.  The default is empty, i.e.,
@@ -228,6 +230,8 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version} if not self.repository else {},
+            base_annotation=self.__class__.__name__,
             comment=False,
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,

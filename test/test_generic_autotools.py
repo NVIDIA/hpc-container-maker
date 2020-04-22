@@ -196,3 +196,20 @@ ENV PATH=/usr/local/zeromq/bin:$PATH''')
         self.assertEqual(r,
 r'''# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
 COPY --from=0 /usr/local/tcl /usr/local/tcl''')
+
+    @ubuntu
+    @docker
+    def test_runtime_annotate(self):
+        """Runtime"""
+        g = generic_autotools(
+            annotate=True,
+            base_annotation='tcl',
+            directory='tcl8.6.9/unix',
+            prefix='/usr/local/tcl',
+            url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
+COPY --from=0 /usr/local/tcl /usr/local/tcl
+LABEL hpccm.tcl.configure='./configure --prefix=/usr/local/tcl' \
+    hpccm.tcl.url=https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz''')

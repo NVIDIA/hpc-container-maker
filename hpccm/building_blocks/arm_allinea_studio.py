@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import StrictVersion
-import os
+import logging
 import posixpath
 import re
 

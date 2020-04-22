@@ -51,6 +51,9 @@ class downloader(hpccm.base_object):
         if self.repository and self.url:
             raise RuntimeError('cannot specify both a repository and a URL')
 
+        # Check if the caller inherits from the annotate template
+        annotate = getattr(self, 'add_annotation', None)
+
         commands = []
 
         if self.url:
@@ -73,6 +76,9 @@ class downloader(hpccm.base_object):
                 else:
                     raise RuntimeError('unrecognized package format')
 
+            if callable(annotate):
+                self.add_annotation('url', self.url)
+
 
         elif self.repository:
             # Clone git repository
@@ -83,6 +89,14 @@ class downloader(hpccm.base_object):
             # Set directory where to find source
             self.src_directory = posixpath.join(wd, posixpath.splitext(
                 posixpath.basename(self.repository))[0])
+
+            # Add annotations
+            if callable(annotate):
+                self.add_annotation('repository', self.repository)
+                if self.branch:
+                    self.add_annotation('branch', self.branch)
+                if self.commit:
+                    self.add_annotation('commit', self.commit)
 
         if hpccm.config.g_ctype == container_type.DOCKER:
             return ' && \\\n    '.join(commands)
