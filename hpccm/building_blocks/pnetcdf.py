@@ -43,6 +43,9 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
 
@@ -139,6 +142,8 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             comment=False,
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,

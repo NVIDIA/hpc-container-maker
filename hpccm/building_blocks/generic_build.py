@@ -24,6 +24,7 @@ from __future__ import print_function
 import posixpath
 import re
 
+import hpccm.templates.annotate
 import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -33,15 +34,22 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 
-class generic_build(bb_base, hpccm.templates.downloader,
-                    hpccm.templates.envvars, hpccm.templates.ldconfig,
-                    hpccm.templates.rm):
+class generic_build(bb_base, hpccm.templates.annotate,
+                    hpccm.templates.downloader, hpccm.templates.envvars,
+                    hpccm.templates.ldconfig, hpccm.templates.rm):
     """The `generic_build` building block downloads and builds
     a specified package.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
+    annotations: Dictionary of additional annotations to include.  The
+    default is an empty dictionary.
 
     build: List of shell commands to run in order to build the
     package.  The working directory is the source directory.  The
@@ -113,6 +121,7 @@ class generic_build(bb_base, hpccm.templates.downloader,
 
         super(generic_build, self).__init__(**kwargs)
 
+        self.__annotations = kwargs.get('annotations', {})
         self.__build = kwargs.get('build', [])
         self.__comment = kwargs.get('comment', True)
         self.__directory = kwargs.get('directory', None)
@@ -144,6 +153,7 @@ class generic_build(bb_base, hpccm.templates.downloader,
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
+        self += label(metadata=self.annotate_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -177,6 +187,10 @@ class generic_build(bb_base, hpccm.templates.downloader,
         if self.ldconfig:
             self.__commands.append(self.ldcache_step(
                 directory=posixpath.join(self.__prefix, self.__libdir)))
+
+        # Add annotations
+        for key,value in self.__annotations.items():
+            self.add_annotation(key, value)
 
         # Cleanup
         remove = [self.src_directory]
@@ -212,6 +226,8 @@ class generic_build(bb_base, hpccm.templates.downloader,
             if self.runtime_environment_variables:
                 instructions.append(environment(
                     variables=self.environment_step(runtime=True)))
+            if self.annotate:
+                instructions.append(label(metadata=self.annotate_step()))
             return '\n'.join(str(x) for x in instructions)
         else: #pragma: no cover
             return

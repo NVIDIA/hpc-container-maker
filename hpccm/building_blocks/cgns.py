@@ -43,6 +43,9 @@ class cgns(bb_base):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     check: Boolean flag to specify whether the test cases should be
     run.  The default is False.
 
@@ -116,6 +119,8 @@ class cgns(bb_base):
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             check=self.__check,
             comment=False,
             configure_opts=self.__configure_opts,

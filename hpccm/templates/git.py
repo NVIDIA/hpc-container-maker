@@ -131,4 +131,12 @@ class git(hpccm.base_object):
                           'git checkout {0}'.format(commit),
                           'cd -'])
 
+        # Add labels if the caller inherits from the labels template
+        if callable(getattr(self, 'add_annotation', None)):
+            self.add_annotation('repository', repository)
+            if branch:
+                self.add_annotation('branch', branch)
+            if commit:
+                self.add_annotation('commit', commit)
+
         return ' && '.join(clone)

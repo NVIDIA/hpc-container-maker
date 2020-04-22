@@ -299,6 +299,9 @@ building block.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the test cases should be
 run.  The default is False.
 
@@ -564,6 +567,9 @@ context.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -673,6 +679,9 @@ component.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
 modified to include the gdrcopy. The default is True.
@@ -724,6 +733,12 @@ builds, and installs a specified GNU Autotools enabled package.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -865,6 +880,12 @@ a specified package.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
+
 - __build__: List of shell commands to run in order to build the
 package.  The working directory is the source directory.  The
 default is an empty list.
@@ -955,6 +976,12 @@ builds, and installs a specified CMake enabled package.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -1218,6 +1245,9 @@ context.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -1794,6 +1824,9 @@ The `knem` building block install the headers from the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`) should be modified to include knem. The default is True.
 
@@ -1839,6 +1872,9 @@ The `kokkos` building block downloads and installs the
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __arch__: Flag to set the target architecture. If set adds
 `--arch=value` to the list of `generate_makefile.bash` options.
@@ -2199,6 +2235,9 @@ Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
 RHEL-based Linux distributions, the default value is `rhel7.2` for
@@ -2271,6 +2310,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` and `make
 testing` steps should be performed.  The default is False.
@@ -2363,6 +2405,9 @@ building blocks for more information.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __inbox__: Boolean flag to specify whether to install the 'inbox' OFED
 distributed by the Linux distribution.  The default is True.
 
@@ -2428,6 +2473,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -2663,6 +2711,9 @@ building block.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -2863,6 +2914,9 @@ The `openblas` building block builds and installs the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 OpenBLAS. The default is True.
@@ -2933,6 +2987,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -3333,6 +3390,9 @@ The `pmix` building block configures, builds, and installs the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -3420,6 +3480,9 @@ component.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -3636,6 +3699,9 @@ recommended.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __branch__: The branch of SENSEI to use.  The default value is
 `v2.1.1`.
 
@@ -3716,6 +3782,9 @@ Note: this building block does not install SLURM itself.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
@@ -3803,6 +3872,9 @@ this building block.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -3960,6 +4032,9 @@ component.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The branch of XPMEM to use.  The default value is
 `master`.

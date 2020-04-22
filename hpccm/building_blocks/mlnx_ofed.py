@@ -24,6 +24,7 @@ from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
+import hpccm.templates.annotate
 import hpccm.templates.rm
 import hpccm.templates.tar
 import hpccm.templates.wget
@@ -33,15 +34,19 @@ from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 
-class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
-                hpccm.templates.wget):
+class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
+                hpccm.templates.tar, hpccm.templates.wget):
     """The `mlnx_ofed` building block downloads and installs the [Mellanox
     OpenFabrics Enterprise Distribution for
     Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
@@ -101,6 +106,9 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__symlink = kwargs.get('symlink', False)
         self.__version = kwargs.get('version', '4.7-3.2.9.0')
 
+        # Add annotation
+        self.add_annotation('version', self.__version)
+
         # Set the Linux distribution specific parameters
         self.__distro()
 
@@ -141,6 +149,8 @@ class mlnx_ofed(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             commands.append('mkdir -p /etc/libibverbs.d')
 
             self += shell(commands=commands)
+
+        self += label(metadata=self.annotate_step())
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
