@@ -2116,6 +2116,9 @@ should also be installed.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __cmake_opts__: List of options to pass to `cmake`.  The default value
 is an empty list.
 

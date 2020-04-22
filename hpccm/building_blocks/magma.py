@@ -43,6 +43,9 @@ class magma(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     cmake_opts: List of options to pass to `cmake`.  The default value
     is an empty list.
 
@@ -96,6 +99,8 @@ class magma(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_cmake(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             comment=False,
             cmake_opts=self.__cmake_opts,
             devel_environment=self.environment_variables,
