@@ -81,7 +81,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     via the package manager to the standard system locations.
 
     version: The version of Mellanox OFED to download.  The default
-    value is `4.7-3.2.9.0`.
+    value is `5.0-2.1.8.0`.
 
     # Examples
 
@@ -104,7 +104,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', None)
         self.__symlink = kwargs.get('symlink', False)
-        self.__version = kwargs.get('version', '4.7-3.2.9.0')
+        self.__version = kwargs.get('version', '5.0-2.1.8.0')
 
         # Add annotation
         self.add_annotation('version', self.__version)

@@ -2213,7 +2213,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.7-3.2.9.0`.
+value is `5.0-2.1.8.0`.
 
 __Examples__
 
@@ -2364,7 +2364,8 @@ parameter for more information.
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
 versions to install.  The default values are `3.4-2.0.0.0`,
 `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
-`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and `4.7-3.2.9.0`.
+`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, and
+`5.0-2.1.8.0`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -3022,7 +3023,7 @@ specified by `version`.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`4.0.3rc3`.
+`4.0.3`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3909,7 +3910,7 @@ The default is empty, i.e., use the release package specified by
 `version`.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.7.0`.
+is `1.8.0`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`

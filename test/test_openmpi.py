@@ -37,7 +37,7 @@ class Test_openmpi(unittest.TestCase):
         """Default openmpi building block"""
         ompi = openmpi()
         self.assertEqual(str(ompi),
-r'''# OpenMPI version 4.0.3rc3
+r'''# OpenMPI version 4.0.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -50,12 +50,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.3rc3.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.3rc3.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/openmpi-4.0.3rc3 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.3.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.3.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-4.0.3 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/openmpi-4.0.3rc3 /var/tmp/openmpi-4.0.3rc3.tar.bz2
+    rm -rf /var/tmp/openmpi-4.0.3 /var/tmp/openmpi-4.0.3.tar.bz2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 
@@ -65,7 +65,7 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
         """Default openmpi building block"""
         ompi = openmpi()
         self.assertEqual(str(ompi),
-r'''# OpenMPI version 4.0.3rc3
+r'''# OpenMPI version 4.0.3
 RUN yum install -y \
         bzip2 \
         file \
@@ -77,12 +77,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.3rc3.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.3rc3.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/openmpi-4.0.3rc3 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.3.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.3.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-4.0.3 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/openmpi-4.0.3rc3 /var/tmp/openmpi-4.0.3rc3.tar.bz2
+    rm -rf /var/tmp/openmpi-4.0.3 /var/tmp/openmpi-4.0.3.tar.bz2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
 

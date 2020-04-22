@@ -38,7 +38,7 @@ class Test_mlnx_ofed(unittest.TestCase):
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -46,7 +46,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
-    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.7-3.2.9.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-utils \
@@ -71,7 +71,7 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -79,7 +79,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
-    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.7-3.2.9.0/ubuntu18.04/mellanox_mlnx_ofed.list && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu18.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-utils \
@@ -104,7 +104,7 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN yum install -y \
         ca-certificates \
         gnupg \
@@ -112,7 +112,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox && \
     yum install -y yum-utils && \
-    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/4.7-3.2.9.0/rhel7.2/mellanox_mlnx_ofed.repo && \
+    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/rhel7.2/mellanox_mlnx_ofed.repo && \
     yum install -y \
         libibmad \
         libibmad-devel \
@@ -136,7 +136,7 @@ RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox &&
         """Default mlnx_ofed building block"""
         mofed = mlnx_ofed()
         self.assertEqual(str(mofed),
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN yum install -y \
         ca-certificates \
         gnupg \
@@ -144,7 +144,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox && \
     yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/4.7-3.2.9.0/rhel8.0/mellanox_mlnx_ofed.repo && \
+    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/rhel8.0/mellanox_mlnx_ofed.repo && \
     yum install -y \
         libibmad \
         libibmad-devel \
@@ -283,7 +283,7 @@ RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox &&
         mofed = mlnx_ofed()
         r = mofed.runtime()
         self.assertEqual(r,
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -291,7 +291,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
-    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.7-3.2.9.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-utils \
@@ -317,7 +317,7 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         mofed = mlnx_ofed(prefix='/opt/ofed')
         r = mofed.runtime()
         self.assertEqual(r,
-r'''# Mellanox OFED version 4.7-3.2.9.0
+r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnl-3-200 \
