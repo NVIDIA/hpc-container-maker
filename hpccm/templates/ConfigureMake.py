@@ -162,6 +162,12 @@ class ConfigureMake(hpccm.base_object):
                                        configure_env, configure_opts,
                                        src_directory)
 
+        # Add an annotation if the caller inherits from the annotate template
+        if callable(getattr(self, 'add_annotation', None)):
+            self.add_annotation('configure', '{1} {3}/configure {2}'.format(
+                change_directory, configure_env, configure_opts,
+                src_directory).strip())
+
         return cmd.strip() # trim whitespace
 
     def install_step(self, parallel=None):

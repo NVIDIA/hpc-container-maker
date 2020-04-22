@@ -38,6 +38,9 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
     modified to include the gdrcopy. The default is True.
@@ -86,6 +89,8 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_build(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
             # Work around "install -D" issue on CentOS
             build=['mkdir -p {0}/include {0}/lib64'.format(self.__prefix),
                    'make PREFIX={} lib lib_install'.format(self.__prefix)],

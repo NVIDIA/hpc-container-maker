@@ -24,6 +24,7 @@ from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
+import hpccm.templates.annotate
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
@@ -32,15 +33,19 @@ from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 
-class multi_ofed(bb_base):
+class multi_ofed(bb_base, hpccm.templates.annotate):
     """The `multi_ofed` building block downloads and installs multiple
     versions of the OpenFabrics Enterprise Distribution (OFED). Please
     refer to the [`mlnx_ofed`](#mlnx_ofed) and [`ofed`](#ofed)
     building blocks for more information.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     inbox: Boolean flag to specify whether to install the 'inbox' OFED
     distributed by the Linux distribution.  The default is True.
@@ -83,7 +88,7 @@ class multi_ofed(bb_base):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        super(multi_ofed, self).__init__()
+        super(multi_ofed, self).__init__(**kwargs)
 
         self.__inbox = kwargs.get('inbox', True)
         self.__mlnx_oslabel = kwargs.get('mlnx_oslabel', '')
@@ -125,7 +130,8 @@ class multi_ofed(bb_base):
 
         # Mellanox OFED
         for version in self.__mlnx_versions:
-            self += mlnx_ofed(oslabel=self.__mlnx_oslabel,
+            self += mlnx_ofed(annotate=False,
+                              oslabel=self.__mlnx_oslabel,
                               packages=self.__mlnx_packages,
                               prefix=posixpath.join(self.__prefix, version),
                               symlink=self.__symlink,
@@ -138,6 +144,11 @@ class multi_ofed(bb_base):
             self += shell(commands=['ln -s {0} {1}'.format(
                 posixpath.join(self.__prefix, 'inbox'),
                 posixpath.join(self.__prefix, '5.0-0'))])
+
+        # Annotations
+        self.add_annotation('mlnx_versions', ', '.join(self.__mlnx_versions))
+        self.add_annotation('inbox', self.__inbox)
+        self += label(metadata=self.annotate_step())
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

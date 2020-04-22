@@ -48,6 +48,9 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     # Parameters
 
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
     branch: The git branch to clone.  Only recognized if the
     `repository` parameter is specified.  The default is empty, i.e.,
     use the default branch for the repository.
@@ -224,6 +227,8 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # Setup build configuration
         self.__bb = generic_autotools(
+            annotations={'version': self.__version} if not self.repository else {},
+            base_annotation=self.__class__.__name__,
             comment=False,
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,
