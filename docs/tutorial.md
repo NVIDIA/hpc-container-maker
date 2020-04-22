@@ -14,9 +14,9 @@ to manage their software environment.  A user loads the modules
 corresponding to the desired software environment.
 
 ```
-$ module load cuda/9.0
+$ module load cuda/10.2
 $ module load gcc
-$ module load openmpi/1.10.7
+$ module load openmpi/4.0.3
 ```
 
 Modules can depend on each other, and in this case, the `openmpi`
@@ -41,7 +41,7 @@ The CUDA base image corresponding to CUDA 9.0 and CentOS 7 is
 recipe is:
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
 ```
 
 _Note_: `Stage0` refers to the first stage of a [multi-stage
@@ -62,7 +62,7 @@ The [`mlnx_ofed` building block](/docs/building_blocks.md#mlnx_ofed)
 installs the OpenFabrics user space libraries:
 
 ```python
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 ```
 
 The [`gnu` building block](/docs/building_blocks.md#gnu) installs the
@@ -84,19 +84,19 @@ compiler, and with CUDA and InfiniBand enabled:
 
 ```python
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                  version='1.10.7')
+                  version='4.0.3')
 ```
 
 Bringing it all together, the complete recipe corresponding to the
 bare metal software environment is:
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 compiler = gnu()
 Stage0 += compiler
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                  version='1.10.7')
+                  version='4.0.3')
 ```
 
 The HPCCM recipe has nearly a one-to-one correspondence with the
@@ -158,12 +158,12 @@ args = parser.parse_args()
 Stage0 = hpccm.Stage()
 
 ### Start "Recipe"
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 compiler = gnu()
 Stage0 += compiler
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                 version='1.10.7')
+                 version='4.0.3')
 ### End "Recipe"
 
 hpccm.config.set_container_format(args.format)
