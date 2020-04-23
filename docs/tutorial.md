@@ -133,8 +133,8 @@ EULA](https://www.pgroup.com/doc/LICENSE) must be accepted in order to
 use the [PGI building block](/docs/building_blocks.md#pgi).
 
 What if the Linux distribution was Ubuntu instead of CentOS?  Change
-the base image from `nvidia/cuda:9.0-devel-centos7` to
-`nvidia/cuda:9.0-devel-ubuntu16.04` and see what happens.
+the base image from `nvidia/cuda:10.2-devel-centos7` to
+`nvidia/cuda:10.2-devel-ubuntu16.04` and see what happens.
 
 What would the equivalent script using the HPCCM Python module look
 like?
