@@ -23,7 +23,7 @@ Modules can depend on each other, and in this case, the `openmpi`
 module was built with the gcc compiler and with CUDA support enabled.
 
 The Linux distribution and drivers are typically fixed by the system
-administrator, for instance CentOS 7 and Mellanox OFED 3.4.
+administrator, for instance CentOS 7 and Mellanox OFED 5.0.
 
 The system administrator of the HPC system built and installed these
 components for their user community.  Including a software component
@@ -36,8 +36,8 @@ _How can this software environment be reproduced in a container image?_
 The starting point for any container image is a base image.  Since
 CUDA is required, the base image should be one of the [publicly
 available CUDA base images](https://hub.docker.com/r/nvidia/cuda/).
-The CUDA base image corresponding to CUDA 9.0 and CentOS 7 is
-`nvidia/cuda:9.0-devel-centos7`.  So the first line of the HPCCM
+The CUDA base image corresponding to CUDA 10.2 and CentOS 7 is
+`nvidia/cuda:10.2-devel-centos7`.  So the first line of the HPCCM
 recipe is:
 
 ```python
