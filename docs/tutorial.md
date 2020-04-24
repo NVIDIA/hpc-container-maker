@@ -14,16 +14,16 @@ to manage their software environment.  A user loads the modules
 corresponding to the desired software environment.
 
 ```
-$ module load cuda/9.0
+$ module load cuda/10.2
 $ module load gcc
-$ module load openmpi/1.10.7
+$ module load openmpi/4.0.3
 ```
 
 Modules can depend on each other, and in this case, the `openmpi`
 module was built with the gcc compiler and with CUDA support enabled.
 
 The Linux distribution and drivers are typically fixed by the system
-administrator, for instance CentOS 7 and Mellanox OFED 3.4.
+administrator, for instance CentOS 7 and Mellanox OFED 5.0.
 
 The system administrator of the HPC system built and installed these
 components for their user community.  Including a software component
@@ -36,12 +36,12 @@ _How can this software environment be reproduced in a container image?_
 The starting point for any container image is a base image.  Since
 CUDA is required, the base image should be one of the [publicly
 available CUDA base images](https://hub.docker.com/r/nvidia/cuda/).
-The CUDA base image corresponding to CUDA 9.0 and CentOS 7 is
-`nvidia/cuda:9.0-devel-centos7`.  So the first line of the HPCCM
+The CUDA base image corresponding to CUDA 10.2 and CentOS 7 is
+`nvidia/cuda:10.2-devel-centos7`.  So the first line of the HPCCM
 recipe is:
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
 ```
 
 _Note_: `Stage0` refers to the first stage of a [multi-stage
@@ -62,7 +62,7 @@ The [`mlnx_ofed` building block](/docs/building_blocks.md#mlnx_ofed)
 installs the OpenFabrics user space libraries:
 
 ```python
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 ```
 
 The [`gnu` building block](/docs/building_blocks.md#gnu) installs the
@@ -84,19 +84,19 @@ compiler, and with CUDA and InfiniBand enabled:
 
 ```python
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                  version='1.10.7')
+                  version='4.0.3')
 ```
 
 Bringing it all together, the complete recipe corresponding to the
 bare metal software environment is:
 
 ```python
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 compiler = gnu()
 Stage0 += compiler
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                  version='1.10.7')
+                  version='4.0.3')
 ```
 
 The HPCCM recipe has nearly a one-to-one correspondence with the
@@ -133,8 +133,8 @@ EULA](https://www.pgroup.com/doc/LICENSE) must be accepted in order to
 use the [PGI building block](/docs/building_blocks.md#pgi).
 
 What if the Linux distribution was Ubuntu instead of CentOS?  Change
-the base image from `nvidia/cuda:9.0-devel-centos7` to
-`nvidia/cuda:9.0-devel-ubuntu16.04` and see what happens.
+the base image from `nvidia/cuda:10.2-devel-centos7` to
+`nvidia/cuda:10.2-devel-ubuntu16.04` and see what happens.
 
 What would the equivalent script using the HPCCM Python module look
 like?
@@ -158,12 +158,12 @@ args = parser.parse_args()
 Stage0 = hpccm.Stage()
 
 ### Start "Recipe"
-Stage0 += baseimage(image='nvidia/cuda:9.0-devel-centos7')
-Stage0 += mlnx_ofed(version='3.4-1.0.0.0')
+Stage0 += baseimage(image='nvidia/cuda:10.2-devel-centos7')
+Stage0 += mlnx_ofed(version='5.0-2.1.8.0')
 compiler = gnu()
 Stage0 += compiler
 Stage0 += openmpi(cuda=True, infiniband=True, toolchain=compiler.toolchain,
-                 version='1.10.7')
+                 version='4.0.3')
 ### End "Recipe"
 
 hpccm.config.set_container_format(args.format)
