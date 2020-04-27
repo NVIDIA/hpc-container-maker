@@ -23,7 +23,6 @@ from __future__ import print_function
 
 from distutils.version import LooseVersion
 import posixpath
-from copy import copy as _copy
 
 import hpccm.config
 import hpccm.templates.envvars

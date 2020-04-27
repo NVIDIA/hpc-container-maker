@@ -30,7 +30,6 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.toolchain import toolchain
 
 class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `xpmem` building block builds and installs the user space
