@@ -4,7 +4,7 @@
    image.
 
    Sample workflow:
-$ hpccm.py --recipe recipes/easybuild.py --userarg easyconfig=GROMACS-2016.3-foss-2016b-GPU-enabled.eb > Dockerfile.gromacs.eb
+$ hpccm.py --recipe recipes/easybuild.py --userarg easyconfig=GROMACS-2019.3-fosscuda-2019b.eb > Dockerfile.gromacs.eb
 $ docker build -t gromacs.eb -f Dockerfile.gromacs.eb .
 $ nvidia-docker run --rm -ti gromacs.eb bash -l
 container:/tmp> module load GROMACS
@@ -15,30 +15,28 @@ import os
 
 Stage0 += comment(__doc__, reformat=False)
 
-Stage0.baseimage('ubuntu:16.04')
+Stage0.baseimage('centos:8')
+
+Stage0 += shell(commands=['yum update -y centos-release',
+                          'rm -rf /var/cache/yum/*'])
 
 # Base dependencies
-Stage0 += python()
+Stage0 += python(python3=False)
 Stage0 += gnu()
 Stage0 += ofed()
-
-# Additional dependencies
-ospackages = ['build-essential', 'bzip2', 'file', 'git', 'gzip',
-              'libssl-dev', 'libtool', 'lmod', 'make', 'openssh-client',
-              'patch', 'python-pip', 'python-setuptools', 'rsh-client',
-              'tar', 'wget', 'unzip', 'xz-utils']
-Stage0 += apt_get(ospackages=ospackages)
-
-# lmod setup
-Stage0 += shell(commands=[
-    'ln -s /usr/share/lmod/lmod/init/profile /etc/profile.d/lmod.sh'])
+Stage0 += packages(epel=True, powertools=True,
+                   yum=['bzip2', 'diffutils', 'file', 'git', 'gzip',
+                        'libtool', 'Lmod', 'make', 'openssh-clients',
+                        'openssl-devel', 'patch', 'rsh', 'tar', 'unzip',
+                        'which', 'xz'])
 
 # Setup and install EasyBuild
+Stage0 += pip(packages=['easybuild'], pip='pip2')
 Stage0 += shell(commands=['useradd -m easybuild',
                           'mkdir -p /opt/easybuild',
-                          'chown easybuild:easybuild /opt/easybuild',
-                          'easy_install easybuild==3.6.2'])
+                          'chown easybuild:easybuild /opt/easybuild'])
 
+# Module environment
 Stage0 += environment(variables={'MODULEPATH': '/opt/easybuild/modules/all:/home/easybuild/.local/easybuild/modules/all:$MODULEPATH'})
 
 easyconfig = USERARG.get('easyconfig', None)
