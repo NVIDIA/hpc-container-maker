@@ -103,7 +103,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     Blocks runtime should be installed.  The default is True.
 
     version: The version of the Intel Parallel Studio XE runtime to
-    install.  The default value is `2020.0-008`.
+    install.  The default value is `2020.1-12`.
 
     # Examples
 
@@ -136,7 +136,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2020.0-008')
+        self.__version = kwargs.get('version', '2020.1-12')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()
@@ -166,19 +166,17 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         if not self.__eula:
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
-        # The APT keys expired and had to be reissued.  They were only
-        # reissued for 2019 and later.  Blindly (and insecurely!) trust
-        # the 2018 and earlier repositories.
         if int(self.__year) >= 2019:
-            apt_keys = ['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)]
             apt_repositories = ['deb https://apt.repos.intel.com/{0} intel-psxe-runtime main'.format(self.__year)]
         else:
-            apt_keys = ['https://apt.repos.intel.com/{0}/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-{0}'.format(self.__year)]
+            # The APT keys expired and had to be reissued.  They were only
+            # reissued for 2019 and later.  Blindly (and insecurely!) trust
+            # the 2018 and earlier repositories.
             apt_repositories = ['deb [trusted=yes] https://apt.repos.intel.com/{0} intel-psxe-runtime main'.format(self.__year)]
 
         self += packages(
             apt=self.__apt,
-            apt_keys=apt_keys,
+            apt_keys = ['https://apt.repos.intel.com/{0}/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-{0}'.format(self.__year)],
             apt_repositories=apt_repositories,
             aptitude=True,
             yum=self.__yum,
@@ -271,8 +269,12 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
                     basepath, 'mpi', 'intel64', 'lib', 'release'))
 
         if self.__tbb:
-            ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',
-                                                  'intel64', 'gcc4.7'))
+            if int(self.__year) >= 2020:
+                ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',
+                                                      'intel64', 'gcc4.8'))
+            else:
+                ld_library_path.append(posixpath.join(basepath, 'tbb', 'lib',
+                                                      'intel64', 'gcc4.7'))
 
         if ld_library_path:
             ld_library_path.append('$LD_LIBRARY_PATH')
