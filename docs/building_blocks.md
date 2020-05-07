@@ -1406,13 +1406,13 @@ the default values are `bzip2`, `openssh-clients`, `tar`, and
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.5.0`.
+value is `2.6.0`.
 
 __Examples__
 
 
 ```python
-hpcx(prefix='/usr/local/hpcx', version='2.5.0')
+hpcx(prefix='/usr/local/hpcx', version='2.6.0')
 ```
 
 
