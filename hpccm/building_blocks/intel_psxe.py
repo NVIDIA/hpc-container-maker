@@ -397,5 +397,6 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                       ipp=self.__ipp,
                                       mkl=self.__mkl,
                                       mpi=self.__mpi,
+                                      psxevars=self.__psxevars,
                                       tbb=self.__tbb,
                                       version=self.__runtime_version))
