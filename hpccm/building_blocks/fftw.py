@@ -24,25 +24,16 @@ from __future__ import print_function
 import posixpath
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
-class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-           hpccm.templates.ldconfig, hpccm.templates.rm, hpccm.templates.tar,
-           hpccm.templates.wget):
+class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `fftw` building block downloads, configures, builds, and
     installs the [FFTW](http://www.fftw.org) component.  Depending on
     the parameters, the source will be downloaded from the web
@@ -50,6 +41,9 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     context.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
@@ -138,112 +132,57 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(fftw, self).__init__(**kwargs)
 
-        self.configure_opts = kwargs.get('configure_opts', [])
-        self.prefix = kwargs.get('prefix', '/usr/local/fftw')
+        self.__baseurl = kwargs.pop('baseurl', 'ftp://ftp.fftw.org/pub/fftw')
+        self.__check = kwargs.pop('check', False)
+        self.__configure_opts = kwargs.pop('configure_opts', [])
+        self.__directory = kwargs.pop('directory', '')
+        self.__mpi = kwargs.pop('mpi', False)
+        self.__ospackages = kwargs.pop('ospackages', ['file', 'make', 'wget'])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/fftw')
+        self.__version = kwargs.pop('version', '3.3.8')
 
-        self.__baseurl = kwargs.get('baseurl', 'ftp://ftp.fftw.org/pub/fftw')
-        self.__check = kwargs.get('check', False)
-        self.__directory = kwargs.get('directory', '')
-        self.__mpi = kwargs.get('mpi', False)
-        self.__ospackages = kwargs.get('ospackages', ['file', 'make', 'wget'])
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '3.3.8')
+        # Set the configure options
+        self.__configure()
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Set the environment variables
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Set the CPU architecture specific parameters
-        self.__cpu_arch()
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
+            check=self.__check,
+            configure_opts=self.__configure_opts,
+            comment=False,
+            devel_environment=self.environment_variables,
+            # PGI compiler needs a larger stack size
+            postconfigure=['ulimit -s unlimited'] if self.__check else None,
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url='{0}/fftw-{1}.tar.gz'.format(self.__baseurl, self.__version),
+            **kwargs)
 
-        # Construct series of steps to execute
-        self.__setup()
-
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        if self.__directory:
-            self += comment('FFTW')
-        else:
-            self += comment('FFTW version {}'.format(self.__version))
+        # Container instructions
+        self += comment('FFTW version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        if self.__directory:
-            # Use source from local build context
-            self += copy(src=self.__directory,
-                         dest=posixpath.join(self.__wd,
-                                             self.__directory))
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
 
-    def __cpu_arch(self):
-        """Based on the CPU architecture, set values accordingly.  A user
-        specified value overrides any defaults."""
+    def __configure(self):
+        """Setup configure options based on user parameters and CPU
+           architecture"""
 
         if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            if not self.configure_opts:
-                self.configure_opts = ['--enable-shared', '--enable-openmp',
-                                       '--enable-threads', '--enable-sse2']
+            if not self.__configure_opts:
+                self.__configure_opts = ['--enable-shared', '--enable-openmp',
+                                         '--enable-threads', '--enable-sse2']
         else:
-            if not self.configure_opts:
-                self.configure_opts = ['--enable-shared', '--enable-openmp',
+            if not self.__configure_opts:
+                self.__configure_opts = ['--enable-shared', '--enable-openmp',
                                        '--enable-threads']
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        tarball = 'fftw-{}.tar.gz'.format(self.__version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
-
         if self.__mpi:
-            self.configure_opts.append('--enable-mpi')
-
-        if self.__directory:
-            # Use source from local build context
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd, self.__directory),
-                toolchain=self.__toolchain))
-        else:
-            # Download source from web
-            self.__commands.append(self.download_step(url=url,
-                                                      directory=self.__wd))
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd,
-                                         'fftw-{}'.format(self.__version)),
-                toolchain=self.__toolchain))
-
-        self.__commands.append(self.build_step())
-
-        # Check the build
-        if self.__check:
-            # PGI compiler needs a larger stack size
-            self.__commands.append('ulimit -s unlimited')
-            self.__commands.append(self.check_step())
-
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        if self.__directory:
-            # Using source from local build context, cleanup directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, self.__directory)]))
-        else:
-            # Using downloaded source, cleanup tarball and directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, tarball),
-                       posixpath.join(self.__wd,
-                                      'fftw-{}'.format(self.__version))]))
+            self.__configure_opts.append('--enable-mpi')
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -259,11 +198,5 @@ class fftw(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         """
         instructions = []
         instructions.append(comment('FFTW'))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

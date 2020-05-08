@@ -299,6 +299,9 @@ building block.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the test cases should be
 run.  The default is False.
 
@@ -564,6 +567,9 @@ context.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -673,6 +679,9 @@ component.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LIBRARY_PATH`, and `LD_LIBRARY_PATH`) should be
 modified to include the gdrcopy. The default is True.
@@ -725,12 +734,22 @@ builds, and installs a specified GNU Autotools enabled package.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
+
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
 use the default branch for the repository.
 
 - __build_directory__: The location to build the package.  The default
 value is the source code location.
+
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -741,6 +760,11 @@ use the latest commit on the default branch for the repository.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default value is an empty list.
+
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
 
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
@@ -756,8 +780,18 @@ configuring.  For instance, `enable_foo=True` maps to
 `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
 Underscores in the parameter name are converted to dashes.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -779,6 +813,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
@@ -840,6 +880,12 @@ a specified package.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
+
 - __build__: List of shell commands to run in order to build the
 package.  The working directory is the source directory.  The
 default is an empty list.
@@ -852,14 +898,29 @@ use the default branch for the repository.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
+
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
 
 - __install__: List of shell commands to run in order to install the
 package.  The working directory is the source directory.  If
 `prefix` is defined, it will be automatically created if the list
 is non-empty.  The default is an empty list.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
@@ -870,6 +931,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __url__: The URL of the tarball package to build.  One of this
 parameter or the `repository` parameter must be specified.
@@ -910,12 +977,22 @@ builds, and installs a specified CMake enabled package.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __annotations__: Dictionary of additional annotations to include.  The
+default is an empty dictionary.
+
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
 use the default branch for the repository.
 
 - __build_directory__: The location to build the package.  The default
 value is a `build` subdirectory in the source code location.
+
+- __build_environment__: Dictionary of environment variables and values
+to set when building the package.  The default is an empty
+dictionary.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -927,12 +1004,27 @@ is an empty list.
 `repository` parameter is specified.  The default is empty, i.e.,
 use the latest commit on the default branch for the repository.
 
+- __devel_environment__: Dictionary of environment variables and values,
+e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+stage after the package is built and installed.  The default is an
+empty dictionary.
+
 - __directory__: The source code location.  The default value is the
 basename of the downloaded package.  If the value is not an
 absolute path, then the temporary working directory is prepended.
 
+- __environment__: Boolean flag to specify whether the environment
+should be modified (see `devel_environment` and
+`runtime_environment`).  The default is True.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the library directory
+should be added dynamic linker cache.  The default value is False.
+
+- __libdir__: The path relative to the install prefix to use when
+configuring the dynamic linker cache.  The default value is `lib`.
 
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
@@ -954,6 +1046,12 @@ must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
 this paramter or the `url` parameter must be specified.
+
+- ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime_environment__: Dictionary of environment variables and
+values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+stage.  The default is an empty dictionary.
 
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
@@ -1148,6 +1246,9 @@ context.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -1170,8 +1271,8 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-include HDF5. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
+should be modified to include HDF5. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the HDF5 library
 directory should be added dynamic linker cache.  If False, then
@@ -1226,6 +1327,7 @@ hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
                                  '--enable-profiling=yes'])
 ```
 
+
 ## runtime
 ```python
 hdf5.runtime(self, _from=u'0')
@@ -1252,6 +1354,10 @@ component.
 
 __Parameters__
 
+
+- __environment__: Boolean flag to specify whether the environment
+should be modified to include HPC-X. This option is only
+recognized if `hpcxinit` is False. The default is True.
 
 - __hpcxinit__: Mellanox HPC-X provides an environment script
 (`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
@@ -1718,6 +1824,9 @@ The `knem` building block install the headers from the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`) should be modified to include knem. The default is True.
 
@@ -1763,6 +1872,9 @@ The `kokkos` building block downloads and installs the
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __arch__: Flag to set the target architecture. If set adds
 `--arch=value` to the list of `generate_makefile.bash` options.
@@ -1932,8 +2044,8 @@ __Parameters__
 
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include the
-LLVM compilers. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
+include the LLVM compilers. The default is True.
 
 - __extra_repository__: Boolean flag to specify whether to enable an
 extra package repository containing addition LLVM compiler
@@ -1941,6 +2053,9 @@ packages.  For Ubuntu, setting this flag to True enables the
 - __`ppa__:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
 distributions, setting this flag to True enables the Software
 Collections (SCL) repository.  The default is False.
+
+- __extra_tools__: Boolean flag to specify whether to also install
+`clang-format` and `clang-tidy`.  The default is False.
 
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
@@ -1983,6 +2098,67 @@ __Examples__
 l = llvm(...)
 Stage0 += l
 Stage1 += l.runtime()
+```
+
+# magma
+```python
+magma(self, **kwargs)
+```
+The `magma` building block configures, builds, and installs the
+[MAGMA](https://icl.cs.utk.edu/magma) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+Either the [MKL](#mkl) or [OpenBLAS](#openblas) building block
+should also be installed.
+
+__Parameters__
+
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default value
+is an empty list.
+
+- __gpu_target__: List of GPU architectures to compile.  The default
+values are `Pascal`, `Volta`, and `Turing`.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  The default values are `tar` and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/magma`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+- __version__: The version of MAGMA source to download.  The default
+value is `2.5.3`.
+
+__Examples__
+
+
+```python
+magma(prefix='/opt/magma', version='2.5.3')
+```
+
+
+## runtime
+```python
+magma.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+```python
+m = magma(...)
+Stage0 += m
+Stage1 += m.runtime()
 ```
 
 # mkl
@@ -2062,6 +2238,9 @@ Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
 RHEL-based Linux distributions, the default value is `rhel7.2` for
@@ -2095,7 +2274,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `4.7-3.2.9.0`.
+value is `5.0-2.1.8.0`.
 
 __Examples__
 
@@ -2134,6 +2313,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` and `make
 testing` steps should be performed.  The default is False.
@@ -2226,6 +2408,9 @@ building blocks for more information.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __inbox__: Boolean flag to specify whether to install the 'inbox' OFED
 distributed by the Linux distribution.  The default is True.
 
@@ -2238,10 +2423,10 @@ OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
 parameter for more information.
 
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
-versions to install.  The default values are `3.3-1.0.4.0`,
-`3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-`4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
-`4.7-3.2.9.0`.
+versions to install.  The default values are `3.4-2.0.0.0`,
+`4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
+`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, and
+`5.0-2.1.8.0`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -2292,6 +2477,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -2527,6 +2715,9 @@ building block.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -2547,14 +2738,11 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-NetCDF. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
+modified to include NetCDF. The default is True.
 
 - __fortran__: Boolean flag to specify whether the NetCDF Fortran
 library should be installed.  The default is True.
-
-- __hdf5_dir__: Path to the location where HDF5 is installed in the
-container image.  The default value is `/usr/local/hdf5`.
 
 - __ldconfig__: Boolean flag to specify whether the NetCDF library
 directory should be added dynamic linker cache.  If False, then
@@ -2639,13 +2827,13 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2020.1.1`.
+value is `2020.2.1`.
 
 __Examples__
 
 
 ```python
-nsight_systems(version='2020.1.1')
+nsight_systems(version='2020.2.1')
 ```
 
 
@@ -2797,6 +2985,9 @@ The `openblas` building block builds and installs the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 OpenBLAS. The default is True.
@@ -2867,6 +3058,9 @@ that want to build using the MPI compiler wrappers.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -2957,7 +3151,7 @@ specified by `version`.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`4.0.3rc3`.
+`4.0.3`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3267,6 +3461,9 @@ The `pmix` building block configures, builds, and installs the
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
 
@@ -3354,6 +3551,9 @@ component.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __check__: Boolean flag to specify whether the `make check` step
 should be performed.  The default is False.
@@ -3570,6 +3770,9 @@ recommended.
 __Parameters__
 
 
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
 - __branch__: The branch of SENSEI to use.  The default value is
 `v2.1.1`.
 
@@ -3650,6 +3853,9 @@ Note: this building block does not install SLURM itself.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __configure_opts__: List of options to pass to `configure`.  The
 default is an empty list.
@@ -3737,6 +3943,9 @@ this building block.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The git branch to clone.  Only recognized if the
 `repository` parameter is specified.  The default is empty, i.e.,
@@ -3829,7 +4038,7 @@ The default is empty, i.e., use the release package specified by
 `version`.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.7.0`.
+is `1.8.0`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3894,6 +4103,9 @@ component.
 
 __Parameters__
 
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
 
 - __branch__: The branch of XPMEM to use.  The default value is
 `master`.

@@ -51,8 +51,9 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://download.schedmd.com/slurm/slurm-19.05.5.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/slurm-19.05.5.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/slurm-19.05.5 &&   ./configure --prefix=/usr/local/slurm-pmi2 && \
+    cd /var/tmp/slurm-19.05.5 && \
     make -C contribs/pmi2 install && \
-    rm -rf /var/tmp/slurm-19.05.5.tar.bz2 /var/tmp/slurm-19.05.5''')
+    rm -rf /var/tmp/slurm-19.05.5 /var/tmp/slurm-19.05.5.tar.bz2''')
 
     @x86_64
     @ubuntu
@@ -74,9 +75,10 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://download.schedmd.com/slurm/slurm-19.05.4.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/slurm-19.05.4.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/slurm-19.05.4 &&   ./configure --prefix=/usr/local/slurm-pmi2 && \
+    cd /var/tmp/slurm-19.05.4 && \
     make -C contribs/pmi2 install && \
     echo "/usr/local/slurm-pmi2/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/slurm-19.05.4.tar.bz2 /var/tmp/slurm-19.05.4''')
+    rm -rf /var/tmp/slurm-19.05.4 /var/tmp/slurm-19.05.4.tar.bz2''')
 
     @x86_64
     @ubuntu
@@ -87,5 +89,4 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         r = p.runtime()
         self.assertEqual(r,
 r'''# SLURM PMI2
-COPY --from=0 /usr/local/slurm-pmi2 /usr/local/slurm-pmi2
-''')
+COPY --from=0 /usr/local/slurm-pmi2 /usr/local/slurm-pmi2''')

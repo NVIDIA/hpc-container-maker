@@ -26,24 +26,19 @@ import re
 from six import string_types
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-              hpccm.templates.downloader, hpccm.templates.ldconfig,
-              hpccm.templates.rm):
+class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
+              hpccm.templates.ldconfig):
     """The `openmpi` building block configures, builds, and installs the
     [OpenMPI](https://www.open-mpi.org) component.
 
@@ -52,6 +47,9 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     that want to build using the MPI compiler wrappers.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     branch: The git branch to clone.  Only recognized if the
     `repository` parameter is specified.  The default is empty, i.e.,
@@ -142,7 +140,7 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
     version: The version of OpenMPI source to download.  This
     value is ignored if `directory` is set.  The default value is
-    `4.0.3rc3`.
+    `4.0.3`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -187,45 +185,61 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(openmpi, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl',
-                                  'https://www.open-mpi.org/software/ompi')
-        self.__check = kwargs.get('check', False)
-        self.configure_opts = kwargs.get('configure_opts',
-                                         ['--disable-getpwuid',
-                                          '--enable-orterun-prefix-by-default'])
-        self.cuda = kwargs.get('cuda', True)
+        self.__baseurl = kwargs.pop('baseurl',
+                                    'https://www.open-mpi.org/software/ompi')
+        self.__configure_opts = kwargs.pop('configure_opts',
+                                           ['--disable-getpwuid',
+                                            '--enable-orterun-prefix-by-default'])
+        self.__cuda = kwargs.pop('cuda', True)
         self.__default_repository = 'https://github.com/open-mpi/ompi.git'
-        self.infiniband = kwargs.get('infiniband', True)
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.__pmi = kwargs.get('pmi', False)
-        self.__pmix = kwargs.get('pmix', False)
-        self.prefix = kwargs.get('prefix', '/usr/local/openmpi')
+        self.__infiniband = kwargs.pop('infiniband', True)
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__pmi = kwargs.pop('pmi', False)
+        self.__pmix = kwargs.pop('pmix', False)
+        self.__prefix = kwargs.pop('prefix', '/usr/local/openmpi')
+        self.__recursive = kwargs.pop('recursive', True)
         self.__runtime_ospackages = [] # Filled in by __distro()
-
         # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '4.0.3rc3')
-        self.__ucx = kwargs.get('ucx', False)
-
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        self.__version = kwargs.pop('version', '4.0.3')
+        self.__ucx = kwargs.pop('ucx', False)
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Set the configure options
+        self.__configure()
+
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Set the download specific parameters
+        self.__download()
+        kwargs['repository'] = self.repository
+        kwargs['url'] = self.url
 
-        # Fill in container instructions
-        self.__instructions()
+        # Setup the environment variables
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-    def __instructions(self):
-        """Fill in container instructions"""
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            annotations={'version': self.__version} if not self.repository else {},
+            base_annotation=self.__class__.__name__,
+            comment=False,
+            configure_opts=self.__configure_opts,
+            devel_environment=self.environment_variables,
+            preconfigure=['./autogen.pl'] if self.repository else None,
+            prefix=self.__prefix,
+            recursive=self.__recursive,
+            runtime_environment=self.environment_variables,
+            toolchain=self.__toolchain,
+            **kwargs)
 
+        # Container instructions
         if self.repository:
             if self.branch:
                 self += comment('OpenMPI {} {}'.format(self.repository,
@@ -238,8 +252,53 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else:
             self += comment('OpenMPI version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
+
+    def __configure(self):
+        """Setup configure options based on user parameters"""
+
+        # CUDA
+        if self.__cuda:
+            if self.__toolchain.CUDA_HOME:
+                self.__configure_opts.append(
+                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
+            else:
+                self.__configure_opts.append('--with-cuda')
+        else:
+            self.__configure_opts.append('--without-cuda')
+
+        # PMI
+        if self.__pmi:
+            if isinstance(self.__pmi, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-pmi={}'.format(self.__pmi))
+            else:
+                self.__configure_opts.append('--with-pmi')
+
+        # PMIX
+        if self.__pmix:
+            if isinstance(self.__pmix, string_types):
+                # Use specified path
+                self.__configure_opts.append('--with-pmix={}'.format(
+                    self.__pmix))
+            else:
+                self.__configure_opts.append('--with-pmix')
+
+        # InfiniBand
+        if self.__infiniband:
+            self.__configure_opts.append('--with-verbs')
+        else:
+            self.__configure_opts.append('--without-verbs')
+
+        # UCX
+        if self.__ucx:
+            if isinstance(self.__ucx, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-ucx={}'.format(self.__ucx))
+            else:
+                self.__configure_opts.append('--with-ucx')
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -270,13 +329,8 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __setup(self):
-
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        build_environment = []
-        remove = []
+    def __download(self):
+        """Set download source based on user parameters"""
 
         # Use the default repository if set to True
         if self.repository is True:
@@ -292,103 +346,6 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             tarball = 'openmpi-{}.tar.bz2'.format(self.__version)
             self.url = '{0}/{1}/downloads/{2}'.format(
                 self.__baseurl, major_minor, tarball)
-            remove.append(posixpath.join(self.__wd, tarball))
-
-        # CUDA
-        if self.cuda:
-            if self.__toolchain.CUDA_HOME:
-                self.configure_opts.append(
-                    '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
-            else:
-                self.configure_opts.append('--with-cuda')
-        else:
-            self.configure_opts.append('--without-cuda')
-
-        # PMI
-        if self.__pmi:
-            if isinstance(self.__pmi, string_types):
-                # Use specified path
-                self.configure_opts.append('--with-pmi={}'.format(self.__pmi))
-            else:
-                self.configure_opts.append('--with-pmi')
-
-        # PMIX
-        if self.__pmix:
-            if isinstance(self.__pmix, string_types):
-                # Use specified path
-                self.configure_opts.append('--with-pmix={}'.format(
-                    self.__pmix))
-            else:
-                self.configure_opts.append('--with-pmix')
-
-        # InfiniBand
-        if self.infiniband:
-            self.configure_opts.append('--with-verbs')
-        else:
-            self.configure_opts.append('--without-verbs')
-
-        # UCX
-        if self.__ucx:
-            if isinstance(self.__ucx, string_types):
-                # Use specified path
-                self.configure_opts.append('--with-ucx={}'.format(self.__ucx))
-            else:
-                self.configure_opts.append('--with-ucx')
-
-            # If UCX was built with CUDA support, it is linked with
-            # libcuda.so.1, which is not available during the
-            # build stage.  Assume that if OpenMPI is built with
-            # CUDA support, then UCX was as well...
-            if self.cuda:
-                cuda_home = "/usr/local/cuda"
-                if self.__toolchain.CUDA_HOME:
-                    cuda_home = self.__toolchain.CUDA_HOME
-                self.__commands.append('ln -sf {0} {1}'.format(
-                    posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
-                    posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
-                if not self.__toolchain.LD_LIBRARY_PATH:
-                    build_environment.append('LD_LIBRARY_PATH="{}:$LD_LIBRARY_PATH"'.format(posixpath.join(cuda_home, 'lib64', 'stubs')))
-
-        # Download source from web
-        self.__commands.append(self.download_step(recursive=True,
-                                                  wd=self.__wd))
-
-        # Generate configure script
-        if self.repository:
-            self.__commands.append('cd {} && ./autogen.pl'.format(
-                self.src_directory))
-
-        # Configure
-        self.__commands.append(self.configure_step(
-            directory=self.src_directory,
-            environment=build_environment,
-            toolchain=self.__toolchain))
-
-        # Build
-        self.__commands.append(self.build_step())
-
-        # Check
-        if self.__check:
-            self.__commands.append(self.check_step())
-
-        # Install
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup
-        if self.src_directory:
-            remove.append(self.src_directory)
-        self.__commands.append(self.cleanup_step(items=remove))
-
-        # Set the environment
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -404,11 +361,5 @@ class openmpi(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         instructions = []
         instructions.append(comment('OpenMPI'))
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
-        return '\n'.join(str(x) for x in instructions)
+        instructions.append(self.__bb.runtime(_from=_from))
+        return '\n'.join(str(x) for x in instructions).rstrip()

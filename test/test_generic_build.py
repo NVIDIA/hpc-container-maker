@@ -108,6 +108,43 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make install PREFIX=/usr/local/openblas && \
     rm -rf /var/tmp/OpenBLAS-0.3.6 /var/tmp/v0.3.6.tar.gz''')
 
+    @centos
+    @docker
+    def test_environment_ldconfig_annotate(self):
+        """ldconfig and environment options"""
+        g = generic_build(annotate=True,
+                          base_annotation='openblas',
+                          branch='v0.3.6',
+                          build=['make USE_OPENMP=1'],
+                          devel_environment={'CPATH': '/usr/local/openblas/include:$CPATH'},
+                          install=['make install PREFIX=/usr/local/openblas'],
+                          ldconfig=True,
+                          prefix='/usr/local/openblas',
+                          repository='https://github.com/xianyi/OpenBLAS.git',
+                          runtime_environment={'CPATH': '/usr/local/openblas/include:$CPATH'})
+        self.assertEqual(str(g),
+r'''# https://github.com/xianyi/OpenBLAS.git
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.3.6 https://github.com/xianyi/OpenBLAS.git OpenBLAS && cd - && \
+    cd /var/tmp/OpenBLAS && \
+    make USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS && \
+    make install PREFIX=/usr/local/openblas && \
+    echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/OpenBLAS
+ENV CPATH=/usr/local/openblas/include:$CPATH
+LABEL hpccm.openblas.branch=v0.3.6 \
+    hpccm.openblas.repository=https://github.com/xianyi/OpenBLAS.git''')
+
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/xianyi/OpenBLAS.git
+COPY --from=0 /usr/local/openblas /usr/local/openblas
+RUN echo "/usr/local/openblas/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig
+ENV CPATH=/usr/local/openblas/include:$CPATH
+LABEL hpccm.openblas.branch=v0.3.6 \
+    hpccm.openblas.repository=https://github.com/xianyi/OpenBLAS.git''')
+
     @ubuntu
     @docker
     def test_runtime(self):

@@ -21,21 +21,14 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import posixpath
-
-import hpccm.templates.CMakeBuild
 import hpccm.templates.git
-import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_cmake import generic_cmake
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.shell import shell
-from hpccm.toolchain import toolchain
 
-class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
-             hpccm.templates.rm):
+class sensei(bb_base, hpccm.templates.git):
     """The `sensei` building block configures, builds, and installs the
     [SENSEI](https://sensei-insitu.org) component.
 
@@ -50,6 +43,9 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
     recommended.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     branch: The branch of SENSEI to use.  The default value is
     `v2.1.1`.
@@ -110,74 +106,56 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
 
         super(sensei, self).__init__(**kwargs)
 
-        self.__branch = kwargs.get('branch', 'v2.1.1')
-        self.__catalyst = kwargs.get('catalyst', '')
-        self.cmake_opts = kwargs.get('cmake_opts', ['-DENABLE_SENSEI=ON'])
-        self.__libsim = kwargs.get('libsim', '')
-        self.__miniapps = kwargs.get('miniapps', False)
-        self.__ospackages = kwargs.get('ospackages', ['ca-certificates', 'git',
+        self.__branch = kwargs.pop('branch', 'v2.1.1')
+        self.__catalyst = kwargs.pop('catalyst', '')
+        self.__cmake_opts = kwargs.pop('cmake_opts', ['-DENABLE_SENSEI=ON'])
+        self.__libsim = kwargs.pop('libsim', '')
+        self.__miniapps = kwargs.pop('miniapps', False)
+        self.__ospackages = kwargs.pop('ospackages', ['ca-certificates', 'git',
                                                       'make'])
-        self.prefix = kwargs.get('prefix', '/usr/local/sensei')
-        self.__repository = kwargs.get('repository', 'https://gitlab.kitware.com/sensei/sensei.git')
-        # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__vtk = kwargs.get('vtk', '')
+        self.__prefix = kwargs.pop('prefix', '/usr/local/sensei')
+        self.__repository = kwargs.pop('repository', 'https://gitlab.kitware.com/sensei/sensei.git')
+        self.__vtk = kwargs.pop('vtk', '')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Set the cmake options
+        self.__cmake()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Setup build configuration
+        self.__bb = generic_cmake(
+            base_annotation=self.__class__.__name__,
+            branch=self.__branch,
+            comment=False,
+            cmake_opts=self.__cmake_opts,
+            prefix=self.__prefix,
+            repository=self.__repository,
+            **kwargs)
 
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
+        # Container instructions
         self += comment('SENSEI version {}'.format(self.__branch))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
+        self += self.__bb
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        # Download source
-        self.__commands.append(self.clone_step(repository=self.__repository,
-                                               branch=self.__branch,
-                                               path=self.__wd))
+    def __cmake(self):
+        """Setup cmake options based on users parameters"""
 
         # Configure
         if self.__catalyst:
-            self.cmake_opts.extend(
+            self.__cmake_opts.extend(
                 ['-DENABLE_CATALYST=ON',
                  '-DParaView_DIR={}'.format(self.__catalyst)])
         if self.__libsim:
-            self.cmake_opts.extend(
+            self.__cmake_opts.extend(
                 ['-DENABLE_LIBSIM=ON',
                  '-DLIBSIM_DIR={}'.format(self.__libsim)])
         if not self.__miniapps:
-            self.cmake_opts.extend(
+            self.__cmake_opts.extend(
                 ['-DENABLE_PARALLEL3D=OFF', '-DENABLE_OSCILLATORS=OFF'])
         else:
-            self.cmake_opts.append('-DCMAKE_C_STANDARD=99')
+            self.__cmake_opts.append('-DCMAKE_C_STANDARD=99')
+
         if self.__vtk:
-            self.cmake_opts.append(
+            self.__cmake_opts.append(
                 '-DVTK_DIR={}'.format(self.__vtk))
-        self.__commands.append(self.configure_step(
-            directory=posixpath.join(self.__wd, 'sensei'),
-            opts=self.cmake_opts, toolchain=self.__toolchain))
-
-        # Build
-        self.__commands.append(self.build_step())
-
-        # Install
-        self.__commands.append(self.build_step(target='install'))
-
-        # Cleanup
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, 'sensei')]))
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -192,6 +170,5 @@ class sensei(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.git,
         """
         instructions = []
         instructions.append(comment('SENSEI'))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

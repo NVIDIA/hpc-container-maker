@@ -15,13 +15,13 @@ The example includes a very simple Jupyter notebook, Conda environment
 Using pip:
 
 ```
-$ jupyter.py --notebook notebook.py --requirements requirements.txt > Dockerfile
+$ jupyter.py --notebook notebook.ipynb --requirements requirements.txt > Dockerfile
 ```
 
 Using Anaconda:
 
 ```
-$ jupyter.py --packager anaconda --notebook notebook.py --environment environment.yml > Dockerfile
+$ jupyter.py --packager anaconda --notebook notebook.ipynb --environment environment.yml > Dockerfile
 ```
 
 Once the Dockerfile has been generated, the steps to build and run
@@ -37,12 +37,12 @@ $ sudo docker run --rm -p 8888:8888 jupyter:example
 Using pip:
 
 ```
-$ jupyter.py --notebook notebook.py --requirements requirements.txt --format singularity > Singularity.def
+$ jupyter.py --notebook notebook.ipynb --requirements requirements.txt --format singularity > Singularity.def
 ```
 
 Using Anaconda:
 ```
-$ jupyter.py --packager anaconda --notebook notebook.py --environment.yml --format singularity > Singularity.def
+$ jupyter.py --packager anaconda --notebook notebook.ipynb --environment.yml --format singularity > Singularity.def
 ```
 
 Once the Singularity definition file has been generated the steps to

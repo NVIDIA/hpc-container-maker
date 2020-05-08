@@ -54,6 +54,10 @@ class wget(hpccm.base_object):
 
         opt_string = ' '.join(self.wget_opts)
 
+        # Add annotation if the caller inherits from the annotate template
+        if callable(getattr(self, 'add_annotation', None)):
+            self.add_annotation('url', url)
+
         # Ensure the directory exists
         return 'mkdir -p {1} && wget {0} -P {1} {2}'.format(opt_string,
                                                             directory, url)

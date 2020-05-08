@@ -53,7 +53,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/pmix-3.1.4 &&   ./configure --prefix=/usr/local/pmix && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/pmix-3.1.4.tar.gz /var/tmp/pmix-3.1.4
+    rm -rf /var/tmp/pmix-3.1.4 /var/tmp/pmix-3.1.4.tar.gz
 ENV CPATH=/usr/local/pmix/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/pmix/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/pmix/bin:$PATH''')
@@ -80,7 +80,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     echo "/usr/local/pmix/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
-    rm -rf /var/tmp/pmix-3.1.4.tar.gz /var/tmp/pmix-3.1.4
+    rm -rf /var/tmp/pmix-3.1.4 /var/tmp/pmix-3.1.4.tar.gz
 ENV CPATH=/usr/local/pmix/include:$CPATH \
     PATH=/usr/local/pmix/bin:$PATH''')
 

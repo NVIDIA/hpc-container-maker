@@ -26,26 +26,19 @@ import re
 from copy import copy as _copy
 
 import hpccm.config
-import hpccm.templates.ConfigureMake
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
 import hpccm.templates.sed
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
-               hpccm.templates.ldconfig, hpccm.templates.rm,
-               hpccm.templates.sed, hpccm.templates.tar, hpccm.templates.wget):
+class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
+               hpccm.templates.sed):
     """The `mvapich2` building block configures, builds, and installs the
     [MVAPICH2](http://mvapich.cse.ohio-state.edu) component.
     Depending on the parameters, the source will be downloaded from
@@ -61,6 +54,9 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
     that want to build using the MPI compiler wrappers.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
@@ -156,55 +152,65 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         super(mvapich2, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl',
+        self.__baseurl = kwargs.pop('baseurl',
                                     'http://mvapich.cse.ohio-state.edu/download/mvapich/mv2')
-        self.__check = kwargs.get('check', False)
-        self.configure_opts = kwargs.get('configure_opts', ['--disable-mcast'])
-        self.cuda = kwargs.get('cuda', True)
-        self.directory = kwargs.get('directory', '')
-        self.__gpu_arch = kwargs.get('gpu_arch', None)
-        self.__ospackages = kwargs.get('ospackages', [])
-        self.prefix = kwargs.get('prefix', '/usr/local/mvapich2')
+        self.__configure_opts = kwargs.pop('configure_opts', ['--disable-mcast'])
+        self.__cuda = kwargs.pop('cuda', True)
+        self.__gpu_arch = kwargs.pop('gpu_arch', None)
+        self.__ospackages = kwargs.pop('ospackages', [])
+        self.__preconfigure = []
+        self.__prefix = kwargs.pop('prefix', '/usr/local/mvapich2')
         self.__runtime_ospackages = [] # Filled in by __distro()
+        # Input toolchain, i.e., what to use when building
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        self.__version = kwargs.pop('version', '2.3.3')
 
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
                                   'F90': False, 'FC': True}
-        self.version = kwargs.get('version', '2.3.3')
-
-        self.__commands = []              # Filled in by __setup()
-
-        # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__wd = '/var/tmp' # working directory
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
                                    F90='mpif90', FC='mpifort')
 
+        # Set the configure options
+        self.__configure()
+
         # Set the Linux distribution specific parameters
         self.__distro()
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Setup the environment variables
+        # Set library path
+        self.environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        self.runtime_environment_variables['PATH'] = '{}:$PATH'.format(
+            posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
+            self.runtime_environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
+        if self.__cuda:
+            # Workaround for using compiler wrappers in the build stage
+            self.environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
 
-        # Fill in container instructions
-        self.__instructions()
+        # Setup build configuration
+        self.__bb = generic_autotools(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
+            comment=False,
+            configure_opts=self.__configure_opts,
+            devel_environment=self.environment_variables,
+            preconfigure=self.__preconfigure,
+            prefix=self.__prefix,
+            runtime_environment=self.runtime_environment_variables,
+            toolchain=self.__toolchain,
+            url='{0}/mvapich2-{1}.tar.gz'.format(self.__baseurl,
+                                                 self.__version),
+            **kwargs)
 
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        if self.directory:
-            self += comment('MVAPICH2')
-        else:
-            self += comment('MVAPICH2 version {}'.format(self.version))
+        # Container instructions
+        self += comment('MVAPICH2 version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        if self.directory:
-            # Use source from local build context
-            self += copy(src=self.directory,
-                         dest=posixpath.join(self.__wd, self.directory))
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -223,125 +229,72 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
-    def __set_gpu_arch(self, directory=None):
+    def __set_gpu_arch(self):
         """Older versions of MVAPICH2 (2.3b and previous) were hard-coded to
         use the "sm_20" GPU architecture.  Use the specified value
         instead."""
 
-        if self.cuda and self.__gpu_arch and directory:
-            self.__commands.append(
-                self.sed_step(file=posixpath.join(directory, 'Makefile.in'),
-                              patterns=[r's/-arch sm_20/-arch {}/g'.format(self.__gpu_arch)]))
-
-    def __setup(self):
+    def __configure(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
         # Create a copy of the toolchain so that it can be modified
         # without impacting the original.
-        toolchain = _copy(self.__toolchain)
+        self.__toolchain = _copy(self.__toolchain)
 
-        tarball = 'mvapich2-{}.tar.gz'.format(self.version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
+        # MVAPICH2 does not accept F90
+        self.__toolchain.F90 = ''
 
         # CUDA
-        if self.cuda:
+        if self.__cuda:
             cuda_home = "/usr/local/cuda"
-            if toolchain.CUDA_HOME:
+            if self.__toolchain.CUDA_HOME:
                 cuda_home = toolchain.CUDA_HOME
 
             # The PGI compiler needs some special handling for CUDA.
             # http://mvapich.cse.ohio-state.edu/static/media/mvapich/mvapich2-2.0-userguide.html#x1-120004.5
-            if toolchain.CC and re.match('.*pgcc', toolchain.CC):
-                self.configure_opts.append(
+            if self.__toolchain.CC and re.match('.*pgcc', self.__toolchain.CC):
+                self.__configure_opts.append(
                     '--enable-cuda=basic --with-cuda={}'.format(cuda_home))
 
                 # Work around issue when using PGI 19.4
-                self.configure_opts.append('--enable-fast=O1')
+                self.__configure_opts.append('--enable-fast=O1')
 
-                if not toolchain.CFLAGS:
-                    toolchain.CFLAGS = '-ta=tesla:nordc'
+                if not self.__toolchain.CFLAGS:
+                    self.__toolchain.CFLAGS = '-ta=tesla:nordc'
 
-                if not toolchain.CPPFLAGS:
-                    toolchain.CPPFLAGS = '-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI='
+                if not self.__toolchain.CPPFLAGS:
+                    self.__toolchain.CPPFLAGS = '-D__x86_64 -D__align__\(n\)=__attribute__\(\(aligned\(n\)\)\) -D__location__\(a\)=__annotate__\(a\) -DCUDARTAPI='
 
-                if not toolchain.LD_LIBRARY_PATH:
-                    toolchain.LD_LIBRARY_PATH = posixpath.join(
+                if not self.__toolchain.LD_LIBRARY_PATH:
+                    self.__toolchain.LD_LIBRARY_PATH = posixpath.join(
                         cuda_home, 'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
             else:
-                if not toolchain.LD_LIBRARY_PATH:
-                    toolchain.LD_LIBRARY_PATH = posixpath.join(
+                if not self.__toolchain.LD_LIBRARY_PATH:
+                    self.__toolchain.LD_LIBRARY_PATH = posixpath.join(
                         cuda_home, 'lib64', 'stubs') + ':$LD_LIBRARY_PATH'
-                self.configure_opts.append(
+                self.__configure_opts.append(
                     '--enable-cuda --with-cuda={}'.format(cuda_home))
 
             # Workaround for using compiler wrappers in the build stage
-            self.__commands.append('ln -s {0} {1}'.format(
+            self.__preconfigure.append('ln -s {0} {1}'.format(
                 posixpath.join(cuda_home, 'lib64', 'stubs', 'libnvidia-ml.so'),
                 posixpath.join(cuda_home, 'lib64', 'stubs',
                                'libnvidia-ml.so.1')))
-            self.__commands.append('ln -s {0} {1}'.format(
+            self.__preconfigure.append('ln -s {0} {1}'.format(
                 posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so'),
                 posixpath.join(cuda_home, 'lib64', 'stubs', 'libcuda.so.1')))
 
+            # Older versions of MVAPICH2 (2.3b and previous) were
+            # hard-coded to use the "sm_20" GPU architecture.  Use the
+            # specified value instead.
+            if self.__gpu_arch:
+                self.__preconfigure.append(
+                    self.sed_step(file='Makefile.in',
+                                  patterns=[r's/-arch sm_20/-arch {}/g'.format(self.__gpu_arch)]))
+
         else:
-            self.configure_opts.append('--disable-cuda')
-
-        if self.directory:
-            # Use source from local build context
-            self.__set_gpu_arch(
-                directory=posixpath.join(self.__wd, self.directory))
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd, self.directory),
-                toolchain=toolchain))
-        else:
-            # Download source from web
-            self.__commands.append(self.download_step(url=url,
-                                   directory=self.__wd))
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-            self.__set_gpu_arch(
-                directory=posixpath.join(self.__wd,
-                                         'mvapich2-{}'.format(self.version)))
-
-            self.__commands.append(self.configure_step(
-                directory=posixpath.join(self.__wd,
-                                         'mvapich2-{}'.format(self.version)),
-                toolchain=toolchain))
-
-
-        self.__commands.append(self.build_step())
-
-        if self.__check:
-            self.__commands.append(self.check_step())
-
-        self.__commands.append(self.install_step())
-
-        # Set library path
-        libpath = posixpath.join(self.prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        if self.directory:
-            # Using source from local build context, cleanup directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, self.directory)]))
-        else:
-            # Using downloaded source, cleanup tarball and directory
-            self.__commands.append(self.cleanup_step(
-                items=[posixpath.join(self.__wd, tarball),
-                       posixpath.join(self.__wd,
-                                      'mvapich2-{}'.format(self.version))]))
-
-        # Setup environment variables
-        self.environment_variables['PATH'] = '{}:$PATH'.format(
-            posixpath.join(self.prefix, 'bin'))
-        if self.cuda:
-            # Workaround for using compiler wrappers in the build stage
-            self.environment_variables['PROFILE_POSTLIB'] = '"-L{} -lnvidia-ml -lcuda"'.format('/usr/local/cuda/lib64/stubs')
+            self.__configure_opts.append('--disable-cuda')
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -359,13 +312,5 @@ class mvapich2(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         instructions.append(comment('MVAPICH2'))
         # TODO: move the definition of runtime ospackages
         instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        # No need to workaround compiler wrapper issue for the runtime.
-        instructions.append(environment(
-            variables=self.environment_step(exclude=['PROFILE_POSTLIB'])))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

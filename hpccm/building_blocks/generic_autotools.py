@@ -22,24 +22,36 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import posixpath
-import re
 
 import hpccm.templates.ConfigureMake
+import hpccm.templates.annotate
 import hpccm.templates.downloader
+import hpccm.templates.envvars
+import hpccm.templates.ldconfig
 import hpccm.templates.rm
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.environment import environment
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
 class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
-                        hpccm.templates.downloader, hpccm.templates.rm):
+                        hpccm.templates.annotate, hpccm.templates.downloader,
+                        hpccm.templates.envvars, hpccm.templates.ldconfig,
+                        hpccm.templates.rm):
     """The `generic_autotools` building block downloads, configures,
     builds, and installs a specified GNU Autotools enabled package.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
+
+    annotations: Dictionary of additional annotations to include.  The
+    default is an empty dictionary.
 
     branch: The git branch to clone.  Only recognized if the
     `repository` parameter is specified.  The default is empty, i.e.,
@@ -47,6 +59,10 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
     build_directory: The location to build the package.  The default
     value is the source code location.
+
+    build_environment: Dictionary of environment variables and values
+    to set when building the package.  The default is an empty
+    dictionary.
 
     check: Boolean flag to specify whether the `make check` step
     should be performed.  The default is False.
@@ -57,6 +73,11 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
     configure_opts: List of options to pass to `configure`.  The
     default value is an empty list.
+
+    devel_environment: Dictionary of environment variables and values,
+    e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+    stage after the package is built and installed.  The default is an
+    empty dictionary.
 
     directory: The source code location.  The default value is the
     basename of the downloaded package.  If the value is not an
@@ -72,8 +93,18 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
     Underscores in the parameter name are converted to dashes.
 
+    environment: Boolean flag to specify whether the environment
+    should be modified (see `devel_environment` and
+    `runtime_environment`).  The default is True.
+
     install: Boolean flag to specify whether the `make install` step
     should be performed.  The default is True.
+
+    ldconfig: Boolean flag to specify whether the library directory
+    should be added dynamic linker cache.  The default value is False.
+
+    libdir: The path relative to the install prefix to use when
+    configuring the dynamic linker cache.  The default value is `lib`.
 
     make: Boolean flag to specify whether the `make` step should be
     performed.  The default is True.
@@ -95,6 +126,12 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
     repository: The git repository of the package to build.  One of
     this paramter or the `url` parameter must be specified.
+
+    _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+    runtime_environment: Dictionary of environment variables and
+    values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+    stage.  The default is an empty dictionary.
 
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
@@ -135,16 +172,23 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
 
         super(generic_autotools, self).__init__(**kwargs)
 
+        self.__annotations = kwargs.get('annotations', {})
         self.__build_directory = kwargs.get('build_directory', None)
+        self.__build_environment = kwargs.get('build_environment', {})
         self.__check = kwargs.get('check', False)
+        self.__comment = kwargs.get('comment', True)
         self.configure_opts = kwargs.get('configure_opts', [])
         self.__directory = kwargs.get('directory', None)
-        self.__environment = kwargs.get('environment', {})
+        self.environment_variables = kwargs.get('devel_environment', {})
         self.__install = kwargs.get('install', True)
+        self.__libdir = kwargs.get('libdir', 'lib')
         self.__make = kwargs.get('make', True)
+        self.__postconfigure = kwargs.get('postconfigure', [])
         self.__postinstall = kwargs.get('postinstall', [])
         self.__preconfigure = kwargs.get('preconfigure', [])
         self.__recursive = kwargs.get('recursive', False)
+        self.__run_arguments = kwargs.get('_run_arguments', None)
+        self.runtime_environment_variables = kwargs.get('runtime_environment', {})
         self.__toolchain = kwargs.get('toolchain', toolchain())
 
         self.__commands = [] # Filled in by __setup()
@@ -159,11 +203,15 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     def __instructions(self):
         """Fill in container instructions"""
 
-        if self.url:
-            self += comment(self.url, reformat=False)
-        elif self.repository:
-            self += comment(self.repository, reformat=False)
-        self += shell(commands=self.__commands)
+        if self.__comment:
+            if self.url:
+                self += comment(self.url, reformat=False)
+            elif self.repository:
+                self += comment(self.repository, reformat=False)
+        self += shell(_arguments=self.__run_arguments,
+                      commands=self.__commands)
+        self += environment(variables=self.environment_step())
+        self += label(metadata=self.annotate_step())
 
     def __setup(self):
         """Construct the series of shell commands, i.e., fill in
@@ -189,14 +237,21 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             self.__commands.extend(self.__preconfigure)
 
         # Configure
-        environment = []
-        if self.__environment:
-            for key, val in sorted(self.__environment.items()):
-                environment.append('{0}={1}'.format(key, val))
+        build_environment = []
+        if self.__build_environment:
+            for key, val in sorted(self.__build_environment.items()):
+                build_environment.append('{0}={1}'.format(key, val))
         self.__commands.append(self.configure_step(
             build_directory=self.__build_directory,
-            directory=self.src_directory, environment=environment,
+            directory=self.src_directory, environment=build_environment,
             toolchain=self.__toolchain))
+
+        # Post configure setup
+        if self.__postconfigure:
+            # Assume the postconfigure commands should be run from the
+            # source directory
+            self.__commands.append('cd {}'.format(self.src_directory))
+            self.__commands.extend(self.__postconfigure)
 
         # Build
         if self.__make:
@@ -216,7 +271,15 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
             self.__commands.append('cd {}'.format(self.prefix))
             self.__commands.extend(self.__postinstall)
 
-        # Cleanup
+        # Set library path
+        if self.ldconfig:
+            self.__commands.append(self.ldcache_step(
+                directory=posixpath.join(self.prefix, self.__libdir)))
+
+        # Add annotations
+        for key,value in self.__annotations.items():
+            self.add_annotation(key, value)
+
         # Cleanup
         remove = [self.src_directory]
         if self.url:
@@ -241,12 +304,22 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         """
         if self.prefix:
             instructions = []
-            if self.url:
-                instructions.append(comment(self.url, reformat=False))
-            elif self.repository:
-                instructions.append(comment(self.repository, reformat=False))
+            if self.__comment:
+                if self.url:
+                    instructions.append(comment(self.url, reformat=False))
+                elif self.repository:
+                    instructions.append(comment(self.repository,
+                                                reformat=False))
             instructions.append(copy(_from=_from, src=self.prefix,
                                      dest=self.prefix))
+            if self.ldconfig:
+                instructions.append(shell(commands=[self.ldcache_step(
+                    directory=posixpath.join(self.prefix, self.__libdir))]))
+            if self.runtime_environment_variables:
+                instructions.append(environment(
+                    variables=self.environment_step(runtime=True)))
+            if self.annotate:
+                instructions.append(label(metadata=self.annotate_step()))
             return '\n'.join(str(x) for x in instructions)
-        else:
+        else: # pragma: no cover
             return

@@ -120,10 +120,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
-    def test_environment_and_toolchain(self):
-        """environment and toolchain"""
+    def test_build_environment_and_toolchain(self):
+        """build environment and toolchain"""
         tc = toolchain(CC='gcc', CXX='g++', FC='gfortran')
         g = generic_cmake(
+            build_environment={'FOO': 'BAR'},
             check=True,
             cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
                         '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
@@ -135,7 +136,6 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
                         '-D MPIEXEC_PREFLAGS=--allow-run-as-root',
                         '-D REGRESSIONTEST_DOWNLOAD=ON'],
             directory='gromacs-2018.2',
-            environment={'FOO': 'BAR'},
             prefix='/usr/local/gromacs',
             toolchain=tc,
             url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
@@ -148,6 +148,35 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cmake --build /var/tmp/gromacs-2018.2/build --target check -- -j$(nproc) && \
     cmake --build /var/tmp/gromacs-2018.2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/gromacs-2018.2 /var/tmp/v2018.2.tar.gz''')
+
+    @ubuntu
+    @docker
+    def test_ldconfig_and_environment(self):
+        """ldconfig and environment"""
+        g = generic_cmake(
+            devel_environment={'CPATH': '/usr/local/spdlog/include:$CPATH'},
+            directory='spdlog-1.4.2',
+            ldconfig=True,
+            prefix='/usr/local/spdlog',
+            runtime_environment={'CPATH': '/usr/local/spdlog/include:$CPATH'},
+            url='https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz')
+        self.assertEqual(str(g),
+r'''# https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v1.4.2.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/spdlog-1.4.2/build && cd /var/tmp/spdlog-1.4.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/spdlog /var/tmp/spdlog-1.4.2 && \
+    cmake --build /var/tmp/spdlog-1.4.2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/spdlog-1.4.2/build --target install -- -j$(nproc) && \
+    echo "/usr/local/spdlog/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
+    rm -rf /var/tmp/spdlog-1.4.2 /var/tmp/v1.4.2.tar.gz
+ENV CPATH=/usr/local/spdlog/include:$CPATH''')
+
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
+COPY --from=0 /usr/local/spdlog /usr/local/spdlog
+RUN echo "/usr/local/spdlog/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig
+ENV CPATH=/usr/local/spdlog/include:$CPATH''')
 
     @ubuntu
     @docker
@@ -199,3 +228,28 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v0.8.0 --re
         self.assertEqual(r,
 r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
 COPY --from=0 /usr/local/gromacs /usr/local/gromacs''')
+
+    @ubuntu
+    @docker
+    def test_runtime_annotate(self):
+        """Runtime"""
+        g = generic_cmake(
+            annotate=True,
+            base_annotation='gromacs',
+            cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                        '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                        '-D GMX_BUILD_OWN_FFTW=ON',
+                        '-D GMX_GPU=ON',
+                        '-D GMX_MPI=OFF',
+                        '-D GMX_OPENMP=ON',
+                        '-D GMX_PREFER_STATIC_LIBS=ON',
+                        '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+            directory='gromacs-2018.2',
+            prefix='/usr/local/gromacs',
+            url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
+COPY --from=0 /usr/local/gromacs /usr/local/gromacs
+LABEL hpccm.gromacs.cmake='cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root' \
+    hpccm.gromacs.url=https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz''')

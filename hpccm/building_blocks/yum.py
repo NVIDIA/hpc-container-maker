@@ -101,8 +101,10 @@ class yum(bb_base):
         self.__download_directory = kwargs.get('download_directory',
                                                '/var/tmp/yum_download')
         self.__epel = kwargs.get('epel', False)
+        self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])
+        self.__opts = ['-y']
         self.ospackages = kwargs.get('ospackages', [])
         self.__powertools = kwargs.get('powertools', False)
         self.__release_stream = kwargs.get('release_stream', False)
@@ -137,6 +139,10 @@ class yum(bb_base):
 
     def __setup(self):
         """Construct the series of commands to execute"""
+
+        if self.__extra_opts:
+            self.__download_args += ' ' + ' '.join(self.__extra_opts)
+            self.__opts.extend(self.__extra_opts)
 
         # Use yum version 4 is requested.  yum 4 is the default on
         # CentOS 8.
@@ -224,7 +230,8 @@ class yum(bb_base):
                         'rm -rf {}'.format(self.__download_directory))
             else:
                 # Install packages
-                install = '{} install -y \\\n'.format(yum)
+                install = '{0} install {1} \\\n'.format(yum,
+                                                        ' '.join(self.__opts))
                 install = install + ' \\\n'.join(packages)
                 self.__commands.append(install)
 

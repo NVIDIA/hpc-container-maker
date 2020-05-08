@@ -137,6 +137,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)
+        self.__fix_ownership = kwargs.get('fix_ownership', False)
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
@@ -373,6 +374,12 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 posixpath.join(self.__libnuma_path, 'libnuma.so.1'),
                 posixpath.join(self.__basepath, self.__version, 'lib',
                                'libnuma.so.1')))
+
+        # Some installed files are owned by uid 921 / gid 1004.
+        # Fix it so that all files are owned by root.
+        if self.__fix_ownership:
+            self.__commands.append('chown -R root.root {}'.format(
+                self.__prefix))
 
         # Cleanup
         self.__commands.append(self.cleanup_step(

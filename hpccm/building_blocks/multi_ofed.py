@@ -20,9 +20,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
+import hpccm.templates.annotate
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
@@ -31,15 +33,19 @@ from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
+from hpccm.primitives.label import label
 from hpccm.primitives.shell import shell
 
-class multi_ofed(bb_base):
+class multi_ofed(bb_base, hpccm.templates.annotate):
     """The `multi_ofed` building block downloads and installs multiple
     versions of the OpenFabrics Enterprise Distribution (OFED). Please
     refer to the [`mlnx_ofed`](#mlnx_ofed) and [`ofed`](#ofed)
     building blocks for more information.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     inbox: Boolean flag to specify whether to install the 'inbox' OFED
     distributed by the Linux distribution.  The default is True.
@@ -53,10 +59,10 @@ class multi_ofed(bb_base):
     parameter for more information.
 
     mlnx_versions: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
-    versions to install.  The default values are `3.3-1.0.4.0`,
-    `3.4-2.0.0.0`, `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`,
-    `4.3-1.0.1.0`, `4.4-2.0.7.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, and
-    `4.7-3.2.9.0`.
+    versions to install.  The default values are `3.4-2.0.0.0`,
+    `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
+    `4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, and
+    `5.0-2.1.8.0`.
 
     ospackages: List of OS packages to install prior to installing
     OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -83,17 +89,17 @@ class multi_ofed(bb_base):
     def __init__(self, **kwargs):
         """Initialize building block"""
 
-        super(multi_ofed, self).__init__()
+        super(multi_ofed, self).__init__(**kwargs)
 
         self.__inbox = kwargs.get('inbox', True)
         self.__mlnx_oslabel = kwargs.get('mlnx_oslabel', '')
         self.__mlnx_packages = kwargs.get('mlnx_packages', [])
         self.__mlnx_versions = kwargs.get('mlnx_versions',
-                                          ['3.3-1.0.4.0', '3.4-2.0.0.0',
-                                           '4.0-2.0.0.1', '4.1-1.0.2.0',
-                                           '4.2-1.2.0.0', '4.3-1.0.1.0',
-                                           '4.4-2.0.7.0', '4.5-1.0.1.0',
-                                           '4.6-1.0.1.1', '4.7-3.2.9.0'])
+                                          ['3.4-2.0.0.0', '4.0-2.0.0.1',
+                                           '4.1-1.0.2.0', '4.2-1.2.0.0',
+                                           '4.3-1.0.1.0', '4.4-1.0.0.0',
+                                           '4.5-1.0.1.0', '4.6-1.0.1.1',
+                                           '4.7-3.2.9.0', '5.0-2.1.8.0'])
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/ofed')
         self.__symlink = kwargs.get('symlink', False)
@@ -113,7 +119,10 @@ class multi_ofed(bb_base):
                                      'libnuma1']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['libnl', 'libnl3', 'numactl-libs']
+                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    self.__ospackages = ['libnl3', 'numactl-libs']
+                else:
+                    self.__ospackages = ['libnl', 'libnl3', 'numactl-libs']
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
@@ -122,7 +131,8 @@ class multi_ofed(bb_base):
 
         # Mellanox OFED
         for version in self.__mlnx_versions:
-            self += mlnx_ofed(oslabel=self.__mlnx_oslabel,
+            self += mlnx_ofed(annotate=False,
+                              oslabel=self.__mlnx_oslabel,
                               packages=self.__mlnx_packages,
                               prefix=posixpath.join(self.__prefix, version),
                               symlink=self.__symlink,
@@ -135,6 +145,11 @@ class multi_ofed(bb_base):
             self += shell(commands=['ln -s {0} {1}'.format(
                 posixpath.join(self.__prefix, 'inbox'),
                 posixpath.join(self.__prefix, '5.0-0'))])
+
+        # Annotations
+        self.add_annotation('mlnx_versions', ', '.join(self.__mlnx_versions))
+        self.add_annotation('inbox', self.__inbox)
+        self += label(metadata=self.annotate_step())
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

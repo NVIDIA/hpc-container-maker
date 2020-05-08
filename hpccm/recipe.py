@@ -23,6 +23,8 @@ from six import raise_from
 
 from distutils.version import StrictVersion
 import logging
+import os
+import sys
 
 import hpccm
 
@@ -34,6 +36,56 @@ from hpccm.Stage import Stage
 
 from hpccm.building_blocks import *
 from hpccm.primitives import *
+
+def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
+            raise_exceptions=False):
+    """Include a recipe file
+
+    # Arguments
+
+    recipe_file: path to a recipe file (required)
+
+    _globals: a dictionary representing the global symbol table
+
+    _locals: a dictionary representing the local symbol table
+
+    prepend_path: If True, prepend the path of the main recipe to the
+    recipe_file. If the recipe_file is an absolute path, then the path
+    is not prepended regardless of the value of this parameter.
+
+    raise_exceptions: If False, do not print stack traces when an
+    exception is raised.  The default value is False.
+
+    """
+
+    if _locals is None:
+        # caller's locals
+        _locals = sys._getframe(1).f_locals
+    if _globals is None:
+        # caller's globals
+        _globals = sys._getframe(1).f_globals
+
+    # If a recipe file is included from another recipe file, some way
+    # is needed to find the included recipe if it specified using a
+    # relative path (relative to the including recipe file). Since
+    # recipe files are exec'ed, the value of __file__ is this file,
+    # not the recipe file. In order to make including recipes in other
+    # recipes using relative paths more intuitive, prepend the path of
+    # the base recipe file.
+    if (prepend_path and hasattr(include, 'prepend_path')
+        and not os.path.isabs(recipe_file)):
+        recipe_file = os.path.join(include.prepend_path, recipe_file)
+
+    try:
+        with open(recipe_file) as f:
+            # pylint: disable=exec-used
+            exec(compile(f.read(), recipe_file, 'exec'), _globals, _locals)
+    except Exception as e:
+        if raise_exceptions:
+            raise_from(e, e)
+        else:
+            logging.error(e)
+            exit(1)
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
            single_stage=False, singularity_version='2.6', userarg=None):
@@ -78,17 +130,14 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     # Set the global Singularity version
     hpccm.config.g_singularity_version = StrictVersion(singularity_version)
 
-    try:
-        with open(recipe_file) as f:
-            # pylint: disable=exec-used
-            exec(compile(f.read(), recipe_file, 'exec'),
-                 dict(locals(), **globals()))
-    except Exception as e:
-        if raise_exceptions:
-            raise_from(e, e)
-        else:
-            logging.error(e)
-            exit(1)
+    # Any included recipes that are specified using relative paths will
+    # need to prepend the path to the main recipe in order to be found.
+    # Save the path to the main recipe.
+    include.prepend_path = os.path.dirname(recipe_file)
+
+    # Load in the recipe file
+    include(recipe_file, _locals=locals(), _globals=globals(),
+            prepend_path=False, raise_exceptions=raise_exceptions)
 
     # Only process the first stage of a recipe
     if single_stage:

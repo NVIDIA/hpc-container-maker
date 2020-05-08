@@ -113,7 +113,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
     def test_multistage_example_singularity26(self):
@@ -152,7 +152,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads
     make -j$(nproc)
     make -j$(nproc) install
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 %post
@@ -164,6 +164,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
         r = recipe(rf, ctype=container_type.SINGULARITY,
                    singularity_version='3.2')
+        self.maxDiff = None
         self.assertEqual(r.strip(),
 r'''# NOTE: this definition file depends on features only available in
 # Singularity 3.2 and later.
@@ -197,7 +198,7 @@ Stage: devel
     cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads
     make -j$(nproc)
     make -j$(nproc) install
-    rm -rf /var/tmp/fftw-3.3.8.tar.gz /var/tmp/fftw-3.3.8
+    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
 %environment
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 %post
@@ -250,6 +251,22 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     cd /var/tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/openmpi-2.1.2.tar.bz2 /var/tmp/openmpi-2.1.2
+    rm -rf /var/tmp/openmpi-2.1.2 /var/tmp/openmpi-2.1.2.tar.bz2
 ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/openmpi/bin:$PATH''')
+
+    def test_include(self):
+        """recipe include"""
+        path = os.path.dirname(__file__)
+        rf = os.path.join(path, 'include3.py')
+        r = recipe(rf)
+        self.assertEqual(r.strip(),
+r'''FROM ubuntu:16.04
+
+# GNU compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        g++ \
+        gcc \
+        gfortran && \
+    rm -rf /var/lib/apt/lists/*''')

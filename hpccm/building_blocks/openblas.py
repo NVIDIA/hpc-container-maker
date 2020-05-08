@@ -26,25 +26,22 @@ import posixpath
 import hpccm.config
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
-from hpccm.primitives.environment import environment
-from hpccm.primitives.shell import shell
 from hpccm.toolchain import toolchain
 
-class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
-               hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `openblas` building block builds and installs the
     [OpenBLAS](https://www.openblas.net) component.
 
     # Parameters
+
+    annotate: Boolean flag to specify whether to include annotations
+    (labels).  The default is False.
 
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
@@ -92,91 +89,59 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(openblas, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl', 'https://github.com/xianyi/OpenBLAS/archive')
-        self.__make_opts = kwargs.get('make_opts',
+        self.__baseurl = kwargs.pop('baseurl', 'https://github.com/xianyi/OpenBLAS/archive')
+        self.__make_opts = kwargs.pop('make_opts',
                                       []) # Filled in by __cpu_arch()
-        self.__ospackages = kwargs.get('ospackages', ['make', 'perl', 'tar',
+        self.__ospackages = kwargs.pop('ospackages', ['make', 'perl', 'tar',
                                                       'wget'])
-        self.__prefix = kwargs.get('prefix', '/usr/local/openblas')
-        self.__toolchain = kwargs.get('toolchain', toolchain())
-        self.__version = kwargs.get('version', '0.3.7')
+        self.__prefix = kwargs.pop('prefix', '/usr/local/openblas')
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        self.__version = kwargs.pop('version', '0.3.7')
 
-        self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        # Set the make options
+        self.__make()
 
-        # Set the CPU architecture specific parameters
-        self.__cpu_arch()
+        # Setup the environment variables
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
-        # Construct the series of steps to execute
-        self.__setup()
+        # Setup build configuration
+        self.__bb = generic_build(
+            annotations={'version': self.__version},
+            base_annotation=self.__class__.__name__,
+            build=['make {}'.format(' '.join(self.__make_opts))],
+            comment=False,
+            directory='OpenBLAS-{}'.format(self.__version),
+            devel_environment=self.environment_variables,
+            install=['make install PREFIX={}'.format(self.__prefix)],
+            prefix=self.__prefix,
+            runtime_environment=self.environment_variables,
+            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version),
+            **kwargs)
 
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
+        # Container instructions
         self += comment('OpenBLAS version {}'.format(self.__version))
         self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
+        self += self.__bb
 
-    def __cpu_arch(self):
+    def __make(self):
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            if not self.__make_opts:
-                self.__make_opts = ['TARGET=ARMV8', 'USE_OPENMP=1']
-        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            if not self.__make_opts:
-                self.__make_opts = ['TARGET=POWER8', 'USE_OPENMP=1']
-        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            if not self.__make_opts:
-                self.__make_opts = ['USE_OPENMP=1']
-        else: # pragma: no cover
-            raise RuntimeError('Unknown CPU architecture')
+        if not self.__make_opts:
+            if self.__toolchain.CC:
+                self.__make_opts.append('CC={}'.format(self.__toolchain.CC))
+            if self.__toolchain.FC:
+                self.__make_opts.append('FC={}'.format(self.__toolchain.FC))
 
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        tarball = 'v{}.tar.gz'.format(self.__version)
-        url = '{0}/{1}'.format(self.__baseurl, tarball)
-
-        # Download source from web
-        self.__commands.append(self.download_step(url=url, directory=self.__wd))
-        self.__commands.append(self.untar_step(
-            tarball=posixpath.join(self.__wd, tarball), directory=self.__wd))
-
-        compilers = []
-        if self.__toolchain.CC:
-            compilers.append('CC={}'.format(self.__toolchain.CC))
-        if self.__toolchain.FC:
-            compilers.append('FC={}'.format(self.__toolchain.FC))
-
-        # Build
-        self.__commands.append(
-            'cd {} && make {} {}'.format(
-                posixpath.join(self.__wd,
-                               'OpenBLAS-{}'.format(self.__version)),
-                ' '.join(compilers), ' '.join(self.__make_opts)))
-
-        # Install
-        self.__commands.append('make install PREFIX={}'.format(self.__prefix))
-
-        # Set library path
-        libpath = posixpath.join(self.__prefix, 'lib')
-        if self.ldconfig:
-            self.__commands.append(self.ldcache_step(directory=libpath))
-        else:
-            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(libpath)
-
-        # Cleanup tarball and directory
-        self.__commands.append(self.cleanup_step(
-            items=[posixpath.join(self.__wd, tarball),
-                   posixpath.join(self.__wd,
-                                  'OpenBLAS-{}'.format(self.__version))]))
+            if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+                self.__make_opts.extend(['TARGET=ARMV8', 'USE_OPENMP=1'])
+            elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+                self.__make_opts.extend(['TARGET=POWER8', 'USE_OPENMP=1'])
+            elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+                self.__make_opts.extend(['USE_OPENMP=1'])
+            else: # pragma: no cover
+                raise RuntimeError('Unknown CPU architecture')
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -192,11 +157,5 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """
         instructions = []
         instructions.append(comment('OpenBLAS'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
-        if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.__prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
+        instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)
