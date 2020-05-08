@@ -1607,7 +1607,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.  The default value is `2020.0-008`.
+tarball version.  The default value is `2020.1-12`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1711,7 +1711,7 @@ and `which`.
 Blocks runtime should be installed.  The default is True.
 
 - __version__: The version of the Intel Parallel Studio XE runtime to
-install.  The default value is `2020.0-008`.
+install.  The default value is `2020.1-12`.
 
 __Examples__
 
