@@ -22,38 +22,42 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import os
 import posixpath
-from six import string_types
 
 import hpccm.templates.envvars
 import hpccm.templates.rm
 import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
+from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class nvshmem(bb_base, hpccm.templates.envvars,
-              hpccm.templates.rm, hpccm.templates.tar, hpccm.templates.wget):
+class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
+              hpccm.templates.tar):
     """The `nvshmem` building block builds and installs the
     [NVSHMEM](https://developer.nvidia.com/nvshmem) component.
 
     # Parameters
 
-    cuda: Flag to specify the CUDA path.  The default value is
-    `/usr/local/cuda`.
+    binary_tarball: Path to NVSHMEM binary tarball relative to the
+    build context. The default value is empty. Either this parameter
+    or `tarball` must be specified.
 
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
     include NVSHMEM. The default is True.
 
+    gdrcopy: Flag to specify the path to the GDRCOPY installation.
+    The default is empty.
+
     hydra: Boolean flag to specify whether the Hydra process launcher
     should be installed.  If True, adds `automake` to the list of OS
-    packages.  The default is True.
+    packages.  The default is False.
 
     make_variables: List of environment variables and values, in `A=B`
     format, to set when building NVSHMEM.  The default is an empty
@@ -65,22 +69,20 @@ class nvshmem(bb_base, hpccm.templates.envvars,
     ospackages: List of OS packages to install prior to building.  The
     default values are `make` and `wget`.
 
-    perftests: Boolean flag to specify whether the performance test
-    programs should be built and installed.  The default is False.
-
     prefix: The top level install location.  The default value is
     `/usr/local/nvshmem`.
 
-    tests: Boolean flag to specify whether the functionality test
-    programs should be built and installed.  The default is False.
+    shmem: Flag to specify the path to the SHMEM installation.  The
+    default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
-    version: The version of NVSHMEM source to download.  The default
-    value is `x.y`.
+    tarball: Path to the NVSHMEM source tarball relative to the build
+    context. The default value is empty. Either this parameter or
+    `binary_tarball` must be specified.
 
     # Examples
 
     ```python
-    nvshmem(prefix='/opt/nvshmem/x.y', version='x.y')
+    nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
     ```
 
     """
@@ -90,109 +92,97 @@ class nvshmem(bb_base, hpccm.templates.envvars,
 
         super(nvshmem, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl', None)
-        self.__cuda = kwargs.get('cuda', '/usr/local/cuda')
-        self.__hydra = kwargs.get('hydra', True)
-        self.__make_variables = kwargs.get('make_variables', [])
-        self.__mpi = kwargs.get('mpi', None)
-        self.__ospackages = kwargs.get('ospackages', ['make', 'wget'])
-        self.__perftests = kwargs.get('perftests', False)
-        self.__prefix = kwargs.get('prefix', '/usr/local/nvshmem')
-        self.__tests = kwargs.get('tests', False)
-        self.__version = kwargs.get('version', 'x.y')
-
-        self.__commands = [] # Filled in by __setup()
+        self.__binary_tarball = kwargs.pop('binary_tarball', None)
+        self.__gdrcopy = kwargs.pop('gdrcopy', None)
+        self.__hydra = kwargs.pop('hydra', False)
+        self.__make_variables = kwargs.pop('make_variables', [])
+        self.__mpi = kwargs.pop('mpi', None)
+        self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
+        self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
+        self.__shmem = kwargs.pop('shmem', None)
         self.__wd = '/var/tmp' # working directory
 
-        # Construct the series of steps to execute
-        self.__setup()
-
-        # Fill in container instructions
-        self.__instructions()
-
-    def __instructions(self):
-        """Fill in container instructions"""
-
-        self += comment('NVSHMEM version {}'.format(self.__version))
-        self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
-        self += environment(variables=self.environment_step())
-
-    def __setup(self):
-        """Construct the series of shell commands, i.e., fill in
-           self.__commands"""
-
-        # Download source from web
-        # FIXME: remove baseurl guard and fixup url and tarball
-        # details when install details are known
-        if self.__baseurl:
-            tarball = 'v{}.tar.gz'.format(self.__version)
-            url = '{0}/{1}'.format(self.__baseurl, tarball)
-
-            self.__commands.append(self.download_step(url=url,
-                                                      directory=self.__wd))
-            self.__commands.append(self.untar_step(
-                tarball=posixpath.join(self.__wd, tarball),
-                directory=self.__wd))
-
-        # Configure
-        env = ['NVSHMEM_PREFIX={}'.format(self.__prefix)]
-
-        if self.__mpi:
-          env.append('NVSHMEM_MPI_SUPPORT=1')
-          env.append('MPI_HOME={}'.format(self.__mpi))
-
-        if self.__make_variables:
-          env.extend(self.__make_variables)
-
-        env_string = ' '.join(sorted(env))
-
-        # Build and install
-        self.__commands.append('cd {}'.format(
-            posixpath.join(self.__wd, 'nvshmem')))
-        self.__commands.append('{} make -j$(nproc) install'.format(env_string))
-
-        # Install Hydra process launcher
-        if self.__hydra:
-          self.__ospackages.append('automake')
-          self.__commands.append(
-              './scripts/install_hydra.sh $(pwd) {}'.format(self.__prefix))
-
-        # Install performance tests
-        if self.__perftests:
-          perftests = 'NVSHMEM_PERFTEST_INSTALL={} make -C perftest -j$(nproc) install'.format(posixpath.join(self.__prefix, 'perftest'))
-          if self.__mpi:
-            self.__commands.append(
-                'MPI_HOME={0} NVSHMEM_MPI_SUPPORT=1 {1}'.format(
-                    self.__mpi, perftests))
-          else:
-            self.__commands.append(perftests)
-
-        # Install functionality tests
-        if self.__tests:
-          tests = 'CUDA_HOME={0} NVSHMEM_HOME={1} TEST_INSTALL={2} make -C test -j$(nproc) install'.format(
-              self.__cuda, self.__prefix,
-              posixpath.join(self.__prefix, 'test'))
-          if self.__mpi:
-            self.__commands.append(
-                'MPI_HOME={0} NVSHMEM_MPI_SUPPORT=1 {1}'.format(
-                    self.__mpi, tests))
-          else:
-            self.__commands.append(tests)
-
-        # Cleanup tarball and directory
-        self.__commands.append(self.cleanup_step(
-            items=[#posixpath.join(self.__wd, tarball), # FIXME
-                   posixpath.join(self.__wd,
-                                  'nvshmem')]))
-
-        # Set the environment
+        # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
             posixpath.join(self.__prefix, 'include'))
         self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
             posixpath.join(self.__prefix, 'lib'))
         self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))
+
+        # Add packages
+        if self.__hydra:
+            self.__ospackages.append('automake')
+
+        self += comment('NVSHMEM')
+        self += packages(ospackages=self.__ospackages)
+
+        if self.__binary_tarball:
+            # Shorthand for the tarball file inside the container
+            tarball = posixpath.join(self.__wd,
+                                     os.path.basename(self.__binary_tarball))
+
+            self += copy(src=self.__binary_tarball, dest=tarball)
+            self += shell(commands=[
+                # Untar binary package
+                self.untar_step(
+                    tarball=tarball,
+                    # remove the leading directory, e.g., install in
+                    # /usr/local/nvshmem not
+                    # /usr/local/nvshmem/nvshmem_<version>_<arch>.
+                    args=['--strip-components=1'],
+                    directory=self.__prefix),
+                # Install Hydra process launcher
+                '{0}/scripts/install_hydra.sh {1} {0}'.format(
+                    self.__prefix, self.__wd) if self.__hydra else None,
+                # Remove temporary files and cleanup
+                self.cleanup_step(items=[tarball])])
+            self += environment(variables=self.environment_variables)
+
+        else:
+            # Build from source
+
+            # Set the build options
+            self.__configure()
+
+            self.__bb = generic_build(
+                build = [
+                    '{} make -j$(nproc) install'.format(
+                        self.__build_environment),
+                    './scripts/install_hydra.sh {1} {0}'.format(
+                        self.__prefix, self.__wd) if self.__hydra else None],
+                devel_environment=self.environment_variables,
+                runtime_environment=self.environment_variables,
+                **kwargs)
+            self += self.__bb
+
+    def __configure(self):
+        """Setup build options based on user parameters"""
+
+        e = {}
+
+        e['NVSHMEM_PREFIX'] = self.__prefix
+
+        if self.__gdrcopy:
+            e['GDRCOPY_HOME'] = self.__gdrcopy
+
+        if self.__mpi:
+            e['NVSHMEM_MPI_SUPPORT'] = 1
+            e['MPI_HOME'] = self.__mpi
+
+        if self.__shmem:
+            e['NVSHMEM_SHMEM_SUPPORT'] = 1
+            e['SHMEM_HOME'] = self.__shmem
+
+        if self.__make_variables:
+          e.extend(self.__make_variables)
+
+        l = []
+        if e:
+            for key, val in sorted(e.items()):
+                l.append('{0}={1}'.format(key, val))
+
+        self.__build_environment = ' '.join(l)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -208,7 +198,10 @@ class nvshmem(bb_base, hpccm.templates.envvars,
         """
         instructions = []
         instructions.append(comment('NVSHMEM'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
-        instructions.append(environment(variables=self.environment_step()))
+        if self.__binary_tarball:
+            instructions.append(copy(_from=_from, src=self.__prefix,
+                                     dest=self.__prefix))
+            instructions.append(environment(variables=self.environment_step()))
+        else:
+            instructions.append(self.__bb.runtime(_from=_from))
         return '\n'.join(str(x) for x in instructions)

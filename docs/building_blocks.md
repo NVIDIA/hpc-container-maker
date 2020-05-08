@@ -2847,16 +2847,20 @@ The `nvshmem` building block builds and installs the
 __Parameters__
 
 
-- __cuda__: Flag to specify the CUDA path.  The default value is
-`/usr/local/cuda`.
+- __binary_tarball__: Path to NVSHMEM binary tarball relative to the
+build context. The default value is empty. Either this parameter
+or `tarball` must be specified.
 
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
 include NVSHMEM. The default is True.
 
+- __gdrcopy__: Flag to specify the path to the GDRCOPY installation.
+The default is empty.
+
 - __hydra__: Boolean flag to specify whether the Hydra process launcher
 should be installed.  If True, adds `automake` to the list of OS
-packages.  The default is True.
+packages.  The default is False.
 
 - __make_variables__: List of environment variables and values, in `A=B`
 format, to set when building NVSHMEM.  The default is an empty
@@ -2868,23 +2872,21 @@ default is empty, i.e., do not build NVSHMEM with MPI support.
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
 
-- __perftests__: Boolean flag to specify whether the performance test
-programs should be built and installed.  The default is False.
-
 - __prefix__: The top level install location.  The default value is
 `/usr/local/nvshmem`.
 
-- __tests__: Boolean flag to specify whether the functionality test
-programs should be built and installed.  The default is False.
+- __shmem__: Flag to specify the path to the SHMEM installation.  The
+default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
-- __version__: The version of NVSHMEM source to download.  The default
-value is `x.y`.
+- __tarball__: Path to the NVSHMEM source tarball relative to the build
+context. The default value is empty. Either this parameter or
+`binary_tarball` must be specified.
 
 __Examples__
 
 
 ```python
-nvshmem(prefix='/opt/nvshmem/x.y', version='x.y')
+nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
 ```
 
 

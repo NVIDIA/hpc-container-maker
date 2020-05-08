@@ -85,6 +85,9 @@ class shell(object):
     def __str__(self):
         """String representation of the primitive"""
         if self.commands:
+            # Remove empty items from the list of commands
+            self.commands = [x for x in self.commands if x]
+
             if hpccm.config.g_ctype == container_type.DOCKER:
                 if self._app:
                     logging.warning('The Singularity specific %app.. syntax '

@@ -38,6 +38,7 @@ class downloader(hpccm.base_object):
         self.commit = kwargs.get('commit', None)
         self.repository = kwargs.get('repository', None)
         self.src_directory = None
+        self.tarball = kwargs.get('tarball', None)
         self.url = kwargs.get('url', None)
 
         super(downloader, self).__init__(**kwargs)
@@ -45,8 +46,8 @@ class downloader(hpccm.base_object):
     def download_step(self, recursive=False, unpack=True, wd='/var/tmp'):
         """Get source code"""
 
-        if not self.repository and not self.url:
-            raise RuntimeError('must specify a repository or a URL')
+        if not self.repository and not self.tarball and not self.url:
+            raise RuntimeError('must specify a repository, tarball, or a URL')
 
         if self.repository and self.url:
             raise RuntimeError('cannot specify both a repository and a URL')
@@ -67,7 +68,7 @@ class downloader(hpccm.base_object):
                 commands.append(hpccm.templates.tar().untar_step(
                     tarball, directory=wd))
 
-                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)'
+                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
                                   r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
                                   tarball)
                 if match:
@@ -79,6 +80,24 @@ class downloader(hpccm.base_object):
             if callable(annotate):
                 self.add_annotation('url', self.url)
 
+        elif self.tarball:
+            if unpack:
+                # Unpack tarball
+                tarball = posixpath.join(wd, posixpath.basename(self.tarball))
+                commands.append(hpccm.templates.tar().untar_step(
+                    tarball, directory=wd))
+
+                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
+                                  r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
+                                  tarball)
+                if match:
+                    # Set directory where to find source
+                    self.src_directory = posixpath.join(wd, match.group(1))
+                else:
+                    raise RuntimeError('unrecognized package format')
+
+            if callable(annotate):
+                self.add_annotation('tarball', self.tarball)
 
         elif self.repository:
             # Clone git repository

@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import os
 import posixpath
 
 import hpccm.templates.annotate
@@ -149,6 +150,10 @@ class generic_build(bb_base, hpccm.templates.annotate,
                 self += comment(self.url, reformat=False)
             elif self.repository:
                 self += comment(self.repository, reformat=False)
+        if self.tarball:
+            self += copy(src=self.tarball,
+                         dest=posixpath.join(self.__wd,
+                                             os.path.basename(self.tarball)))
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
