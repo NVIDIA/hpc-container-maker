@@ -1599,7 +1599,8 @@ intel64` in each build step.  If this value is to set `False`,
 then the environment is set such that the environment is visible
 to both subsequent container image build steps and when the
 container image is run.  However, the environment may differ
-slightly from that set by `compilervars.sh`.  The default value is
+slightly from that set by `compilervars.sh`. This option will be
+used with the `runtime` method. The default value is
 `True`.
 
 - __runtime_version__: The version of Intel Parallel Studio XE runtime
