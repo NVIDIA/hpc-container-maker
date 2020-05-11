@@ -812,7 +812,8 @@ and instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `tarball` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -820,12 +821,17 @@ this paramter or the `url` parameter must be specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
+- __tarball__: Path to the source tarball relative to the local build
+context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+parameter or the `tarball` or `repository` parameters must be
+specified.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -930,7 +936,8 @@ runtime method.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `tarball` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -938,8 +945,13 @@ this paramter or the `url` parameter must be specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
+- __tarball__: Path to the source tarball relative to the local build
+context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+parameter or the `repository` or `tarball` parameters must be
+specified.
 
 __Examples__
 
@@ -1045,7 +1057,8 @@ instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `tarball` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -1053,12 +1066,17 @@ this paramter or the `url` parameter must be specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
+- __tarball__: Path to the source tarball relative to the local build
+context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+parameter or the `tarball` or `repository` parameters must be
+specified.
 
 __Examples__
 
@@ -2862,9 +2880,8 @@ The default is empty.
 should be installed.  If True, adds `automake` to the list of OS
 packages.  The default is False.
 
-- __make_variables__: List of environment variables and values, in `A=B`
-format, to set when building NVSHMEM.  The default is an empty
-list.
+- __make_variables__: Dictionary of environment variables and values to
+set when building NVSHMEM.  The default is an empty dictionary.
 
 - __mpi__: Flag to specify the path to the MPI installation.  The
 default is empty, i.e., do not build NVSHMEM with MPI support.

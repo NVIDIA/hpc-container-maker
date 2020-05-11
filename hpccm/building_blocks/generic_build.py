@@ -95,7 +95,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
     must be specified. The default is False.
 
     repository: The git repository of the package to build.  One of
-    this paramter or the `url` parameter must be specified.
+    this paramter or the `tarball` or `url` parameters must be
+    specified.
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -103,8 +104,13 @@ class generic_build(bb_base, hpccm.templates.annotate,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
+    tarball: Path to the source tarball relative to the local build
+    context.  One of this parameter or the `repository` or `url`
+    parameters must be specified.
+
     url: The URL of the tarball package to build.  One of this
-    parameter or the `repository` parameter must be specified.
+    parameter or the `repository` or `tarball` parameters must be
+    specified.
 
     # Examples
 
@@ -150,6 +156,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
                 self += comment(self.url, reformat=False)
             elif self.repository:
                 self += comment(self.repository, reformat=False)
+            elif self.tarball:
+                self += comment(self.tarball, reformat=False)
         if self.tarball:
             self += copy(src=self.tarball,
                          dest=posixpath.join(self.__wd,
@@ -201,6 +209,9 @@ class generic_build(bb_base, hpccm.templates.annotate,
         if self.url:
             remove.append(posixpath.join(self.__wd,
                                          posixpath.basename(self.url)))
+        elif self.tarball:
+            remove.append(posixpath.join(self.__wd,
+                                         posixpath.basename(self.tarball)))
         self.__commands.append(self.cleanup_step(items=remove))
 
     def runtime(self, _from='0'):

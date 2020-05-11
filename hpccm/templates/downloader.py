@@ -49,8 +49,9 @@ class downloader(hpccm.base_object):
         if not self.repository and not self.tarball and not self.url:
             raise RuntimeError('must specify a repository, tarball, or a URL')
 
-        if self.repository and self.url:
-            raise RuntimeError('cannot specify both a repository and a URL')
+        if sum([bool(self.repository), bool(self.tarball),
+                bool(self.url)]) > 1:
+            raise RuntimeError('must specify exactly one of a repository, tarball, or a URL')
 
         # Check if the caller inherits from the annotate template
         annotate = getattr(self, 'add_annotation', None)
@@ -63,38 +64,15 @@ class downloader(hpccm.base_object):
                 url=self.url, directory=wd))
 
             if unpack:
-                # Unpack tarball
-                tarball = posixpath.join(wd, posixpath.basename(self.url))
-                commands.append(hpccm.templates.tar().untar_step(
-                    tarball, directory=wd))
-
-                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
-                                  r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
-                                  tarball)
-                if match:
-                    # Set directory where to find source
-                    self.src_directory = posixpath.join(wd, match.group(1))
-                else:
-                    raise RuntimeError('unrecognized package format')
+                commands.append(self.__unpack(self.url, wd))
 
             if callable(annotate):
                 self.add_annotation('url', self.url)
 
         elif self.tarball:
+            # Use an already available tarball
             if unpack:
-                # Unpack tarball
-                tarball = posixpath.join(wd, posixpath.basename(self.tarball))
-                commands.append(hpccm.templates.tar().untar_step(
-                    tarball, directory=wd))
-
-                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
-                                  r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
-                                  tarball)
-                if match:
-                    # Set directory where to find source
-                    self.src_directory = posixpath.join(wd, match.group(1))
-                else:
-                    raise RuntimeError('unrecognized package format')
+                commands.append(self.__unpack(self.tarball, wd))
 
             if callable(annotate):
                 self.add_annotation('tarball', self.tarball)
@@ -125,3 +103,19 @@ class downloader(hpccm.base_object):
             return '\n'.join(commands)
         else:
             raise RuntimeError('Unknown container type')
+
+    def __unpack(self, tarball, wd):
+        """Unpack tarball and set source directory"""
+
+        match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
+                          r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
+                          posixpath.basename(tarball))
+
+        if match:
+            # Set directory where to find source
+            self.src_directory = posixpath.join(wd, match.group(1))
+        else:
+            raise RuntimeError('unrecognized package format')
+
+        return hpccm.templates.tar().untar_step(
+            posixpath.join(wd, posixpath.basename(tarball)), directory=wd)

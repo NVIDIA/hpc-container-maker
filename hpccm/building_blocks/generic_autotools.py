@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import os
 import posixpath
 
 import hpccm.templates.ConfigureMake
@@ -125,7 +126,8 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     must be specified. The default is False.
 
     repository: The git repository of the package to build.  One of
-    this paramter or the `url` parameter must be specified.
+    this paramter or the `tarball` or `url` parameters must be
+    specified.
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -133,12 +135,17 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
+    tarball: Path to the source tarball relative to the local build
+    context.  One of this parameter or the `repository` or `url`
+    parameters must be specified.
+
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default is empty.
 
     url: The URL of the tarball package to build.  One of this
-    parameter or the `repository` parameter must be specified.
+    parameter or the `tarball` or `repository` parameters must be
+    specified.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -208,6 +215,12 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
                 self += comment(self.url, reformat=False)
             elif self.repository:
                 self += comment(self.repository, reformat=False)
+            elif self.tarball:
+                self += comment(self.tarball, reformat=False)
+        if self.tarball:
+            self += copy(src=self.tarball,
+                         dest=posixpath.join(self.__wd,
+                                             os.path.basename(self.tarball)))
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -285,6 +298,9 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         if self.url:
             remove.append(posixpath.join(self.__wd,
                                          posixpath.basename(self.url)))
+        elif self.tarball:
+            remove.append(posixpath.join(self.__wd,
+                                         posixpath.basename(self.tarball)))
         if self.__build_directory:
             if posixpath.isabs(self.__build_directory):
                 remove.append(self.__build_directory)

@@ -59,9 +59,8 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     should be installed.  If True, adds `automake` to the list of OS
     packages.  The default is False.
 
-    make_variables: List of environment variables and values, in `A=B`
-    format, to set when building NVSHMEM.  The default is an empty
-    list.
+    make_variables: Dictionary of environment variables and values to
+    set when building NVSHMEM.  The default is an empty dictionary.
 
     mpi: Flag to specify the path to the MPI installation.  The
     default is empty, i.e., do not build NVSHMEM with MPI support.
@@ -95,7 +94,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__binary_tarball = kwargs.pop('binary_tarball', None)
         self.__gdrcopy = kwargs.pop('gdrcopy', None)
         self.__hydra = kwargs.pop('hydra', False)
-        self.__make_variables = kwargs.pop('make_variables', [])
+        self.__make_variables = kwargs.pop('make_variables', {})
         self.__mpi = kwargs.pop('mpi', None)
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
@@ -151,7 +150,9 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                         self.__build_environment),
                     './scripts/install_hydra.sh {1} {0}'.format(
                         self.__prefix, self.__wd) if self.__hydra else None],
+                comment=False,
                 devel_environment=self.environment_variables,
+                prefix=self.__prefix,
                 runtime_environment=self.environment_variables,
                 **kwargs)
             self += self.__bb
@@ -175,7 +176,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             e['SHMEM_HOME'] = self.__shmem
 
         if self.__make_variables:
-          e.extend(self.__make_variables)
+          e.update(self.__make_variables)
 
         l = []
         if e:
