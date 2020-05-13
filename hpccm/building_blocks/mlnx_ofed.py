@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from distutils.version import LooseVersion, StrictVersion
 import posixpath
 
 import hpccm.config
@@ -62,10 +62,17 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     `numactl-libs`, and `wget`.
 
     packages: List of packages to install from Mellanox OFED.  For
-    Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
-    `libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
-    `libmlx4-1`, `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`,
-    `librdmacm1`, `librdmacm-dev`, and `ibverbs-utils`.  For
+    version 5.0 and later on Ubuntu, `ibverbs-providers`,
+    `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+    `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+    and `librdmacm1`. For earlier versions on Ubuntu, the default
+    values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
+    `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4-1`,
+    `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+    `librdmacm-dev`, and `ibverbs-utils`.  For version 5.0 and later
+    on RHEL-based Linux distributions, the default values are
+    `libibumad`, `libibverbs`, `libibverbs-utils`, `librdmacm`,
+    `rdma-core`, and `rdma-core-devel`. For earlier versions on
     RHEL-based Linux distributions, the default values are
     `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
     `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
@@ -167,13 +174,22 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                     self.__oslabel = 'ubuntu16.04'
 
             if not self.__packages:
-                self.__packages = ['libibverbs1', 'libibverbs-dev',
-                                   'ibverbs-utils',
-                                   'libibmad',  'libibmad-devel',
-                                   'libibumad', 'libibumad-devel',
-                                   'libmlx4-1', 'libmlx4-dev',
-                                   'libmlx5-1', 'libmlx5-dev',
-                                   'librdmacm-dev', 'librdmacm1']
+                if LooseVersion(self.__version) >= LooseVersion('5.0'):
+                    # Uses UPSTREAM libs
+                    self.__packages = ['libibverbs1', 'libibverbs-dev',
+                                       'ibverbs-providers', 'ibverbs-utils',
+                                       'libibmad5',  'libibmad-dev',
+                                       'libibumad3', 'libibumad-dev',
+                                       'librdmacm-dev', 'librdmacm1']
+                else:
+                    # Uses MLNX_OFED libs
+                    self.__packages = ['libibverbs1', 'libibverbs-dev',
+                                       'ibverbs-utils',
+                                       'libibmad',  'libibmad-devel',
+                                       'libibumad', 'libibumad-devel',
+                                       'libmlx4-1', 'libmlx4-dev',
+                                       'libmlx5-1', 'libmlx5-dev',
+                                       'librdmacm-dev', 'librdmacm1']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
@@ -191,13 +207,20 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                         self.__oslabel = 'rhel7.2'
 
             if not self.__packages:
-                self.__packages = ['libibverbs', 'libibverbs-devel',
-                                   'libibverbs-utils',
-                                   'libibmad', 'libibmad-devel',
-                                   'libibumad', 'libibumad-devel',
-                                   'libmlx4', 'libmlx4-devel',
-                                   'libmlx5', 'libmlx5-devel',
-                                   'librdmacm-devel', 'librdmacm']
+                if LooseVersion(self.__version) >= LooseVersion('5.0'):
+                    # Uses UPSTREAM libs
+                    self.__packages = ['libibverbs', 'libibverbs-utils',
+                                       'libibumad', 'librdmacm',
+                                       'rdma-core', 'rdma-core-devel']
+                else:
+                    # Uses MLNX_OFED libs
+                    self.__packages = ['libibverbs', 'libibverbs-devel',
+                                       'libibverbs-utils',
+                                       'libibmad', 'libibmad-devel',
+                                       'libibumad', 'libibumad-devel',
+                                       'libmlx4', 'libmlx4-devel',
+                                       'libmlx5', 'libmlx5-devel',
+                                       'librdmacm-devel', 'librdmacm']
 
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')

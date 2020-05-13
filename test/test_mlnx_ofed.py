@@ -49,17 +49,14 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
     mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ibverbs-providers \
         ibverbs-utils \
-        libibmad \
-        libibmad-devel \
-        libibumad \
-        libibumad-devel \
+        libibmad-dev \
+        libibmad5 \
+        libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
-        libmlx4-1 \
-        libmlx4-dev \
-        libmlx5-1 \
-        libmlx5-dev \
         librdmacm-dev \
         librdmacm1 && \
     rm -rf /var/lib/apt/lists/*''')
@@ -82,17 +79,14 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
     mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu18.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ibverbs-providers \
         ibverbs-utils \
-        libibmad \
-        libibmad-devel \
-        libibumad \
-        libibumad-devel \
+        libibmad-dev \
+        libibmad5 \
+        libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
-        libmlx4-1 \
-        libmlx4-dev \
-        libmlx5-1 \
-        libmlx5-dev \
         librdmacm-dev \
         librdmacm1 && \
     rm -rf /var/lib/apt/lists/*''')
@@ -114,19 +108,12 @@ RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox &&
     yum install -y yum-utils && \
     yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/rhel7.2/mellanox_mlnx_ofed.repo && \
     yum install -y \
-        libibmad \
-        libibmad-devel \
         libibumad \
-        libibumad-devel \
         libibverbs \
-        libibverbs-devel \
         libibverbs-utils \
-        libmlx4 \
-        libmlx4-devel \
-        libmlx5 \
-        libmlx5-devel \
         librdmacm \
-        librdmacm-devel && \
+        rdma-core \
+        rdma-core-devel && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -146,19 +133,12 @@ RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox &&
     yum install -y dnf-utils && \
     yum-config-manager --add-repo https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/rhel8.0/mellanox_mlnx_ofed.repo && \
     yum install -y \
-        libibmad \
-        libibmad-devel \
         libibumad \
-        libibumad-devel \
         libibverbs \
-        libibverbs-devel \
         libibverbs-utils \
-        libmlx4 \
-        libmlx4-devel \
-        libmlx5 \
-        libmlx5-devel \
         librdmacm \
-        librdmacm-devel && \
+        rdma-core \
+        rdma-core-devel && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -294,17 +274,14 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
     mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.0-2.1.8.0/ubuntu16.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ibverbs-providers \
         ibverbs-utils \
-        libibmad \
-        libibmad-devel \
-        libibumad \
-        libibumad-devel \
+        libibmad-dev \
+        libibmad5 \
+        libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
-        libmlx4-1 \
-        libmlx4-dev \
-        libmlx5-1 \
-        libmlx5-dev \
         librdmacm-dev \
         librdmacm1 && \
     rm -rf /var/lib/apt/lists/*''')

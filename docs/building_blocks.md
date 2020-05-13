@@ -2256,10 +2256,17 @@ distributions, the default values are `findutils`, `libnl3`,
 `numactl-libs`, and `wget`.
 
 - __packages__: List of packages to install from Mellanox OFED.  For
-Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
-`libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
-`libmlx4-1`, `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`,
-`librdmacm1`, `librdmacm-dev`, and `ibverbs-utils`.  For
+version 5.0 and later on Ubuntu, `ibverbs-providers`,
+`ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+`libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+and `librdmacm1`. For earlier versions on Ubuntu, the default
+values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
+`libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4-1`,
+`libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+`librdmacm-dev`, and `ibverbs-utils`.  For version 5.0 and later
+on RHEL-based Linux distributions, the default values are
+`libibumad`, `libibverbs`, `libibverbs-utils`, `librdmacm`,
+`rdma-core`, and `rdma-core-devel`. For earlier versions on
 RHEL-based Linux distributions, the default values are
 `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
 `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
