@@ -179,6 +179,7 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
     mkdir -p /opt/ofed && \
     find /var/tmp/packages_download -regextype posix-extended -type f -regex "/var/tmp/packages_download/(ibverbs-utils|libibmad|libibmad-devel|libibumad|libibumad-devel|libibverbs-dev|libibverbs1|libmlx4-1|libmlx4-dev|libmlx5-1|libmlx5-dev|librdmacm-dev|librdmacm1).*deb" -exec dpkg --extract {} /opt/ofed \; && \
     rm -rf /var/tmp/packages_download && \
+    rm -f /etc/apt/sources.list.d/mellanox_mlnx_ofed.list && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /etc/libibverbs.d''')
 

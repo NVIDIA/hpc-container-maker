@@ -21,16 +21,18 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import logging # pylint: disable=unused-import
+import os
 import posixpath
 
 import hpccm.config
+import hpccm.templates.sed
 import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.common import linux_distro
 from hpccm.primitives.shell import shell
 
-class apt_get(bb_base, hpccm.templates.wget):
+class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
     """The `apt_get` building block specifies the set of operating system
     packages to install.  This building block should only be used on
     images that use the Debian package manager (e.g., Ubuntu).
@@ -171,6 +173,25 @@ class apt_get(bb_base, hpccm.templates.wget):
                     # Cleanup downloaded packages
                     self.__commands.append(
                         'rm -rf {}'.format(self.__download_directory))
+
+                # Cleanup repository file(s)
+                for repo in self.__repositories:
+                    if repo.startswith('http'):
+                        # Repository is a URL to a repository
+                        # configuration file
+                        self.__commands.append(
+                            'rm -f {}'.format(
+                                posixpath.join('/etc/apt/sources.list.d',
+                                               os.path.basename(repo))))
+                    else:
+                        # Repository is a configuration string
+                        # Use '|' as separator to try to avoid conflicts or
+                        # the need to escape the repo string.
+                        self.__commands.append(
+                            self.sed_step(
+                                file='/etc/apt/sources.list.d/hpccm.list',
+                                patterns=[r'\|^{}$|d'.format(repo)]))
+
             else:
                 if self.__aptitude:
                     self.__commands.append(apt_get_install + ' aptitude')
