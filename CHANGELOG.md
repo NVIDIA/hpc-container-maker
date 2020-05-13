@@ -3,7 +3,7 @@
 - Fixes to the Intel Parallel Studio runtime (`intel_psxe_runtime`),
   Mellanox OFED (`mlnx_ofed`), and "Multi OFED" (`multi_ofed`) building
   blocks.
-- Refersh default component version for the HPC-X (`hpcx`) building block.
+- Refresh default component version for the HPC-X (`hpcx`) building block.
 
 # v20.4.0
 - Adds MAGMA (`magma`) building block
