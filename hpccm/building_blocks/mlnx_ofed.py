@@ -63,7 +63,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
 
     packages: List of packages to install from Mellanox OFED.  For
     version 5.0 and later on Ubuntu, `ibverbs-providers`,
-    `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad`,
+    `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
     `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
     and `librdmacm1`. For earlier versions on Ubuntu, the default
     values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
@@ -179,7 +179,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                     self.__packages = ['libibverbs1', 'libibverbs-dev',
                                        'ibverbs-providers', 'ibverbs-utils',
                                        'libibmad5',  'libibmad-dev',
-                                       'libibumad', 'libibumad-dev',
+                                       'libibumad3', 'libibumad-dev',
                                        'librdmacm-dev', 'librdmacm1']
                 else:
                     # Uses MLNX_OFED libs

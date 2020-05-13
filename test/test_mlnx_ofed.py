@@ -53,8 +53,8 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         ibverbs-utils \
         libibmad-dev \
         libibmad5 \
-        libibumad \
         libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
         librdmacm-dev \
@@ -83,8 +83,8 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         ibverbs-utils \
         libibmad-dev \
         libibmad5 \
-        libibumad \
         libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
         librdmacm-dev \
@@ -278,8 +278,8 @@ RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | ap
         ibverbs-utils \
         libibmad-dev \
         libibmad5 \
-        libibumad \
         libibumad-dev \
+        libibumad3 \
         libibverbs-dev \
         libibverbs1 \
         librdmacm-dev \

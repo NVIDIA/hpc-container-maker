@@ -2257,7 +2257,7 @@ distributions, the default values are `findutils`, `libnl3`,
 
 - __packages__: List of packages to install from Mellanox OFED.  For
 version 5.0 and later on Ubuntu, `ibverbs-providers`,
-`ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad`,
+`ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
 `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
 and `librdmacm1`. For earlier versions on Ubuntu, the default
 values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
