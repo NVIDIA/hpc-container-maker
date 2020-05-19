@@ -14,7 +14,8 @@
 
 from __future__ import absolute_import
 
-__all__ = ['apt_get',
+__all__ = ['amgx',
+           'apt_get',
            'arm_allinea_studio',
            'boost',
            'catalyst',
@@ -63,6 +64,7 @@ __all__ = ['apt_get',
            'xpmem',
            'yum']
 
+from hpccm.building_blocks.amgx import amgx
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.arm_allinea_studio import arm_allinea_studio
 from hpccm.building_blocks.boost import boost
