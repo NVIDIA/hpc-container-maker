@@ -42,7 +42,7 @@ class git(hpccm.base_object):
         """Verify that the specific git branch and the remote repositories exist"""
 
         cmd = 'git ls-remote --exit-code --heads {0}'.format(repository)
-        if branch is not None: cmd = '{} {}'.format(cmd, branch)
+        if branch is not None: cmd = 'git ls-remote --exit-code {0} | grep "{1}"'.format(repository, branch)
 
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         stdout,stderr = p.communicate()
