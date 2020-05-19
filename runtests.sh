@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 COVERAGE=false
 COVERAGE_TOOL=coverage
 PYTHON=python
+TEST=""
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -20,6 +21,9 @@ while [ "$1" != "" ]; do
         --verbose )
             VERBOSE="-v"
             ;;
+        --test=?*)
+            TEST=${1#*=}
+            ;;
         * )
             ;;
     esac
@@ -27,8 +31,11 @@ while [ "$1" != "" ]; do
 done
 
 if ${COVERAGE}; then
-  ${COVERAGE_TOOL} run --source=hpccm -m unittest discover -s test ${VERBOSE}
-  ${COVERAGE_TOOL} report -m
+    ${COVERAGE_TOOL} run --source=hpccm -m unittest discover -s test ${VERBOSE}
+    ${COVERAGE_TOOL} report -m
+elif [ -n "${TEST}" ]; then
+    echo "Test: ${TEST}"
+    ${PYTHON} -m unittest discover ${VERBOSE} -s test -p "*${TEST}*.py"
 else
-  ${PYTHON} -m unittest discover -s test ${VERBOSE}
+    ${PYTHON} -m unittest discover -s test ${VERBOSE}
 fi
