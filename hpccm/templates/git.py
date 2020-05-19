@@ -38,34 +38,21 @@ class git(hpccm.base_object):
 
         self.git_opts = kwargs.get('opts', ['--depth=1'])
 
-    def __verify(self, repository, branch=None, commit=None, fatal=False):
-        """Verify that the specific git reference exists in the remote
-           repository"""
+    def __verify(self, repository, branch=None):
+        """Verify that the specific git branch and the remote repositories exist"""
 
-        if not branch and not commit: # pragma: no cover
-            # Should have already been caught before calling this function
-            logging.warning('Must specify one of branch or commit, '
-                            'skipping verification')
-            return
+        cmd = 'git ls-remote --exit-code --heads {0}'.format(repository)
+        if branch is not None: cmd = '{} {}'.format(cmd, branch)
 
-        command = 'git ls-remote {0} | grep {1}'.format(repository, commit)
-        ref = commit
-        if branch:
-            command = 'git ls-remote --exit-code --heads {0} {1}'.format(repository, branch)
-            ref = branch
-
-        with open(os.devnull, 'w') as DEVNULL:
-            p = subprocess.Popen(command, shell=True, stdout=DEVNULL,
-                                 stderr=DEVNULL)
-        p.communicate()
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        stdout,stderr = p.communicate()
 
         if p.returncode != 0:
-            if fatal:
-                raise RuntimeError('git ref "{}" does not exist'.format(ref))
-            else:
-                logging.warning('git ref "{}" does not exist'.format(ref))
+            return 'git repository "{}" or branch "{}" do not exist\n  cmd: "{}"\n  stdout: "{}"\n  stderr: "{}"'.format(
+                repository, branch, cmd, stdout, stderr
+            )
 
-        return
+        return None
 
     def clone_step(self, branch=None, commit=None, directory='', path='/tmp',
                    repository=None, verify=None, lfs=False, recursive=False):
@@ -105,12 +92,13 @@ class git(hpccm.base_object):
             opt_string = re.sub(r'--depth=\d+\s*', '', opt_string).strip()
 
         # Verify the commit / branch is valid
-        if verify:
-            fatal = False
-            if verify == 'fatal':
-                fatal = True
-            self.__verify(repository, branch=branch, commit=commit,
-                          fatal=fatal)
+        if verify == True or verify == 'fatal':
+            error = self.__verify(repository, branch)
+            if error is not None:
+                if verify == 'fatal':
+                    raise RuntimeError(error)
+                else:
+                    logging.warning(error)
 
         # If lfs=True use `git lfs clone`
         lfs_string = " "
