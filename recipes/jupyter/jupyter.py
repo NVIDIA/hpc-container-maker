@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import argparse
 import hpccm
+import yaml
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -55,8 +56,14 @@ if __name__ == '__main__':
         stage += hpccm.primitives.runscript(
             commands=['jupyter notebook --no-browser --ip 0.0.0.0 --notebook-dir /notebook --allow-root'])
     elif args.packager == 'anaconda':
+        env = 'base'
+        if args.environment:
+          with open(args.environment) as e:
+            y = yaml.safe_load(e)
+            env = y.get('name', 'base')
+
         stage += hpccm.primitives.shell(commands=[
-            'echo "#!/bin/bash\\nsource /usr/local/anaconda/bin/activate base\\njupyter notebook --ip 0.0.0.0 --no-browser --notebook-dir /notebook --allow-root" > /usr/local/bin/entrypoint.sh',
+            'echo "#!/bin/bash\\nsource /usr/local/anaconda/bin/activate {}\\njupyter notebook --ip 0.0.0.0 --no-browser --notebook-dir /notebook --allow-root" > /usr/local/bin/entrypoint.sh'.format(env),
             'chmod a+x /usr/local/bin/entrypoint.sh'])
         stage += hpccm.primitives.runscript(
             commands=['/usr/local/bin/entrypoint.sh'])
