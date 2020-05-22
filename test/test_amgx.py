@@ -34,14 +34,15 @@ class Test_sensei(unittest.TestCase):
 
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
+    def test_branch_ubuntu(self):
         """Default amgx building block"""
         m = amgx(branch='v2.1.0')
         self.assertEqual(str(m),
 r'''# AMGX branch v2.1.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        git && \
+        git \
+        make && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v2.1.0 https://github.com/NVIDIA/amgx amgx && cd - && \
     mkdir -p /var/tmp/amgx/build && cd /var/tmp/amgx/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/amgx /var/tmp/amgx && \
@@ -54,15 +55,57 @@ ENV CPATH=/usr/local/amgx/include:$CPATH \
 
     @centos
     @docker
-    def test_defaults_centos(self):
+    def test_branch_centos(self):
         """Default amgx building block"""
         m = amgx(branch='v2.1.0')
         self.assertEqual(str(m),
 r'''# AMGX branch v2.1.0
 RUN yum install -y \
-        git && \
+        git \
+        make && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v2.1.0 https://github.com/NVIDIA/amgx amgx && cd - && \
+    mkdir -p /var/tmp/amgx/build && cd /var/tmp/amgx/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/amgx /var/tmp/amgx && \
+    cmake --build /var/tmp/amgx/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/amgx/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/amgx
+ENV CPATH=/usr/local/amgx/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/amgx/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/amgx/lib:$LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
+    def test_defaults_ubuntu(self):
+        """Default amgx building block"""
+        m = amgx()
+        self.assertEqual(str(m),
+r'''# AMGX branch master
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git \
+        make && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/NVIDIA/amgx amgx && cd - && \
+    mkdir -p /var/tmp/amgx/build && cd /var/tmp/amgx/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/amgx /var/tmp/amgx && \
+    cmake --build /var/tmp/amgx/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/amgx/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/amgx
+ENV CPATH=/usr/local/amgx/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/amgx/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/amgx/lib:$LIBRARY_PATH''')
+
+    @centos
+    @docker
+    def test_defaults_centos(self):
+        """Default amgx building block"""
+        m = amgx()
+        self.assertEqual(str(m),
+r'''# AMGX branch master
+RUN yum install -y \
+        git \
+        make && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/NVIDIA/amgx amgx && cd - && \
     mkdir -p /var/tmp/amgx/build && cd /var/tmp/amgx/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/amgx /var/tmp/amgx && \
     cmake --build /var/tmp/amgx/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/amgx/build --target install -- -j$(nproc) && \

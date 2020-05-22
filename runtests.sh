@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 COVERAGE=false
 COVERAGE_TOOL=coverage

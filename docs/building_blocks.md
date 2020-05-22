@@ -3,30 +3,18 @@
 amgx(self, **kwargs)
 ```
 
-The `amgx` building block downloads, configures, builds, and installs the [AMGX] component.
-
-[AMGX]: https://developer.nvidia.com/amgx
+The `amgx` building block downloads, configures, builds, and installs the [AMGX](https://developer.nvidia.com/amgx) component.
 
 The [CMake](#cmake) building block should be installed prior to this building block.
 
-Installing an MPI building block before this one is optional and will build the [AMGX] library with MPI support.
+Installing an MPI building block before this one is optional and will build the [AMGX](https://developer.nvidia.com/amgx) library with MPI support.
 Some Eigensolvers make use of the MAGMA and/or MKL libraries and are only available if the paths to these libraries is specified as shown below in the __cmake_opts__.
 
 __Parameters__
 
-- __repository__: The git repository to clone.
-The default is `https://github.com/NVIDIA/AMGX`.
-
 - __branch__: The git branch to clone.
 AMGX releases are tagged, that is, specifying `branch='v2.1.0'` downloads a particular AMGX version.
 The default is `master`.
-
-- __commit__: The git commit to clone.
-The default is empty and uses the latest commit on the selected branch of the repository.
-
-- __directory__: Build from an unpackaged source directory relative to the local build context instead of fetching AMGX sources from a git repository.
-This option is incompatible with `repository`/`branch`/ `commit`.
-The default is `None`.
 
 - __cmake_opts__: List of options to pass to `cmake`.
 The default value is an empty list.
@@ -37,11 +25,21 @@ Some options are:
   - `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String`: MAGMA/MKL are used to accelerate some of the Eigensolvers.
   These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
 
+- __commit__: The git commit to clone.
+The default is empty and uses the latest commit on the selected branch of the repository.
+
+- __directory__: Build from an unpackaged source directory relative to the local build context instead of fetching AMGX sources from a git repository.
+This option is incompatible with `repository`/`branch`/ `commit`.
+The default is `None`.
+
 - __ospackages__: List of OS packages to install prior to downloading, configuring, and building.
 The default is `[git]`.
 
 - __prefix__: The top level install location.
 The default is `/usr/local/amgx`.
+
+- __repository__: The git repository to clone.
+The default is `https://github.com/NVIDIA/AMGX`.
 
 - __toolchain__: The toolchain object.
 This should be used if non-default compilers or other toolchain options are needed.

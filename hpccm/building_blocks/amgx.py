@@ -33,30 +33,21 @@ from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
 
 class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
-    """The `amgx` building block downloads, configures, builds, and installs the [AMGX] component.
-
-    [AMGX]: https://developer.nvidia.com/amgx
+    """The `amgx` building block downloads, configures, builds, and installs the [AMGX](https://developer.nvidia.com/amgx) component.
 
     The [CMake](#cmake) building block should be installed prior to this building block.
 
-    Installing an MPI building block before this one is optional and will build the [AMGX] library with MPI support.
+    Installing an MPI building block before this one is optional and will build the [AMGX](https://developer.nvidia.com/amgx) library with MPI support.
     Some Eigensolvers make use of the MAGMA and/or MKL libraries and are only available if the paths to these libraries is specified as shown below in the cmake_opts.
 
     # Parameters
 
-    repository: The git repository to clone.
-    The default is `https://github.com/NVIDIA/AMGX`.
+    annotate: Boolean flag to specify whether to include annotations (labels).
+    The default is False.
 
     branch: The git branch to clone.
     AMGX releases are tagged, that is, specifying `branch='v2.1.0'` downloads a particular AMGX version.
     The default is `master`.
-
-    commit: The git commit to clone.
-    The default is empty and uses the latest commit on the selected branch of the repository.
-
-    directory: Build from an unpackaged source directory relative to the local build context instead of fetching AMGX sources from a git repository.
-    This option is incompatible with `repository`/`branch`/ `commit`.
-    The default is `None`.
 
     cmake_opts: List of options to pass to `cmake`.
     The default value is an empty list.
@@ -67,19 +58,25 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
       - `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String`: MAGMA/MKL are used to accelerate some of the Eigensolvers.
     These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
 
-    ospackages: List of OS packages to install prior to downloading, configuring, and building
-    .
+    commit: The git commit to clone.
+    The default is empty and uses the latest commit on the selected branch of the repository.
+
+    directory: Build from an unpackaged source directory relative to the local build context instead of fetching AMGX sources from a git repository.
+    This option is incompatible with `repository`/`branch`/ `commit`.
+    The default is `None`.
+
+    ospackages: List of OS packages to install prior to downloading, configuring, and building.
     The default value is `[git]`.
 
     prefix: The top level install location.
     The default is `/usr/local/amgx`.
 
+    repository: The git repository to clone.
+    The default is `https://github.com/NVIDIA/AMGX`.
+
     toolchain: The toolchain object.
     This should be used if non-default compilers or other toolchain options are needed.
     The default is empty.
-
-    annotate: Boolean flag to specify whether to include annotations (labels).
-    The default is False.
 
     # Examples
 
@@ -93,14 +90,11 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Initialize building block"""
         super(amgx, self).__init__(**kwargs)
 
-        self.__repository = kwargs.pop('baseurl', 'https://github.com/NVIDIA/amgx')
+        self.__branch = kwargs.pop('branch', 'master')
         self.__cmake_opts = kwargs.pop('cmake_opts', [])
-        self.__version = kwargs.get('branch')
+        self.__ospackages = kwargs.pop('ospackages', ['git', 'make'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/amgx')
-        self.__ospackages = kwargs.pop('ospackages', ['git'])
-
-        # Set the configure options
-        self.__cmake()
+        self.__repository = kwargs.pop('repository', 'https://github.com/NVIDIA/amgx')
 
         # Set the environment
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
@@ -112,8 +106,9 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         # Setup build configuration
         self.__bb = generic_cmake(
-            annotations={'branch': kwargs.get('branch')},
+            annotations={'branch': self.__branch},
             base_annotation=self.__class__.__name__,
+            branch=self.__branch,
             comment=False,
             cmake_opts=self.__cmake_opts,
             devel_environment=self.environment_variables,
@@ -123,14 +118,10 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             **kwargs)
 
         # Container instructions
-        self += comment('AMGX branch {}'.format(kwargs.get('branch')))
+        self += comment('AMGX branch {}'.format(self.__branch))
         self += packages(ospackages=self.__ospackages)
         self += self.__bb
 
-
-    def __cmake(self):
-        """Setup CMake options"""
-        # Nothing yet
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
