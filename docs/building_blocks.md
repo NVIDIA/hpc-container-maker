@@ -2730,8 +2730,9 @@ nsight_systems(version='2020.1.1')
 ```python
 nv_hpc_sdk(self, **kwargs)
 ```
-The `nv_hpc_sdk` building block downloads and installs the NVIDIA
-HPC SDK.  Currently, the only option is to install from a tarball.
+The `nv_hpc_sdk` building block downloads and installs the [NVIDIA
+HPC SDK](https://developer.nvidia.com/hpc-sdk).  Currently, the
+only option is to install from a tarball.
 
 You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
 building block.
@@ -2761,12 +2762,6 @@ component is selected then `PGI_OPTL_INCLUDE_DIRS` and
 only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
 NVIDIA HPC SDK.  The default value is `False`.
 
-- __license__: The license to use to activate the NVIDIA HPC SDK.  If
-the string contains a `@` the license is interpreted as a network
-license, e.g., `12345@lic-server`.  Otherwise, the string is
-interpreted as the path to the license file relative to the local
-build context.  The default value is empty.
-
 - __mpi__: Boolean flag to specify whether the MPI component should be
 installed.  If True, MPI will be installed.  The default value is
 False.
@@ -2778,7 +2773,7 @@ the default values are `gcc`, `gcc-c++`, `gcc-gfortran`, and
 `numactl-libs`.
 
 - __prefix__: The top level install prefix.  The default value is
-`/opt/nvidia`.
+`/opt/nvidia/hpcsdk`.
 
 - __system_cuda__: Boolean flag to specify whether the NVIDIA HPC SDK
 should use the system CUDA.  If False, the version(s) of CUDA
@@ -2793,8 +2788,8 @@ __Examples__
 
 
 ```python
-nv_hpc_sdk(eula=True, license='port@host',
-           tarball='nvlinux-2020-201-x86_64.tar.gz')
+nv_hpc_sdk(eula=True,
+           tarball='nvhpc_2020_204_Linux_x86_64.tar.gz')
 ```
 
 ```python

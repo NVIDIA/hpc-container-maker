@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import LooseVersion
-import logging # pylint: disable=unused-import
+import logging
 import re
 import posixpath
 
@@ -42,8 +42,9 @@ from hpccm.toolchain import toolchain
 
 class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                  hpccm.templates.tar, hpccm.templates.wget):
-    """The `nv_hpc_sdk` building block downloads and installs the NVIDIA
-    HPC SDK.  Currently, the only option is to install from a tarball.
+    """The `nv_hpc_sdk` building block downloads and installs the [NVIDIA
+    HPC SDK](https://developer.nvidia.com/hpc-sdk).  Currently, the
+    only option is to install from a tarball.
 
     You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
     building block.
@@ -72,12 +73,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
     NVIDIA HPC SDK.  The default value is `False`.
 
-    license: The license to use to activate the NVIDIA HPC SDK.  If
-    the string contains a `@` the license is interpreted as a network
-    license, e.g., `12345@lic-server`.  Otherwise, the string is
-    interpreted as the path to the license file relative to the local
-    build context.  The default value is empty.
-
     mpi: Boolean flag to specify whether the MPI component should be
     installed.  If True, MPI will be installed.  The default value is
     False.
@@ -103,7 +98,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     # Examples
 
     ```python
-    nv_hpc_sdk(eula=True, license='port@host',
+    nv_hpc_sdk(eula=True,
                tarball='nvhpc_2020_204_Linux_x86_64.tar.gz')
     ```
 
@@ -128,10 +123,8 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)
-        self.__license = kwargs.get('license', None)
         self.__mpi = kwargs.get('mpi', False)
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__runtime_commands = [] # Filled in by __setup()
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/nvidia/hpcsdk')
         self.__system_cuda = kwargs.get('system_cuda', False)
@@ -175,14 +168,10 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self += copy(src=self.__tarball,
                          dest=posixpath.join(self.__wd,
                                              posixpath.basename(self.__tarball)))
-        else:
+        else: # pragma: no cover
             raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
-        if self.__license and not '@' in self.__license:
-            # License file
-            self += copy(src=self.__license, dest=posixpath.join(
-                self.__prefix, posixpath.basename(self.__license)))
         self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
 
@@ -220,7 +209,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.__runtime_ospackages = ['numactl-libs']
             if self.__mpi:
                 self.__runtime_ospackages.append('openssh-clients')
-        else:
+        else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
 
     def __environment(self, runtime=False):
@@ -305,7 +294,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__year = '20' + match.groupdict()['year']
             else:
                 raise RuntimeError('could not parse version from tarball')
-        else:
+        else: # pragma: no cover
             raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
 
     def __setup(self):
@@ -315,7 +304,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__tarball:
             # Use tarball from local build context
             tarball = posixpath.basename(self.__tarball)
-        else:
+        else: # pragma: no cover
             raise RuntimeError('must specify the NVIDIA HPC SDK tarball')
 
         self.__commands.append(self.untar_step(
@@ -365,14 +354,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.environment_variables = self.__environment()
         self.runtime_environment_variables = self.__environment(runtime=True)
 
-        # License activation
-        if self.__license:
-            if '@' in self.__license:
-                self.environment_variables['LM_LICENSE_FILE'] = self.__license
-            else:
-                self.environment_variables['LM_LICENSE_FILE'] = posixpath.join(
-                    self.__prefix, posixpath.basename(self.__license))
-
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -400,9 +381,6 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__mpi:
             instructions.append(copy(_from=_from,
                                      src=self.__mpipath, dest=self.__mpipath))
-
-        if self.__runtime_commands:
-            instructions.append(shell(commands=self.__runtime_commands))
 
         instructions.append(environment(variables=self.environment_step(
             runtime=True)))
