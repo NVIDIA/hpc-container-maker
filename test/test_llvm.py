@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -200,6 +200,70 @@ RUN yum install -y \
         llvm-toolset-8.0.1 && \
     rm -rf /var/cache/yum/*
 ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_nightly_ubuntu16(self):
+        """Nightly builds"""
+        l = llvm(nightly=True, version='10')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-10 \
+        libomp-10-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-10) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-10) 30''')
+
+    @x86_64
+    @ubuntu18
+    @docker
+    def test_nightly_ubuntu18(self):
+        """Nightly builds"""
+        l = llvm(extra_tools=True, nightly=True, version='11')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-11 \
+        clang-format-11 \
+        clang-tidy-11 \
+        libomp-11-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-11) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-11) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-11) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-11) 30''')
+
+    @aarch64
+    @ubuntu
+    @docker
+    def test_nightly_aarch64(self):
+        """Nightly builds for aarch64"""
+        with self.assertRaises(RuntimeError):
+            llvm(nightly=True, version='11')
 
     @x86_64
     @ubuntu

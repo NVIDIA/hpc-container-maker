@@ -4,8 +4,9 @@ site_name: "HPC Container Maker"
 
 generate:
 - building_blocks.md:
-  - hpccm.building_blocks.arm_allinea_studio+
+  - hpccm.building_blocks.amgx+
   - hpccm.building_blocks.apt_get+
+  - hpccm.building_blocks.arm_allinea_studio+
   - hpccm.building_blocks.boost+
   - hpccm.building_blocks.catalyst+
   - hpccm.building_blocks.cgns+

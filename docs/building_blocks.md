@@ -2,54 +2,123 @@
 ```python
 amgx(self, **kwargs)
 ```
+The `amgx` building block downloads, configures, builds, and
+installs the [AMGX](https://developer.nvidia.com/amgx) component.
 
-The `amgx` building block downloads, configures, builds, and installs the [AMGX](https://developer.nvidia.com/amgx) component.
+The [CMake](#cmake) building block should be installed prior to
+this building block.
 
-The [CMake](#cmake) building block should be installed prior to this building block.
-
-Installing an MPI building block before this one is optional and will build the [AMGX](https://developer.nvidia.com/amgx) library with MPI support.
-Some Eigensolvers make use of the MAGMA and/or MKL libraries and are only available if the paths to these libraries is specified as shown below in the __cmake_opts__.
+Installing an MPI building block before this one is optional and
+will build the [AMGX](https://developer.nvidia.com/amgx) library
+with MPI support.  Some Eigensolvers make use of the MAGMA and/or
+MKL libraries and are only available if the paths to these
+libraries is specified as shown below in the cmake_opts.
 
 __Parameters__
 
-- __branch__: The git branch to clone.
-AMGX releases are tagged, that is, specifying `branch='v2.1.0'` downloads a particular AMGX version.
-The default is `master`.
 
-- __cmake_opts__: List of options to pass to `cmake`.
-The default value is an empty list.
-See the ["Building"](https://github.com/NVIDIA/AMGX#-building) section of the AMGX documentation of the specified library version for more details.
-Some options are:
-  - `CMAKE_NO_MPI:Boolean` (default=`False`): build without MPI support even if the `FindMPI` script finds an MPI library.
-  - `AMGX_NO_RPATH:Boolean` (default=`False`): by default CMake adds `-rpath` flags to binaries, this option disables that.
-  - `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String`: MAGMA/MKL are used to accelerate some of the Eigensolvers.
-  These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
+- __annotate__: Boolean flag to specify whether to include annotations (labels).
+The default is False.
 
-- __commit__: The git commit to clone.
-The default is empty and uses the latest commit on the selected branch of the repository.
+- __branch__: The git branch to clone.  AMGX releases are tagged, that
+is, specifying `branch='v2.1.0'` downloads a particular AMGX
+version.  The default is `master`.
 
-- __directory__: Build from an unpackaged source directory relative to the local build context instead of fetching AMGX sources from a git repository.
-This option is incompatible with `repository`/`branch`/ `commit`.
-The default is `None`.
+- __cmake_opts__: List of options to pass to `cmake`.  The default value is an empty list.  See the ["Building"](https://github.com/NVIDIA/AMGX#-building) section of the AMGX documentation of the specified library version for more details.  Some options are `CMAKE_NO_MPI:Boolean` (default=`False`) - build without MPI support even if the `FindMPI` script finds an MPI library.  `AMGX_NO_RPATH:Boolean` (default=`False`) - by default CMake adds `-rpath` flags to binaries, this option disables that.  `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String` - MAGMA/MKL are used to accelerate some of the Eigensolvers.  These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
 
-- __ospackages__: List of OS packages to install prior to downloading, configuring, and building.
-The default is `[git]`.
+- __commit__: The git commit to clone.  The default is empty and uses
+the latest commit on the selected branch of the repository.
 
-- __prefix__: The top level install location.
-The default is `/usr/local/amgx`.
+- __directory__: Build from an unpackaged source directory relative to
+the local build context instead of fetching AMGX sources from a
+git repository.  This option is incompatible with
+`repository`/`branch`/ `commit`.  The default is `None`.
 
-- __repository__: The git repository to clone.
-The default is `https://github.com/NVIDIA/AMGX`.
+- __ospackages__: List of OS packages to install prior to downloading,
+configuring, and building.  The default value is `[git]`.
 
-- __toolchain__: The toolchain object.
-This should be used if non-default compilers or other toolchain options are needed.
-The default is empty.
+- __prefix__: The top level install location.  The default is
+`/usr/local/amgx`.
+
+- __repository__: The git repository to clone.  The default is `https://github.com/NVIDIA/AMGX`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
 
 __Examples__
 
+
 ```python
-amgx(prefix='/opt/amgx', branch='v2.1.0')
+amgx(branch='v2.1.0')
 ```
+
+
+## runtime
+```python
+amgx.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+f = amgx(...)
+Stage0 += f
+Stage1 += f.runtime()
+```
+
+# apt_get
+```python
+apt_get(self, **kwargs)
+```
+The `apt_get` building block specifies the set of operating system
+packages to install.  This building block should only be used on
+images that use the Debian package manager (e.g., Ubuntu).
+
+In most cases, the [`packages` building block](#packages) should be
+used instead of `apt_get`.
+
+__Parameters__
+
+
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
+
+- __download__: Boolean flag to specify whether to download the deb
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/apt_get_download`.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
+
+- __keys__: A list of GPG keys to add.  The default is an empty list.
+
+- __ospackages__: A list of packages to install.  The default is an
+empty list.
+
+- __ppas__: A list of personal package archives to add.  The default is
+an empty list.
+
+- __repositories__: A list of apt repositories to add.  The default is
+an empty list.
+
+__Examples__
+
+
+```python
+apt_get(ospackages=['make', 'wget'])
+```
+
 
 # arm_allinea_studio
 ```python
@@ -129,56 +198,6 @@ a = arm_allinea_compiler(...)
 Stage0 += a
 Stage1 += a.runtime()
 ```
-
-# apt_get
-```python
-apt_get(self, **kwargs)
-```
-The `apt_get` building block specifies the set of operating system
-packages to install.  This building block should only be used on
-images that use the Debian package manager (e.g., Ubuntu).
-
-In most cases, the [`packages` building block](#packages) should be
-used instead of `apt_get`.
-
-__Parameters__
-
-
-- __aptitude__: Boolean flag to specify whether `aptitude` should be
-used instead of `apt-get`.  The default is False.
-
-- __download__: Boolean flag to specify whether to download the deb
-packages instead of installing them.  The default is False.
-
-- __download_directory__: The deb package download location. This
-parameter is ignored if `download` is False. The default value is
-`/var/tmp/apt_get_download`.
-
-- __extract__: Location where the downloaded packages should be
-extracted. Note, this extracts and does not install the packages,
-i.e., the package manager is bypassed. After the downloaded
-packages are extracted they are deleted. This parameter is ignored
-if `download` is False. If empty, then the downloaded packages are
-not extracted. The default value is an empty string.
-
-- __keys__: A list of GPG keys to add.  The default is an empty list.
-
-- __ospackages__: A list of packages to install.  The default is an
-empty list.
-
-- __ppas__: A list of personal package archives to add.  The default is
-an empty list.
-
-- __repositories__: A list of apt repositories to add.  The default is
-an empty list.
-
-__Examples__
-
-
-```python
-apt_get(ospackages=['make', 'wget'])
-```
-
 
 # boost
 ```python
@@ -2101,15 +2120,16 @@ __Parameters__
 (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
 include the LLVM compilers. The default is True.
 
-- __extra_repository__: Boolean flag to specify whether to enable an
-extra package repository containing addition LLVM compiler
-packages.  For Ubuntu, setting this flag to True enables the
-- __`ppa__:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
-distributions, setting this flag to True enables the Software
-Collections (SCL) repository.  The default is False.
+- __extra_repository__: Boolean flag to specify whether to enable an extra package repository containing addition LLVM compiler packages.  For Ubuntu, setting this flag to True enables the `ppa:ubuntu-toolchain-r/test`
+repository.  For RHEL-based Linux distributions, setting this flag
+to True enables the Software Collections (SCL) repository.  The
+default is False.
 
 - __extra_tools__: Boolean flag to specify whether to also install
 `clang-format` and `clang-tidy`.  The default is False.
+
+- __nightly__: Boolean flag to specify whether to use the [nightly LLVM packages](https://apt.llvm.org).
+This option is ignored if the base image is not Ubuntu.
 
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
@@ -2130,6 +2150,10 @@ llvm()
 
 ```python
 llvm(extra_repository=True, version='7')
+```
+
+```python
+llvm(nightly=True, version='11')
 ```
 
 ```python
