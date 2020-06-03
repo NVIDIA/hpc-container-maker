@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import os
 import posixpath
 
 import hpccm.templates.annotate
@@ -94,7 +95,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
     must be specified. The default is False.
 
     repository: The git repository of the package to build.  One of
-    this paramter or the `url` parameter must be specified.
+    this paramter or the `compressed_file` or `url` parameters must be
+    specified.
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -102,8 +104,13 @@ class generic_build(bb_base, hpccm.templates.annotate,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
-    url: The URL of the tarball package to build.  One of this
-    parameter or the `repository` parameter must be specified.
+    compressed_file: Path to the source tarball or zip file 
+    relative to the local build     context.  One of this parameter or the `repository` or `url`
+    parameters must be specified.
+
+    url: The URL of the compressed file (tarball or zip package) to build.  One of this
+    parameter or the `repository` or `compressed_file` parameters must be
+    specified.
 
     # Examples
 
@@ -149,6 +156,12 @@ class generic_build(bb_base, hpccm.templates.annotate,
                 self += comment(self.url, reformat=False)
             elif self.repository:
                 self += comment(self.repository, reformat=False)
+            elif self.compressed_file:
+                self += comment(self.compressed_file, reformat=False)
+        if self.compressed_file:
+            self += copy(src=self.compressed_file,
+                         dest=posixpath.join(self.__wd,
+                                             os.path.basename(self.compressed_file)))
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -196,6 +209,9 @@ class generic_build(bb_base, hpccm.templates.annotate,
         if self.url:
             remove.append(posixpath.join(self.__wd,
                                          posixpath.basename(self.url)))
+        elif self.compressed_file:
+            remove.append(posixpath.join(self.__wd,
+                                         posixpath.basename(self.compressed_file)))
         self.__commands.append(self.cleanup_step(items=remove))
 
     def runtime(self, _from='0'):

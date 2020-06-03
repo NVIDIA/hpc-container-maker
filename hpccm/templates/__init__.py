@@ -24,4 +24,5 @@ from hpccm.templates.ldconfig import ldconfig
 from hpccm.templates.rm import rm
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar
+from hpccm.templates.zip import zip
 from hpccm.templates.wget import wget

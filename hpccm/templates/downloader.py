@@ -38,6 +38,7 @@ class downloader(hpccm.base_object):
         self.commit = kwargs.get('commit', None)
         self.repository = kwargs.get('repository', None)
         self.src_directory = None
+        self.compressed_file = kwargs.get('compressed_file', None)
         self.url = kwargs.get('url', None)
 
         super(downloader, self).__init__(**kwargs)
@@ -45,11 +46,12 @@ class downloader(hpccm.base_object):
     def download_step(self, recursive=False, unpack=True, wd='/var/tmp'):
         """Get source code"""
 
-        if not self.repository and not self.url:
-            raise RuntimeError('must specify a repository or a URL')
+        if not self.repository and not self.compressed_file and not self.url:
+            raise RuntimeError('must specify a repository, tarball, zip file or a URL')
 
-        if self.repository and self.url:
-            raise RuntimeError('cannot specify both a repository and a URL')
+        if sum([bool(self.repository), bool(self.compressed_file),
+                bool(self.url)]) > 1:
+            raise RuntimeError('must specify exactly one of a repository, tarball, zip file or a URL')
 
         # Check if the caller inherits from the annotate template
         annotate = getattr(self, 'add_annotation', None)
@@ -57,28 +59,23 @@ class downloader(hpccm.base_object):
         commands = []
 
         if self.url:
-            # Download tarball
+            # Download compressed file
             commands.append(hpccm.templates.wget().download_step(
                 url=self.url, directory=wd))
 
             if unpack:
-                # Unpack tarball
-                tarball = posixpath.join(wd, posixpath.basename(self.url))
-                commands.append(hpccm.templates.tar().untar_step(
-                    tarball, directory=wd))
-
-                match = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)'
-                                  r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
-                                  tarball)
-                if match:
-                    # Set directory where to find source
-                    self.src_directory = posixpath.join(wd, match.group(1))
-                else:
-                    raise RuntimeError('unrecognized package format')
+                commands.append(self.__unpack(self.url, wd))
 
             if callable(annotate):
                 self.add_annotation('url', self.url)
 
+        elif self.compressed_file:
+            # Use an already available compressed_ ile
+            if unpack:
+                commands.append(self.__unpack(self.compressed_file, wd))
+
+            if callable(annotate):
+                self.add_annotation('compressed_file', self.compressed_file)
 
         elif self.repository:
             # Clone git repository
@@ -105,4 +102,26 @@ class downloader(hpccm.base_object):
         elif hpccm.config.g_ctype == container_type.BASH:
             return '\n'.join(commands)
         else:
-            raise RuntimeError('Unknown container type')
+            raise RuntimeError('unknown container type')
+
+    def __unpack(self, compressed_file, wd):
+        """Unpack compressed file and set source directory"""
+
+        match_tar = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
+                          r'|(?:\.tgz)|(?:\.tar\.bz2)|(?:\.tar\.xz))$',
+                          posixpath.basename(compressed_file))
+
+        match_zip = re.search(r'(.*)(?:(?:\.zip))$',
+                          posixpath.basename(compressed_file))
+            
+        if match_tar:
+            self.src_directory = posixpath.join(wd, match_tar.group(1))
+            return hpccm.templates.tar().untar_step(
+                posixpath.join(wd, posixpath.basename(compressed_file)), directory=wd)
+        elif match_zip:
+            self.src_directory = posixpath.join(wd, match_zip.group(1))
+            return hpccm.templates.zip().unzip_step(
+                posixpath.join(wd, posixpath.basename(compressed_file)), directory=wd)
+        else:
+            raise RuntimeError('unrecognized package format')
+    
