@@ -35,101 +35,51 @@ class Test_kokkos(unittest.TestCase):
     @docker
     def test_defaults_ubuntu(self):
         """Default kokkos building block"""
-        k = kokkos()
+        k = kokkos(url='https://github.com/kokkos/kokkos/archive/master.tar.gz')
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        bc \
-        gzip \
-        libhwloc-dev \
-        make \
-        tar \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
-ENV PATH=/usr/local/kokkos/bin:$PATH''')
+r'''# https://github.com/kokkos/kokkos/archive/master.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/master.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/master.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/master/build && cd /var/tmp/master/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /var/tmp/master && \
+    cmake --build /var/tmp/master/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/master/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/master /var/tmp/master.tar.gz''')
 
     @centos
     @docker
     def test_defaults_centos(self):
         """Default kokkos building block"""
-        k = kokkos()
+        k = kokkos(url='https://github.com/kokkos/kokkos/archive/master.tar.gz')
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
-RUN yum install -y \
-        bc \
-        gzip \
-        hwloc-devel \
-        make \
-        tar \
-        wget \
-        which && \
-    rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
-ENV PATH=/usr/local/kokkos/bin:$PATH''')
+r'''# https://github.com/kokkos/kokkos/archive/master.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/master.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/master.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/master/build && cd /var/tmp/master/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /var/tmp/master && \
+    cmake --build /var/tmp/master/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/master/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/master /var/tmp/master.tar.gz''')
 
     @centos8
     @docker
     def test_defaults_centos8(self):
         """Default kokkos building block"""
-        k = kokkos()
+        k = kokkos(url='https://github.com/kokkos/kokkos/archive/master.tar.gz')
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
-RUN yum install -y dnf-utils && \
-    yum-config-manager --set-enabled PowerTools && \
-    yum install -y \
-        bc \
-        gzip \
-        hwloc-devel \
-        make \
-        tar \
-        wget \
-        which && \
-    rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
-ENV PATH=/usr/local/kokkos/bin:$PATH''')
+r'''# https://github.com/kokkos/kokkos/archive/master.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/master.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/master.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/master/build && cd /var/tmp/master/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /var/tmp/master && \
+    cmake --build /var/tmp/master/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/master/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/master /var/tmp/master.tar.gz''')
 
     @ubuntu
     @docker
     def test_runtime(self):
         """Runtime"""
-        k = kokkos()
+        k = kokkos(url='https://github.com/kokkos/kokkos/archive/master.tar.gz')
         r = k.runtime()
         self.assertEqual(r,
-r'''# Kokkos
-COPY --from=0 /usr/local/kokkos /usr/local/kokkos
-ENV PATH=/usr/local/kokkos/bin:$PATH''')
+r'''# https://github.com/kokkos/kokkos/archive/master.tar.gz
+COPY --from=0 /usr/local /usr/local
+ENV PATH=/usr/local/bin:$PATH''')
