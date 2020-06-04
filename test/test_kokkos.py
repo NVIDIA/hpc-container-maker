@@ -37,28 +37,21 @@ class Test_kokkos(unittest.TestCase):
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
+r'''# Kokkos version 3.1.01
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        bc \
         gzip \
         libhwloc-dev \
         make \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos
@@ -67,28 +60,20 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
+r'''# Kokkos version 3.1.01
 RUN yum install -y \
-        bc \
         gzip \
         hwloc-devel \
         make \
         tar \
-        wget \
-        which && \
+        wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos8
@@ -97,30 +82,43 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 2.9.00
+r'''# Kokkos version 3.1.01
 RUN yum install -y dnf-utils && \
     yum-config-manager --set-enabled PowerTools && \
     yum install -y \
-        bc \
         gzip \
         hwloc-devel \
         make \
         tar \
-        wget \
-        which && \
+        wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/2.9.00.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.9.00.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    mkdir build && \
-    cd build && \
-    ../generate_makefile.bash --arch=Pascal60 --with-cuda --with-hwloc --prefix=/usr/local/kokkos && \
-    make kokkoslib -j$(nproc) && \
-    mkdir -p /usr/local/kokkos && \
-    cd /var/tmp/kokkos-2.9.00 && \
-    cd build && \
-    make install -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-2.9.00 /var/tmp/2.9.00.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
+ENV PATH=/usr/local/kokkos/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_check_and_repository(self):
+        """Check and repository options"""
+        k = kokkos(check=True, repository=True)
+        self.assertEqual(str(k),
+r'''# Kokkos version 3.1.01
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        libhwloc-dev \
+        make && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 https://github.com/kokkos/kokkos.git kokkos && cd - && \
+    mkdir -p /var/tmp/kokkos/build && cd /var/tmp/kokkos/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_TESTS=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos && \
+    cmake --build /var/tmp/kokkos/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @ubuntu
