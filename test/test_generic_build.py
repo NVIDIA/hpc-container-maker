@@ -110,13 +110,13 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @centos
     @docker
-    def test_tarball(self):
-        """tarball package"""
+    def test_package(self):
+        """local package"""
         g = generic_build(build=['make USE_OPENMP=1'],
                           directory='OpenBLAS-0.3.6',
                           install=['make install PREFIX=/usr/local/openblas'],
-                          prefix='/usr/local/openblas',
-                          tarball='openblas/v0.3.6.tar.gz')
+                          package='openblas/v0.3.6.tar.gz',
+                          prefix='/usr/local/openblas')
         self.assertEqual(str(g),
 r'''# openblas/v0.3.6.tar.gz
 COPY openblas/v0.3.6.tar.gz /var/tmp/v0.3.6.tar.gz

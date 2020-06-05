@@ -80,8 +80,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
-    def test_tarball(self):
-        """tarball package"""
+    def test_package(self):
+        """local package"""
         g = generic_cmake(
             cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
                         '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
@@ -93,8 +93,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
                         '-D MPIEXEC_PREFLAGS=--allow-run-as-root',
                         '-D REGRESSIONTEST_DOWNLOAD=ON'],
             directory='gromacs-2018.2',
-            prefix='/usr/local/gromacs',
-            tarball='gromacs/v2018.2.tar.gz')
+            package='gromacs/v2018.2.tar.gz',
+            prefix='/usr/local/gromacs')
         self.assertEqual(str(g),
 r'''# gromacs/v2018.2.tar.gz
 COPY gromacs/v2018.2.tar.gz /var/tmp/v2018.2.tar.gz

@@ -796,6 +796,10 @@ configuring the dynamic linker cache.  The default value is `lib`.
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __postinstall__: List of shell commands to run after running 'make
 install'.  The working directory is the install prefix.  The
 default is an empty list.
@@ -812,7 +816,7 @@ and instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `tarball` or `url` parameters must be
+this paramter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
@@ -821,16 +825,12 @@ specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
-- __tarball__: Path to the source tarball relative to the local build
-context.  One of this parameter or the `repository` or `url`
-parameters must be specified.
-
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `tarball` or `repository` parameters must be
+- __url__: The URL of the package to build.  One of this
+parameter or the `package` or `repository` parameters must be
 specified.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
@@ -928,6 +928,10 @@ should be added dynamic linker cache.  The default value is False.
 - __libdir__: The path relative to the install prefix to use when
 configuring the dynamic linker cache.  The default value is `lib`.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
 runtime method.
@@ -936,7 +940,7 @@ runtime method.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `tarball` or `url` parameters must be
+this paramter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
@@ -945,13 +949,8 @@ specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
-- __tarball__: Path to the source tarball relative to the local build
-context.  One of this parameter or the `repository` or `url`
-parameters must be specified.
-
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` or `tarball` parameters must be
-specified.
+- __url__: The URL of the package to build.  One of this parameter or
+the `package` or `repository` or parameters must be specified.
 
 __Examples__
 
@@ -1041,6 +1040,10 @@ configuring the dynamic linker cache.  The default value is `lib`.
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __postinstall__: List of shell commands to run after running 'make
 install'.  The working directory is the install prefix.  The
 default is an empty list.
@@ -1057,7 +1060,7 @@ instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `tarball` or `url` parameters must be
+this paramter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
@@ -1066,17 +1069,12 @@ specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
-- __tarball__: Path to the source tarball relative to the local build
-context.  One of this parameter or the `repository` or `url`
-parameters must be specified.
-
 - __toolchain__: The toolchain object.  This should be used if
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `tarball` or `repository` parameters must be
-specified.
+- __url__: The URL of the package to build.  One of this parameter or
+the `repository` or `package` parameters must be specified.
 
 __Examples__
 

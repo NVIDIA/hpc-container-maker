@@ -99,6 +99,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
         self.__shmem = kwargs.pop('shmem', None)
+        self.__tarball = kwargs.pop('tarball', None)
         self.__wd = '/var/tmp' # working directory
 
         # Setup the environment variables
@@ -152,6 +153,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                         self.__prefix, self.__wd) if self.__hydra else None],
                 comment=False,
                 devel_environment=self.environment_variables,
+                package=self.__tarball,
                 prefix=self.__prefix,
                 runtime_environment=self.environment_variables,
                 **kwargs)

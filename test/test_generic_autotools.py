@@ -72,11 +72,11 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
-    def test_tarball(self):
-        """tarball package"""
+    def test_package(self):
+        """local package"""
         g = generic_autotools(
-            prefix='/usr/local/openmpi',
-            tarball='packages/openmpi-4.0.1.tar.bz2')
+            package='packages/openmpi-4.0.1.tar.bz2',
+            prefix='/usr/local/openmpi')
         self.assertEqual(str(g),
 r'''# packages/openmpi-4.0.1.tar.bz2
 COPY packages/openmpi-4.0.1.tar.bz2 /var/tmp/openmpi-4.0.1.tar.bz2
