@@ -110,6 +110,26 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @centos
     @docker
+    def test_package(self):
+        """local package"""
+        g = generic_build(build=['make USE_OPENMP=1'],
+                          directory='OpenBLAS-0.3.6',
+                          install=['make install PREFIX=/usr/local/openblas'],
+                          package='openblas/v0.3.6.tar.gz',
+                          prefix='/usr/local/openblas')
+        self.assertEqual(str(g),
+r'''# openblas/v0.3.6.tar.gz
+COPY openblas/v0.3.6.tar.gz /var/tmp/v0.3.6.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
+    make USE_OPENMP=1 && \
+    mkdir -p /usr/local/openblas && \
+    cd /var/tmp/OpenBLAS-0.3.6 && \
+    make install PREFIX=/usr/local/openblas && \
+    rm -rf /var/tmp/OpenBLAS-0.3.6 /var/tmp/v0.3.6.tar.gz''')
+
+    @centos
+    @docker
     def test_environment_ldconfig_annotate(self):
         """ldconfig and environment options"""
         g = generic_build(annotate=True,

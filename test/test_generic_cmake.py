@@ -80,6 +80,32 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
+    def test_package(self):
+        """local package"""
+        g = generic_cmake(
+            cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                        '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                        '-D GMX_BUILD_OWN_FFTW=ON',
+                        '-D GMX_GPU=ON',
+                        '-D GMX_MPI=OFF',
+                        '-D GMX_OPENMP=ON',
+                        '-D GMX_PREFER_STATIC_LIBS=ON',
+                        '-D MPIEXEC_PREFLAGS=--allow-run-as-root',
+                        '-D REGRESSIONTEST_DOWNLOAD=ON'],
+            directory='gromacs-2018.2',
+            package='gromacs/v2018.2.tar.gz',
+            prefix='/usr/local/gromacs')
+        self.assertEqual(str(g),
+r'''# gromacs/v2018.2.tar.gz
+COPY gromacs/v2018.2.tar.gz /var/tmp/v2018.2.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/v2018.2.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root -D REGRESSIONTEST_DOWNLOAD=ON /var/tmp/gromacs-2018.2 && \
+    cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/gromacs-2018.2/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/gromacs-2018.2 /var/tmp/v2018.2.tar.gz''')
+
+    @ubuntu
+    @docker
     def test_build_directory(self):
         """build directory option"""
         g = generic_cmake(

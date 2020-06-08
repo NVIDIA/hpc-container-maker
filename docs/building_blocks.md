@@ -868,6 +868,10 @@ configuring the dynamic linker cache.  The default value is `lib`.
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __postinstall__: List of shell commands to run after running 'make
 install'.  The working directory is the install prefix.  The
 default is an empty list.
@@ -884,7 +888,8 @@ and instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `package` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -896,8 +901,9 @@ stage.  The default is an empty dictionary.
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+- __url__: The URL of the package to build.  One of this
+parameter or the `package` or `repository` parameters must be
+specified.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -994,6 +1000,10 @@ should be added dynamic linker cache.  The default value is False.
 - __libdir__: The path relative to the install prefix to use when
 configuring the dynamic linker cache.  The default value is `lib`.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __prefix__: The top level install location.  The default value is
 empty. If defined then the location is copied as part of the
 runtime method.
@@ -1002,7 +1012,8 @@ runtime method.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `package` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -1010,8 +1021,8 @@ this paramter or the `url` parameter must be specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+- __url__: The URL of the package to build.  One of this parameter or
+the `package` or `repository` or parameters must be specified.
 
 __Examples__
 
@@ -1101,6 +1112,10 @@ configuring the dynamic linker cache.  The default value is `lib`.
 - __make__: Boolean flag to specify whether the `make` step should be
 performed.  The default is True.
 
+- __package__: Path to the local source package relative to the local
+build context.  One of this parameter or the `repository` or `url`
+parameters must be specified.
+
 - __postinstall__: List of shell commands to run after running 'make
 install'.  The working directory is the install prefix.  The
 default is an empty list.
@@ -1117,7 +1132,8 @@ instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `url` parameter must be specified.
+this paramter or the `package` or `url` parameters must be
+specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -1129,8 +1145,8 @@ stage.  The default is an empty dictionary.
 non-default compilers or other toolchain options are needed.  The
 default is empty.
 
-- __url__: The URL of the tarball package to build.  One of this
-parameter or the `repository` parameter must be specified.
+- __url__: The URL of the package to build.  One of this parameter or
+the `repository` or `package` parameters must be specified.
 
 __Examples__
 
@@ -3026,6 +3042,74 @@ __Examples__
 
 ```python
 n = nv_hpc_sdk(...)
+Stage0 += n
+Stage1 += n.runtime()
+```
+
+# nvshmem
+```python
+nvshmem(self, **kwargs)
+```
+The `nvshmem` building block builds and installs the
+[NVSHMEM](https://developer.nvidia.com/nvshmem) component.
+
+__Parameters__
+
+
+- __binary_tarball__: Path to NVSHMEM binary tarball relative to the
+build context. The default value is empty. Either this parameter
+or `package` must be specified.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
+include NVSHMEM. The default is True.
+
+- __gdrcopy__: Flag to specify the path to the GDRCOPY installation.
+The default is empty.
+
+- __hydra__: Boolean flag to specify whether the Hydra process launcher
+should be installed.  If True, adds `automake` to the list of OS
+packages.  The default is False.
+
+- __make_variables__: Dictionary of environment variables and values to
+set when building NVSHMEM.  The default is an empty dictionary.
+
+- __mpi__: Flag to specify the path to the MPI installation.  The
+default is empty, i.e., do not build NVSHMEM with MPI support.
+
+- __ospackages__: List of OS packages to install prior to building.  The
+default values are `make` and `wget`.
+
+- __package__: Path to the NVSHMEM source package relative to the build
+context. The default value is empty. Either this parameter or
+`binary_tarball` must be specified.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/nvshmem`.
+
+- __shmem__: Flag to specify the path to the SHMEM installation.  The
+default is empty, i.e., do not build NVSHMEM with SHMEM support.
+
+__Examples__
+
+
+```python
+nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
+```
+
+
+## runtime
+```python
+nvshmem.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+n = nvshmem(...)
 Stage0 += n
 Stage1 += n.runtime()
 ```

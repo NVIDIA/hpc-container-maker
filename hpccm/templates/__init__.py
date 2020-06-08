@@ -25,3 +25,4 @@ from hpccm.templates.rm import rm
 from hpccm.templates.sed import sed
 from hpccm.templates.tar import tar
 from hpccm.templates.wget import wget
+from hpccm.templates.zipfile import zipfile

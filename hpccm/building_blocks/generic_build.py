@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import os
 import posixpath
 
 import hpccm.templates.annotate
@@ -86,6 +87,10 @@ class generic_build(bb_base, hpccm.templates.annotate,
     libdir: The path relative to the install prefix to use when
     configuring the dynamic linker cache.  The default value is `lib`.
 
+    package: Path to the local source package relative to the local
+    build context.  One of this parameter or the `repository` or `url`
+    parameters must be specified.
+
     prefix: The top level install location.  The default value is
     empty. If defined then the location is copied as part of the
     runtime method.
@@ -94,7 +99,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
     must be specified. The default is False.
 
     repository: The git repository of the package to build.  One of
-    this paramter or the `url` parameter must be specified.
+    this paramter or the `package` or `url` parameters must be
+    specified.
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
@@ -102,8 +108,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
-    url: The URL of the tarball package to build.  One of this
-    parameter or the `repository` parameter must be specified.
+    url: The URL of the package to build.  One of this parameter or
+    the `package` or `repository` or parameters must be specified.
 
     # Examples
 
@@ -149,6 +155,12 @@ class generic_build(bb_base, hpccm.templates.annotate,
                 self += comment(self.url, reformat=False)
             elif self.repository:
                 self += comment(self.repository, reformat=False)
+            elif self.package:
+                self += comment(self.package, reformat=False)
+        if self.package:
+            self += copy(src=self.package,
+                         dest=posixpath.join(self.__wd,
+                                             os.path.basename(self.package)))
         self += shell(_arguments=self.__run_arguments,
                       commands=self.__commands)
         self += environment(variables=self.environment_step())
@@ -196,6 +208,9 @@ class generic_build(bb_base, hpccm.templates.annotate,
         if self.url:
             remove.append(posixpath.join(self.__wd,
                                          posixpath.basename(self.url)))
+        elif self.package:
+            remove.append(posixpath.join(self.__wd,
+                                         posixpath.basename(self.package)))
         self.__commands.append(self.cleanup_step(items=remove))
 
     def runtime(self, _from='0'):

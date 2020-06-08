@@ -100,3 +100,17 @@ r'''mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch dev --recur
         self.assertEqual(d.download_step(wd='/tmp/git'),
 r'''mkdir -p /tmp/git && cd /tmp/git && git clone  https://github.com/foo/bar bar && cd - && cd /tmp/git/bar && git checkout deadbeef && cd -''')
         self.assertEqual(d.src_directory, '/tmp/git/bar')
+
+    @docker
+    def test_tarball(self):
+        """Local tarball, no download"""
+        d = downloader(package='foo.tar.gz')
+        self.assertEqual(d.download_step(), 'mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tar.gz -C /var/tmp -z')
+        self.assertEqual(d.src_directory, '/var/tmp/foo')
+
+    @docker
+    def test_zipfile(self):
+        """Local zipfile, no download"""
+        d = downloader(package='foo.zip')
+        self.assertEqual(d.download_step(), 'mkdir -p /var/tmp && unzip -d /var/tmp /var/tmp/foo.zip')
+        self.assertEqual(d.src_directory, '/var/tmp/foo')

@@ -72,6 +72,22 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
+    def test_package(self):
+        """local package"""
+        g = generic_autotools(
+            package='packages/openmpi-4.0.1.tar.bz2',
+            prefix='/usr/local/openmpi')
+        self.assertEqual(str(g),
+r'''# packages/openmpi-4.0.1.tar.bz2
+COPY packages/openmpi-4.0.1.tar.bz2 /var/tmp/openmpi-4.0.1.tar.bz2
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.1.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/openmpi-4.0.1 &&   ./configure --prefix=/usr/local/openmpi && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/openmpi-4.0.1 /var/tmp/openmpi-4.0.1.tar.bz2''')
+
+    @ubuntu
+    @docker
     def test_pre_and_post(self):
         """Preconfigure and postinstall options"""
         g = generic_autotools(
