@@ -1943,52 +1943,72 @@ kokkos(self, **kwargs)
 The `kokkos` building block downloads and installs the
 [Kokkos](https://github.com/kokkos/kokkos) component.
 
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
 __Parameters__
 
 
 - __annotate__: Boolean flag to specify whether to include annotations
 (labels).  The default is False.
 
-- __arch__: Flag to set the target architecture. If set adds
-`--arch=value` to the list of `generate_makefile.bash` options.
-The default value is `Pascal60`, i.e., sm_60.  If a cuda aware
-build is not selected, then a non-default value should be used.
+- __arch__: List of target architectures to build. If set adds
+`-DKokkos_ARCH_<value>=ON` to the list of CMake options. The
+default value is `VOLTA70`, i.e., sm_70.  If a CUDA aware build is
+not selected, then a non-default value should be used.
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __check__: Boolean flag to specify whether the build should be
+checked.  If True, adds `-DKokkos_ENABLE_TESTS=ON` to the list of
+CMake options. The default is False.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default is
+`-DCMAKE_BUILD_TYPE=RELEASE`.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __cuda__: Flag to control whether a CUDA aware build is performed.  If
-True, adds `--with-cuda` to the list of `generate_makefile.bash`
-options.  If a string, uses the value of the string as the CUDA
-path.  If False, does nothing.  The default value is True.
+True, adds `-DKokkos_ENABLE_CUDA=ON` and
+`-DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper` to the list of
+CMake options.  The default value is True.
 
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 Kokkos. The default is True.
 
 - __hwloc__: Flag to control whether a hwloc aware build is performed.
-If True, adds `--with-hwloc` to the list of
-`generate_makefile.bash` options.  If a string, uses the value of
-the string as the hwloc path.  If False, does nothing.  The
-default value is True.
-
-- __opts__: List of options to pass to `generate_makefile.bash`.  The
-default is an empty list.
+If True, adds `-DKokkos_ENABLE_HWLOC=ON` to the list of CMake
+options. The default value is True.
 
 - __ospackages__: List of OS packages to install prior to building.  For
-Ubuntu, the default values are `bc`, `gzip`, `libhwloc-dev`,
-`make`, `tar`, and `wget`.  For RHEL-based Linux distributions the
-default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
-`wget`, and `which`.
+Ubuntu, the default values are `gzip`, `libhwloc-dev`, `make`,
+`tar`, and `wget`.  For RHEL-based Linux distributions the default
+values are `gzip`, `hwloc-devel`, `make`, `tar`, and `wget`.
 
 - __prefix__: The top level installation location.  The default value
 is `/usr/local/kokkos`.
 
+- __repository__: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/kokkos/kokkos.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
+- __url__: The location of the tarball that should be used to build
+Kokkos.  The default is empty, i.e., use the release package
+specified by `version`.
+
 - __version__: The version of Kokkos source to download.  The default
-value is `2.9.00`.
+value is `3.1.01`.
 
 __Examples__
 
 
 ```python
-kokkos(prefix='/opt/kokkos/2.8.00', version='2.8.00')
+kokkos(prefix='/opt/kokkos/3.1.01', version='3.1.01')
 ```
 
 
