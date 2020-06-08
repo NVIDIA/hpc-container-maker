@@ -888,7 +888,7 @@ and instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `package` or `url` parameters must be
+this parameter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
@@ -1012,7 +1012,7 @@ runtime method.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `package` or `url` parameters must be
+this parameter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
@@ -1132,7 +1132,7 @@ instead set the prefix to a package specific directory.
 must be specified. The default is False.
 
 - __repository__: The git repository of the package to build.  One of
-this paramter or the `package` or `url` parameters must be
+this parameter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).

@@ -99,7 +99,7 @@ class generic_build(bb_base, hpccm.templates.annotate,
     must be specified. The default is False.
 
     repository: The git repository of the package to build.  One of
-    this paramter or the `package` or `url` parameters must be
+    this parameter or the `package` or `url` parameters must be
     specified.
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
