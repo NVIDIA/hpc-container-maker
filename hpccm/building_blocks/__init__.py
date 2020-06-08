@@ -14,7 +14,8 @@
 
 from __future__ import absolute_import
 
-__all__ = ['apt_get',
+__all__ = ['amgx',
+           'apt_get',
            'arm_allinea_studio',
            'boost',
            'catalyst',
@@ -47,6 +48,7 @@ __all__ = ['apt_get',
            'mvapich2',
            'netcdf',
            'nsight_systems',
+           'nv_hpc_sdk',
            'nvshmem',
            'ofed',
            'openblas',
@@ -64,6 +66,7 @@ __all__ = ['apt_get',
            'xpmem',
            'yum']
 
+from hpccm.building_blocks.amgx import amgx
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.arm_allinea_studio import arm_allinea_studio
 from hpccm.building_blocks.boost import boost
@@ -97,6 +100,7 @@ from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 from hpccm.building_blocks.mvapich2 import mvapich2
 from hpccm.building_blocks.netcdf import netcdf
 from hpccm.building_blocks.nsight_systems import nsight_systems
+from hpccm.building_blocks.nv_hpc_sdk import nv_hpc_sdk
 from hpccm.building_blocks.nvshmem import nvshmem
 from hpccm.building_blocks.ofed import ofed
 from hpccm.building_blocks.openblas import openblas

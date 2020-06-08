@@ -54,6 +54,10 @@ class Test_git(unittest.TestCase):
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
                                       commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c'),
                          'mkdir -p /tmp && cd /tmp && git clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd - && cd /tmp/hpc-container-maker && git checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c && cd -')
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c',
+                                      verify='fatal'),
+                         'mkdir -p /tmp && cd /tmp && git clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd - && cd /tmp/hpc-container-maker && git checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c && cd -')
 
     def test_branch_and_commit(self):
         """git with both specified branch and specified commit"""
@@ -62,6 +66,27 @@ class Test_git(unittest.TestCase):
                                       branch='master',
                                       commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c'),
                          'mkdir -p /tmp && cd /tmp && git clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd - && cd /tmp/hpc-container-maker && git checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c && cd -')
+
+    def test_tag(self):
+        """git with specified tag"""
+        g = git()
+        valid_tag='v20.5.0'
+        invalid_tag='v-1.-2.-3'
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      branch=valid_tag),
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch v20.5.0 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      branch=invalid_tag),
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch v-1.-2.-3 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+
+        self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      branch=valid_tag, verify='fatal'),
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch v20.5.0 https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+
+        with self.assertRaises(RuntimeError):
+            g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
+                                      branch=invalid_tag, verify='fatal')
 
     def test_path(self):
         """git with non-default base path"""
@@ -119,7 +144,3 @@ class Test_git(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             g.clone_step(repository=repository,
                          branch=invalid_branch, verify='fatal')
-
-        with self.assertRaises(RuntimeError):
-            g.clone_step(repository=repository,
-                         commit=invalid_commit, verify='fatal')

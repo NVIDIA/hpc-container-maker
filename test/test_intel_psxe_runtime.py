@@ -46,7 +46,7 @@ class Test_intel_psxe_runtime(unittest.TestCase):
         """eula"""
         psxe_rt = intel_psxe_runtime(eula=True)
         self.assertEqual(str(psxe_rt),
-r'''# Intel Parallel Studio XE runtime version 2020.0-008
+r'''# Intel Parallel Studio XE runtime version 2020.1-12
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -57,12 +57,12 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2020.PUB | apt-key add - && \
+RUN wget -qO - https://apt.repos.intel.com/2020/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2020 | apt-key add - && \
     echo "deb https://apt.repos.intel.com/2020 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \
     aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \
-        intel-psxe-runtime=2020.0-008 && \
+        intel-psxe-runtime=2020.1-12 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bash.bashrc''')
 
@@ -85,7 +85,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
+RUN wget -qO - https://apt.repos.intel.com/2019/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2019 | apt-key add - && \
     echo "deb https://apt.repos.intel.com/2019 intel-psxe-runtime main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \

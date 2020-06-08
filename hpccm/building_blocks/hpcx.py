@@ -99,12 +99,12 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.5.0`.
+    value is `2.6.0`.
 
     # Examples
 
     ```python
-    hpcx(prefix='/usr/local/hpcx', version='2.5.0')
+    hpcx(prefix='/usr/local/hpcx', version='2.6.0')
     ```
 
     """
@@ -126,7 +126,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.5.0')
+        self.__version = kwargs.get('version', '2.6.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

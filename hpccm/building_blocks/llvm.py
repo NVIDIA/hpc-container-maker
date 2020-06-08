@@ -48,15 +48,16 @@ class llvm(bb_base, hpccm.templates.envvars):
     (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
     include the LLVM compilers. The default is True.
 
-    extra_repository: Boolean flag to specify whether to enable an
-    extra package repository containing addition LLVM compiler
-    packages.  For Ubuntu, setting this flag to True enables the
-    `ppa:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
-    distributions, setting this flag to True enables the Software
-    Collections (SCL) repository.  The default is False.
+    extra_repository: Boolean flag to specify whether to enable an extra package repository containing addition LLVM compiler packages.  For Ubuntu, setting this flag to True enables the `ppa:ubuntu-toolchain-r/test`
+    repository.  For RHEL-based Linux distributions, setting this flag
+    to True enables the Software Collections (SCL) repository.  The
+    default is False.
 
     extra_tools: Boolean flag to specify whether to also install
     `clang-format` and `clang-tidy`.  The default is False.
+
+    nightly: Boolean flag to specify whether to use the [nightly LLVM packages](https://apt.llvm.org).
+    This option is ignored if the base image is not Ubuntu.
 
     version: The version of the LLVM compilers to install.  Note that
     the version refers to the Linux distribution packaging, not the
@@ -79,6 +80,10 @@ class llvm(bb_base, hpccm.templates.envvars):
     ```
 
     ```python
+    llvm(nightly=True, version='11')
+    ```
+
+    ```python
     l = llvm()
     openmpi(..., toolchain=l.toolchain, ...)
     ```
@@ -90,13 +95,17 @@ class llvm(bb_base, hpccm.templates.envvars):
 
         super(llvm, self).__init__(**kwargs)
 
+        self.__apt_keys = []       # Filled in below
+        self.__apt_repositories = [] # Filled in below
         self.__commands = []       # Filled in below
         self.__compiler_debs = []  # Filled in below
         self.__compiler_rpms = []  # Filled in below
         self.__extra_repo = kwargs.get('extra_repository', False)
         self.__extra_tools = kwargs.get('extra_tools', False)
+        self.__nightly = kwargs.get('nightly', False)
         self.__ospackages = kwargs.get('ospackages', []) # Filled in below
         self.__runtime_debs = []   # Filled in below
+        self.__runtime_ospackages = [] # Filled in below
         self.__runtime_rpms = []   # Filled in below
         self.__version = kwargs.get('version', None)
 
@@ -113,13 +122,43 @@ class llvm(bb_base, hpccm.templates.envvars):
         self.__instructions()
 
     def __setup(self):
-        """Based on the Linux dsitribution and CPU architecture, set values
+        """Based on the Linux distribution and CPU architecture, set values
         accordingly."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             self.__ospackages = []
 
-            if self.__version:
+            if self.__nightly and self.__version:
+                # Nightly packages from apt.llvm.org
+                if hpccm.config.g_cpu_arch != cpu_arch.X86_64:
+                    raise RuntimeError('LLVM nightly builds only available for x86')
+
+                self.__compiler_debs = ['clang-{}'.format(self.__version),
+                                        'libomp-{}-dev'.format(self.__version)]
+                self.__runtime_debs = ['libclang1-{}'.format(self.__version),
+                                       'llvm-{}-runtime'.format(self.__version)]
+                self.__apt_keys = ['https://apt.llvm.org/llvm-snapshot.gpg.key']
+                self.__apt_repositories = self.__nightly_package_repos()
+
+                self.__ospackages = ['apt-transport-https', 'ca-certificates',
+                                     'gnupg', 'wget']
+                self.__runtime_ospackages = self.__ospackages
+
+                # Setup the environment so that the alternate compiler
+                # version is the new default
+                self.__commands.append('update-alternatives --install /usr/bin/clang clang $(which clang-{}) 30'.format(self.__version))
+                self.__commands.append('update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-{}) 30'.format(self.__version))
+
+                # Install and configure clang-format and clang-tidy
+                if self.__extra_tools:
+                    self.__compiler_debs.extend([
+                        'clang-format-{}'.format(self.__version),
+                        'clang-tidy-{}'.format(self.__version)])
+                    self.__commands.append('update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-{}) 30'.format(self.__version))
+                    self.__commands.append('update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-{}) 30'.format(self.__version))
+
+            elif self.__version:
+                # distro provided version
                 self.__compiler_debs = ['clang-{}'.format(self.__version),
                                         'libomp-dev']
                 self.__runtime_debs = ['libclang1', 'libomp5']
@@ -217,11 +256,43 @@ class llvm(bb_base, hpccm.templates.envvars):
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
         self += packages(apt=self.__compiler_debs,
+                         apt_keys=self.__apt_keys,
+                         apt_repositories=self.__apt_repositories,
                          scl=bool(self.__version), # True / False
                          yum=self.__compiler_rpms)
         if self.__commands:
             self += shell(commands=self.__commands)
         self += environment(variables=self.environment_step())
+
+    def __nightly_package_repos(self):
+        """Return the package repositories for the given distro and llvm
+        version.  The development branch repositories are not
+        versioned and must be handled differently.  Currently the
+        development branch is version 11."""
+
+        codename = 'xenial'
+        codename_ver = 'xenial'
+
+        if (hpccm.config.g_linux_version >= StrictVersion('18.0') and
+            hpccm.config.g_linux_version < StrictVersion('19.0')):
+            codename = 'bionic'
+            if self.__version == '11':
+                codename_ver = 'bionic'
+            else:
+                codename_ver = 'bionic-{}'.format(self.__version)
+        elif (hpccm.config.g_linux_version >= StrictVersion('16.0') and
+              hpccm.config.g_linux_version < StrictVersion('17.0')):
+            codename = 'xenial'
+            if self.__version == '11':
+                codename_ver = 'xenial'
+            else:
+                codename_ver = 'xenial-{}'.format(self.__version)
+        else:
+            raise RuntimeError('Unsupported Ubuntu version')
+
+        return [
+            'deb http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver),
+            'deb-src http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver)]
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
@@ -237,7 +308,11 @@ class llvm(bb_base, hpccm.templates.envvars):
         """
         instructions = []
         instructions.append(comment('LLVM compiler runtime'))
+        if self.__runtime_ospackages:
+            instructions.append(packages(ospackages=self.__runtime_ospackages))
         instructions.append(packages(apt=self.__runtime_debs,
+                                     apt_keys=self.__apt_keys,
+                                     apt_repositories=self.__apt_repositories,
                                      scl=bool(self.__version), # True / False
                                      yum=self.__runtime_rpms))
         return '\n'.join(str(x) for x in instructions)

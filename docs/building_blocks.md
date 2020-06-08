@@ -1,3 +1,125 @@
+# amgx
+```python
+amgx(self, **kwargs)
+```
+The `amgx` building block downloads, configures, builds, and
+installs the [AMGX](https://developer.nvidia.com/amgx) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+Installing an MPI building block before this one is optional and
+will build the [AMGX](https://developer.nvidia.com/amgx) library
+with MPI support.  Some Eigensolvers make use of the MAGMA and/or
+MKL libraries and are only available if the paths to these
+libraries is specified as shown below in the cmake_opts.
+
+__Parameters__
+
+
+- __annotate__: Boolean flag to specify whether to include annotations (labels).
+The default is False.
+
+- __branch__: The git branch to clone.  AMGX releases are tagged, that
+is, specifying `branch='v2.1.0'` downloads a particular AMGX
+version.  The default is `master`.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default value is an empty list.  See the ["Building"](https://github.com/NVIDIA/AMGX#-building) section of the AMGX documentation of the specified library version for more details.  Some options are `CMAKE_NO_MPI:Boolean` (default=`False`) - build without MPI support even if the `FindMPI` script finds an MPI library.  `AMGX_NO_RPATH:Boolean` (default=`False`) - by default CMake adds `-rpath` flags to binaries, this option disables that.  `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String` - MAGMA/MKL are used to accelerate some of the Eigensolvers.  These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
+
+- __commit__: The git commit to clone.  The default is empty and uses
+the latest commit on the selected branch of the repository.
+
+- __directory__: Build from an unpackaged source directory relative to
+the local build context instead of fetching AMGX sources from a
+git repository.  This option is incompatible with
+`repository`/`branch`/ `commit`.  The default is `None`.
+
+- __ospackages__: List of OS packages to install prior to downloading,
+configuring, and building.  The default value is `[git]`.
+
+- __prefix__: The top level install location.  The default is
+`/usr/local/amgx`.
+
+- __repository__: The git repository to clone.  The default is `https://github.com/NVIDIA/AMGX`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
+__Examples__
+
+
+```python
+amgx(branch='v2.1.0')
+```
+
+
+## runtime
+```python
+amgx.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+f = amgx(...)
+Stage0 += f
+Stage1 += f.runtime()
+```
+
+# apt_get
+```python
+apt_get(self, **kwargs)
+```
+The `apt_get` building block specifies the set of operating system
+packages to install.  This building block should only be used on
+images that use the Debian package manager (e.g., Ubuntu).
+
+In most cases, the [`packages` building block](#packages) should be
+used instead of `apt_get`.
+
+__Parameters__
+
+
+- __aptitude__: Boolean flag to specify whether `aptitude` should be
+used instead of `apt-get`.  The default is False.
+
+- __download__: Boolean flag to specify whether to download the deb
+packages instead of installing them.  The default is False.
+
+- __download_directory__: The deb package download location. This
+parameter is ignored if `download` is False. The default value is
+`/var/tmp/apt_get_download`.
+
+- __extract__: Location where the downloaded packages should be
+extracted. Note, this extracts and does not install the packages,
+i.e., the package manager is bypassed. After the downloaded
+packages are extracted they are deleted. This parameter is ignored
+if `download` is False. If empty, then the downloaded packages are
+not extracted. The default value is an empty string.
+
+- __keys__: A list of GPG keys to add.  The default is an empty list.
+
+- __ospackages__: A list of packages to install.  The default is an
+empty list.
+
+- __ppas__: A list of personal package archives to add.  The default is
+an empty list.
+
+- __repositories__: A list of apt repositories to add.  The default is
+an empty list.
+
+__Examples__
+
+
+```python
+apt_get(ospackages=['make', 'wget'])
+```
+
+
 # arm_allinea_studio
 ```python
 arm_allinea_studio(self, **kwargs)
@@ -76,56 +198,6 @@ a = arm_allinea_compiler(...)
 Stage0 += a
 Stage1 += a.runtime()
 ```
-
-# apt_get
-```python
-apt_get(self, **kwargs)
-```
-The `apt_get` building block specifies the set of operating system
-packages to install.  This building block should only be used on
-images that use the Debian package manager (e.g., Ubuntu).
-
-In most cases, the [`packages` building block](#packages) should be
-used instead of `apt_get`.
-
-__Parameters__
-
-
-- __aptitude__: Boolean flag to specify whether `aptitude` should be
-used instead of `apt-get`.  The default is False.
-
-- __download__: Boolean flag to specify whether to download the deb
-packages instead of installing them.  The default is False.
-
-- __download_directory__: The deb package download location. This
-parameter is ignored if `download` is False. The default value is
-`/var/tmp/apt_get_download`.
-
-- __extract__: Location where the downloaded packages should be
-extracted. Note, this extracts and does not install the packages,
-i.e., the package manager is bypassed. After the downloaded
-packages are extracted they are deleted. This parameter is ignored
-if `download` is False. If empty, then the downloaded packages are
-not extracted. The default value is an empty string.
-
-- __keys__: A list of GPG keys to add.  The default is an empty list.
-
-- __ospackages__: A list of packages to install.  The default is an
-empty list.
-
-- __ppas__: A list of personal package archives to add.  The default is
-an empty list.
-
-- __repositories__: A list of apt repositories to add.  The default is
-an empty list.
-
-__Examples__
-
-
-```python
-apt_get(ospackages=['make', 'wget'])
-```
-
 
 # boost
 ```python
@@ -1422,13 +1494,13 @@ the default values are `bzip2`, `openssh-clients`, `tar`, and
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.5.0`.
+value is `2.6.0`.
 
 __Examples__
 
 
 ```python
-hpcx(prefix='/usr/local/hpcx', version='2.5.0')
+hpcx(prefix='/usr/local/hpcx', version='2.6.0')
 ```
 
 
@@ -1615,7 +1687,8 @@ intel64` in each build step.  If this value is to set `False`,
 then the environment is set such that the environment is visible
 to both subsequent container image build steps and when the
 container image is run.  However, the environment may differ
-slightly from that set by `compilervars.sh`.  The default value is
+slightly from that set by `compilervars.sh`. This option will be
+used with the `runtime` method. The default value is
 `True`.
 
 - __runtime_version__: The version of Intel Parallel Studio XE runtime
@@ -1623,7 +1696,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.  The default value is `2020.0-008`.
+tarball version.  The default value is `2020.1-12`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1727,7 +1800,7 @@ and `which`.
 Blocks runtime should be installed.  The default is True.
 
 - __version__: The version of the Intel Parallel Studio XE runtime to
-install.  The default value is `2020.0-008`.
+install.  The default value is `2020.1-12`.
 
 __Examples__
 
@@ -1886,52 +1959,72 @@ kokkos(self, **kwargs)
 The `kokkos` building block downloads and installs the
 [Kokkos](https://github.com/kokkos/kokkos) component.
 
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
 __Parameters__
 
 
 - __annotate__: Boolean flag to specify whether to include annotations
 (labels).  The default is False.
 
-- __arch__: Flag to set the target architecture. If set adds
-`--arch=value` to the list of `generate_makefile.bash` options.
-The default value is `Pascal60`, i.e., sm_60.  If a cuda aware
-build is not selected, then a non-default value should be used.
+- __arch__: List of target architectures to build. If set adds
+`-DKokkos_ARCH_<value>=ON` to the list of CMake options. The
+default value is `VOLTA70`, i.e., sm_70.  If a CUDA aware build is
+not selected, then a non-default value should be used.
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __check__: Boolean flag to specify whether the build should be
+checked.  If True, adds `-DKokkos_ENABLE_TESTS=ON` to the list of
+CMake options. The default is False.
+
+- __cmake_opts__: List of options to pass to `cmake`.  The default is
+`-DCMAKE_BUILD_TYPE=RELEASE`.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
 
 - __cuda__: Flag to control whether a CUDA aware build is performed.  If
-True, adds `--with-cuda` to the list of `generate_makefile.bash`
-options.  If a string, uses the value of the string as the CUDA
-path.  If False, does nothing.  The default value is True.
+True, adds `-DKokkos_ENABLE_CUDA=ON` and
+`-DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper` to the list of
+CMake options.  The default value is True.
 
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
 Kokkos. The default is True.
 
 - __hwloc__: Flag to control whether a hwloc aware build is performed.
-If True, adds `--with-hwloc` to the list of
-`generate_makefile.bash` options.  If a string, uses the value of
-the string as the hwloc path.  If False, does nothing.  The
-default value is True.
-
-- __opts__: List of options to pass to `generate_makefile.bash`.  The
-default is an empty list.
+If True, adds `-DKokkos_ENABLE_HWLOC=ON` to the list of CMake
+options. The default value is True.
 
 - __ospackages__: List of OS packages to install prior to building.  For
-Ubuntu, the default values are `bc`, `gzip`, `libhwloc-dev`,
-`make`, `tar`, and `wget`.  For RHEL-based Linux distributions the
-default values are `bc`, `gzip`, `hwloc-devel`, `make`, `tar`,
-`wget`, and `which`.
+Ubuntu, the default values are `gzip`, `libhwloc-dev`, `make`,
+`tar`, and `wget`.  For RHEL-based Linux distributions the default
+values are `gzip`, `hwloc-devel`, `make`, `tar`, and `wget`.
 
 - __prefix__: The top level installation location.  The default value
 is `/usr/local/kokkos`.
 
+- __repository__: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/kokkos/kokkos.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
+- __url__: The location of the tarball that should be used to build
+Kokkos.  The default is empty, i.e., use the release package
+specified by `version`.
+
 - __version__: The version of Kokkos source to download.  The default
-value is `2.9.00`.
+value is `3.1.01`.
 
 __Examples__
 
 
 ```python
-kokkos(prefix='/opt/kokkos/2.8.00', version='2.8.00')
+kokkos(prefix='/opt/kokkos/3.1.01', version='3.1.01')
 ```
 
 
@@ -2063,15 +2156,16 @@ __Parameters__
 (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
 include the LLVM compilers. The default is True.
 
-- __extra_repository__: Boolean flag to specify whether to enable an
-extra package repository containing addition LLVM compiler
-packages.  For Ubuntu, setting this flag to True enables the
-- __`ppa__:ubuntu-toolchain-r/test` repository.  For RHEL-based Linux
-distributions, setting this flag to True enables the Software
-Collections (SCL) repository.  The default is False.
+- __extra_repository__: Boolean flag to specify whether to enable an extra package repository containing addition LLVM compiler packages.  For Ubuntu, setting this flag to True enables the `ppa:ubuntu-toolchain-r/test`
+repository.  For RHEL-based Linux distributions, setting this flag
+to True enables the Software Collections (SCL) repository.  The
+default is False.
 
 - __extra_tools__: Boolean flag to specify whether to also install
 `clang-format` and `clang-tidy`.  The default is False.
+
+- __nightly__: Boolean flag to specify whether to use the [nightly LLVM packages](https://apt.llvm.org).
+This option is ignored if the base image is not Ubuntu.
 
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
@@ -2092,6 +2186,10 @@ llvm()
 
 ```python
 llvm(extra_repository=True, version='7')
+```
+
+```python
+llvm(nightly=True, version='11')
 ```
 
 ```python
@@ -2271,10 +2369,17 @@ distributions, the default values are `findutils`, `libnl3`,
 `numactl-libs`, and `wget`.
 
 - __packages__: List of packages to install from Mellanox OFED.  For
-Ubuntu, the default values are `libibverbs1`, `libibverbs-dev`,
-`libibmad`, `libibmad-devel`, `libibumad`, `libibumad-devel`,
-`libmlx4-1`, `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`,
-`librdmacm1`, `librdmacm-dev`, and `ibverbs-utils`.  For
+version 5.0 and later on Ubuntu, `ibverbs-providers`,
+`ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+`libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+and `librdmacm1`. For earlier versions on Ubuntu, the default
+values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
+`libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4-1`,
+`libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+`librdmacm-dev`, and `ibverbs-utils`.  For version 5.0 and later
+on RHEL-based Linux distributions, the default values are
+`libibumad`, `libibverbs`, `libibverbs-utils`, `librdmacm`,
+`rdma-core`, and `rdma-core-devel`. For earlier versions on
 RHEL-based Linux distributions, the default values are
 `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
 `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
@@ -2852,6 +2957,94 @@ __Examples__
 nsight_systems(version='2020.2.1')
 ```
 
+
+# nv_hpc_sdk
+```python
+nv_hpc_sdk(self, **kwargs)
+```
+The `nv_hpc_sdk` building block downloads and installs the [NVIDIA
+HPC SDK](https://developer.nvidia.com/hpc-sdk).  Currently, the
+only option is to install from a tarball.
+
+You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf) to use this
+building block.
+
+As a side effect, a toolchain is created containing the NVIDIA
+compilers.  The tool can be passed to other operations that want
+to build using the NVIDIA compilers.
+
+__Parameters__
+
+
+- __environment__: Boolean flag to specify whether the environment
+(`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
+should be modified to include the NVIDIA HPC SDK. The default is
+True.
+
+- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf).
+The default value is `False`.
+
+- __extended_environment__: Boolean flag to specify whether an extended
+set of environment variables should be defined.  If True, the
+following environment variables `CC`, `CPP`, `CXX`, `F77`, `F90`,
+`FC`, and `MODULEPATH` will be defined.  In addition, if the MPI
+component is selected then `PGI_OPTL_INCLUDE_DIRS` and
+`PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
+`LD_LIBRARY_PATH` will include the MPI component.  If False, then
+only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
+NVIDIA HPC SDK.  The default value is `False`.
+
+- __mpi__: Boolean flag to specify whether the MPI component should be
+installed.  If True, MPI will be installed.  The default value is
+False.
+
+- __ospackages__: List of OS packages to install prior to installing the
+NVIDIA HPC SDK.  For Ubuntu, the default values are `gcc`, `g++`,
+`gfortran`, and `libnuma1`.  For RHEL-based Linux distributions,
+the default values are `gcc`, `gcc-c++`, `gcc-gfortran`, and
+`numactl-libs`.
+
+- __prefix__: The top level install prefix.  The default value is
+`/opt/nvidia/hpcsdk`.
+
+- __system_cuda__: Boolean flag to specify whether the NVIDIA HPC SDK
+should use the system CUDA.  If False, the version(s) of CUDA
+bundled with the NVIDIA HPC SDK will be installed.  The default
+value is False.
+
+- __tarball__: Path to the NVIDIA HPC SDK tarball relative to the local
+build context.  The default value is empty.  This option is
+required.
+
+__Examples__
+
+
+```python
+nv_hpc_sdk(eula=True,
+           tarball='nvhpc_2020_205_Linux_x86_64.tar.gz')
+```
+
+```python
+n = nv_hpc_sdk(eula=True, ...)
+openmpi(..., toolchain=n.toolchain, ...)
+```
+
+
+## runtime
+```python
+nv_hpc_sdk.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+n = nv_hpc_sdk(...)
+Stage0 += n
+Stage1 += n.runtime()
+```
 
 # nvshmem
 ```python

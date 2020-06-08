@@ -136,7 +136,8 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     then the environment is set such that the environment is visible
     to both subsequent container image build steps and when the
     container image is run.  However, the environment may differ
-    slightly from that set by `compilervars.sh`.  The default value is
+    slightly from that set by `compilervars.sh`. This option will be
+    used with the `runtime` method. The default value is
     `True`.
 
     runtime_version: The version of Intel Parallel Studio XE runtime
@@ -144,7 +145,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     using the [intel_psxe_runtime](#intel_psxe_runtime) building
     block.  This value is passed as its `version` parameter.  In
     general, the major version of the runtime should correspond to the
-    tarball version.  The default value is `2020.0-008`.
+    tarball version.  The default value is `2020.1-12`.
 
     tarball: Path to the Intel Parallel Studio XE tarball relative to
     the local build context.  The default value is empty.  This
@@ -192,7 +193,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__prefix = kwargs.get('prefix', '/opt/intel')
         self.__psxevars = kwargs.get('psxevars', True)
-        self.__runtime_version = kwargs.get('runtime_version', '2020.0-008')
+        self.__runtime_version = kwargs.get('runtime_version', '2020.1-12')
         self.__tarball = kwargs.get('tarball', None)
         self.__tbb = kwargs.get('tbb', True)
         self.__wd = '/var/tmp' # working directory
@@ -397,5 +398,6 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                       ipp=self.__ipp,
                                       mkl=self.__mkl,
                                       mpi=self.__mpi,
+                                      psxevars=self.__psxevars,
                                       tbb=self.__tbb,
                                       version=self.__runtime_version))
