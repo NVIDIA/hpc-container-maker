@@ -2734,7 +2734,7 @@ The `nv_hpc_sdk` building block downloads and installs the [NVIDIA
 HPC SDK](https://developer.nvidia.com/hpc-sdk).  Currently, the
 only option is to install from a tarball.
 
-You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
+You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf) to use this
 building block.
 
 As a side effect, a toolchain is created containing the NVIDIA
@@ -2749,7 +2749,7 @@ __Parameters__
 should be modified to include the NVIDIA HPC SDK. The default is
 True.
 
-- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
+- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf).
 The default value is `False`.
 
 - __extended_environment__: Boolean flag to specify whether an extended
