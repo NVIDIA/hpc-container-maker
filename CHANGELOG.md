@@ -1,6 +1,6 @@
 # v20.6.0
 
-- Adds AMGX (`amgx`) NVIDIA HPC SDK (`nv_hpc_sdk`) and NVSHMEM (`nvshmem`)
+- Adds AMGX (`amgx`), NVIDIA HPC SDK (`nv_hpc_sdk`), and NVSHMEM (`nvshmem`)
   building blocks.
 - Enhancements to the Kokkos (`kokkos`), LLVM (`llvm`) and generic
   (`generic_autotools`, `generic_build`, `generic_cmake`) building blocks.
