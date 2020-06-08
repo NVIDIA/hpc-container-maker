@@ -99,7 +99,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
     ```python
     nv_hpc_sdk(eula=True,
-               tarball='nvhpc_2020_204_Linux_x86_64.tar.gz')
+               tarball='nvhpc_2020_205_Linux_x86_64.tar.gz')
     ```
 
     ```python
