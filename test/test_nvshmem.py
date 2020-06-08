@@ -70,9 +70,9 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_tarball_ubuntu(self):
-        """nvshmem source tarball"""
-        n = nvshmem(tarball='nvshmem-0.3.2EA.tar.gz')
+    def test_package_ubuntu(self):
+        """nvshmem source package"""
+        n = nvshmem(package='nvshmem-0.3.2EA.tar.gz')
         self.assertEqual(str(n),
 r'''# NVSHMEM
 RUN apt-get update -y && \
@@ -91,14 +91,15 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 
     @centos
     @docker
-    def test_tarball_options_centos(self):
-        """nvshmem source tarball with all options"""
+    def test_package_options_centos(self):
+        """nvshmem source package with all options"""
         n = nvshmem(gdrcopy='/usr/local/gdrcopy', hydra=True,
                     make_variables={
                         'NVCC_GENCODE': '-gencode=arch=compute_70,code=sm_70',
                         'NVSHMEM_VERBOSE': 1},
-                    mpi='/usr/local/openmpi', shmem='/usr/local/openmpi',
-                    tarball='nvshmem-0.3.2EA.tar.gz')
+                    mpi='/usr/local/openmpi',
+                    package='nvshmem-0.3.2EA.tar.gz',
+                    shmem='/usr/local/openmpi')
         self.assertEqual(str(n),
 r'''# NVSHMEM
 RUN yum install -y \
@@ -133,7 +134,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     @docker
     def test_source_runtime(self):
         """Runtime"""
-        n = nvshmem(tarball='nvshmem-0.3.2EA.tar.gz')
+        n = nvshmem(package='nvshmem-0.3.2EA.tar.gz')
         r = n.runtime()
         self.assertEqual(r,
 r'''# NVSHMEM

@@ -2865,7 +2865,7 @@ __Parameters__
 
 - __binary_tarball__: Path to NVSHMEM binary tarball relative to the
 build context. The default value is empty. Either this parameter
-or `tarball` must be specified.
+or `package` must be specified.
 
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
@@ -2887,15 +2887,15 @@ default is empty, i.e., do not build NVSHMEM with MPI support.
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
 
+- __package__: Path to the NVSHMEM source package relative to the build
+context. The default value is empty. Either this parameter or
+`binary_tarball` must be specified.
+
 - __prefix__: The top level install location.  The default value is
 `/usr/local/nvshmem`.
 
 - __shmem__: Flag to specify the path to the SHMEM installation.  The
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
-
-- __tarball__: Path to the NVSHMEM source tarball relative to the build
-context. The default value is empty. Either this parameter or
-`binary_tarball` must be specified.
 
 __Examples__
 

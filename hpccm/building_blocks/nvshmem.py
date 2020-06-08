@@ -46,7 +46,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
     binary_tarball: Path to NVSHMEM binary tarball relative to the
     build context. The default value is empty. Either this parameter
-    or `tarball` must be specified.
+    or `package` must be specified.
 
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
@@ -68,15 +68,15 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     ospackages: List of OS packages to install prior to building.  The
     default values are `make` and `wget`.
 
+    package: Path to the NVSHMEM source package relative to the build
+    context. The default value is empty. Either this parameter or
+    `binary_tarball` must be specified.
+
     prefix: The top level install location.  The default value is
     `/usr/local/nvshmem`.
 
     shmem: Flag to specify the path to the SHMEM installation.  The
     default is empty, i.e., do not build NVSHMEM with SHMEM support.
-
-    tarball: Path to the NVSHMEM source tarball relative to the build
-    context. The default value is empty. Either this parameter or
-    `binary_tarball` must be specified.
 
     # Examples
 
@@ -99,7 +99,6 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
         self.__shmem = kwargs.pop('shmem', None)
-        self.__tarball = kwargs.pop('tarball', None)
         self.__wd = '/var/tmp' # working directory
 
         # Setup the environment variables
@@ -153,7 +152,6 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                         self.__prefix, self.__wd) if self.__hydra else None],
                 comment=False,
                 devel_environment=self.environment_variables,
-                package=self.__tarball,
                 prefix=self.__prefix,
                 runtime_environment=self.environment_variables,
                 **kwargs)
