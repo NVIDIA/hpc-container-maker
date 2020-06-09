@@ -246,6 +246,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpcsdk/Linux_ppc64le/2020/mpi/openmpi-3.1.5/lib:
 r'''# NVIDIA HPC SDK
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libatomic1 \
         libnuma1 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/REDIST/*.so* /opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/lib/
@@ -261,6 +262,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/lib:$LD_LIBRA
         self.assertEqual(r,
 r'''# NVIDIA HPC SDK
 RUN yum install -y \
+        libatomic \
         numactl-libs && \
     rm -rf /var/cache/yum/*
 COPY --from=0 /opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/REDIST/*.so* /opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/lib/
@@ -276,6 +278,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpcsdk/Linux_x86_64/20.5/compilers/lib:$LD_LIBRA
         self.assertEqual(r,
 r'''# NVIDIA HPC SDK
 RUN yum install -y \
+        libatomic \
         numactl-libs \
         openssh-clients && \
     rm -rf /var/cache/yum/*

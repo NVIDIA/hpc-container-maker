@@ -197,7 +197,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__ospackages = ['gcc', 'g++', 'gfortran', 'libnuma1']
                 if self.__mpi:
                     self.__ospackages.append('openssh-client')
-            self.__runtime_ospackages = ['libnuma1']
+            self.__runtime_ospackages = ['libatomic1', 'libnuma1']
             if self.__mpi:
                 self.__runtime_ospackages.append('openssh-client')
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
@@ -206,7 +206,7 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                      'numactl-libs']
                 if self.__mpi:
                     self.__ospackages.append('openssh-clients')
-            self.__runtime_ospackages = ['numactl-libs']
+            self.__runtime_ospackages = ['libatomic', 'numactl-libs']
             if self.__mpi:
                 self.__runtime_ospackages.append('openssh-clients')
         else: # pragma: no cover
