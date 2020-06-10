@@ -1,3 +1,12 @@
+# v20.6.0
+
+- Adds AMGX (`amgx`), NVIDIA HPC SDK (`nv_hpc_sdk`), and NVSHMEM (`nvshmem`)
+  building blocks.
+- Enhancements to the Kokkos (`kokkos`), LLVM (`llvm`) and generic
+  (`generic_autotools`, `generic_build`, `generic_cmake`) building blocks.
+- Adds support for zip file packages.
+- Fix to the Jupyter example recipe.
+
 # v20.5.0
 
 - Fixes to the Intel Parallel Studio runtime (`intel_psxe_runtime`),
