@@ -306,13 +306,12 @@ class llvm(bb_base, hpccm.templates.envvars):
         Stage1 += l.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('LLVM compiler runtime'))
+        self.rt += comment('LLVM compiler runtime')
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(packages(apt=self.__runtime_debs,
-                                     apt_keys=self.__apt_keys,
-                                     apt_repositories=self.__apt_repositories,
-                                     scl=bool(self.__version), # True / False
-                                     yum=self.__runtime_rpms))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += packages(apt=self.__runtime_debs,
+                            apt_keys=self.__apt_keys,
+                            apt_repositories=self.__apt_repositories,
+                            scl=bool(self.__version), # True / False
+                            yum=self.__runtime_rpms)
+        return str(self.rt)

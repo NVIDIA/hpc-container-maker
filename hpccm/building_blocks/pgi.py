@@ -415,11 +415,10 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         Stage1 += p.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('PGI compiler'))
+        self.rt += comment('PGI compiler')
 
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
+            self.rt += packages(ospackages=self.__runtime_ospackages)
 
         pgi_path = posixpath.join(self.__basepath, self.__version)
         src_path = pgi_path
@@ -428,34 +427,29 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             # Too many levels of symlinks for the Docker builder to
             # handle, so use the real path
             src_path = posixpath.join(self.__basepath_llvm, self.__version)
-        instructions.append(copy(_from=_from,
-                                 src=posixpath.join(src_path,
-                                                    'REDIST', '*.so*'),
-                                 dest=posixpath.join(pgi_path,
-                                                     'lib', '')))
+        self.rt += copy(_from=_from,
+                        src=posixpath.join(src_path, 'REDIST', '*.so*'),
+                        dest=posixpath.join(pgi_path, 'lib', ''))
 
         # REDIST workaround for incorrect libcudaforwrapblas.so
         # symlink
         if (LooseVersion(self.__version) >= LooseVersion('18.10') and
             LooseVersion(self.__version) < LooseVersion('19.10') and
             hpccm.config.g_cpu_arch == cpu_arch.X86_64):
-            instructions.append(
-                copy(_from=_from,
-                     src=posixpath.join(pgi_path, 'lib',
-                                        'libcudaforwrapblas.so'),
-                     dest=posixpath.join(pgi_path, 'lib',
-                                         'libcudaforwrapblas.so')))
+            self.rt += copy(_from=_from,
+                            src=posixpath.join(pgi_path, 'lib',
+                                               'libcudaforwrapblas.so'),
+                            dest=posixpath.join(pgi_path, 'lib',
+                                                'libcudaforwrapblas.so'))
 
         if self.__mpi:
             mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi')
             if LooseVersion(self.__version) >= LooseVersion('19.4'):
                 mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi-3.1.3')
-            instructions.append(copy(_from=_from,
-                                     src=mpi_path, dest=mpi_path))
+            self.rt += copy(_from=_from, src=mpi_path, dest=mpi_path)
 
         if self.__runtime_commands:
-            instructions.append(shell(commands=self.__runtime_commands))
+            self.rt += shell(commands=self.__runtime_commands)
 
-        instructions.append(environment(variables=self.environment_step(
-            runtime=True)))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += environment(variables=self.environment_step(runtime=True))
+        return str(self.rt)

@@ -209,13 +209,10 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         Stage1 += b.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('Boost'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
+        self.rt += comment('Boost')
+        self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)
         if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.__prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += shell(commands=[self.ldcache_step(
+                directory=posixpath.join(self.__prefix, 'lib'))])
+        self.rt += environment(variables=self.environment_step())
+        return str(self.rt)

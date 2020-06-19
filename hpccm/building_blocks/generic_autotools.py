@@ -319,23 +319,20 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         ```
         """
         if self.prefix:
-            instructions = []
             if self.__comment:
                 if self.url:
-                    instructions.append(comment(self.url, reformat=False))
+                    self.rt += comment(self.url, reformat=False)
                 elif self.repository:
-                    instructions.append(comment(self.repository,
-                                                reformat=False))
-            instructions.append(copy(_from=_from, src=self.prefix,
-                                     dest=self.prefix))
+                    self.rt += comment(self.repository, reformat=False)
+            self.rt += copy(_from=_from, src=self.prefix, dest=self.prefix)
             if self.ldconfig:
-                instructions.append(shell(commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, self.__libdir))]))
+                self.rt += shell(commands=[self.ldcache_step(
+                    directory=posixpath.join(self.prefix, self.__libdir))])
             if self.runtime_environment_variables:
-                instructions.append(environment(
-                    variables=self.environment_step(runtime=True)))
+                self.rt += environment(
+                    variables=self.environment_step(runtime=True))
             if self.annotate:
-                instructions.append(label(metadata=self.annotate_step()))
-            return '\n'.join(str(x) for x in instructions)
+                self.rt += label(metadata=self.annotate_step())
+            return str(self.rt)
         else: # pragma: no cover
             return

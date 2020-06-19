@@ -48,7 +48,7 @@ class Test_bb_base(unittest.TestCase):
         # Append instructions
         b += shell(commands=['echo a'])
         # Append directly to "private" class variable (not recommended)
-        b._bb_base__instructions_bb.append(shell(commands=['echo b']))
+        b._bb_instructions__instructions_bb.append(shell(commands=['echo b']))
         self.assertEqual(len(b), 2)
         self.assertEqual(str(b), 'RUN echo a\nRUN echo b')
 
@@ -62,7 +62,7 @@ class Test_bb_base(unittest.TestCase):
         self.assertEqual(str(next(i)), 'RUN echo b')
 
         # Insertion, using "private" class variable (not recommended)
-        b._bb_base__instructions_bb.insert(0, shell(commands=['echo c']))
+        b._bb_instructions__instructions_bb.insert(0, shell(commands=['echo c']))
         self.assertEqual(len(b), 3)
         self.assertEqual(str(b), 'RUN echo c\nRUN echo a\nRUN echo b')
 
@@ -71,6 +71,20 @@ class Test_bb_base(unittest.TestCase):
             del(b[1])
 
         # Deletion via "private" class variable (not recommended)
-        del(b._bb_base__instructions_bb[1])
+        del(b._bb_instructions__instructions_bb[1])
         self.assertEqual(len(b), 2)
         self.assertEqual(str(b), 'RUN echo c\nRUN echo b')
+
+    @ubuntu
+    @docker
+    def test_runtime_instructions(self):
+        """Instruction manipulations"""
+        b = bb_base()
+
+        # A non-runtime instruction that should not appear
+        b += shell(commands=['echo a'])
+
+        b.rt += shell(commands=['echo r1'])
+        b.rt += shell(commands=['echo r2'])
+        self.assertEqual(len(b.rt), 2)
+        self.assertEqual(str(b.rt), 'RUN echo r1\nRUN echo r2')

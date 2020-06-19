@@ -428,26 +428,23 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         Stage1 += g.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('GNU compiler runtime'))
+        self.rt += comment('GNU compiler runtime')
         if self.__source:
-            instructions.append(copy(_from=_from,
-                                     dest=posixpath.join(self.prefix, 'lib64'),
-                                     src=posixpath.join(self.prefix, 'lib64')))
+            self.rt += copy(_from=_from,
+                            dest=posixpath.join(self.prefix, 'lib64'),
+                            src=posixpath.join(self.prefix, 'lib64'))
             if self.ldconfig:
-                instructions.append(shell(
-                    commands=[self.ldcache_step(
-                        directory=posixpath.join(self.prefix, 'lib64'))]))
+                self.rt += shell(commands=[self.ldcache_step(
+                    directory=posixpath.join(self.prefix, 'lib64'))])
             else:
-                instructions.append(environment(
-                    variables=self.environment_step(
-                        include_only=['LD_LIBRARY_PATH'])))
+                self.rt += environment(variables=self.environment_step(
+                    include_only=['LD_LIBRARY_PATH']))
         else:
-            instructions.append(
-                packages(apt=self.__runtime_debs,
-                         apt_ppas=self.__extra_repo_apt,
-                         release_stream=bool(self.__version), # True / False
-                         scl=bool(self.__version), # True / False
-                         yum=self.__runtime_rpms))
+            self.rt += packages(
+                apt=self.__runtime_debs,
+                apt_ppas=self.__extra_repo_apt,
+                release_stream=bool(self.__version), # True / False
+                scl=bool(self.__version), # True / False
+                yum=self.__runtime_rpms)
 
-        return '\n'.join(str(x) for x in instructions)
+        return str(self.rt)

@@ -238,18 +238,16 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         ```
         """
         if self.__prefix:
-            instructions = []
-            instructions.append(comment('Mellanox OFED version {}'.format(
-                self.__version)))
+            self.rt += comment('Mellanox OFED version {}'.format(
+                self.__version))
 
             if self.__deppackages:
-                instructions.append(packages(ospackages=self.__deppackages))
+                self.rt += packages(ospackages=self.__deppackages)
 
             # Suppress warnings from libibverbs
-            instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))
+            self.rt += shell(commands=['mkdir -p /etc/libibverbs.d'])
 
-            instructions.append(copy(_from=_from, dest=self.__prefix,
-                                     src=self.__prefix))
-            return '\n'.join(str(x) for x in instructions)
+            self.rt += copy(_from=_from, dest=self.__prefix, src=self.__prefix)
+            return str(self.rt)
         else:
             return str(self)

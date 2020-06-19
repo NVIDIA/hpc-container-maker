@@ -179,7 +179,7 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         else:
             if not self.__configure_opts:
                 self.__configure_opts = ['--enable-shared', '--enable-openmp',
-                                       '--enable-threads']
+                                         '--enable-threads']
 
         if self.__mpi:
             self.__configure_opts.append('--enable-mpi')
@@ -196,7 +196,6 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += f.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('FFTW'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('FFTW')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

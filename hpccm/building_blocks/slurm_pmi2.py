@@ -147,7 +147,6 @@ class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += p.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('SLURM PMI2'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions).rstrip()
+        self.rt += comment('SLURM PMI2')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

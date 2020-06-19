@@ -257,8 +257,7 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += n.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('NetCDF'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb[0].runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('NetCDF')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb[0].runtime(_from=_from)
+        return str(self.rt)

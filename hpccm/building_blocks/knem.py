@@ -104,7 +104,6 @@ class knem(bb_base, hpccm.templates.envvars):
         Stage1 += k.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('KNEM'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('KNEM')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

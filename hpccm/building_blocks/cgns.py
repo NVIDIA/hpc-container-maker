@@ -182,8 +182,7 @@ class cgns(bb_base):
         Stage1 += c.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('CGNS'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('CGNS')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

@@ -385,8 +385,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         Stage1 += u.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('UCX'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('UCX')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

@@ -22,13 +22,13 @@ from __future__ import print_function
 
 import hpccm.base_object
 
-class bb_base(hpccm.base_object):
-    """Base class for building blocks."""
+class bb_instructions(hpccm.base_object):
+    """Base class for building block instructions."""
 
     def __init__(self, **kwargs):
-        """Initialize building block base class"""
+        """Initialize building block instruction class"""
 
-        super(bb_base, self).__init__(**kwargs)
+        super(bb_instructions, self).__init__(**kwargs)
 
         self.__instructions_bb = []
 
@@ -53,3 +53,13 @@ class bb_base(hpccm.base_object):
     def __str__(self):
         """String representation of the building block"""
         return '\n'.join(str(x) for x in self.__instructions_bb if str(x))
+
+class bb_base(bb_instructions):
+    """Base class for building blocks."""
+
+    def __init__(self, **kwargs):
+        super(bb_base, self).__init__(**kwargs)
+
+        # Runtime instructions are kept in a separate list from the
+        # "regular" instructions
+        self.rt = bb_instructions()

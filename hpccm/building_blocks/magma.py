@@ -133,7 +133,6 @@ class magma(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += m.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('MAGMA'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('MAGMA')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)
