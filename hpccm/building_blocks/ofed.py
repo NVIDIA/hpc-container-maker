@@ -219,17 +219,15 @@ class ofed(bb_base):
         ```
         """
         if self.__prefix:
-            instructions = []
-            instructions.append(comment('OFED'))
+            self.rt += comment('OFED')
 
             if self.__deppackages:
-                instructions.append(packages(ospackages=self.__deppackages))
+                self.rt += packages(ospackages=self.__deppackages)
 
             # Suppress warnings from libibverbs
-            instructions.append(shell(commands=['mkdir -p /etc/libibverbs.d']))
+            self.rt += shell(commands=['mkdir -p /etc/libibverbs.d'])
 
-            instructions.append(copy(_from=_from, dest=self.__prefix,
-                                     src=self.__prefix))
-            return '\n'.join(str(x) for x in instructions)
+            self.rt += copy(_from=_from, dest=self.__prefix, src=self.__prefix)
+            return str(self.rt)
         else:
             return str(self)

@@ -168,7 +168,6 @@ class sensei(bb_base, hpccm.templates.git):
         Stage1 += s.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('SENSEI'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('SENSEI')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

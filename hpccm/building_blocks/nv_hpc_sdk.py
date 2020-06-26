@@ -366,23 +366,19 @@ class nv_hpc_sdk(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         Stage1 += n.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('NVIDIA HPC SDK'))
+        self.rt += comment('NVIDIA HPC SDK')
 
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
+            self.rt += packages(ospackages=self.__runtime_ospackages)
 
-        instructions.append(copy(_from=_from,
-                                 src=posixpath.join(self.__basepath,
-                                                    'REDIST', '*.so*'),
-                                 dest=posixpath.join(self.__basepath,
-                                                     'lib', '')))
+        self.rt += copy(_from=_from,
+                        src=posixpath.join(self.__basepath, 'REDIST', '*.so*'),
+                        dest=posixpath.join(self.__basepath, 'lib', ''))
 
         if self.__mpi:
-            instructions.append(copy(_from=_from,
-                                     src=self.__mpipath, dest=self.__mpipath))
+            self.rt += copy(_from=_from, src=self.__mpipath,
+                            dest=self.__mpipath)
 
-        instructions.append(environment(variables=self.environment_step(
-            runtime=True)))
+        self.rt += environment(variables=self.environment_step(runtime=True))
 
-        return '\n'.join(str(x) for x in instructions)
+        return str(self.rt)

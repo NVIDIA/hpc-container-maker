@@ -65,9 +65,9 @@ __Examples__
 
 
 ```python
-f = amgx(...)
-Stage0 += f
-Stage1 += f.runtime()
+a = amgx(...)
+Stage0 += a
+Stage1 += a.runtime()
 ```
 
 # apt_get

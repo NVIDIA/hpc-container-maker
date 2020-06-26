@@ -257,15 +257,12 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
         Stage1 += c.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('ParaView Catalyst'))
+        self.rt += comment('ParaView Catalyst')
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.prefix,
-                                 dest=self.prefix))
+            self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += copy(_from=_from, src=self.prefix, dest=self.prefix)
         if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.prefix, 'lib'))]))
-        instructions.append(environment(variables=self.environment_step()))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += shell(commands=[self.ldcache_step(
+                directory=posixpath.join(self.prefix, 'lib'))])
+        self.rt += environment(variables=self.environment_step())
+        return str(self.rt)

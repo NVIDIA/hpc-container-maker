@@ -128,12 +128,11 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         # Examples
 
         ```python
-        f = amgx(...)
-        Stage0 += f
-        Stage1 += f.runtime()
+        a = amgx(...)
+        Stage0 += a
+        Stage1 += a.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('AMGX'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('AMGX')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

@@ -151,7 +151,6 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += x.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('XPMEM'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('XPMEM')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

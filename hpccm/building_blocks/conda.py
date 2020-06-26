@@ -212,14 +212,12 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         Stage1 += c.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('Anaconda'))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
-        instructions.append(shell(commands=[
+        self.rt += comment('Anaconda')
+        self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)
+        self.rt += shell(commands=[
             '{0} init'.format(
                 posixpath.join(self.__prefix, 'bin', 'conda')),
             'ln -s {0} /etc/profile.d/conda.sh'.format(
                 posixpath.join(self.__prefix, 'etc', 'profile.d',
-                               'conda.sh'))]))
-        return '\n'.join(str(x) for x in instructions)
+                               'conda.sh'))])
+        return str(self.rt)

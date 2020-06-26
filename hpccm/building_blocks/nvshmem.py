@@ -197,12 +197,10 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         Stage1 += n.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('NVSHMEM'))
+        self.rt += comment('NVSHMEM')
         if self.__binary_tarball:
-            instructions.append(copy(_from=_from, src=self.__prefix,
-                                     dest=self.__prefix))
-            instructions.append(environment(variables=self.environment_step()))
+            self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)
+            self.rt += environment(variables=self.environment_step())
         else:
-            instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

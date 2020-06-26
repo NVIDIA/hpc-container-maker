@@ -257,21 +257,19 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         Stage1 += l.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('VisIt libsim'))
+        self.rt += comment('VisIt libsim')
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(_from=_from, src=self.__prefix,
-                                 dest=self.__prefix))
+            self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)
         if self.ldconfig:
             libpath = posixpath.join(self.__prefix, self.__version,
                                      self.__arch)
             suffix1 = 'lib'
             suffix2 = posixpath.join('libsim', 'V2', 'lib')
-            instructions.append(shell(
-                commands=[self.ldcache_step(directory=posixpath.join(libpath,
-                                                                     suffix1)),
-                          self.ldcache_step(
-                              directory=posixpath.join(libpath, suffix2))]))
-        instructions.append(environment(variables=self.environment_step()))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += shell(commands=[
+                self.ldcache_step(
+                    directory=posixpath.join(libpath, suffix1)),
+                self.ldcache_step(
+                    directory=posixpath.join(libpath, suffix2))])
+        self.rt += environment(variables=self.environment_step())
+        return str(self.rt)

@@ -229,7 +229,6 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
         Stage1 += k.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('Kokkos'))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('Kokkos')
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

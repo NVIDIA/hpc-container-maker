@@ -309,16 +309,14 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         Stage1 += m.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('MVAPICH2-GDR'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(copy(src=self.__install_path,
-                                 dest=self.__install_path, _from=_from))
+        self.rt += comment('MVAPICH2-GDR')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += copy(src=self.__install_path,
+                        dest=self.__install_path, _from=_from)
         if self.ldconfig:
-            instructions.append(shell(
-                commands=[self.ldcache_step(
-                    directory=posixpath.join(self.__install_path, 'lib64'))]))
+            self.rt += shell(commands=[self.ldcache_step(
+                directory=posixpath.join(self.__install_path, 'lib64'))])
         # No need to workaround compiler wrapper issue for the runtime.
-        instructions.append(environment(
-            variables=self.environment_step(exclude=['PROFILE_POSTLIB'])))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += environment(
+            variables=self.environment_step(exclude=['PROFILE_POSTLIB']))
+        return str(self.rt)

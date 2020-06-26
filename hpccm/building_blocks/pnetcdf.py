@@ -198,9 +198,8 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += p.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('PnetCDF'))
+        self.rt += comment('PnetCDF')
         if self.__runtime_ospackages:
-            instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+            self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

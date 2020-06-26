@@ -263,8 +263,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         Stage1 += a.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('Arm Allinea Studio'))
+        self.rt += comment('Arm Allinea Studio')
 
         paths = []
 
@@ -280,12 +279,12 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__version, self.__directory_string),
             'lib')
         paths.append(compiler_redist_path)
-        instructions.append(
-            copy(_from=_from,
-                 src=[posixpath.join(compiler_redist_path, lib)
-                      for lib in ['libgomp.so', 'libiomp5.so', 'libomp.so',
-                                  'libflang.so', 'libflangrti.so']],
-                 dest=posixpath.join(compiler_redist_path, '')))
+        self.rt += copy(_from=_from,
+                        src=[posixpath.join(compiler_redist_path, lib)
+                             for lib in ['libgomp.so', 'libiomp5.so',
+                                         'libomp.so', 'libflang.so',
+                                         'libflangrti.so']],
+                        dest=posixpath.join(compiler_redist_path, ''))
 
         # Performance libraries
         microarch_string = {'generic': 'Generic-AArch64',
@@ -300,12 +299,12 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     self.__directory_string),
                 'lib')
             paths.append(armpl_arm_redist_path)
-            instructions.append(
-                copy(_from=_from,
-                     src=[posixpath.join(armpl_arm_redist_path, lib)
-                          for lib in ['libamath.so', 'libamath_dummy.so',
-                                      'libastring.so']],
-                     dest=posixpath.join(armpl_arm_redist_path, '')))
+            self.rt += copy(_from=_from,
+                            src=[posixpath.join(armpl_arm_redist_path, lib)
+                                 for lib in ['libamath.so',
+                                             'libamath_dummy.so',
+                                             'libastring.so']],
+                            dest=posixpath.join(armpl_arm_redist_path, ''))
 
             armpl_gcc_redist_path = posixpath.join(
                 self.__prefix,
@@ -314,16 +313,15 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                     self.__directory_string, self.__gcc_version),
                 'lib')
             paths.append(armpl_gcc_redist_path)
-            instructions.append(
-                copy(_from=_from,
-                     src=[posixpath.join(armpl_gcc_redist_path, lib)
-                          for lib in ['libamath.so', 'libamath_dummy.so',
-                                      'libastring.so']],
-                     dest=posixpath.join(armpl_gcc_redist_path, '')))
+            self.rt += copy(_from=_from,
+                            src=[posixpath.join(armpl_gcc_redist_path, lib)
+                                 for lib in ['libamath.so',
+                                             'libamath_dummy.so',
+                                             'libastring.so']],
+                            dest=posixpath.join(armpl_gcc_redist_path, ''))
 
         paths.append('$LD_LIBRARY_PATH') # tack on existing value at end
         self.runtime_environment_variables['LD_LIBRARY_PATH'] = ':'.join(paths)
-        instructions.append(environment(variables=self.environment_step(
-            runtime=True)))
+        self.rt += environment(variables=self.environment_step(runtime=True))
 
-        return '\n'.join(str(x) for x in instructions)
+        return str(self.rt)

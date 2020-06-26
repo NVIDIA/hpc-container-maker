@@ -220,8 +220,7 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += h.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('HDF5'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('HDF5')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)

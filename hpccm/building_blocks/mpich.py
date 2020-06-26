@@ -211,8 +211,7 @@ class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         Stage1 += m.runtime()
         ```
         """
-        instructions = []
-        instructions.append(comment('MPICH'))
-        instructions.append(packages(ospackages=self.__runtime_ospackages))
-        instructions.append(self.__bb.runtime(_from=_from))
-        return '\n'.join(str(x) for x in instructions)
+        self.rt += comment('MPICH')
+        self.rt += packages(ospackages=self.__runtime_ospackages)
+        self.rt += self.__bb.runtime(_from=_from)
+        return str(self.rt)
