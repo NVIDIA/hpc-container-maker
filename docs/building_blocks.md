@@ -3060,6 +3060,9 @@ __Parameters__
 build context. The default value is empty. Either this parameter
 or `package` must be specified.
 
+- __cuda__: Flag to specify the path to the CUDA installation.  The
+default is `/usr/local/cuda`.
+
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
 include NVSHMEM. The default is True.
@@ -3090,8 +3093,15 @@ context. The default value is empty. Either this parameter or
 - __shmem__: Flag to specify the path to the SHMEM installation.  The
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
+- __version__: The version of NVSHMEM source to download.  The default
+value is `1.0.1-0`.
+
 __Examples__
 
+
+```python
+nvshmem(mpi='/usr/local/openmpi', version='1.0.1-0')
+```
 
 ```python
 nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')

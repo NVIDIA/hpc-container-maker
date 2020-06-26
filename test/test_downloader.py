@@ -71,11 +71,21 @@ r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://m
 mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
         self.assertEqual(d.src_directory, '/var/tmp/foo')
 
+    @docker
     def test_bad_url(self):
-        """Unrecognized package format"""
+        """Unrecognized package format, assumes tar can figure it out"""
+        d = downloader(url='http://mysite.com/foo.Z')
+        self.assertEqual(d.download_step(),
+r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mysite.com/foo.Z && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/foo.Z -C /var/tmp''')
+        self.assertEqual(d.src_directory, None)
+
+    @docker
+    def test_bad_url_noallow(self):
+        """Unrecognzied package format"""
         d = downloader(url='http://mysite.com/foo.Z')
         with self.assertRaises(RuntimeError):
-            d.download_step()
+            d.download_step(allow_unknown_filetype=False)
 
     @docker
     def test_basic_git(self):
