@@ -25,6 +25,7 @@ import logging # pylint: disable=unused-import
 import os
 import posixpath
 
+import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.rm
 import hpccm.templates.tar
@@ -37,8 +38,8 @@ from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
-class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
-              hpccm.templates.tar):
+class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
+              hpccm.templates.rm, hpccm.templates.tar):
     """The `nvshmem` building block builds and installs the
     [NVSHMEM](https://developer.nvidia.com/nvshmem) component.
 
@@ -47,6 +48,9 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     binary_tarball: Path to NVSHMEM binary tarball relative to the
     build context. The default value is empty. Either this parameter
     or `package` must be specified.
+
+    cuda: Flag to specify the path to the CUDA installation.  The
+    default is `/usr/local/cuda`.
 
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
@@ -78,7 +82,14 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     shmem: Flag to specify the path to the SHMEM installation.  The
     default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
+    version: The version of NVSHMEM source to download.  The default
+    value is `1.0.1-0`.
+
     # Examples
+
+    ```python
+    nvshmem(mpi='/usr/local/openmpi', version='1.0.1-0')
+    ```
 
     ```python
     nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
@@ -92,6 +103,7 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         super(nvshmem, self).__init__(**kwargs)
 
         self.__binary_tarball = kwargs.pop('binary_tarball', None)
+        self.__cuda = kwargs.pop('cuda', '/usr/local/cuda')
         self.__gdrcopy = kwargs.pop('gdrcopy', None)
         self.__hydra = kwargs.pop('hydra', False)
         self.__make_variables = kwargs.pop('make_variables', {})
@@ -99,7 +111,15 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
         self.__shmem = kwargs.pop('shmem', None)
+        self.__src_directory = kwargs.pop('src_directory', None)
+        self.__version = kwargs.pop('version', '1.0.1-0')
         self.__wd = '/var/tmp' # working directory
+
+        # Set the download specific parameters
+        self.__download()
+        kwargs['url'] = self.url
+        if self.__src_directory:
+            kwargs['directory'] = self.__src_directory
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
@@ -113,7 +133,10 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__hydra:
             self.__ospackages.append('automake')
 
-        self += comment('NVSHMEM')
+        if self.__version and not self.__binary_tarball and not self.package:
+            self += comment('NVSHMEM {}'.format(self.__version))
+        else:
+            self += comment('NVSHMEM')
         self += packages(ospackages=self.__ospackages)
 
         if self.__binary_tarball:
@@ -164,6 +187,9 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         e['NVSHMEM_PREFIX'] = self.__prefix
 
+        if self.__cuda:
+            e['CUDA_HOME'] = self.__cuda
+
         if self.__gdrcopy:
             e['GDRCOPY_HOME'] = self.__gdrcopy
 
@@ -184,6 +210,15 @@ class nvshmem(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 l.append('{0}={1}'.format(key, val))
 
         self.__build_environment = ' '.join(l)
+
+    def __download(self):
+        """Set download source based on user parameters"""
+
+        if not self.package and not self.repository and not self.url:
+            shortened = 'nvshmem-src-{}'.format(
+                self.__version.replace('.', ''))
+            self.__src_directory = 'nvshmem_src_{}'.format(self.__version)
+            self.url = 'https://developer.nvidia.com/{0}'.format(shortened)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

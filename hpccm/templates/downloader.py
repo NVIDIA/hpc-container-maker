@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import logging
 import posixpath
 import re
 
@@ -43,7 +44,8 @@ class downloader(hpccm.base_object):
 
         super(downloader, self).__init__(**kwargs)
 
-    def download_step(self, recursive=False, unpack=True, wd='/var/tmp'):
+    def download_step(self, allow_unknown_filetype=True, recursive=False,
+                      unpack=True, wd='/var/tmp'):
         """Get source code"""
 
         if not self.repository and not self.package and not self.url:
@@ -64,7 +66,9 @@ class downloader(hpccm.base_object):
                 url=self.url, directory=wd))
 
             if unpack:
-                commands.append(self.__unpack(self.url, wd))
+                commands.append(self.__unpack(
+                    self.url, wd,
+                    allow_unknown_filetype=allow_unknown_filetype))
 
             if callable(annotate):
                 self.add_annotation('url', self.url)
@@ -72,7 +76,9 @@ class downloader(hpccm.base_object):
         elif self.package:
             # Use an already available package
             if unpack:
-                commands.append(self.__unpack(self.package, wd))
+                commands.append(self.__unpack(
+                    self.package, wd,
+                    allow_unknown_filetype=allow_unknown_filetype))
 
             if callable(annotate):
                 self.add_annotation('package', self.package)
@@ -104,7 +110,7 @@ class downloader(hpccm.base_object):
         else:
             raise RuntimeError('Unknown container type')
 
-    def __unpack(self, package, wd):
+    def __unpack(self, package, wd, allow_unknown_filetype=True):
         """Unpack package and set source directory"""
 
         match_tar = re.search(r'(.*)(?:(?:\.tar)|(?:\.tar\.gz)|(?:\.txz)'
@@ -123,6 +129,17 @@ class downloader(hpccm.base_object):
             self.src_directory = posixpath.join(wd, match_zip.group(1))
             return hpccm.templates.zipfile().unzip_step(
                 posixpath.join(wd, posixpath.basename(package)), directory=wd)
+        elif allow_unknown_filetype:
+            # Unclear what the file type is.  For instance, this can
+            # happen if a site uses a URL redirector and the shortened
+            # URL does not include the file extension.  In most cases,
+            # tar can figure it out.  However, note that the src
+            # directory is set to None since there is no way to infer
+            # what the directory structure might be inside the
+            # archive.
+            logging.warning('unrecognized package format')
+            self.src_directory = None
+            return hpccm.templates.tar().untar_step(
+                posixpath.join(wd, posixpath.basename(package)), directory=wd)
         else:
             raise RuntimeError('unrecognized package format')
-

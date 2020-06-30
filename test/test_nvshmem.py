@@ -33,6 +33,27 @@ class Test_nvshmem(unittest.TestCase):
 
     @ubuntu
     @docker
+    def test_defaults_ubuntu(self):
+        """nvshmem defaults"""
+        n = nvshmem()
+        self.assertEqual(str(n),
+r'''# NVSHMEM 1.0.1-0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.nvidia.com/nvshmem-src-101-0 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-src-101-0 -C /var/tmp && \
+    cd /var/tmp/nvshmem_src_1.0.1-0 && \
+    CUDA_HOME=/usr/local/cuda NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
+    rm -rf /var/tmp/nvshmem_src_1.0.1-0 /var/tmp/nvshmem-src-101-0
+ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
+    PATH=/usr/local/nvshmem/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_binary_tarball_ubuntu(self):
         """nvshmem binary tarball"""
         n = nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
@@ -83,7 +104,7 @@ RUN apt-get update -y && \
 COPY nvshmem-0.3.2EA.tar.gz /var/tmp/nvshmem-0.3.2EA.tar.gz
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-0.3.2EA.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvshmem-0.3.2EA && \
-    NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
+    CUDA_HOME=/usr/local/cuda NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
     rm -rf /var/tmp/nvshmem-0.3.2EA /var/tmp/nvshmem-0.3.2EA.tar.gz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
@@ -110,7 +131,7 @@ RUN yum install -y \
 COPY nvshmem-0.3.2EA.tar.gz /var/tmp/nvshmem-0.3.2EA.tar.gz
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-0.3.2EA.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvshmem-0.3.2EA && \
-    GDRCOPY_HOME=/usr/local/gdrcopy MPI_HOME=/usr/local/openmpi NVCC_GENCODE=-gencode=arch=compute_70,code=sm_70 NVSHMEM_MPI_SUPPORT=1 NVSHMEM_PREFIX=/usr/local/nvshmem NVSHMEM_SHMEM_SUPPORT=1 NVSHMEM_VERBOSE=1 SHMEM_HOME=/usr/local/openmpi make -j$(nproc) install && \
+    CUDA_HOME=/usr/local/cuda GDRCOPY_HOME=/usr/local/gdrcopy MPI_HOME=/usr/local/openmpi NVCC_GENCODE=-gencode=arch=compute_70,code=sm_70 NVSHMEM_MPI_SUPPORT=1 NVSHMEM_PREFIX=/usr/local/nvshmem NVSHMEM_SHMEM_SUPPORT=1 NVSHMEM_VERBOSE=1 SHMEM_HOME=/usr/local/openmpi make -j$(nproc) install && \
     ./scripts/install_hydra.sh /var/tmp /usr/local/nvshmem && \
     rm -rf /var/tmp/nvshmem-0.3.2EA /var/tmp/nvshmem-0.3.2EA.tar.gz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \

@@ -182,6 +182,10 @@ class generic_build(bb_base, hpccm.templates.annotate,
                 self.src_directory = posixpath.join(self.__wd,
                                                     self.__directory)
 
+        # sanity check
+        if not self.src_directory:
+            raise RuntimeError('source directory is not defined')
+
         # Build
         if self.__build:
             self.__commands.append('cd {}'.format(self.src_directory))

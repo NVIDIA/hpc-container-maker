@@ -242,6 +242,10 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
                 self.src_directory = posixpath.join(self.__wd,
                                                     self.__directory)
 
+        # sanity check
+        if not self.src_directory:
+            raise RuntimeError('source directory is not defined')
+
         # Preconfigure setup
         if self.__preconfigure:
             # Assume the preconfigure commands should be run from the
