@@ -86,8 +86,8 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     Underscores in the parameter name are converted to dashes.
 
     environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    UCX. The default is True.
+    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+    modified to include UCX. The default is True.
 
     gdrcopy: Flag to control whether gdrcopy is used by the build.  If
     True, adds `--with-gdrcopy` to the list of `configure` options.
@@ -223,6 +223,10 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         kwargs['url'] = self.url
 
         # Setup the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib'))
         self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))
         if not self.ldconfig:
