@@ -75,7 +75,9 @@ RUN yum install -y \
         gcc-c++ && \
     rm -rf /var/cache/yum/*
 RUN yum install -y \
-        llvm-toolset-8.0.1 && \
+        clang \
+        libomp \
+        llvm-libs && \
     rm -rf /var/cache/yum/*
 ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 
@@ -84,7 +86,7 @@ ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
     @docker
     def test_version_ubuntu(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, extra_tools=True, version='6.0')
+        l = llvm(extra_tools=True, version='6.0')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
@@ -104,7 +106,7 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-6.0) 30 && 
     @docker
     def test_version_centos(self):
         """LLVM compiler version"""
-        l = llvm(extra_repository=True, extra_tools=True, version='7')
+        l = llvm(extra_tools=True, version='7')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN yum install -y \
@@ -184,6 +186,103 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
+    @ubuntu
+    @docker
+    def test_toolset8_ubuntu(self):
+        """full toolset"""
+        l = llvm(toolset=True, version='8')
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-8 \
+        clang-format-8 \
+        clang-tidy-8 \
+        clang-tools-8 \
+        libc++-8-dev \
+        libc++1-8 \
+        libc++abi1-8 \
+        libclang-8-dev \
+        libclang1-8 \
+        liblldb-8-dev \
+        libomp-8-dev \
+        lld-8 \
+        lldb-8 \
+        llvm-8 \
+        llvm-8-dev \
+        llvm-8-runtime && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-8) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-8) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-8) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-8) 30 && \
+    update-alternatives --install /usr/bin/lldb lldb $(which lldb-8) 30 && \
+    update-alternatives --install /usr/bin/llvm-config llvm-config $(which llvm-config-8) 30 && \
+    update-alternatives --install /usr/bin/llvm-cov llvm-cov $(which llvm-cov-8) 30''')
+
+    @x86_64
+    @ubuntu18
+    @docker
+    def test_toolset_ubuntu18(self):
+        """full toolset"""
+        l = llvm(toolset=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang \
+        clang-format \
+        clang-tidy \
+        libc++-dev \
+        libc++1 \
+        libc++abi1 \
+        libclang-dev \
+        libclang1 \
+        libomp-dev \
+        lldb \
+        llvm \
+        llvm-dev \
+        llvm-runtime && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @centos
+    @docker
+    def test_toolset_centos7(self):
+        """full toolset"""
+        l = llvm(toolset=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang \
+        llvm && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/4.8.2/include:$CPATH''')
+
+    @x86_64
+    @centos8
+    @docker
+    def test_toolset_centos8(self):
+        """full toolset"""
+        l = llvm(toolset=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN yum install -y \
+        gcc \
+        gcc-c++ && \
+    rm -rf /var/cache/yum/*
+RUN yum install -y \
+        clang \
+        clang-tools-extra \
+        llvm-toolset && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
+
+    @x86_64
     @centos8
     @docker
     def test_extra_tools_centos8(self):
@@ -196,17 +295,19 @@ RUN yum install -y \
         gcc-c++ && \
     rm -rf /var/cache/yum/*
 RUN yum install -y \
-        clang-tools-extra-8.0.1 \
-        llvm-toolset-8.0.1 && \
+        clang \
+        clang-tools-extra \
+        libomp \
+        llvm-libs && \
     rm -rf /var/cache/yum/*
 ENV CPATH=/usr/lib/gcc/x86_64-redhat-linux/8/include:$CPATH''')
 
     @x86_64
     @ubuntu
     @docker
-    def test_nightly_ubuntu16(self):
-        """Nightly builds"""
-        l = llvm(nightly=True, version='10')
+    def test_upstream_ubuntu16(self):
+        """Upstream builds"""
+        l = llvm(upstream=True, version='10')
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
@@ -230,9 +331,9 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-10) 30 && \
     @x86_64
     @ubuntu18
     @docker
-    def test_nightly_ubuntu18(self):
-        """Nightly builds"""
-        l = llvm(extra_tools=True, nightly=True, version='11')
+    def test_upstream_ubuntu18(self):
+        """Upstream builds"""
+        l = llvm(extra_tools=True, upstream=True)
         self.assertEqual(str(l),
 r'''# LLVM compiler
 RUN apt-get update -y && \
@@ -260,10 +361,10 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-11) 30 && \
     @aarch64
     @ubuntu
     @docker
-    def test_nightly_aarch64(self):
-        """Nightly builds for aarch64"""
+    def test_upstream_aarch64(self):
+        """Upstream builds for aarch64"""
         with self.assertRaises(RuntimeError):
-            llvm(nightly=True, version='11')
+            llvm(upstream=True, version='11')
 
     @x86_64
     @ubuntu
