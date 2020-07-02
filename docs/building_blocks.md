@@ -4198,8 +4198,8 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-UCX. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+modified to include UCX. The default is True.
 
 - __gdrcopy__: Flag to control whether gdrcopy is used by the build.  If
 True, adds `--with-gdrcopy` to the list of `configure` options.
