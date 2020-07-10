@@ -14,4 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# add the path where this script resides to the search path for python modules
+wd=$(readlink -e $(dirname $0))
+export PYTHONPATH=${wd}:$PYTHONPATH
+
 python3 -m hpccm.cli $*
