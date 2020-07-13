@@ -23,7 +23,7 @@ from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import bash, docker, singularity
+from helpers import bash, centos, docker, singularity, ubuntu
 
 import hpccm.config
 
@@ -138,8 +138,17 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_cpu_architecture('arm64v8')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
 
+    @ubuntu
     @docker
-    def test_set_cpu_architecture_ppc64le(self):
+    def test_set_cpu_architecture_ppc64le_ubuntu(self):
+        """Set CPU architecture to POWER"""
+        hpccm.config.set_cpu_architecture('ppc64le')
+        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
+        self.assertEqual(hpccm.config.get_cpu_architecture(), 'ppc64el')
+
+    @centos
+    @docker
+    def test_set_cpu_architecture_ppc64le_centos(self):
         """Set CPU architecture to POWER"""
         hpccm.config.set_cpu_architecture('ppc64le')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)

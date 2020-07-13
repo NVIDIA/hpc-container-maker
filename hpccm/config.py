@@ -52,7 +52,10 @@ def get_cpu_architecture():
   if this.g_cpu_arch == cpu_arch.AARCH64:
     return 'aarch64'
   elif this.g_cpu_arch == cpu_arch.PPC64LE:
-    return 'ppc64le'
+    if this.g_linux_distro == linux_distro.UBUNTU:
+      return 'ppc64el'
+    else:
+      return 'ppc64le'
   elif this.g_cpu_arch == cpu_arch.X86_64:
     return 'x86_64'
   else: # pragma: no cover

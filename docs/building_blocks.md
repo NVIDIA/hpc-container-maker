@@ -2822,6 +2822,80 @@ Stage0 += m
 Stage1 += m.runtime()
 ```
 
+# nccl
+```python
+nccl(self, **kwargs)
+```
+The `nccl` building block installs the
+[NCCL](https://developer.nvidia.com/nccl) component.
+
+__Parameters__
+
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __build__: Boolean flag to specify whether NCCL should be built from
+source.  The default value is False.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
+- __cuda__: Flag to specify the CUDA version of the package to download.
+The default is `11.0`.  This option is ignored if build is True.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+modified to include NCCL. The default is True.  This option is
+ignored if build is False.
+
+- __make_variables__: Dictionary of environment variables and values to
+set when building NCCL.  The default is an empty dictionary.  This
+option is ignored if build is False.
+
+- __ospackages__: List of OS packages to install prior to building.  The
+default values are `make` and `wget`.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/nccl`.  This option is ignored if build is False.
+
+- __repository__: The location of the git repository that should be used to build NCCL.  If True, then use the default `https://github.com/NVIDIA/nccl.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
+- __version__: The version of NCCL to install.  The default value is
+`2.7.6-1`.
+
+__Examples__
+
+
+```python
+nccl(cuda='11.0', version='2.7.6-1')
+```
+
+```python
+nccl(build=True, version='2.7.6-1')
+```
+
+
+## runtime
+```python
+nccl.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+n = nccl(...)
+Stage0 += n
+Stage1 += n.runtime()
+```
+
 # netcdf
 ```python
 netcdf(self, **kwargs)
