@@ -46,6 +46,7 @@ __all__ = ['amgx',
            'multi_ofed',
            'mvapich2_gdr',
            'mvapich2',
+           'nccl',
            'netcdf',
            'nsight_systems',
            'nv_hpc_sdk',
@@ -98,6 +99,7 @@ from hpccm.building_blocks.mpich import mpich
 from hpccm.building_blocks.multi_ofed import multi_ofed
 from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 from hpccm.building_blocks.mvapich2 import mvapich2
+from hpccm.building_blocks.nccl import nccl
 from hpccm.building_blocks.netcdf import netcdf
 from hpccm.building_blocks.nsight_systems import nsight_systems
 from hpccm.building_blocks.nv_hpc_sdk import nv_hpc_sdk
