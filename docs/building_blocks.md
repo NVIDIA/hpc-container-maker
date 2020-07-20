@@ -209,6 +209,9 @@ The `boost` building block downloads and installs the
 __Parameters__
 
 
+- __b2_opts__: List of options to pass to `b2`.  The default is an empty
+list.
+
 - __bootstrap_opts__: List of options to pass to `bootstrap.sh`.  The
 default is an empty list.
 
@@ -233,7 +236,8 @@ is `/usr/local/boost`.
 - __python__: Boolean flag to specify whether Boost should be built with
 Python support.  If enabled, the Python C headers need to be
 installed (typically this can be done by adding `python-dev` or
-`python-devel` to the list of OS packages).  The default is False.
+`python-devel` to the list of OS packages).  This flag is ignored
+if `bootstrap_opts` is set.  The default is False.
 
 - __sourceforge__: Boolean flag to specify whether Boost should be
 downloaded from SourceForge rather than the current Boost

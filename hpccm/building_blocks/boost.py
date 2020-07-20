@@ -46,6 +46,9 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    b2_opts: List of options to pass to `b2`.  The default is an empty
+    list.
+
     bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
     default is an empty list.
 
@@ -70,7 +73,8 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     python: Boolean flag to specify whether Boost should be built with
     Python support.  If enabled, the Python C headers need to be
     installed (typically this can be done by adding `python-dev` or
-    `python-devel` to the list of OS packages).  The default is False.
+    `python-devel` to the list of OS packages).  This flag is ignored
+    if `bootstrap_opts` is set.  The default is False.
 
     sourceforge: Boolean flag to specify whether Boost should be
     downloaded from SourceForge rather than the current Boost
@@ -97,6 +101,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         super(boost, self).__init__(**kwargs)
 
+        self.__b2_opts = kwargs.get('b2_opts', [])
         self.__baseurl = kwargs.get('baseurl',
                                     'https://dl.bintray.com/boostorg/release/__version__/source')
         self.__bootstrap_opts = kwargs.get('bootstrap_opts', [])
@@ -166,7 +171,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         # standard Python install.  It requires the development
         # package, python-dev or python-devel.  So skip Python unless
         # it's specifically enabled.
-        if not self.__python:
+        if not self.__bootstrap_opts and not self.__python:
             self.__bootstrap_opts.append('--without-libraries=python')
 
         # Download source from web
@@ -182,7 +187,9 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                 ' '.join(self.__bootstrap_opts)))
 
         # Build and install
-        self.__commands.append('./b2 -j{} -q install'.format(self.__parallel))
+        self.__b2_opts.append('-j{}'.format(self.__parallel))
+        self.__b2_opts.append('-q install')
+        self.__commands.append('./b2 {0}'.format(' '.join(self.__b2_opts)))
 
         # Set library path
         libpath = posixpath.join(self.__prefix, 'lib')

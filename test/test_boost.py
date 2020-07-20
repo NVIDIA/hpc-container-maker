@@ -143,6 +143,49 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 
     @ubuntu
     @docker
+    def test_bootstrap_opts(self):
+        b = boost(bootstrap_opts=['--with-libraries=atomic,chrono'],
+                  version='1.72.0')
+        self.assertEqual(str(b),
+r'''# Boost version 1.72.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        libbz2-dev \
+        tar \
+        wget \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --with-libraries=atomic,chrono && \
+    ./b2 -j$(nproc) -q install && \
+    rm -rf /var/tmp/boost_1_72_0.tar.bz2 /var/tmp/boost_1_72_0
+ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
+    def test_b2_opts(self):
+        b = boost(b2_opts=['cxxflags="-std=c++14"'], version='1.72.0')
+        self.assertEqual(str(b),
+r'''# Boost version 1.72.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        libbz2-dev \
+        tar \
+        wget \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
+    ./b2 cxxflags="-std=c++14" -j$(nproc) -q install && \
+    rm -rf /var/tmp/boost_1_72_0.tar.bz2 /var/tmp/boost_1_72_0
+ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         b = boost()
