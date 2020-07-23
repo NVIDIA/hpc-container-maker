@@ -2158,28 +2158,21 @@ __Parameters__
 
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
-include the LLVM compilers. The default is True.
-
-- __extra_repository__: Boolean flag to specify whether to enable an extra package repository containing addition LLVM compiler packages.  For Ubuntu, setting this flag to True enables the `ppa:ubuntu-toolchain-r/test`
-repository.  For RHEL-based Linux distributions, setting this flag
-to True enables the Software Collections (SCL) repository.  The
-default is False.
+include the LLVM compilers when necessary. The default is True.
 
 - __extra_tools__: Boolean flag to specify whether to also install
 `clang-format` and `clang-tidy`.  The default is False.
 
-- __nightly__: Boolean flag to specify whether to use the [nightly LLVM packages](https://apt.llvm.org).
-This option is ignored if the base image is not Ubuntu.
+- __toolset__: Boolean flag to specify whether to also install the
+full LLVM toolset.  The default is False.
+
+- __upstream__: Boolean flag to specify whether to use the [upstream LLVM packages](https://apt.llvm.org).
+This option is ignored if the base image is not Ubuntu-based.
 
 - __version__: The version of the LLVM compilers to install.  Note that
 the version refers to the Linux distribution packaging, not the
-actual compiler version.  For Ubuntu, the version is appended to
-the default package name, e.g., `clang-6.0`.  For RHEL-based Linux
-distributions, the version is inserted into the SCL Developer
-Toolset package name, e.g., `llvm-toolset-7-clang`.  For
-RHEL-based Linux distributions, specifying the version
-automatically sets `extra_repository` to True.  The default is an
-empty value.
+actual compiler version.  For RHEL-based 8.x Linux distributions,
+the version is ignored. The default is an empty value.
 
 __Examples__
 
@@ -2189,11 +2182,11 @@ llvm()
 ```
 
 ```python
-llvm(extra_repository=True, version='7')
+llvm(version='7')
 ```
 
 ```python
-llvm(nightly=True, version='11')
+llvm(upstream=True, version='11')
 ```
 
 ```python
