@@ -141,7 +141,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     non-default compilers or other toolchain options are needed.  The
     default value is empty.
 
-    url: The loation of the tarball that should be used to build UCX.
+    url: The location of the tarball that should be used to build UCX.
     The default is empty, i.e., use the release package specified by
     `version`.
 

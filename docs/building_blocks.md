@@ -3436,7 +3436,7 @@ string, uses the value of the string as the UCX path, e.g.,
 `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
 list of `configure` options.  The default is False.
 
-- __url__: The loation of the tarball that should be used to build
+- __url__: The location of the tarball that should be used to build
 OpenMPI.  The default is empty, i.e., use the release package
 specified by `version`.
 
@@ -4324,7 +4324,7 @@ specified by `version`.
 non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
-- __url__: The loation of the tarball that should be used to build UCX.
+- __url__: The location of the tarball that should be used to build UCX.
 The default is empty, i.e., use the release package specified by
 `version`.
 

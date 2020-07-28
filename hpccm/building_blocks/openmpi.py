@@ -134,7 +134,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
     list of `configure` options.  The default is False.
 
-    url: The loation of the tarball that should be used to build
+    url: The location of the tarball that should be used to build
     OpenMPI.  The default is empty, i.e., use the release package
     specified by `version`.
 
