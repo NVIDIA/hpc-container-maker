@@ -39,7 +39,7 @@ generate:
   - hpccm.building_blocks.nccl+
   - hpccm.building_blocks.netcdf+
   - hpccm.building_blocks.nsight_systems+
-  - hpccm.building_blocks.nv_hpc_sdk+
+  - hpccm.building_blocks.nvhpc+
   - hpccm.building_blocks.nvshmem+
   - hpccm.building_blocks.ofed+
   - hpccm.building_blocks.openblas+
