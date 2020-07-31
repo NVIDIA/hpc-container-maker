@@ -49,10 +49,10 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.nvidia.com/nvhpc-2020-207-linux-x86-64-cuda-multi && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc-2020-207-linux-x86-64-cuda-multi -C /var/tmp && \
-    cd /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi /var/tmp/nvhpc-2020-207-linux-x86-64-cuda-multi
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/lib64:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/man \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/bin:$PATH''')
@@ -74,10 +74,10 @@ RUN yum install -y \
         wget \
         which && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.nvidia.com/nvhpc-2020-207-linux-x86-64-cuda-multi && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc-2020-207-linux-x86-64-cuda-multi -C /var/tmp && \
-    cd /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi /var/tmp/nvhpc-2020-207-linux-x86-64-cuda-multi
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/lib64:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/man \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/bin:$PATH''')
@@ -88,10 +88,10 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:
     def test_package_centos(self):
         """Local package"""
         n = nvhpc(eula=True,
-                  package='nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz')
+                  package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz')
         self.assertEqual(str(n),        
 r'''# NVIDIA HPC SDK version 20.7
-COPY nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz
+COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
         gcc \
         gcc-c++ \
@@ -101,9 +101,9 @@ RUN yum install -y \
         wget \
         which && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/lib64:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/man \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/bin:$PATH''')
@@ -114,10 +114,10 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:
     def test_extended_environment(self):
         """Extended environment"""
         n = nvhpc(eula=True, extended_environment=True,
-                  package='nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz')
+                  package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz')
         self.assertEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
-COPY nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz
+COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
         gcc \
         gcc-c++ \
@@ -127,9 +127,9 @@ RUN yum install -y \
         wget \
         which && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi /var/tmp/nvhpc_2020_207_Linux_x86_64-cuda-multi.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 ENV CC=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc \
     CPP=cpp \
     CXX=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc++ \
@@ -146,10 +146,10 @@ ENV CC=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc \
     def test_aarch64(self):
         """Default HPC SDK building block on aarch64"""
         n = nvhpc(eula=True,
-                  package='nvhpc_2020_207_Linux_aarch64-cuda-11.0.tar.gz')
+                  package='nvhpc_2020_207_Linux_aarch64_cuda_11.0.tar.gz')
         self.assertEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
-COPY nvhpc_2020_207_Linux_aarch64-cuda-11.0.tar.gz /var/tmp/nvhpc_2020_207_Linux_aarch64-cuda-11.0.tar.gz
+COPY nvhpc_2020_207_Linux_aarch64_cuda_11.0.tar.gz /var/tmp/nvhpc_2020_207_Linux_aarch64_cuda_11.0.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         debianutils \
@@ -160,9 +160,9 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_aarch64-cuda-11.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2020_207_Linux_aarch64-cuda-11.0 && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_aarch64-cuda-11.0 /var/tmp/nvhpc_2020_207_Linux_aarch64-cuda-11.0.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_aarch64_cuda_11.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_aarch64_cuda_11.0 && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_aarch64_cuda_11.0 /var/tmp/nvhpc_2020_207_Linux_aarch64_cuda_11.0.tar.gz
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/cuda/lib64:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/compilers/man \
     PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/mpi/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/cuda/bin:$PATH''')
@@ -173,10 +173,10 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/20.7/comm_libs/nvshmem/lib
     def test_ppc64le(self):
         """Default HPC SDK building block on ppc64le"""
         n = nvhpc(eula=True,
-                  package='nvhpc_2020_207_Linux_ppc64le-cuda-multi.tar.gz')
+                  package='nvhpc_2020_207_Linux_ppc64le_cuda_multi.tar.gz')
         self.assertEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
-COPY nvhpc_2020_207_Linux_ppc64le-cuda-multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_ppc64le-cuda-multi.tar.gz
+COPY nvhpc_2020_207_Linux_ppc64le_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_multi.tar.gz
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         debianutils \
@@ -187,9 +187,9 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_ppc64le-cuda-multi.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2020_207_Linux_ppc64le-cuda-multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2020_207_Linux_ppc64le-cuda-multi /var/tmp/nvhpc_2020_207_Linux_ppc64le-cuda-multi.tar.gz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_multi.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
+    rm -rf /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_multi /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_multi.tar.gz
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/cuda/lib64:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/man \
     PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/cuda/bin:$PATH''')

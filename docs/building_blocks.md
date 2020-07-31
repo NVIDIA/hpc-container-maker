@@ -3083,7 +3083,7 @@ the local build context.  The default value is empty.
 stage.  The paths are relative to the `REDIST` directory and
 wildcards are supported.  The default is an empty list.
 
-- __url__: The location of the package that should be installed.  The default value is `https://developer.nvidia.com/nvhpc-X-Y-Z-cuda-multi`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
+- __url__: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
@@ -3098,7 +3098,7 @@ nvhpc(eula=True)
 
 ```python
 nvhpc(eula=True,
-      package='nvhpc_2020_207_Linux_x86_64.tar.gz',
+      package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz',
       redist=['compilers/lib/*'])
 ```
 

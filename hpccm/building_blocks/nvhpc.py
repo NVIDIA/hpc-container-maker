@@ -90,7 +90,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     stage.  The paths are relative to the `REDIST` directory and
     wildcards are supported.  The default is an empty list.
 
-    url: The location of the package that should be installed.  The default value is `https://developer.nvidia.com/nvhpc-X-Y-Z-cuda-multi`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
+    url: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
@@ -104,7 +104,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     ```python
     nvhpc(eula=True,
-          package='nvhpc_2020_207_Linux_x86_64.tar.gz',
+          package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz',
           redist=['compilers/lib/*'])
     ```
 
@@ -277,16 +277,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             if self.__url:
                 self.url = self.__url
             else:
-                self.url = 'https://developer.nvidia.com/nvhpc-{0}-{1}-{2}-cuda-multi'.format(
+                self.url = 'https://developer.download.nvidia.com/hpc-sdk/nvhpc_{0}_{1}_{2}_cuda_multi.tar.gz'.format(
                     self.__year, self.__version.replace('.', ''),
-                    self.__arch_directory.replace('_', '-').lower())
+                    self.__arch_directory)
 
         self.__commands.append(self.download_step(wd=self.__wd))
-
-        if self.url and not self.src_directory:
-            self.src_directory = posixpath.join(
-                self.__wd,
-                posixpath.basename(self.url).replace('-', '_').replace('linux', 'Linux').replace('_cuda', '-cuda').replace('_multi', '-multi'))
 
         # Set installer flags
         flags = {'NVHPC_ACCEPT_EULA': 'accept',
