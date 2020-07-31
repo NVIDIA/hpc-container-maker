@@ -1,3 +1,11 @@
+# v20.7.0
+
+- Adds a NCCL (`nccl`) building block.
+- Enhancements and fixes to the Boost (`boost`), LLVM (`llvm`), NVSHMEM
+  (`nvshmem`), and UCX (`ucx`) building blocks.
+- Fix an issue when using the `hpccm.sh` wrapper script
+- Internal change to add runtime support to the base building block class.
+
 # v20.6.0
 
 - Adds AMGX (`amgx`), NVIDIA HPC SDK (`nv_hpc_sdk`), and NVSHMEM (`nvshmem`)
