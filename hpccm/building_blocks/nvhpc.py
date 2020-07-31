@@ -46,7 +46,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     NVIDIA HPC SDK is downloaded, although a local tar package may
     used instead by specifying the `package` parameter.
 
-    You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf) to use this
+    You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula) to use this
     building block.
 
     As a side effect, a toolchain is created containing the NVIDIA
@@ -63,7 +63,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
     include the NVIDIA HPC SDK. The default is True.
 
-    eula: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf).
+    eula: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula).
     The default value is `False`.
 
     extended_environment: Boolean flag to specify whether an extended
@@ -126,7 +126,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # By setting this value to True, you agree to the NVIDIA HPC
         # SDK End-User License Agreement
-        # (https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf)
+        # (https://docs.nvidia.com/hpc-sdk/eula)
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)

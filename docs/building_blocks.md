@@ -3038,7 +3038,7 @@ SDK](https://developer.nvidia.com/hpc-sdk).  By default, the
 NVIDIA HPC SDK is downloaded, although a local tar package may
 used instead by specifying the `package` parameter.
 
-You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf) to use this
+You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula) to use this
 building block.
 
 As a side effect, a toolchain is created containing the NVIDIA
@@ -3056,7 +3056,7 @@ HPC SDK.
 (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
 include the NVIDIA HPC SDK. The default is True.
 
-- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf).
+- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula).
 The default value is `False`.
 
 - __extended_environment__: Boolean flag to specify whether an extended
