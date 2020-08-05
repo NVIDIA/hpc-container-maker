@@ -73,6 +73,9 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     `PATH` will be extended to include the NVIDIA HPC SDK.  The
     default value is `False`.
 
+    mpi: Boolean flag to specify whether MPI should be included in the
+    environment.  The default value is `True`.
+
     ospackages: List of OS packages to install prior to installing the
     NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
     `gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
@@ -104,6 +107,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     ```python
     nvhpc(eula=True,
+          url='https://developer.download.nvidia.com/hpc-sdk/nvhpc_2020_207_Linux_x86_64_cuda_11.0.tar.gz')
+    ```
+
+    ```python
+    nvhpc(eula=True,
           package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz',
           redist=['compilers/lib/*'])
     ```
@@ -130,10 +138,12 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)
+        self.__mpi = kwargs.get('mpi', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/nvidia/hpc_sdk')
         self.__redist = kwargs.get('redist', [])
+        self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
         self.__version = '20.7'
         self.__wd = '/var/tmp' # working directory
@@ -227,25 +237,41 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             e['FC'] = posixpath.join(self.__basepath, 'compilers', 'bin',
                                      'nvfortran')
 
-        e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(':'.join([
+        cpath = [
+            posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'include'),
+            posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'include'),
+            posixpath.join(self.__basepath, 'math_libs', 'include'),
+            posixpath.join(self.__basepath, 'compilers', 'include'),
+            posixpath.join(self.__basepath, 'cuda', 'include')]
+
+        ld_library_path = [
             posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'lib'),
             posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'lib'),
-            posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'),
             posixpath.join(self.__basepath, 'math_libs', 'lib64'),
             posixpath.join(self.__basepath, 'compilers', 'lib'),
-            posixpath.join(self.__basepath, 'cuda', 'lib64')
-        ]))
+            posixpath.join(self.__basepath, 'cuda', 'lib64')]
 
-        e['MANPATH'] = posixpath.join(self.__basepath, 'compilers', 'man')
-
-        e['PATH'] = '{}:$PATH'.format(':'.join([
+        path = [
             posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'bin'),
             posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'bin'),
-            posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'),
             posixpath.join(self.__basepath, 'profilers', 'bin'),
             posixpath.join(self.__basepath, 'compilers', 'bin'),
-            posixpath.join(self.__basepath, 'cuda', 'bin')
-        ]))
+            posixpath.join(self.__basepath, 'cuda', 'bin')]
+
+        if self.__mpi:
+            cpath.append(
+                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
+            ld_library_path.append(
+                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
+            path.append(
+                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'))
+
+        e['CPATH'] = '{}:$CPATH'.format(':'.join(cpath))
+        e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(':'.join(
+            ld_library_path))
+        e['MANPATH'] = '{}:$MANPATH'.format(
+            posixpath.join(self.__basepath, 'compilers', 'man'))
+        e['PATH'] = '{}:$PATH'.format(':'.join(path))
 
         return e
 
@@ -289,6 +315,8 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                  'NVHPC_SILENT': 'true'}
         if self.__cuda_version:
             flags['NVHPC_DEFAULT_CUDA'] = self.__cuda_version
+        if self.__stdpar_cudacc:
+            flags['NVHPC_STDPAR_CUDACC'] = self.__stdpar_cudacc
         if not self.__eula:
             # This will fail when building the container
             logging.warning('NVIDIA HPC SDK EULA was not accepted')
@@ -358,9 +386,6 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                     libdirs[posixpath.join(posixpath.dirname(redistpath),
                                            posixpath.dirname(r))] = True
 
-            #self.rt += environment(
-            #    variables={'LD_LIBRARY_PATH':
-            #               ':'.join(sorted(libdirs.keys()))})
             if libdirs:
                 liblist = sorted(libdirs.keys())
                 liblist.append('$LD_LIBRARY_PATH')

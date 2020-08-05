@@ -3066,6 +3066,9 @@ and `FC`.  If False, then only `LD_LIBRARY_PATH`, `MANPATH`, and
 `PATH` will be extended to include the NVIDIA HPC SDK.  The
 default value is `False`.
 
+- __mpi__: Boolean flag to specify whether MPI should be included in the
+environment.  The default value is `True`.
+
 - __ospackages__: List of OS packages to install prior to installing the
 NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
 `gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
@@ -3094,6 +3097,11 @@ __Examples__
 
 ```python
 nvhpc(eula=True)
+```
+
+```python
+nvhpc(eula=True,
+      url='https://developer.download.nvidia.com/hpc-sdk/nvhpc_2020_207_Linux_x86_64_cuda_11.0.tar.gz')
 ```
 
 ```python
