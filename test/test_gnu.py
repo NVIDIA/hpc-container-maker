@@ -267,3 +267,13 @@ RUN echo "/usr/local/gnu/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig''')
         self.assertEqual(tc.FC, 'gfortran')
         self.assertEqual(tc.F77, 'gfortran')
         self.assertEqual(tc.F90, 'gfortran')
+
+    def test_toolchain_source(self):
+        g = gnu(source=True, prefix='/usr/local/gnu', version='9.1.0')
+        tc = g.toolchain
+        self.assertEqual(tc.CC, "/usr/local/gnu/bin/gcc")
+        self.assertEqual(tc.CXX, "/usr/local/gnu/bin/g++")
+        self.assertEqual(tc.FC, "/usr/local/gnu/bin/gfortran")
+        self.assertEqual(tc.F77, "/usr/local/gnu/bin/gfortran")
+        self.assertEqual(tc.F90, "/usr/local/gnu/bin/gfortran")
+        self.assertTrue("/usr/local/gnu/lib64" in tc.LD_LIBRARY_PATH)

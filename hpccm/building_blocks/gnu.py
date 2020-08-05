@@ -182,6 +182,24 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         # Fill in container instructions
         self.__instructions()
 
+    def __configure_toolchain_on_build(self):
+
+        directory = posixpath.join(self.prefix, 'bin')
+
+        if self.__cc:
+            self.toolchain.CC = posixpath.join(directory, 'gcc')
+
+        if self.__cxx:
+            self.toolchain.CXX = posixpath.join(directory, 'g++')
+
+        if self.__fortran:
+            self.toolchain.FC = posixpath.join(directory, 'gfortran')
+            self.toolchain.F77 = posixpath.join(directory, 'gfortran')
+            self.toolchain.F90 = posixpath.join(directory, 'gfortran')
+
+        if "LD_LIBRARY_PATH" in self.environment_variables:
+            self.toolchain.LD_LIBRARY_PATH = self.environment_variables["LD_LIBRARY_PATH"]
+
     def __build(self):
         """Build compilers from source"""
 
@@ -263,6 +281,9 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
             # Install
             self.__commands.append(accel.install_step())
+
+            #configure toolchain
+            self.__configure_toolchain_on_build()
 
         # Configure host compiler
         if self.__openacc:
