@@ -70,6 +70,7 @@ RUN yum install -y \
         gcc \
         gcc-c++ \
         gcc-gfortran \
+        libatomic \
         numactl-libs \
         openssh-clients \
         wget \
@@ -98,6 +99,7 @@ RUN yum install -y \
         gcc \
         gcc-c++ \
         gcc-gfortran \
+        libatomic \
         numactl-libs \
         openssh-clients \
         wget \
@@ -125,6 +127,7 @@ RUN yum install -y \
         gcc \
         gcc-c++ \
         gcc-gfortran \
+        libatomic \
         numactl-libs \
         openssh-clients \
         wget \

@@ -3073,7 +3073,7 @@ environment.  The default value is `True`.
 NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
 `gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
 `wget`.  For RHEL-based Linux distributions, the default values
-are `gcc`, `gcc-c++`, `gcc-gfortran`, `numactl-libs`,
+are `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
 `openssh-clients`, `wget`, and `which`.
 
 - __package__: Path to the NVIDIA HPC SDK tar package file relative to

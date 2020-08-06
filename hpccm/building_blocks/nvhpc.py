@@ -80,7 +80,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
     `gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
     `wget`.  For RHEL-based Linux distributions, the default values
-    are `gcc`, `gcc-c++`, `gcc-gfortran`, `numactl-libs`,
+    are `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
     `openssh-clients`, `wget`, and `which`.
 
     package: Path to the NVIDIA HPC SDK tar package file relative to
@@ -211,8 +211,8 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['gcc', 'gcc-c++', 'gcc-gfortran',
-                                     'openssh-clients', 'numactl-libs',
-                                     'wget', 'which']
+                                     'libatomic', 'openssh-clients',
+                                     'numactl-libs', 'wget', 'which']
             self.__runtime_ospackages = ['libatomic', 'numactl-libs',
                                          'openssh-clients']
         else: # pragma: no cover
