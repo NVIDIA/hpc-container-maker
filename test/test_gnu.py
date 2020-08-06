@@ -276,4 +276,5 @@ RUN echo "/usr/local/gnu/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig''')
         self.assertEqual(tc.FC, "/usr/local/gnu/bin/gfortran")
         self.assertEqual(tc.F77, "/usr/local/gnu/bin/gfortran")
         self.assertEqual(tc.F90, "/usr/local/gnu/bin/gfortran")
-        self.assertTrue("/usr/local/gnu/lib64" in tc.LD_LIBRARY_PATH)
+        if tc.LD_LIBRARY_PATH:
+            self.assertTrue("/usr/local/gnu/lib64" in tc.LD_LIBRARY_PATH)

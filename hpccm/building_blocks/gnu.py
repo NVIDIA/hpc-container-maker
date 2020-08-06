@@ -282,9 +282,6 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             # Install
             self.__commands.append(accel.install_step())
 
-            #configure toolchain
-            self.__configure_toolchain_on_build()
-
         # Configure host compiler
         if self.__openacc:
             self.configure_opts.extend(['--with-cuda-driver=/usr/local/cuda',
@@ -311,6 +308,9 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 directory=posixpath.join(self.prefix, 'lib64')))
         else:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.prefix, 'lib64'))
+
+        # Setup toolchain
+        self.__configure_toolchain_on_build()
 
         # Cleanup
         self.__commands.append(self.cleanup_step(
