@@ -3029,15 +3029,16 @@ nsight_systems(version='2020.2.1')
 ```
 
 
-# nv_hpc_sdk
+# nvhpc
 ```python
-nv_hpc_sdk(self, **kwargs)
+nvhpc(self, **kwargs)
 ```
-The `nv_hpc_sdk` building block downloads and installs the [NVIDIA
-HPC SDK](https://developer.nvidia.com/hpc-sdk).  Currently, the
-only option is to install from a tarball.
+The `nvhpc` building block downloads and installs the [NVIDIA HPC
+SDK](https://developer.nvidia.com/hpc-sdk).  By default, the
+NVIDIA HPC SDK is downloaded, although a local tar package may
+used instead by specifying the `package` parameter.
 
-You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf) to use this
+You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula) to use this
 building block.
 
 As a side effect, a toolchain is created containing the NVIDIA
@@ -3047,63 +3048,77 @@ to build using the NVIDIA compilers.
 __Parameters__
 
 
-- __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
-should be modified to include the NVIDIA HPC SDK. The default is
-True.
+- __cuda__: The default CUDA version to configure.  The default is an
+empty value, i.e., use the latest version supported by the NVIDIA
+HPC SDK.
 
-- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula/hpc-sdk-ea-eula.pdf).
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be
+modified to include the NVIDIA HPC SDK. The default is True.
+
+- __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula).
 The default value is `False`.
 
 - __extended_environment__: Boolean flag to specify whether an extended
 set of environment variables should be defined.  If True, the
 following environment variables `CC`, `CPP`, `CXX`, `F77`, `F90`,
-`FC`, and `MODULEPATH` will be defined.  In addition, if the MPI
-component is selected then `PGI_OPTL_INCLUDE_DIRS` and
-`PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
-`LD_LIBRARY_PATH` will include the MPI component.  If False, then
-only `PATH` and `LD_LIBRARY_PATH` will be extended to include the
-NVIDIA HPC SDK.  The default value is `False`.
+and `FC`.  If False, then only `CPATH`, `LD_LIBRARY_PATH`,
+`MANPATH`, and `PATH` will be extended to include the NVIDIA HPC
+SDK.  The default value is `False`.
 
-- __mpi__: Boolean flag to specify whether the MPI component should be
-installed.  If True, MPI will be installed.  The default value is
-False.
+- __mpi__: Boolean flag to specify whether MPI should be included in the
+environment.  The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing the
-NVIDIA HPC SDK.  For Ubuntu, the default values are `gcc`, `g++`,
-`gfortran`, and `libnuma1`.  For RHEL-based Linux distributions,
-the default values are `gcc`, `gcc-c++`, `gcc-gfortran`, and
-`numactl-libs`.
+NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
+`gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
+`wget`.  For RHEL-based Linux distributions, the default values
+are `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
+`openssh-clients`, `wget`, and `which`.
+
+- __package__: Path to the NVIDIA HPC SDK tar package file relative to
+the local build context.  The default value is empty.
 
 - __prefix__: The top level install prefix.  The default value is
-`/opt/nvidia/hpcsdk`.
+`/opt/nvidia/hpc_sdk`.
 
-- __system_cuda__: Boolean flag to specify whether the NVIDIA HPC SDK
-should use the system CUDA.  If False, the version(s) of CUDA
-bundled with the NVIDIA HPC SDK will be installed.  The default
-value is False.
+- __redist__: The list of redistributable files to copy into the runtime
+stage.  The paths are relative to the `REDIST` directory and
+wildcards are supported.  The default is an empty list.
 
-- __tarball__: Path to the NVIDIA HPC SDK tarball relative to the local
-build context.  The default value is empty.  This option is
-required.
+- __url__: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
+
+- __version__: The version of the HPC SDK to use.  Note when `package`
+is set the version is determined automatically from the package
+file name.  The default value is `20.7`.
 
 __Examples__
 
 
 ```python
-nv_hpc_sdk(eula=True,
-           tarball='nvhpc_2020_205_Linux_x86_64.tar.gz')
+nvhpc(eula=True)
 ```
 
 ```python
-n = nv_hpc_sdk(eula=True, ...)
+nvhpc(eula=True,
+      url='https://developer.download.nvidia.com/hpc-sdk/nvhpc_2020_207_Linux_x86_64_cuda_11.0.tar.gz')
+```
+
+```python
+nvhpc(eula=True,
+      package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz',
+      redist=['compilers/lib/*'])
+```
+
+```python
+n = nvhpc(eula=True, ...)
 openmpi(..., toolchain=n.toolchain, ...)
 ```
 
 
 ## runtime
 ```python
-nv_hpc_sdk.runtime(self, _from=u'0')
+nvhpc.runtime(self, _from=u'0')
 ```
 Generate the set of instructions to install the runtime specific
 components from a build in a previous stage.
@@ -3112,7 +3127,7 @@ __Examples__
 
 
 ```python
-n = nv_hpc_sdk(...)
+n = nvhpc(redist=[...], ...)
 Stage0 += n
 Stage1 += n.runtime()
 ```
