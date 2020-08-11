@@ -3053,8 +3053,8 @@ empty value, i.e., use the latest version supported by the NVIDIA
 HPC SDK.
 
 - __environment__: Boolean flag to specify whether the environment
-(`CPATH`, `LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be
-modified to include the NVIDIA HPC SDK. The default is True.
+(`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
+include the NVIDIA HPC SDK. The default is True.
 
 - __eula__: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula).
 The default value is `False`.
@@ -3062,9 +3062,9 @@ The default value is `False`.
 - __extended_environment__: Boolean flag to specify whether an extended
 set of environment variables should be defined.  If True, the
 following environment variables `CC`, `CPP`, `CXX`, `F77`, `F90`,
-and `FC`.  If False, then only `CPATH`, `LD_LIBRARY_PATH`,
-`MANPATH`, and `PATH` will be extended to include the NVIDIA HPC
-SDK.  The default value is `False`.
+and `FC`.  If False, then only `LD_LIBRARY_PATH`, `MANPATH`, and
+`PATH` will be extended to include the NVIDIA HPC SDK.  The
+default value is `False`.
 
 - __mpi__: Boolean flag to specify whether MPI should be included in the
 environment.  The default value is `True`.
