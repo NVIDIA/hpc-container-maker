@@ -78,10 +78,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     ospackages: List of OS packages to install prior to installing the
     NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
-    `gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
-    `wget`.  For RHEL-based Linux distributions, the default values
-    are `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
-    `openssh-clients`, `wget`, and `which`.
+    `gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
+    `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+    the default values are `gcc`, `gcc-c++`, `gcc-gfortran`,
+    `libatomic`, `numactl-libs`, `openssh-clients`, `wget`, and
+    `which`.
 
     package: Path to the NVIDIA HPC SDK tar package file relative to
     the local build context.  The default value is empty.
@@ -205,7 +206,8 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['debianutils', 'gcc', 'g++', 'gfortran',
-                                     'libnuma1', 'openssh-client', 'wget']
+                                     'libatomic1', 'libnuma1',
+                                     'openssh-client', 'wget']
             self.__runtime_ospackages = ['libatomic1', 'libnuma1',
                                          'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
@@ -382,16 +384,22 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
                 # If the redist path looks like a library directory,
                 # add it to LD_LIBRARY_PATH
-                if 'lib' in posixpath.dirname(r):
+                if '/lib' in posixpath.dirname(r):
                     libdirs[posixpath.join(posixpath.dirname(redistpath),
                                            posixpath.dirname(r))] = True
+
+            if self.__redist and self.__mpi:
+                mpipath = posixpath.join(self.__basepath, 'comm_libs', 'mpi')
+                self.rt += copy(_from=_from, src=mpipath, dest=mpipath)
+                libdirs[posixpath.join(mpipath, 'lib')] = True
+                self.runtime_environment_variables['PATH'] = '{}:$PATH'.format(
+                    posixpath.join(mpipath, 'bin'))
 
             if libdirs:
                 liblist = sorted(libdirs.keys())
                 liblist.append('$LD_LIBRARY_PATH')
                 
-                self.runtime_environment_variables = {
-                    'LD_LIBRARY_PATH': ':'.join(liblist)}
+                self.runtime_environment_variables['LD_LIBRARY_PATH'] = ':'.join(liblist)
                 self.rt += environment(
                     variables=self.runtime_environment_variables)
 
