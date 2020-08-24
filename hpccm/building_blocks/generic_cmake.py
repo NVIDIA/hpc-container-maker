@@ -234,14 +234,13 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
            self.__commands"""
 
         # Get source
-        if self.repository or self.package or self.url:
-            self.__commands.append(
-                self.download_step(
-                    recursive=self.__recursive,
-                    wd=self.__wd,
-                    unpack=self.__unpack_download
-                )
+        self.__commands.append(
+            self.download_step(
+                recursive=self.__recursive,
+                wd=self.__wd,
+                unpack=self.__unpack_download
             )
+        )
 
         # directory containing the unarchived package
         if self.__directory:
