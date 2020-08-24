@@ -95,6 +95,35 @@ ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_nvhpc(self):
+        """mvapich2 with NVIDIA HPC SDK"""
+        tc = toolchain()
+        tc.CC = 'nvc'
+        tc.CXX = 'nvc++'
+        tc.F77 = 'nvfortran'
+        tc.FC = 'nvfortran'
+        mv2 = mvapich2(toolchain=tc, cuda=False, version='2.3.3')
+        self.assertEqual(str(mv2),
+r'''# MVAPICH2 version 2.3.3
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        byacc \
+        file \
+        make \
+        openssh-client \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/mvapich2-2.3.3 &&  CC=nvc CFLAGS='-fpic -DPIC' CXX=nvc++ F77=nvfortran FC=nvfortran FCFLAGS='-fpic -DPIC' FFLAGS='-fpic -DPIC' ./configure --prefix=/usr/local/mvapich2 --disable-cuda --disable-mcast ac_cv_c_compiler_gnu=no && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/mvapich2-2.3.3 /var/tmp/mvapich2-2.3.3.tar.gz
+ENV LD_LIBRARY_PATH=/usr/local/mvapich2/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/mvapich2/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_gpu_arch(self):
         """mvapich2 GPU architecture"""
         mv2 = mvapich2(version='2.3b', gpu_arch='sm_60')
