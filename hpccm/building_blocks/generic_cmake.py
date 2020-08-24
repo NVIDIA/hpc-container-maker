@@ -136,6 +136,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
     url: The URL of the package to build.  One of this parameter or
     the `repository` or `package` parameters must be specified.
 
+    unpack_download: if the URL or package specified needs to be unpacked.
+    The default is True
+
     # Examples
 
     ```python

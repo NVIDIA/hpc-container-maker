@@ -1152,6 +1152,9 @@ default is empty.
 - __url__: The URL of the package to build.  One of this parameter or
 the `repository` or `package` parameters must be specified.
 
+- __unpack_download__: if the `url` or `package` specified needs to be unpacked.
+The default is True
+
 __Examples__
 
 
@@ -4546,5 +4549,3 @@ __Examples__
 ```python
 yum(ospackages=['make', 'wget'])
 ```
-
-
