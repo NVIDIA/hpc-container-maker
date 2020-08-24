@@ -162,7 +162,8 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__prefix = kwargs.pop('prefix', '/usr/local/mvapich2')
         self.__runtime_ospackages = [] # Filled in by __distro()
         # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        # Create a copy of the toolchain so that it can be modified
+        self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
         self.__version = kwargs.pop('version', '2.3.3')
 
         # MVAPICH2 does not accept F90
@@ -238,18 +239,28 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # Create a copy of the toolchain so that it can be modified
-        # without impacting the original.
-        self.__toolchain = _copy(self.__toolchain)
-
         # MVAPICH2 does not accept F90
         self.__toolchain.F90 = ''
+
+        # Workarounds when using the NV compilers
+        if (self.__toolchain.CC and re.match('.*nvc', self.__toolchain.CC) and
+            not self.__toolchain.CFLAGS):
+            self.__toolchain.CFLAGS = '-fpic -DPIC'
+            self.__configure_opts.append('ac_cv_c_compiler_gnu=no')
+        if (self.__toolchain.F77 and
+            re.match('.*nvfortran', self.__toolchain.F77) and
+            not self.__toolchain.FFLAGS):
+            self.__toolchain.FFLAGS = '-fpic -DPIC'
+        if (self.__toolchain.FC and
+            re.match('.*nvfortran', self.__toolchain.FC) and
+            not self.__toolchain.FCFLAGS):
+            self.__toolchain.FCFLAGS = '-fpic -DPIC'
 
         # CUDA
         if self.__cuda:
             cuda_home = "/usr/local/cuda"
             if self.__toolchain.CUDA_HOME:
-                cuda_home = toolchain.CUDA_HOME
+                cuda_home = self.__toolchain.CUDA_HOME
 
             # The PGI compiler needs some special handling for CUDA.
             # http://mvapich.cse.ohio-state.edu/static/media/mvapich/mvapich2-2.0-userguide.html#x1-120004.5

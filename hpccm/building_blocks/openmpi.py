@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import posixpath
 import re
+from copy import copy as _copy
 from six import string_types
 
 import hpccm.config
@@ -200,7 +201,9 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__recursive = kwargs.pop('recursive', True)
         self.__runtime_ospackages = [] # Filled in by __distro()
         # Input toolchain, i.e., what to use when building
-        self.__toolchain = kwargs.pop('toolchain', toolchain())
+        # Create a copy of the toolchain so that it can be modified
+        # without impacting the original
+        self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
         self.__version = kwargs.pop('version', '4.0.3')
         self.__ucx = kwargs.pop('ucx', False)
 
@@ -299,6 +302,12 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                     '--with-ucx={}'.format(self.__ucx))
             else:
                 self.__configure_opts.append('--with-ucx')
+
+        # PIC workaround when using the NVIDIA compilers
+        if self.__toolchain.FC and re.match('.*nvfortran',
+                                            self.__toolchain.FC):
+            if not self.__toolchain.FCFLAGS:
+                self.__toolchain.FCFLAGS = '-fpic -DPIC'
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user

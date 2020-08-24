@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import posixpath
 import re
+from copy import copy as _copy
 
 import hpccm.config
 import hpccm.templates.envvars
@@ -33,6 +34,7 @@ from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.toolchain import toolchain
 
 class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `hdf5` building block downloads, configures, builds, and
@@ -137,6 +139,9 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
                                             '--enable-fortran'])
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/hdf5')
+        # Create a copy of the toolchain so that it can be modified
+        # without impacting the original
+        self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__version = kwargs.pop('version', '1.10.6')
 
@@ -157,6 +162,12 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         if not self.ldconfig:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
+        # PIC workaround when using the NVIDIA compilers
+        if self.__toolchain.FC and re.match('.*nvfortran',
+                                            self.__toolchain.FC):
+            if not self.__toolchain.FCFLAGS:
+                self.__toolchain.FCFLAGS = '-fpic -DPIC'
+
         # Setup build configuration
         self.__bb = generic_autotools(
             annotations={'version': self.__version},
@@ -167,6 +178,7 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             devel_environment=self.environment_variables,
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
+            toolchain=self.__toolchain,
             url=self.__url,
             **kwargs)
 
