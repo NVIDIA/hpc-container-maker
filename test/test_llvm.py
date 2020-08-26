@@ -348,15 +348,15 @@ RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     echo "deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-11 \
-        clang-format-11 \
-        clang-tidy-11 \
-        libomp-11-dev && \
+        clang-12 \
+        clang-format-12 \
+        clang-tidy-12 \
+        libomp-12-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/clang clang $(which clang-11) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-11) 30 && \
-    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-11) 30 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-11) 30''')
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-12) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-12) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-12) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-12) 30''')
 
     @aarch64
     @ubuntu

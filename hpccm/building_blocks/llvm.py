@@ -88,6 +88,9 @@ class llvm(bb_base, hpccm.templates.envvars):
 
         super(llvm, self).__init__(**kwargs)
 
+        # Current LLVM trunk version
+        self.__trunk_version = '12'
+
         self.__apt_keys = []       # Filled in below
         self.__apt_repositories = [] # Filled in below
         self.__commands = []       # Filled in below
@@ -122,8 +125,7 @@ class llvm(bb_base, hpccm.templates.envvars):
             self.__ospackages = []
 
             if self.__upstream and not self.__version:
-                # The current development branch is version 11.
-                self.__version = '11'
+                self.__version = self.__trunk_version
 
             if self.__version:
                 if LooseVersion(self.__version) <= LooseVersion('6.0'):
@@ -310,7 +312,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         """Return the package repositories for the given distro and llvm
         version.  The development branch repositories are not
         versioned and must be handled differently.  Currently the
-        development branch is version 11."""
+        development branch is version 12."""
 
         codename = 'xenial'
         codename_ver = 'xenial'
@@ -318,14 +320,14 @@ class llvm(bb_base, hpccm.templates.envvars):
         if (hpccm.config.g_linux_version >= StrictVersion('18.0') and
             hpccm.config.g_linux_version < StrictVersion('19.0')):
             codename = 'bionic'
-            if self.__version == '11':
+            if self.__version == self.__trunk_version:
                 codename_ver = 'bionic'
             else:
                 codename_ver = 'bionic-{}'.format(self.__version)
         elif (hpccm.config.g_linux_version >= StrictVersion('16.0') and
               hpccm.config.g_linux_version < StrictVersion('17.0')):
             codename = 'xenial'
-            if self.__version == '11':
+            if self.__version == self.__trunk_version:
                 codename_ver = 'xenial'
             else:
                 codename_ver = 'xenial-{}'.format(self.__version)
