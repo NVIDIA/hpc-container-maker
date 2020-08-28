@@ -45,6 +45,7 @@ RUN apt-get update -y && \
         g++ \
         gcc \
         gfortran \
+        libatomic1 \
         libnuma1 \
         openssh-client \
         wget && \
@@ -159,6 +160,7 @@ RUN apt-get update -y && \
         g++ \
         gcc \
         gfortran \
+        libatomic1 \
         libnuma1 \
         openssh-client \
         wget && \
@@ -186,6 +188,7 @@ RUN apt-get update -y && \
         g++ \
         gcc \
         gfortran \
+        libatomic1 \
         libnuma1 \
         openssh-client \
         wget && \
@@ -213,14 +216,16 @@ RUN apt-get update -y && \
         openssh-client && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/20.7/REDIST/compilers/lib/* /opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib/
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:$LD_LIBRARY_PATH''')
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi /opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi
+ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/bin:$PATH''')
 
     @x86_64
     @centos
     @docker
     def test_runtime_centos(self):
         """Runtime"""
-        n = nvhpc(eula=True,
+        n = nvhpc(eula=True, mpi=False,
                   redist=['comm_libs/11.0/nccl/lib/libnccl.so',
                           'compilers/lib/*',
                           'math_libs/11.0/lib64/libcufft.so.10',

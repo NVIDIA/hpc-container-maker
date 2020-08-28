@@ -3071,10 +3071,11 @@ environment.  The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing the
 NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
-`gcc`, `g++`, `gfortran`, `libnuma1`, `openssh-client`, and
-`wget`.  For RHEL-based Linux distributions, the default values
-are `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
-`openssh-clients`, `wget`, and `which`.
+`gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
+`openssh-client`, and `wget`.  For RHEL-based Linux distributions,
+the default values are `gcc`, `gcc-c++`, `gcc-gfortran`,
+`libatomic`, `numactl-libs`, `openssh-clients`, `wget`, and
+`which`.
 
 - __package__: Path to the NVIDIA HPC SDK tar package file relative to
 the local build context.  The default value is empty.
