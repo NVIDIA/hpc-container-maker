@@ -1,3 +1,11 @@
+# v20.8.0
+
+- Adds an NVIDIA HPC SDK (`nvhpc`) building block, replacing the previous
+  one (`nv_hpc_sdk`).
+- Enhancements to the GNU (`gnu`) and LLVM (`llvm`) building blocks.
+- Update the hpcbase example recipes to use the NVDIA HPC SDK instead of
+  the PGI compilers.
+
 # v20.7.0
 
 - Adds a NCCL (`nccl`) building block.
