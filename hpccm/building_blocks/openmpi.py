@@ -166,8 +166,8 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     ```
 
     ```python
-    p = pgi(eula=True)
-    openmpi(toolchain=p.toolchain)
+    n = nvhpc(eula=True)
+    openmpi(toolchain=n.toolchain)
     ```
 
     ```python

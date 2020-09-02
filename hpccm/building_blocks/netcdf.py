@@ -118,11 +118,6 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
     ```
 
-    ```python
-    p = pgi(eula=True)
-    netcdf(toolchain=p.toolchain)
-    ```
-
     """
 
     def __init__(self, **kwargs):

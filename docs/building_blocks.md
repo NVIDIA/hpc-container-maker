@@ -718,8 +718,8 @@ fftw(directory='sources/fftw-3.3.7')
 ```
 
 ```python
-p = pgi(eula=True)
-fftw(toolchain=p.toolchain)
+n = nvhpc(eula=True)
+fftw(toolchain=n.toolchain)
 ```
 
 ```python
@@ -1410,8 +1410,8 @@ hdf5(directory='sources/hdf5-1.10.1')
 ```
 
 ```python
-p = pgi(eula=True)
-hdf5(toolchain=p.toolchain)
+n = nvhpc(eula=True)
+hdf5(toolchain=n.toolchain)
 ```
 
 ```python
@@ -2494,10 +2494,6 @@ __Examples__
 mpich(prefix='/opt/mpich/3.3', version='3.3')
 ```
 
-```python
-p = pgi(eula=True)
-mpich(toolchain=p.toolchain)
-```
 
 ## runtime
 ```python
@@ -2680,8 +2676,8 @@ mvapich2(directory='sources/mvapich2-2.3b')
 ```
 
 ```python
-p = pgi(eula=True)
-mvapich2(toolchain=p.toolchain)
+n = nvhpc(eula=True)
+mvapich2(toolchain=n.toolchain)
 ```
 
 ```python
@@ -2980,11 +2976,6 @@ __Examples__
 
 ```python
 netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
-```
-
-```python
-p = pgi(eula=True)
-netcdf(toolchain=p.toolchain)
 ```
 
 
@@ -3330,11 +3321,6 @@ __Examples__
 openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
 ```
 
-```python
-p = pgi(eula=True)
-openblas(toolchain=p.toolchain)
-```
-
 
 ## runtime
 ```python
@@ -3484,8 +3470,8 @@ openmpi(repository='https://github.com/open-mpi/ompi.git')
 ```
 
 ```python
-p = pgi(eula=True)
-openmpi(toolchain=p.toolchain)
+n = nvhpc(eula=True)
+openmpi(toolchain=n.toolchain)
 ```
 
 ```python
@@ -3615,9 +3601,12 @@ packages(apt=['python3'], yum=['python34'], epel=True)
 ```python
 pgi(self, **kwargs)
 ```
-The `pgi` building block downloads and installs the PGI compiler.
-Currently, the only option is to install the latest community
-edition.
+The `pgi` building block installs the PGI compiler from a
+manually downloaded package.
+
+Note: The [NVIDIA HPC SDK](https://developer.nvidia.com/hpc-sdk)
+has replaced the PGI compilers.  The [nvhpc](#nvhpc) building
+block should be used instead of this building block.
 
 You must agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
 building block.
@@ -3669,29 +3658,14 @@ bundled with the PGI compiler will be installed.  The default
 value is False.
 
 - __tarball__: Path to the PGI compiler tarball relative to the local
-build context.  The default value is empty.  If this is defined,
-the tarball in the local build context will be used rather than
-downloading the tarball from the web.
-
-- __version__: The version of the PGI compiler to use.  Note this value
-is currently only used when setting the environment and does not
-control the version of the compiler downloaded.  The default value
-is `19.10`.
+build context.  The default value is empty.  This parameter is
+required.
 
 __Examples__
 
 
 ```python
-pgi(eula=True)
-```
-
-```python
-pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
-```
-
-```python
-p = pgi(eula=True)
-openmpi(..., toolchain=p.toolchain, ...)
+pgi(eula=True, tarball='pgilinux-2019-1910-x86_64.tar.gz')
 ```
 
 

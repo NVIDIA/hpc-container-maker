@@ -107,10 +107,6 @@ class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     mpich(prefix='/opt/mpich/3.3', version='3.3')
     ```
 
-    ```python
-    p = pgi(eula=True)
-    mpich(toolchain=p.toolchain)
-    ```
     """
 
     def __init__(self, **kwargs):
