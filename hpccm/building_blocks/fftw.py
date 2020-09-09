@@ -116,8 +116,8 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     ```
 
     ```python
-    p = pgi(eula=True)
-    fftw(toolchain=p.toolchain)
+    n = nvhpc(eula=True)
+    fftw(toolchain=n.toolchain)
     ```
 
     ```python

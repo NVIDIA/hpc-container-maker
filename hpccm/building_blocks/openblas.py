@@ -77,11 +77,6 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
     ```
 
-    ```python
-    p = pgi(eula=True)
-    openblas(toolchain=p.toolchain)
-    ```
-
     """
 
     def __init__(self, **kwargs):

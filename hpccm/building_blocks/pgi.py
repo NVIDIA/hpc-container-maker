@@ -42,9 +42,12 @@ from hpccm.toolchain import toolchain
 
 class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
           hpccm.templates.tar, hpccm.templates.wget):
-    """The `pgi` building block downloads and installs the PGI compiler.
-    Currently, the only option is to install the latest community
-    edition.
+    """The `pgi` building block installs the PGI compiler from a
+    manually downloaded package.
+
+    Note: The [NVIDIA HPC SDK](https://developer.nvidia.com/hpc-sdk)
+    has replaced the PGI compilers.  The [nvhpc](#nvhpc) building
+    block should be used instead of this building block.
 
     You must agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt) to use this
     building block.
@@ -95,28 +98,13 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     value is False.
 
     tarball: Path to the PGI compiler tarball relative to the local
-    build context.  The default value is empty.  If this is defined,
-    the tarball in the local build context will be used rather than
-    downloading the tarball from the web.
-
-    version: The version of the PGI compiler to use.  Note this value
-    is currently only used when setting the environment and does not
-    control the version of the compiler downloaded.  The default value
-    is `19.10`.
+    build context.  The default value is empty.  This parameter is
+    required.
 
     # Examples
 
     ```python
-    pgi(eula=True)
-    ```
-
-    ```python
-    pgi(eula=True, tarball='pgilinux-2017-1710-x86_64.tar.gz')
-    ```
-
-    ```python
-    p = pgi(eula=True)
-    openmpi(..., toolchain=p.toolchain, ...)
+    pgi(eula=True, tarball='pgilinux-2019-1910-x86_64.tar.gz')
     ```
 
     """
@@ -142,19 +130,18 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/pgi')
-        self.__referer = r'https://www.pgroup.com/products/community.htm?utm_source=hpccm\&utm_medium=wgt\&utm_campaign=CE\&nvid=nv-int-14-39155'
         self.__system_cuda = kwargs.get('system_cuda', False)
         self.__system_libnuma = kwargs.get('system_libnuma', True)
         self.__tarball = kwargs.get('tarball', '')
-        self.__url_template = 'https://www.pgroup.com/support/downloader.php?file=pgi-community-linux-{}'
-
-        # The version is fragile since the latest version is
-        # automatically downloaded, which may not match this default.
-        self.__version = kwargs.get('version', '19.10')
+        self.__version = '' # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')
+
+        # tarball parameter is required
+        if not self.__tarball:
+            raise RuntimeError('PGI install package must be set')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -177,14 +164,12 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Fill in container instructions"""
 
         self += comment('PGI compiler version {}'.format(self.__version))
-        if self.__tarball:
-            # Use tarball from local build context
-            self += copy(src=self.__tarball,
-                         dest=posixpath.join(self.__wd,
-                                             posixpath.basename(self.__tarball)))
-        else:
-            # Downloading, so need wget
-            self.__ospackages.append('wget')
+
+        # Use tarball from local build context
+        self += copy(src=self.__tarball,
+                     dest=posixpath.join(self.__wd,
+                                         posixpath.basename(self.__tarball)))
+
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
         self += shell(commands=self.__commands)
@@ -302,29 +287,18 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        if self.__tarball:
-            # Use tarball from local build context
-            tarball = posixpath.basename(self.__tarball)
+        # Use tarball from local build context
+        tarball = posixpath.basename(self.__tarball)
 
-            # Figure out the version from the tarball name
-            match = re.match(r'pgilinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
-                             tarball)
-            if match and match.groupdict()['year'] and match.groupdict()['month']:
-                self.__version = '{0}.{1}'.format(match.groupdict()['year'],
-                                                  match.groupdict()['month'])
+        # Figure out the version from the tarball name
+        match = re.match(r'pgilinux-\d+-(?P<year>\d\d)0?(?P<month>[1-9][0-9]?)',
+                         tarball)
+        if match and match.groupdict()['year'] and match.groupdict()['month']:
+            self.__version = '{0}.{1}'.format(match.groupdict()['year'],
+                                              match.groupdict()['month'])
         else:
-            # The URL would normally result in a downloaded file with
-            # the name 'downloader.php?file=pgi-community-linux-x64'.
-            # Also, the version downloaded cannot be controlled, it
-            # will always be the 'latest'.  Use a synthetic tarball
-            # filename.
-            tarball = 'pgi-community-linux-{}-latest.tar.gz'.format(
-                self.__arch_pkg)
-
-            self.__commands.append(self.download_step(
-                url=self.__url_template.format(self.__arch_pkg),
-                outfile=posixpath.join(self.__wd, tarball),
-                referer=self.__referer, directory=self.__wd))
+            logging.warning('could not determine PGI version')
+            self.__version = '19.10'
 
         self.__commands.append(self.untar_step(
             tarball=posixpath.join(self.__wd, tarball),

@@ -138,8 +138,8 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     ```
 
     ```python
-    p = pgi(eula=True)
-    mvapich2(toolchain=p.toolchain)
+    n = nvhpc(eula=True)
+    mvapich2(toolchain=n.toolchain)
     ```
 
     ```python
