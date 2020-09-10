@@ -337,44 +337,55 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
-        elif self.__version and not self.__source:
+        else:
+            # Set libfortran version depending on the Ubuntu version
+            if self.__fortran:
+                if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                    if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                        self.__runtime_debs.append('libgfortran4')
+                    elif hpccm.config.g_linux_version >= StrictVersion('16.0'):
+                        self.__runtime_debs.append('libgfortran3')
+                    else: # pragma: no cover
+                        raise RuntimeError('Unrecognized Ubuntu version')
+
             # Setup the environment so that the alternate compiler version
             # is the new default
-            alternatives = {}
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                if self.__cc:
-                    alternatives['gcc'] = '$(which gcc-{})'.format(
+            if self.__version:
+                alternatives = {}
+                if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                    if self.__cc:
+                        alternatives['gcc'] = '$(which gcc-{})'.format(
+                            self.__version)
+                    if self.__cxx:
+                        alternatives['g++'] = '$(which g++-{})'.format(
+                            self.__version)
+                    if self.__fortran:
+                        alternatives['gfortran'] = '$(which gfortran-{})'.format(
+                            self.__version)
+                    alternatives['gcov'] = '$(which gcov-{})'.format(
                         self.__version)
-                if self.__cxx:
-                    alternatives['g++'] = '$(which g++-{})'.format(
+                elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+                    # Default for CentOS 7
+                    toolset_path = '/opt/rh/devtoolset-{}/root/usr/bin'.format(
                         self.__version)
-                if self.__fortran:
-                    alternatives['gfortran'] = '$(which gfortran-{})'.format(
-                        self.__version)
-                alternatives['gcov'] = '$(which gcov-{})'.format(
-                    self.__version)
-            elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-                # Default for CentOS 7
-                toolset_path = '/opt/rh/devtoolset-{}/root/usr/bin'.format(
-                    self.__version)
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    # CentOS 8
-                    toolset_path = '/opt/rh/gcc-toolset-{}/root/usr/bin'.format(self.__version)
+                    if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                        # CentOS 8
+                        toolset_path = '/opt/rh/gcc-toolset-{}/root/usr/bin'.format(self.__version)
 
-                if self.__cc:
-                    alternatives['gcc'] = posixpath.join(toolset_path, 'gcc')
-                if self.__cxx:
-                    alternatives['g++'] = posixpath.join(toolset_path, 'g++')
-                if self.__fortran:
-                    alternatives['gfortran'] = posixpath.join(toolset_path,
-                                                              'gfortran')
-                alternatives['gcov'] = posixpath.join(toolset_path, 'gcov')
+                    if self.__cc:
+                        alternatives['gcc'] = posixpath.join(toolset_path, 'gcc')
+                    if self.__cxx:
+                        alternatives['g++'] = posixpath.join(toolset_path, 'g++')
+                    if self.__fortran:
+                        alternatives['gfortran'] = posixpath.join(toolset_path,
+                                                                  'gfortran')
+                    alternatives['gcov'] = posixpath.join(toolset_path, 'gcov')
 
-            else: # pragma: no cover
-                raise RuntimeError('Unknown Linux distribution')
+                else: # pragma: no cover
+                    raise RuntimeError('Unknown Linux distribution')
 
-            for tool,alt in sorted(alternatives.items()):
-                self.__commands.append('update-alternatives --install {0} {1} {2} 30'.format(posixpath.join('/usr/bin', tool), tool, alt))
+                for tool,alt in sorted(alternatives.items()):
+                    self.__commands.append('update-alternatives --install {0} {1} {2} 30'.format(posixpath.join('/usr/bin', tool), tool, alt))
 
     def __instructions(self):
         """Fill in container instructions"""
@@ -408,7 +419,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         if self.__fortran:
             self.__compiler_debs.append('gfortran')
-            self.__runtime_debs.append('libgfortran3')
+            # libgfortran runtime deb is set is __distro()
             self.__compiler_rpms.append('gcc-gfortran')
             self.__runtime_rpms.append('libgfortran')
             self.toolchain.F77 = 'gfortran'
