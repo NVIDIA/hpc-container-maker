@@ -3043,6 +3043,11 @@ __Parameters__
 empty value, i.e., use the latest version supported by the NVIDIA
 HPC SDK.
 
+- __cuda_multi__: Boolean flag to specify whether the NVIDIA HPC SDK
+support for multiple CUDA versions should be installed.  The
+default value is `True`, except for aarch64 processors where the
+default is `False`.
+
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
 include the NVIDIA HPC SDK. The default is True.
