@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.libsim import libsim
 
@@ -31,6 +31,7 @@ class Test_libsim(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -57,6 +58,7 @@ RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/vi
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
 
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -84,6 +86,7 @@ RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/vi
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -111,6 +114,9 @@ RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/vi
     rm -rf /var/tmp/visit
 ENV PATH=/usr/local/visit/bin:$PATH''')
 
+    @x86_64
+    @ubuntu
+    @docker
     def test_non_default_opts(self):
         """non-default options"""
         l = libsim(mpi=False, system_cmake=False, system_python=False,
@@ -135,6 +141,7 @@ RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/vi
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/visit/bin:$PATH''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):

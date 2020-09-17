@@ -303,6 +303,11 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             else:
                 self.__configure_opts.append('--with-ucx')
 
+        # Workaround when using the NVIDIA compilers
+        if self.__toolchain.CC and re.match('.*nvc', self.__toolchain.CC):
+            if not self.__toolchain.CFLAGS:
+                self.__toolchain.CFLAGS = '-O1'
+
         # PIC workaround when using the NVIDIA compilers
         if self.__toolchain.FC and re.match('.*nvfortran',
                                             self.__toolchain.FC):

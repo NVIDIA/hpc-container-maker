@@ -3862,8 +3862,8 @@ directory should be added dynamic linker cache.  If False, then
 directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
-and building.  The default values are `m4`, `make`, `tar`, and
-`wget`.
+and building.  The default values are `file`, `m4`, `make`,
+`perl`, `tar`, and `wget`.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/pnetcdf`.
