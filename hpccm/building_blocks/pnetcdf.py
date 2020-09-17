@@ -72,8 +72,8 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     directory. The default value is False.
 
     ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `m4`, `make`, `tar`, and
-    `wget`.
+    and building.  The default values are `file`, `m4`, `make`,
+    `perl`, `tar`, and `wget`.
 
     prefix: The top level install location.  The default value is
     `/usr/local/pnetcdf`.
@@ -117,8 +117,8 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__baseurl = kwargs.get('baseurl', 'https://parallel-netcdf.github.io/Release')
         self.__configure_opts = kwargs.pop('configure_opts',
                                            ['--enable-shared'])
-        self.__ospackages = kwargs.pop('ospackages', ['m4', 'make', 'tar',
-                                                      'wget'])
+        self.__ospackages = kwargs.pop('ospackages', ['file', 'm4', 'make',
+                                                      'perl', 'tar', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/pnetcdf')
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.pop('toolchain',

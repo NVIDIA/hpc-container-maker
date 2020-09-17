@@ -40,8 +40,10 @@ class Test_pnetcdf(unittest.TestCase):
 r'''# PnetCDF version 1.12.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
         m4 \
         make \
+        perl \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
@@ -65,8 +67,10 @@ ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
 r'''# PnetCDF version 1.10.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        file \
         m4 \
         make \
+        perl \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
