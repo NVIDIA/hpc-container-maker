@@ -59,6 +59,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     empty value, i.e., use the latest version supported by the NVIDIA
     HPC SDK.
 
+    cuda_multi: Boolean flag to specify whether the NVIDIA HPC SDK
+    support for multiple CUDA versions should be installed.  The
+    default value is `True`, except for aarch64 processors where the
+    default is `False`.
+
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
     include the NVIDIA HPC SDK. The default is True.
@@ -130,6 +135,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         super(nvhpc, self).__init__(**kwargs)
 
         self.__arch_directory = None # Filled in __cpu_arch()
+        self.__cuda_multi = kwargs.get('cuda_multi', True)
         self.__cuda_version = kwargs.get('cuda', None)
         self.__commands = [] # Filled in by __setup()
 
@@ -192,6 +198,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             self.__arch_directory = 'Linux_aarch64'
+            self.__cuda_multi = False # CUDA multi packages not available
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_directory = 'Linux_ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
@@ -305,9 +312,15 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             if self.__url:
                 self.url = self.__url
             else:
-                self.url = 'https://developer.download.nvidia.com/hpc-sdk/nvhpc_{0}_{1}_{2}_cuda_multi.tar.gz'.format(
+                baseurl = 'https://developer.download.nvidia.com/hpc-sdk/nvhpc_{0}_{1}_{2}_cuda_{{}}.tar.gz'.format(
                     self.__year, self.__version.replace('.', ''),
                     self.__arch_directory)
+                if self.__cuda_multi:
+                    self.url = baseurl.format('multi')
+                elif self.__cuda_version:
+                    self.url = baseurl.format(self.__cuda_version)
+                else:
+                    self.url = baseurl.format('11.0')
 
         self.__commands.append(self.download_step(wd=self.__wd))
 
