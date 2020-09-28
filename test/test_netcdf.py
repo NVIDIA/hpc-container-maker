@@ -37,8 +37,8 @@ class Test_netcdf(unittest.TestCase):
         """Default netcdf building block"""
         n = netcdf()
         self.assertEqual(str(n),
-r'''# NetCDF version 4.7.3, NetCDF C++ version 4.3.1, NetCDF Fortran
-# version 4.5.2
+r'''# NetCDF version 4.7.4, NetCDF C++ version 4.3.1, NetCDF Fortran
+# version 4.5.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -49,12 +49,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-c/archive/v4.7.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.7.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-c-4.7.3 &&   ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-c/archive/v4.7.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.7.4.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-c-4.7.4 &&   ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-c-4.7.3 /var/tmp/v4.7.3.tar.gz
+    rm -rf /var/tmp/netcdf-c-4.7.4 /var/tmp/v4.7.4.tar.gz
 ENV CPATH=/usr/local/netcdf/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/netcdf/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/netcdf/lib:$LIBRARY_PATH \
@@ -65,12 +65,12 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-cxx4-4.3.1 /var/tmp/v4.3.1.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-fortran/archive/v4.5.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-fortran-4.5.2 &&   ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-fortran/archive/v4.5.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.5.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-fortran-4.5.3 &&   ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-fortran-4.5.2 /var/tmp/v4.5.2.tar.gz''')
+    rm -rf /var/tmp/netcdf-fortran-4.5.3 /var/tmp/v4.5.3.tar.gz''')
 
     @centos
     @docker
@@ -78,8 +78,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Default netcdf building block"""
         n = netcdf()
         self.assertEqual(str(n),
-r'''# NetCDF version 4.7.3, NetCDF C++ version 4.3.1, NetCDF Fortran
-# version 4.5.2
+r'''# NetCDF version 4.7.4, NetCDF C++ version 4.3.1, NetCDF Fortran
+# version 4.5.3
 RUN yum install -y \
         ca-certificates \
         file \
@@ -89,12 +89,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-c/archive/v4.7.3.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.7.3.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-c-4.7.3 &&   ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-c/archive/v4.7.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.7.4.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-c-4.7.4 &&   ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-c-4.7.3 /var/tmp/v4.7.3.tar.gz
+    rm -rf /var/tmp/netcdf-c-4.7.4 /var/tmp/v4.7.4.tar.gz
 ENV CPATH=/usr/local/netcdf/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/netcdf/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/netcdf/lib:$LIBRARY_PATH \
@@ -105,12 +105,12 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/netcdf-cxx4-4.3.1 /var/tmp/v4.3.1.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-fortran/archive/v4.5.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/netcdf-fortran-4.5.2 &&   ./configure --prefix=/usr/local/netcdf && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Unidata/netcdf-fortran/archive/v4.5.3.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v4.5.3.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/netcdf-fortran-4.5.3 &&   ./configure --prefix=/usr/local/netcdf && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/netcdf-fortran-4.5.2 /var/tmp/v4.5.2.tar.gz''')
+    rm -rf /var/tmp/netcdf-fortran-4.5.3 /var/tmp/v4.5.3.tar.gz''')
 
     @ubuntu
     @docker

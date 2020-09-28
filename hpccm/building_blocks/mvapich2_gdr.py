@@ -78,7 +78,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     cuda_version: The version of CUDA the MVAPICH2-GDR package was
     built against.  The version string format is X.Y.  The version
     should match the version of CUDA provided by the base image.  This
-    value is ignored if `package` is set.  The default value is `9.2`.
+    value is ignored if `package` is set.  The default value is `10.2`.
 
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
@@ -96,7 +96,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     MVAPICH2-GDR package was built against.  The version string format
     is X.Y.  The version should match the version of Mellanox OFED
     installed by the `mlnx_ofed` building block.  This value is
-    ignored if `package` is set.  The default value is `4.5`.
+    ignored if `package` is set.  The default value is `4.7`.
 
     ospackages: List of OS packages to install prior to installation.
     For Ubuntu, the default values are `cpio`, `libnuma1`,
@@ -117,10 +117,10 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     The default value is False.
 
     release: The release of MVAPICH2-GDR to download.  The value is
-    ignored is `package` is set.  The default value is `2`.
+    ignored is `package` is set.  The default value is `1`.
 
     version: The version of MVAPICH2-GDR to download.  The value is
-    ignored if `package` is set.  The default value is `2.3.3`.  Due
+    ignored if `package` is set.  The default value is `2.3.4`.  Due
     to differences in the packaging scheme, versions prior to 2.3 are
     not supported.
 
@@ -144,18 +144,18 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__arch = kwargs.get('arch', hpccm.config.get_cpu_architecture())
         self.__baseurl = kwargs.get('baseurl',
                                     'http://mvapich.cse.ohio-state.edu/download/mvapich/gdr')
-        self.__cuda_version = kwargs.get('cuda_version', '9.2')
+        self.__cuda_version = kwargs.get('cuda_version', '10.2')
         self.__gnu = kwargs.get('gnu', True)
         self.__gnu_version = kwargs.get('gnu_version', '4.8.5')
         self.__install_path_template = '/opt/mvapich2/gdr/{0}/mcast/no-openacc/{1}/{2}/mpirun/{3}'
-        self.__mofed_version = kwargs.get('mlnx_ofed_version', '4.5')
+        self.__mofed_version = kwargs.get('mlnx_ofed_version', '4.7')
         self.__ospackages = kwargs.get('ospackages', [])
         self.__package = kwargs.get('package', '')
         self.__package_template = 'mvapich2-gdr-mcast.{0}.{1}.{2}-{3}-{4}.el7.{5}.rpm'
         self.__pgi = kwargs.get('pgi', False)
-        self.__pgi_version = kwargs.get('pgi_version', '18.10')
-        self.__release = kwargs.get('release', '2')
-        self.version = kwargs.get('version', '2.3.3')
+        self.__pgi_version = kwargs.get('pgi_version', '19.10')
+        self.__release = kwargs.get('release', '1')
+        self.version = kwargs.get('version', '2.3.4')
         self.__wd = '/var/tmp' # working directory
 
         # Output toolchain

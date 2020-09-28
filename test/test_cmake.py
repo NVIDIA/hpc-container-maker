@@ -38,16 +38,16 @@ class Test_cmake(unittest.TestCase):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.16.3
+r'''# CMake version 3.18.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.18/cmake-3.18.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -57,15 +57,15 @@ ENV PATH=/usr/local/bin:$PATH''')
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.16.3
+r'''# CMake version 3.18.3
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.18/cmake-3.18.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -73,7 +73,7 @@ ENV PATH=/usr/local/bin:$PATH''')
     @docker
     def test_eula(self):
         """Accept EULA"""
-        c = cmake(eula=True)
+        c = cmake(eula=True, version='3.16.3')
         self.assertEqual(str(c),
 r'''# CMake version 3.16.3
 RUN apt-get update -y && \

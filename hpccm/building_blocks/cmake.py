@@ -64,7 +64,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     the default is True.
 
     version: The version of CMake to download.  The default value is
-    `3.16.3`.
+    `3.18.3`.
 
     # Examples
 
@@ -95,7 +95,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__source = kwargs.get('source', False)
-        self.__version = kwargs.get('version', '3.16.3')
+        self.__version = kwargs.get('version', '3.18.3')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

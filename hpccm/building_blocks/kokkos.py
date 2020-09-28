@@ -97,7 +97,7 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
     specified by `version`.
 
     version: The version of Kokkos source to download.  The default
-    value is `3.1.01`.
+    value is `3.2.00`.
 
     # Examples
 
@@ -124,7 +124,7 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__powertools = False # enable the CentOS PowerTools repo
         self.__prefix = kwargs.pop('prefix', '/usr/local/kokkos')
-        self.__version = kwargs.pop('version', '3.1.01')
+        self.__version = kwargs.pop('version', '3.2.00')
 
         if self.repository:
             self.__directory = ''

@@ -83,7 +83,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `multicore-linux-ppc64le`.
 
     version: The version of Charm++ to download.  The default value is
-    `6.9.0`.
+    `6.10.2`.
 
     # Examples
 
@@ -115,7 +115,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__target = kwargs.get('target', 'charm++')
         self.__target_architecture = kwargs.get('target_architecture', '')
-        self.__version = kwargs.get('version', '6.9.0')
+        self.__version = kwargs.get('version', '6.10.2')
 
         # Version 6.9.0 dropped the 'v' from directory name
         if LooseVersion(self.__version) >= LooseVersion('6.9.0'):

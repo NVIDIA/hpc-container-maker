@@ -103,7 +103,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     Blocks runtime should be installed.  The default is True.
 
     version: The version of the Intel Parallel Studio XE runtime to
-    install.  The default value is `2020.1-12`.
+    install.  The default value is `2020.2-14`.
 
     # Examples
 
@@ -136,7 +136,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         self.__psxevars = kwargs.get('psxevars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__tbb = kwargs.get('tbb', True)
-        self.__version = kwargs.get('version', '2020.1-12')
+        self.__version = kwargs.get('version', '2020.2-14')
         self.__year = self.__version.split('.')[0]
 
         self.__bashrc = ''            # Filled in by __distro()

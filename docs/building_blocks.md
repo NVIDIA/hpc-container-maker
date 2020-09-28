@@ -137,7 +137,7 @@ operations that want to build using the Arm Allinea Studio
 compilers.  However, the environment is not automatically
 configured for the Arm Allinea Studio compilers.  The desired
 environment module must be manually loaded, e.g., `module load
-Generic-AArch64/RHEL/7/arm-linux-compiler/20.0`.
+Generic-AArch64/RHEL/7/arm-linux-compiler/20.3`.
 
 __Parameters__
 
@@ -170,8 +170,8 @@ defined, the tarball in the local build context will be used
 rather than downloading the tarball from the web.
 
 - __version__: The version of Arm Allinea Studio to install.  The
-default value is `20.0`.  Due to differences in the packaging
-scheme, versions prior to 20.0 are not supported.
+default value is `20.3`.  Due to differences in the packaging
+scheme, versions prior to 20.2 are not supported.
 
 __Examples__
 
@@ -179,7 +179,7 @@ __Examples__
 ```python
 arm_allinea_studio(eula=True,
                    microarchitectures=['generic', 'thunderx2t99'],
-                   version='20.0')
+                   version='20.3')
 ```
 
 
@@ -245,7 +245,7 @@ repository.  For versions of Boost older than 1.63.0, the
 SourceForge repository should be used.  The default is False.
 
 - __version__: The version of Boost source to download.  The default
-value is `1.72.0`.
+value is `1.74.0`.
 
 __Examples__
 
@@ -408,7 +408,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of CGNS source to download.  The default
-value is `3.4.0`.
+value is `4.1.2`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -489,7 +489,7 @@ value is `multicore-arm8`.  For ppc64le processors, the default is
 `multicore-linux-ppc64le`.
 
 - __version__: The version of Charm++ to download.  The default value is
-`6.9.0`.
+`6.10.2`.
 
 __Examples__
 
@@ -549,7 +549,7 @@ use the available pre-compiled package.  For all other processors,
 the default is True.
 
 - __version__: The version of CMake to download.  The default value is
-`3.16.3`.
+`3.18.3`.
 
 __Examples__
 
@@ -596,7 +596,7 @@ empty list.
 Anaconda should be installed.  The default is False.
 
 - __version__: The version of Anaconda to download.  The default value
-is `4.7.12`.
+is `4.8.3`.
 
 __Examples__
 
@@ -774,7 +774,7 @@ default values are `make` and `wget`.
 `/usr/local/gdrcopy`.
 
 - __version__: The version of gdrcopy source to download.  The default
-value is `2.0`.
+value is `2.1`.
 
 __Examples__
 
@@ -1385,7 +1385,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of HDF5 source to download.  This value is
-ignored if `directory` is set.  The default value is `1.10.6`.
+ignored if `directory` is set.  The default value is `1.12.0`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -1498,7 +1498,7 @@ the default values are `bzip2`, `openssh-clients`, `tar`, and
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.6.0`.
+value is `2.7.0`.
 
 __Examples__
 
@@ -1700,7 +1700,7 @@ to install via the `runtime` method.  The runtime is installed
 using the [intel_psxe_runtime](#intel_psxe_runtime) building
 block.  This value is passed as its `version` parameter.  In
 general, the major version of the runtime should correspond to the
-tarball version.  The default value is `2020.1-12`.
+tarball version.  The default value is `2020.2-14`.
 
 - __tarball__: Path to the Intel Parallel Studio XE tarball relative to
 the local build context.  The default value is empty.  This
@@ -1804,7 +1804,7 @@ and `which`.
 Blocks runtime should be installed.  The default is True.
 
 - __version__: The version of the Intel Parallel Studio XE runtime to
-install.  The default value is `2020.1-12`.
+install.  The default value is `2020.2-14`.
 
 __Examples__
 
@@ -1877,7 +1877,7 @@ empty list.
 is `/usr/local/julia`.
 
 - __version__: The version of Julia to install.  The default value is
-`1.3.1`.
+`1.5.1`.
 
 __Examples__
 
@@ -1930,7 +1930,7 @@ The default values are `ca-certificates` and `git`.
 `/usr/local/knem`.
 
 - __version__: The version of KNEM source to download.  The default
-value is `1.1.3`.
+value is `1.1.4`.
 
 __Examples__
 
@@ -2022,7 +2022,7 @@ Kokkos.  The default is empty, i.e., use the release package
 specified by `version`.
 
 - __version__: The version of Kokkos source to download.  The default
-value is `3.1.01`.
+value is `3.2.00`.
 
 __Examples__
 
@@ -2392,7 +2392,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `5.0-2.1.8.0`.
+value is `5.1-2.3.7.1`.
 
 __Examples__
 
@@ -2539,8 +2539,8 @@ parameter for more information.
 - __mlnx_versions__: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
 versions to install.  The default values are `3.4-2.0.0.0`,
 `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
-`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, and
-`5.0-2.1.8.0`.
+`4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`,
+`5.0-2.1.8.0`, and `5.1-2.3.7.1`.
 
 - __ospackages__: List of OS packages to install prior to installing
 OFED.  For Ubuntu, the default values are `libnl-3-200`,
@@ -2639,9 +2639,9 @@ directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are `byacc`, `file`,
-`make`, `openssh-client`, and `wget`.  For RHEL-based Linux
-distributions, the default values are `byacc`, `file`, `make`,
-`openssh-clients`, and `wget`.
+`flex`, `make`, `openssh-client`, and `wget`.  For RHEL-based
+Linux distributions, the default values are `byacc`, `file`,
+`flex`, `make`, `openssh-clients`, and `wget`.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/mvapich2`.
@@ -2651,7 +2651,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of MVAPICH2 source to download.  This value
-is ignored if `directory` is set.  The default value is `2.3.3`.
+is ignored if `directory` is set.  The default value is `2.3.4`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -2741,7 +2741,7 @@ architecture of the base image.
 - __cuda_version__: The version of CUDA the MVAPICH2-GDR package was
 built against.  The version string format is X.Y.  The version
 should match the version of CUDA provided by the base image.  This
-value is ignored if `package` is set.  The default value is `9.2`.
+value is ignored if `package` is set.  The default value is `10.2`.
 
 - __environment__: Boolean flag to specify whether the environment
 (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
@@ -2759,7 +2759,7 @@ directory. The default value is False.
 MVAPICH2-GDR package was built against.  The version string format
 is X.Y.  The version should match the version of Mellanox OFED
 installed by the `mlnx_ofed` building block.  This value is
-ignored if `package` is set.  The default value is `4.5`.
+ignored if `package` is set.  The default value is `4.7`.
 
 - __ospackages__: List of OS packages to install prior to installation.
 For Ubuntu, the default values are `cpio`, `libnuma1`,
@@ -2780,10 +2780,10 @@ MVAPICH2-GDR version).
 The default value is False.
 
 - __release__: The release of MVAPICH2-GDR to download.  The value is
-ignored is `package` is set.  The default value is `2`.
+ignored is `package` is set.  The default value is `1`.
 
 - __version__: The version of MVAPICH2-GDR to download.  The value is
-ignored if `package` is set.  The default value is `2.3.3`.  Due
+ignored if `package` is set.  The default value is `2.3.4`.  Due
 to differences in the packaging scheme, versions prior to 2.3 are
 not supported.
 
@@ -2859,7 +2859,7 @@ repository.  The default is empty, i.e., use the release package
 specified by `version`.
 
 - __version__: The version of NCCL to install.  The default value is
-`2.7.6-1`.
+`2.7.8-1`.
 
 __Examples__
 
@@ -2952,13 +2952,13 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of NetCDF to download.  The default value is
-`4.7.3`.
+`4.7.4`.
 
 - __version_cxx__: The version of NetCDF C++ to download.  The default
 value is `4.3.1`.
 
 - __version_fortran__: The version of NetCDF Fortran to download.  The
-default value is `4.5.2`.
+default value is `4.5.3`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3010,7 +3010,7 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2020.2.1`.
+value is `2020.3.1`.
 
 __Examples__
 
@@ -3317,7 +3317,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.7`.
+value is `0.3.10`.
 
 __Examples__
 
@@ -3449,7 +3449,7 @@ specified by `version`.
 
 - __version__: The version of OpenMPI source to download.  This
 value is ignored if `directory` is set.  The default value is
-`4.0.3`.
+`4.0.5`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -3789,7 +3789,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of PMIX source to download.  The default value
-is `3.1.4`.
+is `3.1.5`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -4177,7 +4177,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of SLURM source to download.  The default
-value is `19.05.5`.
+value is `20.02.5`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -4324,7 +4324,7 @@ The default is empty, i.e., use the release package specified by
 `version`.
 
 - __version__: The version of UCX source to download.  The default value
-is `1.8.0`.
+is `1.9.0`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`

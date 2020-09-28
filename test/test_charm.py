@@ -38,7 +38,7 @@ class Test_charm(unittest.TestCase):
         """Default charm building block"""
         c = charm()
         self.assertEqual(str(c),
-r'''# Charm++ version 6.9.0
+r'''# Charm++ version 6.10.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         autoconf \
@@ -48,13 +48,13 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
-    mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
-    cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
-    rm -rf /var/tmp/v6.9.0.tar.gz
-ENV CHARMBASE=/usr/local/charm-6.9.0 \
-    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
-    PATH=/usr/local/charm-6.9.0/bin:$PATH''')
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.10.2.tar.gz && \
+    mkdir -p /usr/local && tar -x -f /var/tmp/v6.10.2.tar.gz -C /usr/local -z && \
+    cd /usr/local/charm-6.10.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
+    rm -rf /var/tmp/v6.10.2.tar.gz
+ENV CHARMBASE=/usr/local/charm-6.10.2 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.10.2/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.10.2/bin:$PATH''')
 
     @aarch64
     @ubuntu
@@ -165,7 +165,7 @@ ENV CHARMBASE=/usr/local/charm-6.9.0 \
         r = c.runtime()
         self.assertEqual(r,
 r'''# Charm++
-COPY --from=0 /usr/local/charm-6.9.0 /usr/local/charm-6.9.0
-ENV CHARMBASE=/usr/local/charm-6.9.0 \
-    LD_LIBRARY_PATH=/usr/local/charm-6.9.0/lib_so:$LD_LIBRARY_PATH \
-    PATH=/usr/local/charm-6.9.0/bin:$PATH''')
+COPY --from=0 /usr/local/charm-6.10.2 /usr/local/charm-6.10.2
+ENV CHARMBASE=/usr/local/charm-6.10.2 \
+    LD_LIBRARY_PATH=/usr/local/charm-6.10.2/lib_so:$LD_LIBRARY_PATH \
+    PATH=/usr/local/charm-6.10.2/bin:$PATH''')

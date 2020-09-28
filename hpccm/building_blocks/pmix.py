@@ -81,7 +81,7 @@ class pmix(bb_base,hpccm.templates.envvars, hpccm.templates.ldconfig):
     default value is empty.
 
     version: The version of PMIX source to download.  The default value
-    is `3.1.4`.
+    is `3.1.5`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -112,7 +112,7 @@ class pmix(bb_base,hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/pmix')
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__version = kwargs.pop('version', '3.1.4')
+        self.__version = kwargs.pop('version', '3.1.5')
 
         # Set the Linux distribution specific parameters
         self.__distro()

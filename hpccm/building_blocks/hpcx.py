@@ -99,7 +99,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.6.0`.
+    value is `2.7.0`.
 
     # Examples
 
@@ -126,7 +126,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.6.0')
+        self.__version = kwargs.get('version', '2.7.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -241,10 +241,16 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             hpcx_mpi_dir = posixpath.join(hpcx_dir, 'ompi')
             hpcx_oshmem_dir = hpcx_mpi_dir
             hpcx_mpi_tests_dir = posixpath.join(hpcx_mpi_dir, 'tests')
-            hpcx_osu_dir = posixpath.join(hpcx_mpi_tests_dir,
-                                          'osu-micro-benchmarks-5.3.2')
-            hpcx_osu_cuda_dir = posixpath.join(
-                hpcx_mpi_tests_dir, 'osu-micro-benchmarks-5.3.2-cuda')
+            if StrictVersion(self.__version) >= StrictVersion('2.7'):
+                hpcx_osu_dir = posixpath.join(hpcx_mpi_tests_dir,
+                                              'osu-micro-benchmarks-5.6.2')
+                hpcx_osu_cuda_dir = posixpath.join(
+                    hpcx_mpi_tests_dir, 'osu-micro-benchmarks-5.6.2-cuda')
+            else:
+                hpcx_osu_dir = posixpath.join(hpcx_mpi_tests_dir,
+                                              'osu-micro-benchmarks-5.3.2')
+                hpcx_osu_cuda_dir = posixpath.join(
+                    hpcx_mpi_tests_dir, 'osu-micro-benchmarks-5.3.2-cuda')
             hpcx_ipm_dir = posixpath.join(hpcx_mpi_tests_dir, 'ipm-2.0.6')
             hpcx_ipm_lib = posixpath.join(hpcx_ipm_dir, 'lib', 'libipm.so')
             hpcx_clusterkit_dir = posixpath.join(hpcx_dir, 'clusterkit')

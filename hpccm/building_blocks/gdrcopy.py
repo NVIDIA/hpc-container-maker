@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.templates.envvars
@@ -57,7 +58,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     `/usr/local/gdrcopy`.
 
     version: The version of gdrcopy source to download.  The default
-    value is `2.0`.
+    value is `2.1`.
 
     # Examples
 
@@ -76,7 +77,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/gdrcopy')
-        self.__version = kwargs.pop('version', '2.0')
+        self.__version = kwargs.pop('version', '2.1')
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
@@ -86,6 +87,11 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         if not self.ldconfig:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
                 posixpath.join(self.__prefix, 'lib64'))
+
+        if StrictVersion(self.__version) >= StrictVersion('2.1'):
+            url='{0}/{1}.tar.gz'.format(self.__baseurl, self.__version)
+        else:
+            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version)
 
         # Setup build configuration
         self.__bb = generic_build(
@@ -100,7 +106,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             libdir='lib64',
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
-            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version),
+            url=url,
             **kwargs)
 
         # Container instructions

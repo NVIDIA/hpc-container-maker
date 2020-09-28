@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging
 import posixpath
 
@@ -64,7 +65,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     Anaconda should be installed.  The default is False.
 
     version: The version of Anaconda to download.  The default value
-    is `4.7.12`.
+    is `4.8.3`.
 
     # Examples
 
@@ -103,7 +104,8 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__prefix = kwargs.get('prefix', '/usr/local/anaconda')
         self.__python2 = kwargs.get('python2', False)
         self.__python_version = '2' if self.__python2 else '3'
-        self.__version = kwargs.get('version', '4.7.12')
+        self.__python_subversion = 'py27' if self.__python2 else 'py38'
+        self.__version = kwargs.get('version', '4.8.3')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -145,8 +147,13 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        miniconda = 'Miniconda{0}-{1}-Linux-{2}.sh'.format(
-            self.__python_version, self.__version, self.__arch_pkg)
+        if StrictVersion(self.__version) >= StrictVersion('4.8'):
+            miniconda = 'Miniconda{0}-{1}_{2}-Linux-{3}.sh'.format(
+                self.__python_version, self.__python_subversion,
+                self.__version, self.__arch_pkg)
+        else:
+            miniconda = 'Miniconda{0}-{1}-Linux-{2}.sh'.format(
+                self.__python_version, self.__version, self.__arch_pkg)
         url = '{0}/{1}'.format(self.__baseurl, miniconda)
 
         # Download source from web

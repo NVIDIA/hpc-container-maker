@@ -44,15 +44,15 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
-    bash /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-py38_4.8.3-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     . /usr/local/anaconda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda install -y numpy && \
     /usr/local/anaconda/bin/conda clean -afy && \
-    rm -rf /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh''')
+    rm -rf /var/tmp/Miniconda3-py38_4.8.3-Linux-x86_64.sh''')
 
     @x86_64
     @centos
@@ -66,22 +66,22 @@ RUN yum install -y \
         ca-certificates \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
-    bash /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-py38_4.8.3-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     . /usr/local/anaconda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda install -y numpy && \
     /usr/local/anaconda/bin/conda clean -afy && \
-    rm -rf /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh''')
+    rm -rf /var/tmp/Miniconda3-py38_4.8.3-Linux-x86_64.sh''')
 
     @ppc64le
     @ubuntu
     @docker
     def test_ppc64le(self):
         """ppc64le"""
-        c = conda(eula=True)
+        c = conda(eula=True, version='4.7.12')
         self.assertEqual(str(c),
 r'''# Anaconda
 RUN apt-get update -y && \
@@ -101,7 +101,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://r
     @docker
     def test_channels(self):
         """channels"""
-        c = conda(channels=['conda-forge', 'nvidia'], eula=True)
+        c = conda(channels=['conda-forge', 'nvidia'], eula=True,
+                  version='4.7.12')
         self.assertEqual(str(c),
 r'''# Anaconda
 RUN apt-get update -y && \
@@ -124,7 +125,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://r
     @docker
     def test_environment(self):
         """environment"""
-        c = conda(eula=True, environment='foo/environment.yml')
+        c = conda(eula=True, environment='foo/environment.yml',
+                  version='4.7.12')
         self.assertEqual(str(c),
 r'''# Anaconda
 RUN apt-get update -y && \
@@ -149,7 +151,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://r
     @docker
     def test_python2(self):
         """python 2"""
-        c = conda(eula=True, python2=True)
+        c = conda(eula=True, python2=True, version='4.7.12')
         self.assertEqual(str(c),
 r'''# Anaconda
 RUN apt-get update -y && \

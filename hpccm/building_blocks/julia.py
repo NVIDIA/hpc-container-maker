@@ -78,7 +78,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     is `/usr/local/julia`.
 
     version: The version of Julia to install.  The default value is
-    `1.3.1`.
+    `1.5.1`.
 
     # Examples
 
@@ -107,7 +107,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', ['tar', 'wget'])
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/julia')
-        self.__version = kwargs.get('version', '1.3.1')
+        self.__version = kwargs.get('version', '1.5.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

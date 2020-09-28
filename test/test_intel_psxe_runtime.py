@@ -46,7 +46,7 @@ class Test_intel_psxe_runtime(unittest.TestCase):
         """eula"""
         psxe_rt = intel_psxe_runtime(eula=True)
         self.assertEqual(str(psxe_rt),
-r'''# Intel Parallel Studio XE runtime version 2020.1-12
+r'''# Intel Parallel Studio XE runtime version 2020.2-14
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -62,7 +62,7 @@ RUN wget -qO - https://apt.repos.intel.com/2020/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-2
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends aptitude && \
     aptitude install -y --without-recommends -o Aptitude::ProblemResolver::SolutionCost='100*canceled-actions,200*removals' \
-        intel-psxe-runtime=2020.1-12 && \
+        intel-psxe-runtime=2020.2-14 && \
     rm -rf /var/lib/apt/lists/*
 RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/bash.bashrc''')
 

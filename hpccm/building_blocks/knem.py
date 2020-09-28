@@ -49,7 +49,7 @@ class knem(bb_base, hpccm.templates.envvars):
     `/usr/local/knem`.
 
     version: The version of KNEM source to download.  The default
-    value is `1.1.3`.
+    value is `1.1.4`.
 
     # Examples
 
@@ -67,8 +67,9 @@ class knem(bb_base, hpccm.templates.envvars):
         self.__ospackages = kwargs.pop('ospackages',
                                        ['ca-certificates', 'git'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/knem')
-        self.__repository = kwargs.pop('repository', 'https://gforge.inria.fr/git/knem/knem.git')
-        self.__version = kwargs.pop('version', '1.1.3')
+        self.__repository = kwargs.pop('repository',
+                                       'https://gitlab.inria.fr/knem/knem.git')
+        self.__version = kwargs.pop('version', '1.1.4')
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(

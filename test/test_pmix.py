@@ -38,7 +38,7 @@ class Test_pmix(unittest.TestCase):
         """Default pmix building block"""
         p = pmix()
         self.assertEqual(str(p),
-r'''# PMIX version 3.1.4
+r'''# PMIX version 3.1.5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         file \
@@ -48,12 +48,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v3.1.4/pmix-3.1.4.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/pmix-3.1.4.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/pmix-3.1.4 &&   ./configure --prefix=/usr/local/pmix && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v3.1.5/pmix-3.1.5.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/pmix-3.1.5.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/pmix-3.1.5 &&   ./configure --prefix=/usr/local/pmix && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/pmix-3.1.4 /var/tmp/pmix-3.1.4.tar.gz
+    rm -rf /var/tmp/pmix-3.1.5 /var/tmp/pmix-3.1.5.tar.gz
 ENV CPATH=/usr/local/pmix/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/pmix/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/pmix/bin:$PATH''')

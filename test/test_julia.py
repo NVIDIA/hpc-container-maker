@@ -38,16 +38,16 @@ class Test_julia(unittest.TestCase):
         """Default julia building block"""
         j = julia()
         self.assertEqual(str(j),
-r'''# Julia version 1.3.1
+r'''# Julia version 1.5.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.3/julia-1.3.1-linux-x86_64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.3.1-linux-x86_64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.3.1 /usr/local/julia && \
-    rm -rf /var/tmp/julia-1.3.1-linux-x86_64.tar.gz /var/tmp/julia-1.3.1
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.1-linux-x86_64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.5.1-linux-x86_64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.5.1 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.5.1-linux-x86_64.tar.gz /var/tmp/julia-1.5.1
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
@@ -58,16 +58,16 @@ ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
         """aarch64"""
         j = julia()
         self.assertEqual(str(j),
-r'''# Julia version 1.3.1
+r'''# Julia version 1.5.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.3/julia-1.3.1-linux-aarch64.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.3.1-linux-aarch64.tar.gz -C /var/tmp -z && \
-    cp -a /var/tmp/julia-1.3.1 /usr/local/julia && \
-    rm -rf /var/tmp/julia-1.3.1-linux-aarch64.tar.gz /var/tmp/julia-1.3.1
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.5/julia-1.5.1-linux-aarch64.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.5.1-linux-aarch64.tar.gz -C /var/tmp -z && \
+    cp -a /var/tmp/julia-1.5.1 /usr/local/julia && \
+    rm -rf /var/tmp/julia-1.5.1-linux-aarch64.tar.gz /var/tmp/julia-1.5.1
 ENV LD_LIBRARY_PATH=/usr/local/julia/lib:$LD_LIBRARY_PATH \
     PATH=/usr/local/julia/bin:$PATH''')
 
