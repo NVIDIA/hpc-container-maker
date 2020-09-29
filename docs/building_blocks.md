@@ -3701,6 +3701,9 @@ __Parameters__
 
 - __alternatives__: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
 
+- __args__: List of arguments to pass to pip.  The default is
+`--no-cache-dir`.
+
 - __ospackages__: List of OS packages to install prior to installing
 PyPi packages.  For Ubuntu, the default values are `python-pip`,
 `python-setuptools`, and `python-wheel` for Python 2.x and

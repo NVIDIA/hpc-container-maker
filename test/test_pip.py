@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         python-setuptools \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install hpccm''')
+RUN pip --no-cache-dir install hpccm''')
 
     @centos
     @docker
@@ -57,7 +57,7 @@ RUN yum install -y epel-release && \
     yum install -y \
         python2-pip && \
     rm -rf /var/cache/yum/*
-RUN pip install hpccm''')
+RUN pip --no-cache-dir install hpccm''')
 
     @centos8
     @docker
@@ -71,7 +71,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN alternatives --set python /usr/bin/python2 && \
     alternatives --install /usr/bin/pip pip /usr/bin/pip2 30
-RUN pip install hpccm''')
+RUN pip --no-cache-dir install hpccm''')
 
     @ubuntu
     @docker
@@ -86,13 +86,25 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 install hpccm''')
+RUN pip3 --no-cache-dir install hpccm''')
 
     @centos
     @docker
     def test_pip3_centos(self):
         """pip3 w/ pip building block"""
         p = pip(packages=['hpccm'], pip='pip3')
+        self.assertEqual(str(p),
+r'''# pip
+RUN yum install -y \
+        python3-pip && \
+    rm -rf /var/cache/yum/*
+RUN pip3 --no-cache-dir install hpccm''')
+
+    @centos
+    @docker
+    def test_no_args(self):
+        """empty args option"""
+        p = pip(args=[], packages=['hpccm'], pip='pip3')
         self.assertEqual(str(p),
 r'''# pip
 RUN yum install -y \
@@ -107,7 +119,7 @@ RUN pip3 install hpccm''')
         p = pip(ospackages=[], packages=['hpccm'])
         self.assertEqual(str(p),
 r'''# pip
-RUN pip install hpccm''')
+RUN pip --no-cache-dir install hpccm''')
 
     @ubuntu
     @docker
@@ -120,7 +132,7 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         foo && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install hpccm''')
+RUN pip --no-cache-dir install hpccm''')
 
     @ubuntu
     @docker
@@ -136,7 +148,7 @@ RUN apt-get update -y && \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
 COPY foo/requirements.txt /var/tmp/requirements.txt
-RUN pip install -r /var/tmp/requirements.txt && \
+RUN pip --no-cache-dir install -r /var/tmp/requirements.txt && \
     rm -rf /var/tmp/requirements.txt''')
 
     @ubuntu
@@ -152,5 +164,5 @@ RUN apt-get update -y && \
         python-setuptools \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip install --upgrade pip && \
-    pip install hpccm''')
+RUN pip --no-cache-dir install --upgrade pip && \
+    pip --no-cache-dir install hpccm''')
