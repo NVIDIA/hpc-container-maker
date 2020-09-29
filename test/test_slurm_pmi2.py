@@ -38,7 +38,7 @@ class Test_slurm_pmi2(unittest.TestCase):
         """Default slurm_pmi2 building block"""
         p = slurm_pmi2()
         self.assertEqual(str(p),
-r'''# SLURM PMI2 version 19.05.5
+r'''# SLURM PMI2 version 20.02.5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -48,12 +48,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://download.schedmd.com/slurm/slurm-19.05.5.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/slurm-19.05.5.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/slurm-19.05.5 &&   ./configure --prefix=/usr/local/slurm-pmi2 && \
-    cd /var/tmp/slurm-19.05.5 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://download.schedmd.com/slurm/slurm-20.02.5.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/slurm-20.02.5.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/slurm-20.02.5 &&   ./configure --prefix=/usr/local/slurm-pmi2 && \
+    cd /var/tmp/slurm-20.02.5 && \
     make -C contribs/pmi2 install && \
-    rm -rf /var/tmp/slurm-19.05.5 /var/tmp/slurm-19.05.5.tar.bz2''')
+    rm -rf /var/tmp/slurm-20.02.5 /var/tmp/slurm-20.02.5.tar.bz2''')
 
     @x86_64
     @ubuntu

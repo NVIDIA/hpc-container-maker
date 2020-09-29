@@ -56,7 +56,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     compilers.  However, the environment is not automatically
     configured for the Arm Allinea Studio compilers.  The desired
     environment module must be manually loaded, e.g., `module load
-    Generic-AArch64/RHEL/7/arm-linux-compiler/20.0`.
+    Generic-AArch64/RHEL/7/arm-linux-compiler/20.3`.
 
     # Parameters
 
@@ -88,15 +88,15 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     rather than downloading the tarball from the web.
 
     version: The version of Arm Allinea Studio to install.  The
-    default value is `20.0`.  Due to differences in the packaging
-    scheme, versions prior to 20.0 are not supported.
+    default value is `20.3`.  Due to differences in the packaging
+    scheme, versions prior to 20.2 are not supported.
 
     # Examples
 
     ```python
     arm_allinea_studio(eula=True,
                        microarchitectures=['generic', 'thunderx2t99'],
-                       version='20.0')
+                       version='20.3')
     ```
 
     """
@@ -124,7 +124,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__package_string = '' # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/arm')
         self.__tarball = kwargs.get('tarball', None)
-        self.__version = kwargs.get('version', '20.0')
+        self.__version = kwargs.get('version', '20.3')
         self.__wd = '/var/tmp' # working directory
 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
@@ -167,10 +167,10 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             self.__directory_string = 'Ubuntu-16.04'
-            self.__package_string = 'Ubuntu_16.04'
+            self.__package_string = 'Ubuntu-16.04'
             self.__url_string = 'Ubuntu16.04'
 
-            self.__installer_template = 'arm-compiler-for-linux-{{}}_Generic-AArch64_{0}_aarch64-linux-deb.sh'.format(self.__directory_string)
+            self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
 
             if not self.__ospackages:
                 self.__ospackages = ['libc6-dev', 'lmod', 'python', 'tar',
@@ -179,14 +179,14 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                 self.__directory_string = 'RHEL-8'
-                self.__package_string = 'RHEL_8'
+                self.__package_string = 'RHEL-8'
                 self.__url_string = 'RHEL8'
             else:
                 self.__directory_string = 'RHEL-7'
-                self.__package_string = 'RHEL_7'
+                self.__package_string = 'RHEL-7'
                 self.__url_string = 'RHEL7'
 
-            self.__installer_template = 'arm-compiler-for-linux-{{}}_Generic-AArch64_{}_aarch64-linux-rpm.sh'.format(self.__directory_string)
+            self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
 
             if not self.__ospackages:
                 self.__ospackages = ['Lmod', 'glibc-devel', 'tar', 'wget']
@@ -203,7 +203,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             tarball = posixpath.basename(self.__tarball)
 
             # Figure out the version from the tarball name
-            match = re.match(r'Arm-Compiler-for-Linux_(?P<year>\d\d)\.0?(?P<month>[0-9][0-9]?)',
+            match = re.match(r'arm-compiler-for-linux_(?P<year>\d\d)\.0?(?P<month>[0-9][0-9]?)',
                              tarball)
             if match and match.groupdict()['year'] and match.groupdict()['month']:
                 self.__version = '{0}.{1}'.format(match.groupdict()['year'],
@@ -216,7 +216,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                            match.groupdict()['minor'])
 
-            tarball = 'Arm-Compiler-for-Linux_{0}_{1}_aarch64.tar'.format(
+            tarball = 'arm-compiler-for-linux_{0}_{1}_aarch64.tar'.format(
                 self.__version, self.__package_string)
             url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
                                            self.__url_string, tarball)
@@ -236,7 +236,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__microarchitectures:
             install_args.append('--only-install-microarchitectures={}'.format(
                 ','.join(self.__microarchitectures)))
-        package_directory = 'Arm-Compiler-for-linux_{0}_AArch64_{1}_aarch64'.format(self.__version, self.__package_string)
+        package_directory = 'arm-compiler-for-linux_{0}_{1}'.format(self.__version, self.__package_string)
         self.__commands.append('cd {0} && ./{1} {2}'.format(
             posixpath.join(self.__wd, package_directory),
             self.__installer_template.format(self.__version),

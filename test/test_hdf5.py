@@ -37,7 +37,7 @@ class Test_hdf5(unittest.TestCase):
         """Default hdf5 building block"""
         h = hdf5()
         self.assertEqual(str(h),
-r'''# HDF5 version 1.10.6
+r'''# HDF5 version 1.12.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -46,12 +46,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.6.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/hdf5-1.10.6 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.12.0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/hdf5-1.12.0 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.10.6 /var/tmp/hdf5-1.10.6.tar.bz2
+    rm -rf /var/tmp/hdf5-1.12.0 /var/tmp/hdf5-1.12.0.tar.bz2
 ENV CPATH=/usr/local/hdf5/include:$CPATH \
     HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
@@ -64,7 +64,7 @@ ENV CPATH=/usr/local/hdf5/include:$CPATH \
         """Default hdf5 building block"""
         h = hdf5()
         self.assertEqual(str(h),
-r'''# HDF5 version 1.10.6
+r'''# HDF5 version 1.12.0
 RUN yum install -y \
         bzip2 \
         file \
@@ -72,12 +72,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.6.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/hdf5-1.10.6 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.12.0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/hdf5-1.12.0 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.10.6 /var/tmp/hdf5-1.10.6.tar.bz2
+    rm -rf /var/tmp/hdf5-1.12.0 /var/tmp/hdf5-1.12.0.tar.bz2
 ENV CPATH=/usr/local/hdf5/include:$CPATH \
     HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \

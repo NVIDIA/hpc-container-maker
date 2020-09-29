@@ -78,7 +78,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     specified by `version`.
 
     version: The version of NCCL to install.  The default value is
-    `2.7.6-1`.
+    `2.7.8-1`.
 
     # Examples
 
@@ -107,7 +107,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nccl')
         self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '2.7.6-1')
+        self.__version = kwargs.pop('version', '2.7.8-1')
         self.__wd = '/var/tmp' # working directory
 
         if not self.__build:

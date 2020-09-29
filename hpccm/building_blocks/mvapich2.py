@@ -102,9 +102,9 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are `byacc`, `file`,
-    `make`, `openssh-client`, and `wget`.  For RHEL-based Linux
-    distributions, the default values are `byacc`, `file`, `make`,
-    `openssh-clients`, and `wget`.
+    `flex`, `make`, `openssh-client`, and `wget`.  For RHEL-based
+    Linux distributions, the default values are `byacc`, `file`,
+    `flex`, `make`, `openssh-clients`, and `wget`.
 
     prefix: The top level install location.  The default value is
     `/usr/local/mvapich2`.
@@ -114,7 +114,7 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     default is empty.
 
     version: The version of MVAPICH2 source to download.  This value
-    is ignored if `directory` is set.  The default value is `2.3.3`.
+    is ignored if `directory` is set.  The default value is `2.3.4`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -164,7 +164,7 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         # Input toolchain, i.e., what to use when building
         # Create a copy of the toolchain so that it can be modified
         self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
-        self.__version = kwargs.pop('version', '2.3.3')
+        self.__version = kwargs.pop('version', '2.3.4')
 
         # MVAPICH2 does not accept F90
         self.toolchain_control = {'CC': True, 'CXX': True, 'F77': True,
@@ -219,12 +219,12 @@ class mvapich2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['byacc', 'file', 'make',
+                self.__ospackages = ['byacc', 'file', 'flex', 'make',
                                      'openssh-client', 'wget']
             self.__runtime_ospackages = ['openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['byacc', 'file', 'make',
+                self.__ospackages = ['byacc', 'file', 'flex', 'make',
                                      'openssh-clients', 'wget']
             self.__runtime_ospackages = ['openssh-clients']
         else: # pragma: no cover

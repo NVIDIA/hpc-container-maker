@@ -146,7 +146,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     `version`.
 
     version: The version of UCX source to download.  The default value
-    is `1.8.0`.
+    is `1.9.0`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -208,7 +208,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__prefix = kwargs.pop('prefix', '/usr/local/ucx')
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__toolchain = kwargs.pop('toolchain', toolchain())
-        self.__version = kwargs.pop('version', '1.8.0')
+        self.__version = kwargs.pop('version', '1.9.0')
         self.__xpmem = kwargs.pop('xpmem', '')
 
         # Set the configure options

@@ -76,7 +76,7 @@ class cgns(bb_base):
     default is empty.
 
     version: The version of CGNS source to download.  The default
-    value is `3.4.0`.
+    value is `4.1.2`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -109,7 +109,7 @@ class cgns(bb_base):
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/cgns')
         self.__toolchain = kwargs.pop('toolchain', toolchain())
-        self.__version = kwargs.pop('version', '3.4.0')
+        self.__version = kwargs.pop('version', '4.1.2')
 
         # Set the configuration options
         self.__configure()

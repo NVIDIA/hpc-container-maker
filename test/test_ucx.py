@@ -38,7 +38,7 @@ class Test_ucx(unittest.TestCase):
         """Default ucx building block"""
         u = ucx()
         self.assertEqual(str(u),
-r'''# UCX version 1.8.0
+r'''# UCX version 1.9.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         binutils-dev \
@@ -47,12 +47,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.8.0/ucx-1.8.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.8.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.8.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.9.0/ucx-1.9.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.9.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.9.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.8.0 /var/tmp/ucx-1.8.0.tar.gz
+    rm -rf /var/tmp/ucx-1.9.0 /var/tmp/ucx-1.9.0.tar.gz
 ENV CPATH=/usr/local/ucx/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/ucx/lib:$LIBRARY_PATH \
@@ -65,7 +65,7 @@ ENV CPATH=/usr/local/ucx/include:$CPATH \
         """Default ucx building block"""
         u = ucx()
         self.assertEqual(str(u),
-r'''# UCX version 1.8.0
+r'''# UCX version 1.9.0
 RUN yum install -y \
         binutils-devel \
         file \
@@ -73,12 +73,12 @@ RUN yum install -y \
         numactl-devel \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.8.0/ucx-1.8.0.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.8.0.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.8.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.9.0/ucx-1.9.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.9.0.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/ucx-1.9.0 &&   ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-cuda=/usr/local/cuda && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.8.0 /var/tmp/ucx-1.8.0.tar.gz
+    rm -rf /var/tmp/ucx-1.9.0 /var/tmp/ucx-1.9.0.tar.gz
 ENV CPATH=/usr/local/ucx/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/ucx/lib:$LIBRARY_PATH \
@@ -90,7 +90,7 @@ ENV CPATH=/usr/local/ucx/include:$CPATH \
     def test_with_paths_ubuntu(self):
         """ucx building block with paths"""
         u = ucx(cuda='/cuda', gdrcopy='/gdrcopy', knem='/knem', ofed='/ofed',
-                xpmem='/xpmem')
+                xpmem='/xpmem', version='1.8.0')
         self.assertEqual(str(u),
 r'''# UCX version 1.8.0
 RUN apt-get update -y && \
@@ -117,7 +117,8 @@ ENV CPATH=/usr/local/ucx/include:$CPATH \
     @docker
     def test_with_true_ubuntu(self):
         """ucx building block with True values"""
-        u = ucx(cuda=True, gdrcopy=True, knem=True, ofed=True, xpmem=True)
+        u = ucx(cuda=True, gdrcopy=True, knem=True, ofed=True, xpmem=True,
+                version='1.8.0')
         self.assertEqual(str(u),
 r'''# UCX version 1.8.0
 RUN apt-get update -y && \
@@ -144,7 +145,8 @@ ENV CPATH=/usr/local/ucx/include:$CPATH \
     @docker
     def test_with_false_ubuntu(self):
         """ucx building block with False values"""
-        u = ucx(cuda=False, gdrcopy=False, knem=False, ofed=False, xpmem=False)
+        u = ucx(cuda=False, gdrcopy=False, knem=False, ofed=False, xpmem=False,
+                version='1.8.0')
         self.assertEqual(str(u),
 r'''# UCX version 1.8.0
 RUN apt-get update -y && \

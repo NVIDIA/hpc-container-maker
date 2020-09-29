@@ -37,7 +37,7 @@ class Test_kokkos(unittest.TestCase):
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 3.1.01
+r'''# Kokkos version 3.2.00
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         gzip \
@@ -46,12 +46,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.2.00 /var/tmp/3.2.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos
@@ -60,7 +60,7 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 3.1.01
+r'''# Kokkos version 3.2.00
 RUN yum install -y \
         gzip \
         hwloc-devel \
@@ -68,12 +68,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.2.00 /var/tmp/3.2.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @centos8
@@ -82,7 +82,7 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         """Default kokkos building block"""
         k = kokkos()
         self.assertEqual(str(k),
-r'''# Kokkos version 3.1.01
+r'''# Kokkos version 3.2.00
 RUN yum install -y dnf-utils && \
     yum-config-manager --set-enabled PowerTools && \
     yum install -y \
@@ -92,19 +92,19 @@ RUN yum install -y dnf-utils && \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/3.1.01.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/kokkos-3.1.01/build && cd /var/tmp/kokkos-3.1.01/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.1.01 && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/kokkos-3.1.01/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/kokkos-3.1.01 /var/tmp/3.1.01.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/kokkos-3.2.00/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/kokkos-3.2.00 /var/tmp/3.2.00.tar.gz
 ENV PATH=/usr/local/kokkos/bin:$PATH''')
 
     @ubuntu
     @docker
     def test_check_and_repository(self):
         """Check and repository options"""
-        k = kokkos(check=True, repository=True)
+        k = kokkos(check=True, repository=True, version='3.1.01')
         self.assertEqual(str(k),
 r'''# Kokkos version 3.1.01
 RUN apt-get update -y && \

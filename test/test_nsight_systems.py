@@ -38,7 +38,7 @@ class Test_nsight_systems(unittest.TestCase):
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.2.1
+r'''# NVIDIA Nsight Systems 2020.3.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -50,7 +50,7 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
     echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2020.2.1 && \
+        nsight-systems-cli-2020.3.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -60,12 +60,12 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.2.1
+r'''# NVIDIA Nsight Systems 2020.3.1
 RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/7fa2af80.pub && \
     yum install -y dnf-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/x86_64 && \
     yum install -y \
-        nsight-systems-cli-2020.2.1 && \
+        nsight-systems-cli-2020.3.1 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64

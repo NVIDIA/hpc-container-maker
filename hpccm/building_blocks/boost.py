@@ -82,7 +82,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     SourceForge repository should be used.  The default is False.
 
     version: The version of Boost source to download.  The default
-    value is `1.72.0`.
+    value is `1.74.0`.
 
     # Examples
 
@@ -110,7 +110,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__prefix = kwargs.get('prefix', '/usr/local/boost')
         self.__python = kwargs.get('python', False)
         self.__sourceforge = kwargs.get('sourceforge', False)
-        self.__version = kwargs.get('version', '1.72.0')
+        self.__version = kwargs.get('version', '1.74.0')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory

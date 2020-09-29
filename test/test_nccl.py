@@ -38,7 +38,7 @@ class Test_nccl(unittest.TestCase):
         """nccl defaults"""
         n = nccl()
         self.assertEqual(str(n),
-r'''# NCCL 2.7.6-1
+r'''# NCCL 2.7.8-1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -50,8 +50,8 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/machine-learning/re
     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl-dev=2.7.6-1+cuda11.0 \
-        libnccl2=2.7.6-1+cuda11.0 && \
+        libnccl-dev=2.7.8-1+cuda11.0 \
+        libnccl2=2.7.8-1+cuda11.0 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -61,7 +61,7 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/machine-learning/re
         """nccl defaults"""
         n = nccl()
         self.assertEqual(str(n),
-r'''# NCCL 2.7.6-1
+r'''# NCCL 2.7.8-1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -73,8 +73,8 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/machine-learning/re
     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl-dev=2.7.6-1+cuda11.0 \
-        libnccl2=2.7.6-1+cuda11.0 && \
+        libnccl-dev=2.7.8-1+cuda11.0 \
+        libnccl2=2.7.8-1+cuda11.0 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @ppc64le
@@ -113,11 +113,11 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.7.6-1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.7.6-1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nccl-2.7.6-1 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.7.8-1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.7.8-1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nccl-2.7.8-1 && \
     PREFIX=/usr/local/nccl make -j$(nproc) install && \
-    rm -rf /var/tmp/nccl-2.7.6-1 /var/tmp/v2.7.6-1.tar.gz
+    rm -rf /var/tmp/nccl-2.7.8-1 /var/tmp/v2.7.8-1.tar.gz
 ENV CPATH=/usr/local/nccl/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nccl/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nccl/lib:$LIBRARY_PATH \
@@ -130,13 +130,13 @@ ENV CPATH=/usr/local/nccl/include:$CPATH \
         """nccl defaults"""
         n = nccl()
         self.assertEqual(str(n),
-r'''# NCCL 2.7.6-1
+r'''# NCCL 2.7.8-1
 RUN rpm --import https://developer.download.nvidia.com/compute/machine-learning/repos/rhel7/x86_64/7fa2af80.pub && \
     yum install -y yum-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/compute/machine-learning/repos/rhel7/x86_64 && \
     yum install -y \
-        libnccl-2.7.6-1+cuda11.0 \
-        libnccl-devel-2.7.6-1+cuda11.0 && \
+        libnccl-2.7.8-1+cuda11.0 \
+        libnccl-devel-2.7.8-1+cuda11.0 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -146,13 +146,13 @@ RUN rpm --import https://developer.download.nvidia.com/compute/machine-learning/
         """nccl defaults"""
         n = nccl()
         self.assertEqual(str(n),
-r'''# NCCL 2.7.6-1
+r'''# NCCL 2.7.8-1
 RUN rpm --import https://developer.download.nvidia.com/compute/machine-learning/repos/rhel8/x86_64/7fa2af80.pub && \
     yum install -y dnf-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/compute/machine-learning/repos/rhel8/x86_64 && \
     yum install -y \
-        libnccl-2.7.6-1+cuda11.0 \
-        libnccl-devel-2.7.6-1+cuda11.0 && \
+        libnccl-2.7.8-1+cuda11.0 \
+        libnccl-devel-2.7.8-1+cuda11.0 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -183,7 +183,7 @@ ENV CPATH=/usr/local/nccl/include:$CPATH \
     @docker
     def test_build_centos(self):
         """nccl build"""
-        n = nccl(build=True)
+        n = nccl(build=True, version='2.7.6-1')
         self.assertEqual(str(n),
 r'''# NCCL
 RUN yum install -y \
@@ -221,7 +221,7 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/machine-learning/re
     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl2=2.7.6-1+cuda11.0 && \
+        libnccl2=2.7.8-1+cuda11.0 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64

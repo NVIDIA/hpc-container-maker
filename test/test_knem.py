@@ -37,13 +37,13 @@ class Test_knem(unittest.TestCase):
         """Default knem building block"""
         k = knem()
         self.assertEqual(str(k),
-r'''# KNEM version 1.1.3
+r'''# KNEM version 1.1.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
         git && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.3 https://gforge.inria.fr/git/knem/knem.git knem && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.4 https://gitlab.inria.fr/knem/knem.git knem && cd - && \
     mkdir -p /usr/local/knem && \
     cd /var/tmp/knem && \
     mkdir -p /usr/local/knem/include && \
@@ -57,12 +57,12 @@ ENV CPATH=/usr/local/knem/include:$CPATH''')
         """Default knem building block"""
         k = knem()
         self.assertEqual(str(k),
-r'''# KNEM version 1.1.3
+r'''# KNEM version 1.1.4
 RUN yum install -y \
         ca-certificates \
         git && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.3 https://gforge.inria.fr/git/knem/knem.git knem && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch knem-1.1.4 https://gitlab.inria.fr/knem/knem.git knem && cd - && \
     mkdir -p /usr/local/knem && \
     cd /var/tmp/knem && \
     mkdir -p /usr/local/knem/include && \

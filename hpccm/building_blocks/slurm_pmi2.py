@@ -76,7 +76,7 @@ class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     default value is empty.
 
     version: The version of SLURM source to download.  The default
-    value is `19.05.5`.
+    value is `20.02.5`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -107,7 +107,7 @@ class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__ospackages = kwargs.pop('ospackages', ['bzip2', 'file', 'make',
                                                       'perl', 'tar', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/slurm-pmi2')
-        self.__version = kwargs.pop('version', '19.05.5')
+        self.__version = kwargs.pop('version', '20.02.5')
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
