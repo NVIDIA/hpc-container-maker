@@ -21,8 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from six import string_types
-
 from distutils.version import StrictVersion
 
 import hpccm.config

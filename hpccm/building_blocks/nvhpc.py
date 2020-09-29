@@ -20,7 +20,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
 import logging
 import re
 import posixpath
