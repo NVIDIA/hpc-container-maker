@@ -1,3 +1,19 @@
+# v20.9.0
+
+- Refreshes default component versions for the Arm Allinea Studio
+  (`arm_allinea_studio`), Boost (`boost`), CGNS (`cgns`), Charm++ (`charm`),
+  CMake (`cmake`), Anaconda (`conda`), gdrcopy (`gdrcopy`), HDF5 (`hdf5`),
+  HPC-X (`hpcx`), Intel Parallel Studio runtime (`intel_psxe_runtime`),
+  Julia (`julia`), Kokkos (`kokkos`), Mellanox OFED (`mlnx_ofed`),
+  "Multi OFED" (`multi_ofed`), MVAPICH2 (`mvapich2`), MVAPICH2-GDR
+  (`mvapich2_gdr`), NCCL (`nccl`), NetCDF (`netcdf`), OpenBLAS (`openblas`),
+  OpenMPI (`openmpi`), PMIX (`pmix`), PMI (`slurm_pmi2`), and UCX (`ucx`)
+  building blocks.
+- Enhancements and fixes to the GNU (`gnu`), NVIDIA HPC SDK (`nvhpc`),
+  OpenMPI (`openmpi`), pip (`pip`), and PnetCDF (`pnetcdf`) building blocks.
+- Updates the PGI (`pgi`) building block to reflect changes in the vendor
+  distribution model.
+
 # v20.8.0
 
 - Adds an NVIDIA HPC SDK (`nvhpc`) building block, replacing the previous
