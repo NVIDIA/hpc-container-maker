@@ -41,6 +41,9 @@ class pip(bb_base, hpccm.templates.rm):
 
     alternatives: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
 
+    args: List of arguments to pass to pip.  The default is
+    `--no-cache-dir`.
+
     ospackages: List of OS packages to install prior to installing
     PyPi packages.  For Ubuntu, the default values are `python-pip`,
     `python-setuptools`, and `python-wheel` for Python 2.x and
@@ -83,6 +86,7 @@ class pip(bb_base, hpccm.templates.rm):
         super(pip, self).__init__(**kwargs)
 
         self.__alternatives = kwargs.get('alternatives', False)
+        self.__args = kwargs.get('args', ['--no-cache-dir'])
         self.__epel = False
         self.__ospackages = kwargs.get('ospackages', None)
         self.__packages = kwargs.get('packages', [])
@@ -128,6 +132,10 @@ class pip(bb_base, hpccm.templates.rm):
                 'alternatives --install /usr/bin/pip pip /usr/bin/pip2 30'])
 
         if self.__pip:
+            if self.__args:
+                self.__pip = '{0} {1}'.format(self.__pip,
+                                              ' '.join(self.__args))
+
             cmds = []
 
             if self.__upgrade:
