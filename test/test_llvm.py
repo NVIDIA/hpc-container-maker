@@ -172,6 +172,19 @@ ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/8:$COMPILER_PATH \
     @x86_64
     @ubuntu
     @docker
+    def test_openmp_ubuntu(self):
+        """openmp disabled"""
+        l = llvm(openmp=False)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @ubuntu
+    @docker
     def test_extra_tools_ubuntu(self):
         """clang-format and clang-tidy"""
         l = llvm(extra_tools=True)
