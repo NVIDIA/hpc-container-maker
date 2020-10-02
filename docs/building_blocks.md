@@ -595,6 +595,10 @@ empty list.
 - __python2__: Boolean flag to specify that the Python 2 version of
 Anaconda should be installed.  The default is False.
 
+- __python_subversion__: The Python version to install.  This value is
+ignored if the Conda version is less than 4.8.  The default is
+`py38` if using Python 3, and `py27` if using Python 2.
+
 - __version__: The version of Anaconda to download.  The default value
 is `4.8.3`.
 
