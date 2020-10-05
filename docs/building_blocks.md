@@ -2163,6 +2163,9 @@ include the LLVM compilers when necessary. The default is True.
 - __extra_tools__: Boolean flag to specify whether to also install
 `clang-format` and `clang-tidy`.  The default is False.
 
+- __openmp__: Boolean flag to specify whether to also install OpenMP
+support.  The default is True.
+
 - __toolset__: Boolean flag to specify whether to also install the
 full LLVM toolset.  The default is False.
 

@@ -51,6 +51,9 @@ class llvm(bb_base, hpccm.templates.envvars):
     extra_tools: Boolean flag to specify whether to also install
     `clang-format` and `clang-tidy`.  The default is False.
 
+    openmp: Boolean flag to specify whether to also install OpenMP
+    support.  The default is True.
+
     toolset: Boolean flag to specify whether to also install the
     full LLVM toolset.  The default is False.
 
@@ -97,6 +100,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         self.__compiler_debs = []  # Filled in below
         self.__compiler_rpms = []  # Filled in below
         self.__extra_tools = kwargs.get('extra_tools', False)
+        self.__openmp = kwargs.get('openmp', True)
         self.__ospackages = kwargs.get('ospackages', []) # Filled in below
         self.__runtime_debs = []   # Filled in below
         self.__runtime_ospackages = [] # Filled in below
@@ -129,21 +133,26 @@ class llvm(bb_base, hpccm.templates.envvars):
 
             if self.__version:
                 if LooseVersion(self.__version) <= LooseVersion('6.0'):
+                    self.__compiler_debs = ['clang-{}'.format(self.__version)]
+                    self.__runtime_debs = [
+                        'libclang1-{}'.format(self.__version)]
+
                     # Versioned OpenMP libraries do not exist for
                     # older versions
-                    self.__compiler_debs = [
-                        'clang-{}'.format(self.__version),
-                        'libomp-dev']
-                    self.__runtime_debs = [
-                        'libclang1-{}'.format(self.__version),
-                        'libomp5']
+                    if self.__openmp:
+                        self.__compiler_debs.append('libomp-dev')
+                        self.__runtime_debs.append('libomp5')
+
                 else:
-                    self.__compiler_debs = [
-                        'clang-{}'.format(self.__version),
-                        'libomp-{}-dev'.format(self.__version)]
+                    self.__compiler_debs = ['clang-{}'.format(self.__version)]
                     self.__runtime_debs = [
-                        'libclang1-{}'.format(self.__version),
-                        'libomp5-{}'.format(self.__version)]
+                        'libclang1-{}'.format(self.__version)]
+
+                    if self.__openmp:
+                        self.__compiler_debs.append(
+                            'libomp-{}-dev'.format(self.__version))
+                        self.__runtime_debs.append(
+                            'libomp5-{}'.format(self.__version))
 
                 if self.__upstream:
                     # Upstream packages from apt.llvm.org
@@ -196,8 +205,12 @@ class llvm(bb_base, hpccm.templates.envvars):
 
             else:
                 # Distro default
-                self.__compiler_debs = ['clang', 'libomp-dev']
-                self.__runtime_debs = ['libclang1', 'libomp5']
+                self.__compiler_debs = ['clang']
+                self.__runtime_debs = ['libclang1']
+
+                if self.__openmp:
+                    self.__compiler_debs.append('libomp-dev')
+                    self.__runtime_debs.append('libomp5')
 
                 if self.__toolset or self.__extra_tools:
                     self.__compiler_debs.extend(['clang-format', 'clang-tidy'])
@@ -224,9 +237,13 @@ class llvm(bb_base, hpccm.templates.envvars):
             if self.__version:
                 if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                     # Multiple versions are not available for CentOS 8
-                    self.__compiler_rpms = ['clang', 'llvm-libs', 'libomp']
-                    self.__runtime_rpms = ['llvm-libs', 'libomp']
+                    self.__compiler_rpms = ['clang', 'llvm-libs']
+                    self.__runtime_rpms = ['llvm-libs']
                     compiler_version = '8'
+
+                    if self.__openmp:
+                        self.__compiler_rpms.append('libomp')
+                        self.__runtime_rpms.append('libomp')
 
                     if self.__toolset or self.__extra_tools:
                         self.__compiler_rpms.append('clang-tools-extra')
@@ -236,13 +253,17 @@ class llvm(bb_base, hpccm.templates.envvars):
                 else:
                     # CentOS 7
                     self.__compiler_rpms = [
-                        'llvm-toolset-{}-clang'.format(self.__version),
-                        'llvm-toolset-{}-libomp-devel'.format(self.__version)]
+                        'llvm-toolset-{}-clang'.format(self.__version)]
                     self.__runtime_rpms = [
                         'llvm-toolset-{}-runtime'.format(self.__version),
-                        'llvm-toolset-{}-libomp'.format(self.__version),
                         'llvm-toolset-{}-compiler-rt'.format(self.__version)]
                     compiler_version = '4.8.2'
+
+                    if self.__openmp:
+                        self.__compiler_rpms.append(
+                            'llvm-toolset-{}-libomp-devel'.format(self.__version))
+                        self.__runtime_rpms.append(
+                            'llvm-toolset-{}-libomp'.format(self.__version))
 
                     if self.__toolset or self.__extra_tools:
                         self.__compiler_rpms.append('llvm-toolset-{}-clang-tools-extra'.format(self.__version))
@@ -258,8 +279,11 @@ class llvm(bb_base, hpccm.templates.envvars):
                 self.__compiler_rpms = ['clang']
                 if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                     # CentOS 8
-                    self.__runtime_rpms = ['llvm-libs', 'libomp']
+                    self.__runtime_rpms = ['llvm-libs']
                     compiler_version = '8'
+
+                    if self.__openmp:
+                        self.__runtime_rpms.append('libomp')
 
                     if self.__toolset or self.__extra_tools:
                         self.__compiler_rpms.append('clang-tools-extra')
