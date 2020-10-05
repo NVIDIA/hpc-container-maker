@@ -64,6 +64,10 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
     python2: Boolean flag to specify that the Python 2 version of
     Anaconda should be installed.  The default is False.
 
+    python_subversion: The Python version to install.  This value is
+    ignored if the Conda version is less than 4.8.  The default is
+    `py38` if using Python 3, and `py27` if using Python 2.
+
     version: The version of Anaconda to download.  The default value
     is `4.8.3`.
 
@@ -104,7 +108,8 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__prefix = kwargs.get('prefix', '/usr/local/anaconda')
         self.__python2 = kwargs.get('python2', False)
         self.__python_version = '2' if self.__python2 else '3'
-        self.__python_subversion = 'py27' if self.__python2 else 'py38'
+        self.__python_subversion = kwargs.get(
+            'python_subversion', 'py27' if self.__python2 else 'py38')
         self.__version = kwargs.get('version', '4.8.3')
 
         self.__commands = [] # Filled in by __setup()

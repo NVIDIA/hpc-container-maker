@@ -169,6 +169,26 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://r
     @x86_64
     @ubuntu
     @docker
+    def test_python_subversion(self):
+        """python subversion"""
+        c = conda(eula=True, python_subversion='py37', version='4.8.3')
+        self.assertEqual(str(c),
+r'''# Anaconda
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-py37_4.8.3-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+    /usr/local/anaconda/bin/conda init && \
+    ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    /usr/local/anaconda/bin/conda clean -afy && \
+    rm -rf /var/tmp/Miniconda3-py37_4.8.3-Linux-x86_64.sh''')
+
+    @x86_64
+    @ubuntu
+    @docker
     def test_runtime(self):
         """runtime"""
         c = conda(eula=True)
