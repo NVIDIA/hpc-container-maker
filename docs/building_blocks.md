@@ -3094,7 +3094,7 @@ wildcards are supported.  The default is an empty list.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `20.7`.
+file name.  The default value is `20.9`.
 
 __Examples__
 

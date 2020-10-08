@@ -102,7 +102,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `20.7`.
+    file name.  The default value is `20.9`.
 
     # Examples
 
@@ -151,7 +151,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
-        self.__version = '20.7'
+        self.__version = kwargs.get('version', '20.9')
         self.__wd = '/var/tmp' # working directory
         self.__year = '' # Filled in by __version()
 
@@ -311,9 +311,9 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             if self.__url:
                 self.url = self.__url
             else:
-                baseurl = 'https://developer.download.nvidia.com/hpc-sdk/nvhpc_{0}_{1}_{2}_cuda_{{}}.tar.gz'.format(
-                    self.__year, self.__version.replace('.', ''),
-                    self.__arch_directory)
+                baseurl = 'https://developer.download.nvidia.com/hpc-sdk/{0}/nvhpc_{1}_{2}_{3}_cuda_{{}}.tar.gz'.format(
+                    self.__version, self.__year,
+                    self.__version.replace('.', ''), self.__arch_directory)
                 if self.__cuda_multi:
                     self.url = baseurl.format('multi')
                 elif self.__cuda_version:
