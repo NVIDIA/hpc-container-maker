@@ -161,6 +161,13 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
 
     @docker
+    def test_detect_ubuntu20(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='nvidia/cuda:11.0-devel-ubuntu20.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
+
+    @docker
     def test_detect_ubuntu_16(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='ubuntu:16.04')
@@ -173,6 +180,13 @@ From: foo.sif
         b = baseimage(image='ubuntu:18.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+
+    @docker
+    def test_detect_ubuntu_20(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='ubuntu:20.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
 
     @docker
     def test_detect_centos(self):
@@ -236,6 +250,13 @@ From: foo.sif
         b = baseimage(image='foo', _distro='ubuntu18')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+
+    @docker
+    def test_distro_ubuntu20(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='ubuntu20')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
 
     @docker
     def test_distro_centos(self):

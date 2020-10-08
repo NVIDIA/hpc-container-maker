@@ -1488,9 +1488,9 @@ version of Mellanox HPC-X should be used.  The default is `False`.
 
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04` for
-Ubuntu 16.04 and `ubuntu18.04` for Ubuntu 18.04.  For RHEL-based
-Linux distributions, the default value is `redhat7.6` for version
-7 and `redhat8.0` for version 8.
+Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, and `ubuntu20.04`
+for Ubuntu 20.04.  For RHEL-based Linux distributions, the default
+value is `redhat7.6` for version 7 and `redhat8.0` for version 8.
 
 - __ospackages__: List of OS packages to install prior to installing
 Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
