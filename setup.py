@@ -39,7 +39,7 @@ setup(
       "Programming Language :: Python :: 3.6"
     ],
     # Make hpccm.cli.main available from the command line as `hpccm`.
-    install_requires=['enum34', 'six'],
+    install_requires=["enum34; python_version < '3.4'", 'six'],
     entry_points={
         'console_scripts': [
             'hpccm=hpccm.cli:main']})
