@@ -133,9 +133,13 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         # apart the full version to get the MAJOR and MINOR
         # components.
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
+        major = int(match.groupdict()['major'])
+        minor = int(match.groupdict()['minor'])
+        major_minor = '{0}.{1}'.format(major, minor)
+
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
+        if major == 3 and minor == 0 or major < 3:
+            runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
         # Download source from web
