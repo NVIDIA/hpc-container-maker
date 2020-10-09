@@ -139,6 +139,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
         if major == 3 and minor == 0 or major < 3:
+            self.__ospackages += ['libc6-i386']
             runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
