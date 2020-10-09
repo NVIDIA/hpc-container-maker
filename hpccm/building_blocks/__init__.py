@@ -48,6 +48,7 @@ __all__ = ['amgx',
            'mvapich2',
            'nccl',
            'netcdf',
+           'nsight_compute',
            'nsight_systems',
            'nvhpc',
            'nvshmem',
@@ -101,6 +102,7 @@ from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 from hpccm.building_blocks.mvapich2 import mvapich2
 from hpccm.building_blocks.nccl import nccl
 from hpccm.building_blocks.netcdf import netcdf
+from hpccm.building_blocks.nsight_compute import nsight_compute
 from hpccm.building_blocks.nsight_systems import nsight_systems
 from hpccm.building_blocks.nvhpc import nvhpc
 from hpccm.building_blocks.nvshmem import nvshmem
