@@ -341,7 +341,14 @@ class llvm(bb_base, hpccm.templates.envvars):
         codename = 'xenial'
         codename_ver = 'xenial'
 
-        if (hpccm.config.g_linux_version >= StrictVersion('18.0') and
+        if (hpccm.config.g_linux_version >= StrictVersion('20.0') and
+            hpccm.config.g_linux_version < StrictVersion('21.0')):
+            codename = 'focal'
+            if self.__version == self.__trunk_version:
+                codename_ver = 'focal'
+            else:
+                codename_ver = 'focal-{}'.format(self.__version)
+        elif (hpccm.config.g_linux_version >= StrictVersion('18.0') and
             hpccm.config.g_linux_version < StrictVersion('19.0')):
             codename = 'bionic'
             if self.__version == self.__trunk_version:

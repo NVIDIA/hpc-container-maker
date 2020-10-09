@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64
 
 from hpccm.building_blocks.hpcx import hpcx
 
@@ -74,6 +74,28 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
     rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64''')
+
+    @x86_64
+    @ubuntu20
+    @docker
+    def test_defaults_ubuntu20(self):
+        """Default hpcx building block"""
+        h = hpcx()
+        self.assertEqual(str(h),
+r'''# Mellanox HPC-X version 2.7.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bzip2 \
+        openssh-client \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64 /usr/local/hpcx && \
+    echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
+    echo "hpcx_load" >> /etc/bash.bashrc && \
+    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64''')
 
     @x86_64
     @centos

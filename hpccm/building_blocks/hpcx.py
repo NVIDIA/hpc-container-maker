@@ -85,9 +85,9 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04` for
-    Ubuntu 16.04 and `ubuntu18.04` for Ubuntu 18.04.  For RHEL-based
-    Linux distributions, the default value is `redhat7.6` for version
-    7 and `redhat8.0` for version 8.
+    Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, and `ubuntu20.04`
+    for Ubuntu 20.04.  For RHEL-based Linux distributions, the default
+    value is `redhat7.6` for version 7 and `redhat8.0` for version 8.
 
     ospackages: List of OS packages to install prior to installing
     Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
@@ -158,7 +158,9 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                    self.__oslabel = 'ubuntu20.04'
+                elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                     self.__oslabel = 'ubuntu18.04'
                 else:
                     self.__oslabel = 'ubuntu16.04'

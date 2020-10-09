@@ -22,8 +22,8 @@ is `docker` (Singularity specific).
 
 - ___distro__: The underlying Linux distribution of the base image.
 Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
-`rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
-default, the primitive attempts to figure out the Linux
+`rhel7`, `rhel8, `ubuntu`, `ubuntu16`, `ubuntu18`, and `ubuntu20`.
+By default, the primitive attempts to figure out the Linux
 distribution by inspecting the image identifier, and falls back to
 `ubuntu` if unable to determine the Linux distribution
 automatically.
@@ -33,7 +33,7 @@ automatically.
  `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
  default value is True.
 
-- __image__: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
+- __image__: The image identifier to use as the base image.  The default value is `ubuntu:18.04`.
 
 - __AS__: Name for the build stage (Docker specific).  The default value
 is empty.  This parameter is deprecated; use `_as` instead.

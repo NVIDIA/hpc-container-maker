@@ -113,7 +113,10 @@ class ofed(bb_base):
             if hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 # Give priority to packages from the Ubuntu repositories over
                 # vendor repositories
-                self.__extra_opts = ['-t bionic']
+                if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                    self.__extra_opts = ['-t focal']
+                else:
+                    self.__extra_opts = ['-t bionic']
 
                 self.__ospackages= ['dapl2-utils', 'ibutils',
                                     'ibverbs-providers', 'ibverbs-utils',

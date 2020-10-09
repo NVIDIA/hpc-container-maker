@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from distutils.version import StrictVersion
+import logging
 import posixpath
 
 import hpccm.config
@@ -111,6 +112,10 @@ class pip(bb_base, hpccm.templates.rm):
                     hpccm.config.g_linux_version < StrictVersion('8.0')):
                     # python2-pip is an EPEL package in CentOS 7.x
                     self.__epel = True
+                elif (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
+                      hpccm.config.g_linux_version >= StrictVersion('20.0')):
+                    # python-pip is not supported in Ubuntu 20.04
+                    logging.warning('pip2 is not supported in Ubuntu 20.04.  Use pip3.')
         elif self.__ospackages:
             self.__debs = self.__ospackages
             self.__rpms = self.__ospackages

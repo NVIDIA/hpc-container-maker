@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ppc64le, x86_64
+from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20, ppc64le, x86_64
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -72,6 +72,32 @@ RUN apt-get update -y && \
 r'''# OFED
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t bionic \
+        dapl2-utils \
+        ibutils \
+        ibverbs-providers \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libdapl2 \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @ubuntu20
+    @docker
+    def test_defaults_ubuntu20(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t focal \
         dapl2-utils \
         ibutils \
         ibverbs-providers \

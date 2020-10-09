@@ -50,8 +50,8 @@ class baseimage(object):
 
     _distro: The underlying Linux distribution of the base image.
     Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
-    `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, and `ubuntu18`.  By
-    default, the primitive attempts to figure out the Linux
+    `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, `ubuntu18`, and `ubuntu20`.
+    By default, the primitive attempts to figure out the Linux
     distribution by inspecting the image identifier, and falls back to
     `ubuntu` if unable to determine the Linux distribution
     automatically.
@@ -61,7 +61,7 @@ class baseimage(object):
      `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
      default value is True.
 
-    image: The image identifier to use as the base image.  The default value is `nvidia/cuda:9.0-devel-ubuntu16.04`.
+    image: The image identifier to use as the base image.  The default value is `ubuntu:18.04`.
 
     AS: Name for the build stage (Docker specific).  The default value
     is empty.  This parameter is deprecated; use `_as` instead.
@@ -83,7 +83,7 @@ class baseimage(object):
         self.__as = kwargs.get('AS', '') # Deprecated
         self.__as = kwargs.get('_as', self.__as)
         self.__bootstrap = kwargs.get('_bootstrap', 'docker')
-        self.image = kwargs.get('image', 'nvidia/cuda:9.0-devel-ubuntu16.04')
+        self.image = kwargs.get('image', 'ubuntu:18.04')
         self.__distro = kwargs.get('_distro', '')
         self.__docker_env = kwargs.get('_docker_env', True) # Singularity specific
 
@@ -114,6 +114,8 @@ class baseimage(object):
             hpccm.config.set_linux_distro('ubuntu16')
         elif self.__distro == 'ubuntu18':
             hpccm.config.set_linux_distro('ubuntu18')
+        elif self.__distro == 'ubuntu20':
+            hpccm.config.set_linux_distro('ubuntu20')
         elif self.__distro == 'centos':
             hpccm.config.set_linux_distro('centos')
         elif self.__distro == 'centos7':
@@ -140,6 +142,8 @@ class baseimage(object):
             hpccm.config.set_linux_distro('ubuntu16')
         elif re.search(r'ubuntu:?18', self.image):
             hpccm.config.set_linux_distro('ubuntu18')
+        elif re.search(r'ubuntu:?20', self.image):
+            hpccm.config.set_linux_distro('ubuntu20')
         elif re.search(r'ubuntu', self.image):
             hpccm.config.set_linux_distro('ubuntu')
         else:
