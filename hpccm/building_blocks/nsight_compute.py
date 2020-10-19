@@ -44,8 +44,6 @@ class nsight_compute(bb_base):
 
     run_file: Path to NSight Compute's `.run` file to install. The default value is `None`.
 
-    predeploy: This speeds up the time it takes to attach a remote GUI to the container by including the files that usually need to be copied already in the container image itself. This increases image size by about 150 Mb. Default is `False`.
-
     install_path: Path where files are installed. Default is `/usr/local/NVIDIA-Nsight-Compute`.
 
     ospackages: List of OS packages to install prior to building.  The
@@ -68,8 +66,6 @@ class nsight_compute(bb_base):
         self.__wd = '/var/tmp'
         self.__ospackages = kwargs.pop('ospackages', ['perl'])
         self.__target = kwargs.get('target', '/usr/local/NVIDIA-Nsight-Compute')
-        self.__predeploy = kwargs.get('predeploy', False)
-
 
         if self.__run_file is None or not self.__run_file.endswith('.run'):
             raise RuntimeError('Nsight Compute\'s block requires a \'`.run` file\' to be specified via the `run_file` argument.')
@@ -90,8 +86,7 @@ class nsight_compute(bb_base):
             f'sh ./{pkg} --nox11 -- -noprompt -targetpath={self.__target}'
         ]
 
-        if self.__predeploy:
-            install_cmds += self._predeploy_target_commands(self.__target)
+        install_cmds += self._predeploy_target_commands(self.__target)
 
         self.__bb = generic_build(
             annotations={'file': pkg},
@@ -117,7 +112,7 @@ class nsight_compute(bb_base):
         this removes the need to copy the files over."""
         return [
             'mkdir -p /tmp/var/target',
-            f'cp -r {install_dir}/target/*-x?? /tmp/var/target/',
-            f'cp -r {install_dir}/sections /tmp/var/',
+            f'ln -sf {install_dir}/target/*-x?? /tmp/var/target/',
+            f'ln -sf {install_dir}/sections /tmp/var/',
             'chmod -R a+w /tmp/var'
         ]
