@@ -44,7 +44,7 @@ class nsight_compute(bb_base):
 
     run_file: Path to NSight Compute's `.run` file to install. The default value is `None`.
 
-    predeploy: Copy installation files to allow faster attaching of a remote GUI. Default is `True`.
+    predeploy: This speeds up the time it takes to attach a remote GUI to the container by including the files that usually need to be copied already in the container image itself. This increases image size by about 150 Mb. Default is `False`.
 
     install_path: Path where files are installed. Default is `/usr/local/NVIDIA-Nsight-Compute`.
 
@@ -68,7 +68,7 @@ class nsight_compute(bb_base):
         self.__wd = '/var/tmp'
         self.__ospackages = kwargs.pop('ospackages', ['perl'])
         self.__target = kwargs.get('target', '/usr/local/NVIDIA-Nsight-Compute')
-        self.__predeploy = kwargs.get('predeploy', True)
+        self.__predeploy = kwargs.get('predeploy', False)
 
 
         if self.__run_file is None or not self.__run_file.endswith('.run'):
