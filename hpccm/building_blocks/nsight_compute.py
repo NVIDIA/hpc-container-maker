@@ -87,8 +87,7 @@ class nsight_compute(bb_base):
         pkg = os.path.basename(path)
 
         install_cmds = [
-            f'chmod a+x {pkg}',
-            f'./{pkg} --nox11 -- -noprompt -targetpath={self.__target}'
+            f'sh ./{pkg} --nox11 -- -noprompt -targetpath={self.__target}'
         ]
 
         if self.__predeploy:
