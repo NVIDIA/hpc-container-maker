@@ -32,7 +32,7 @@ from hpccm.building_blocks.generic_build import generic_build
 from hpccm.primitives.comment import comment
 
 class nsight_compute(bb_base):
-    """The `nsight_compute` building block downloads and installs the
+    """The `nsight_compute` building block installs the
     [NVIDIA Nsight Compute
     profiler]](https://developer.nvidia.com/nsight-compute).
 
