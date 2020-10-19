@@ -66,7 +66,7 @@ class nsight_compute(bb_base):
         super(nsight_compute, self).__init__(**kwargs)
 
         self.__run_file = kwargs.get('run_file', None)
-        self.__eula = kwargs.get('run_file', False)
+        self.__eula = kwargs.get('eula', False)
         self.__wd = '/var/tmp'
         self.__ospackages = kwargs.pop('ospackages', ['perl'])
         self.__target = kwargs.get('target', nsight_compute.__DEFAULT_INSTALL_PATH)
