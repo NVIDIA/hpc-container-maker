@@ -140,10 +140,16 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
         if LooseVersion(self.__version) < LooseVersion('3.1'):
+            runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
             # CMake releases of versions < 3.1 are only include 32-bit
             # binaries:
-            self.__ospackages += ['libc6-i386']
-            runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__ospackages.append('libc6-i386')
+            elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+                self.__ospackages.append('glibc.i686')
+            else: # pragma: no cover
+                raise RuntimeError('Unknown Linux distribution')
+
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
         # Download source from web
