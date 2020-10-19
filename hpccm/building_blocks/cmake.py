@@ -33,6 +33,7 @@ import hpccm.templates.wget
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
+from distutils.version import LooseVersion
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 from hpccm.primitives.environment import environment
@@ -138,7 +139,9 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         major_minor = '{0}.{1}'.format(major, minor)
 
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
-        if major == 3 and minor == 0 or major < 3:
+        if LooseVersion(self.__version) < LooseVersion('3.1'):
+            # CMake releases of versions < 3.1 are only include 32-bit
+            # binaries:
             self.__ospackages += ['libc6-i386']
             runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
