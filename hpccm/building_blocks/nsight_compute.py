@@ -58,8 +58,6 @@ class nsight_compute(bb_base):
     ```
     """
 
-    __DEFAULT_INSTALL_PATH = '/usr/local/NVIDIA-Nsight-Compute'
-
     def __init__(self, **kwargs):
         """Initialize building block"""
 
@@ -69,7 +67,7 @@ class nsight_compute(bb_base):
         self.__eula = kwargs.get('eula', False)
         self.__wd = '/var/tmp'
         self.__ospackages = kwargs.pop('ospackages', ['perl'])
-        self.__target = kwargs.get('target', nsight_compute.__DEFAULT_INSTALL_PATH)
+        self.__target = kwargs.get('target', '/usr/local/NVIDIA-Nsight-Compute')
         self.__predeploy = kwargs.get('predeploy', True)
 
 
