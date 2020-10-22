@@ -1029,6 +1029,8 @@ specified.
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
 
+- __unpack__: Unpack the sources after downloading. Default is `True`.
+
 - __url__: The URL of the package to build.  One of this parameter or
 the `package` or `repository` or parameters must be specified.
 
@@ -3000,6 +3002,35 @@ __Examples__
 n = netcdf(...)
 Stage0 += n
 Stage1 += n.runtime()
+```
+
+# nsight_compute
+```python
+nsight_compute(self, **kwargs)
+```
+The `nsight_compute` building block installs the
+[NVIDIA Nsight Compute
+profiler]](https://developer.nvidia.com/nsight-compute).
+
+__Parameters__
+
+
+- __eula__: Required, by setting this value to `True`, you agree to the Nsight Compute End User License Agreement
+that is displayed when running the installer interactively.
+The default value is `False`.
+
+- __run_file__: Path to NSight Compute's `.run` file to install. The default value is `None`.
+
+- __install_path__: Path where files are installed. Default is `/usr/local/NVIDIA-Nsight-Compute`.
+
+- __ospackages__: List of OS packages to install prior to building.  The
+default values is `['perl']`.
+
+__Examples__
+
+
+```python
+nsight_compute(eula=True, run_file='nsight-compute-linux-2020.2.0.18-28964561.run')
 ```
 
 # nsight_systems

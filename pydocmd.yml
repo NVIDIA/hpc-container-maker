@@ -38,6 +38,7 @@ generate:
   - hpccm.building_blocks.mvapich2_gdr+
   - hpccm.building_blocks.nccl+
   - hpccm.building_blocks.netcdf+
+  - hpccm.building_blocks.nsight_compute+
   - hpccm.building_blocks.nsight_systems+
   - hpccm.building_blocks.nvhpc+
   - hpccm.building_blocks.nvshmem+
