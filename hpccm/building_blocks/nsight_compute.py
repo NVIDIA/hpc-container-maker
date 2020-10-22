@@ -83,7 +83,7 @@ class nsight_compute(bb_base):
         pkg = os.path.basename(path)
 
         install_cmds = [
-            f'sh ./{pkg} --nox11 -- -noprompt -targetpath={self.__target}'
+            'sh ./{} --nox11 -- -noprompt -targetpath={}'.format(pkg, self.__target)
         ]
 
         install_cmds += self._predeploy_target_commands(self.__target)
@@ -96,11 +96,11 @@ class nsight_compute(bb_base):
             install=install_cmds,
             directory=self.__wd,
             target=self.__target,
-            devel_environment={'PATH': f'{self.__target}:$PATH'},
+            devel_environment={'PATH': '{}:$PATH'.format(self.__target)},
             unpack=False
         )
 
-        self += comment(f'NVIDIA Nsight Compute {pkg}')
+        self += comment('NVIDIA Nsight Compute {}'.format(pkg))
         self += packages(ospackages=self.__ospackages)
         self += self.__bb
 
@@ -112,7 +112,7 @@ class nsight_compute(bb_base):
         this removes the need to copy the files over."""
         return [
             'mkdir -p /tmp/var/target',
-            f'ln -sf {install_dir}/target/*-x?? /tmp/var/target/',
-            f'ln -sf {install_dir}/sections /tmp/var/',
+            'ln -sf {}/target/*-x?? /tmp/var/target/'.format(install_dir),
+            'ln -sf {}/sections /tmp/var/'.format(install_dir),
             'chmod -R a+w /tmp/var'
         ]
