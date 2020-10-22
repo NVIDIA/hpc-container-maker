@@ -108,7 +108,7 @@ class generic_build(bb_base, hpccm.templates.annotate,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
-    unpack: Unpack the sources after downloading. Defualt is `True`.
+    unpack: Unpack the sources after downloading. Default is `True`.
 
     url: The URL of the package to build.  One of this parameter or
     the `package` or `repository` or parameters must be specified.
