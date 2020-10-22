@@ -108,6 +108,8 @@ class generic_build(bb_base, hpccm.templates.annotate,
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
 
+    unpack: Unpack the sources after downloading. Default is `True`.
+
     url: The URL of the package to build.  One of this parameter or
     the `package` or `repository` or parameters must be specified.
 
@@ -137,6 +139,7 @@ class generic_build(bb_base, hpccm.templates.annotate,
         self.__recursive = kwargs.get('recursive', False)
         self.__run_arguments = kwargs.get('_run_arguments', None)
         self.runtime_environment_variables = kwargs.get('runtime_environment', {})
+        self.__unpack = kwargs.get('unpack', True)
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = '/var/tmp' # working directory
@@ -172,7 +175,7 @@ class generic_build(bb_base, hpccm.templates.annotate,
 
         # Get source
         self.__commands.append(self.download_step(recursive=self.__recursive,
-                                                  wd=self.__wd))
+                                                  wd=self.__wd, unpack=self.__unpack))
 
         # directory containing the unarchived package
         if self.__directory:
