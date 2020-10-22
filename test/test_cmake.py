@@ -107,6 +107,45 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
+    @ubuntu
+    @docker
+    def test_defaults_ubuntu(self):
+        """Cmake building block for old 32-bit versions"""
+        c = cmake(eula=True, version='3.0.0')
+        self.assertEqual(str(c),
+r'''# CMake version 3.0.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libc6-i386 \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.0/cmake-3.0.0-Linux-i386.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.0.0-Linux-i386.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.0.0-Linux-i386.sh
+ENV PATH=/usr/local/bin:$PATH''')
+
+    @x86_64
+    @centos
+    @docker
+    def test_defaults_ubuntu(self):
+        """Cmake building block for old 32-bit versions"""
+        c = cmake(eula=True, version='3.0.0')
+        self.assertEqual(str(c),
+r'''# CMake version 3.0.0
+RUN yum install -y \
+        glibc.i686 \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.0/cmake-3.0.0-Linux-i386.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.0.0-Linux-i386.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.0.0-Linux-i386.sh
+ENV PATH=/usr/local/bin:$PATH''')
+
+    @x86_64
     @centos
     @docker
     def test_source(self):

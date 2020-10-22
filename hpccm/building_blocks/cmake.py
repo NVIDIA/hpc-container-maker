@@ -33,6 +33,7 @@ import hpccm.templates.wget
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
+from distutils.version import LooseVersion
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 from hpccm.primitives.environment import environment
@@ -133,9 +134,22 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         # apart the full version to get the MAJOR and MINOR
         # components.
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
+        major = int(match.groupdict()['major'])
+        minor = int(match.groupdict()['minor'])
+        major_minor = '{0}.{1}'.format(major, minor)
+
         runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
+        if LooseVersion(self.__version) < LooseVersion('3.1'):
+            runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
+            # CMake releases of versions < 3.1 are only include 32-bit
+            # binaries:
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__ospackages.append('libc6-i386')
+            elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+                self.__ospackages.append('glibc.i686')
+            else: # pragma: no cover
+                raise RuntimeError('Unknown Linux distribution')
+
         url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
 
         # Download source from web
