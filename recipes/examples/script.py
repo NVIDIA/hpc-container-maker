@@ -26,7 +26,7 @@ import hpccm
 ### Parse command line arguments
 parser = argparse.ArgumentParser(description='HPCCM example')
 parser.add_argument('--compiler', type=str, default='gnu',
-                    choices=['gnu', 'llvm', 'pgi'],
+                    choices=['gnu', 'llvm', 'nvhpc'],
                     help='Compiler choice (default: gnu)')
 parser.add_argument('--format', type=str, default='docker',
                     choices=['docker', 'singularity'],
@@ -34,7 +34,7 @@ parser.add_argument('--format', type=str, default='docker',
 parser.add_argument('--linux', type=str, default='centos',
                     choices=['centos', 'ubuntu'],
                     help='Linux distribution choice (default: centos)')
-parser.add_argument('--pgi_eula_accept', action='store_true',
+parser.add_argument('--nvhpc_eula_accept', action='store_true',
                     default=False,
                     help='Accept PGI EULA (default: false)')
 args = parser.parse_args()
@@ -53,12 +53,12 @@ if args.compiler == 'gnu':
     Stage0 += hpccm.building_blocks.gnu()
 elif args.compiler == 'llvm':
     Stage0 += hpccm.building_blocks.llvm()
-elif args.compiler == 'pgi':
-    if not args.pgi_eula_accept:
-        print('PGI EULA not accepted. To accept, use "--pgi_eula_accept".\n'
-              'See PGI EULA at https://www.pgroup.com/doc/LICENSE')
+elif args.compiler == 'nvhpc':
+    if not args.nvhpc_eula_accept:
+        print('EULA not accepted. To accept, use "--nvhpc_eula_accept".\n'
+              'See NVIDIA EULA at https://docs.nvidia.com/hpc-sdk/eula')
         exit(1)
-    Stage0 += hpccm.building_blocks.pgi(eula=args.pgi_eula_accept)
+    Stage0 += hpccm.building_blocks.nvhpc(eula=args.nvhpc_eula_accept)
 
 ### Set container specification output format
 hpccm.config.set_container_format(args.format)
