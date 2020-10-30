@@ -1,3 +1,15 @@
+# v20.10.0
+
+- Adds support for Ubuntu 20.04.
+- Adds a Nsight Compute (`nsight_compute`) building block.
+- Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`).
+- Enhancements to the Anaconda (`conda`), CMake (`cmake`), and LLVM (`llvm`).
+- Adds an OSU Micro-Benchmarks example recipe, demonstrating how to build a
+  container that is portable with respect to the host OFED version.
+- Updates the example recipes to use the NVDIA HPC SDK instead of
+  the PGI compilers.
+- Fixes an install issue with Python 3.4 and later.
+
 # v20.9.0
 
 - Refreshes default component versions for the Arm Allinea Studio
