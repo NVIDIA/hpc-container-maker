@@ -244,10 +244,21 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.9/comm_libs/11.0/nccl/li
 
     def test_toolchain(self):
         """Toolchain"""
-        n = nvhpc(package='nvhpc_2020_205_Linux_x86_64.tar.gz')
+        n = nvhpc(version='20.9')
         tc = n.toolchain
         self.assertEqual(tc.CC, 'nvc')
         self.assertEqual(tc.CXX, 'nvc++')
         self.assertEqual(tc.FC, 'nvfortran')
         self.assertEqual(tc.F77, 'nvfortran')
         self.assertEqual(tc.F90, 'nvfortran')
+        self.assertEqual(tc.CUDA_HOME, None)
+
+        n2 = nvhpc(cuda='11.0', cuda_home=True, version='20.9')
+        tc2 = n2.toolchain
+        self.assertEqual(tc2.CC, 'nvc')
+        self.assertEqual(tc2.CXX, 'nvc++')
+        self.assertEqual(tc2.FC, 'nvfortran')
+        self.assertEqual(tc2.F77, 'nvfortran')
+        self.assertEqual(tc2.F90, 'nvfortran')
+        self.assertEqual(tc2.CUDA_HOME,
+                         '/opt/nvidia/hpc_sdk/Linux_x86_64/20.9/cuda/11.0')
