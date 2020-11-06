@@ -3048,7 +3048,7 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2020.3.1`.
+value is `2020.4.1`.
 
 __Examples__
 

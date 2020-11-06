@@ -38,7 +38,7 @@ class Test_nsight_systems(unittest.TestCase):
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.3.1
+r'''# NVIDIA Nsight Systems 2020.4.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -46,11 +46,11 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2020.3.1 && \
+        nsight-systems-cli-2020.4.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -60,12 +60,12 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu16
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2020.3.1
-RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/7fa2af80.pub && \
+r'''# NVIDIA Nsight Systems 2020.4.1
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/x86_64 && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 && \
     yum install -y \
-        nsight-systems-cli-2020.3.1 && \
+        nsight-systems-cli-2020.4.1 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -83,8 +83,8 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-cli-2020.1.1 && \
@@ -105,8 +105,8 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repo-deb/x86_64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-2020.1.1 && \
@@ -127,8 +127,8 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/ppc64el/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repo-deb/ppc64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-cli-2020.1.1 && \
@@ -142,9 +142,9 @@ RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu18
         n = nsight_systems(version='2020.1.1')
         self.assertEqual(str(n),
 r'''# NVIDIA Nsight Systems 2020.1.1
-RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/ppc64le/7fa2af80.pub && \
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le/nvidia.pub && \
     yum install -y yum-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/ppc64 && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le && \
     yum install -y \
         nsight-systems-cli-2020.1.1 && \
     rm -rf /var/cache/yum/*''')
@@ -157,9 +157,9 @@ RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/
         n = nsight_systems(version='2020.2.1')
         self.assertEqual(str(n),
 r'''# NVIDIA Nsight Systems 2020.2.1
-RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2af80.pub && \
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/arm64/nvidia.pub && \
     yum install -y yum-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repo-rpm/arm64 && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/arm64 && \
     yum install -y \
         nsight-systems-cli-2020.2.1 && \
     rm -rf /var/cache/yum/*''')

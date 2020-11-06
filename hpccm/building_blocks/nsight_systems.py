@@ -41,7 +41,7 @@ class nsight_systems(bb_base):
     package should be installed.  The default is True.
 
     version: The version of Nsight Systems to install.  The default
-    value is `2020.3.1`.
+    value is `2020.4.1`.
 
     # Examples
 
@@ -56,12 +56,11 @@ class nsight_systems(bb_base):
 
         super(nsight_systems, self).__init__(**kwargs)
 
-        self.__arch_key_label = ''   # Filled in __cpu_arch
-        self.__arch_repo_label = ''  # Filled in __cpu_arch
+        self.__arch_label = ''   # Filled in __cpu_arch
         self.__cli = kwargs.get('cli', True)
         self.__distro_label = ''     # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__version = kwargs.get('version', '2020.3.1')
+        self.__version = kwargs.get('version', '2020.4.1')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -86,28 +85,28 @@ class nsight_systems(bb_base):
             package = 'nsight-systems-{}'.format(self.__version)
 
         self += packages(
-            apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, self.__arch_key_label)],
-            apt_repositories=['deb https://developer.download.nvidia.com/devtools/repo-deb/{}/ /'.format(self.__arch_repo_label)],
+            apt_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
+            apt_repositories=['deb https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
             ospackages=[package],
-            yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, self.__arch_key_label)],
-            yum_repositories=['https://developer.download.nvidia.com/devtools/repo-rpm/{}'.format(self.__arch_repo_label)])
+            yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
+            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
 
     def __cpu_arch(self):
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            self.__arch_repo_label = 'arm64'
-            self.__arch_key_label = 'x86_64' # https://developer.nvidia.com/cuda-toolkit/arm
+            self.__arch_label = 'arm64'
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_repo_label = 'ppc64'
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_key_label = 'ppc64el'
+                self.__arch_label = 'ppc64el'
             else:
-                self.__arch_key_label = 'ppc64le'
+                self.__arch_label = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__arch_repo_label = 'x86_64'
-            self.__arch_key_label = 'x86_64'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'amd64'
+            else:
+                self.__arch_label = 'x86_64'
         else: # pragma: no cover
             raise RuntimeError('Unknown CPU architecture')
 
@@ -120,7 +119,9 @@ class nsight_systems(bb_base):
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
                                      'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+            if hpccm.config.g_linux_version >= StrictVersion('20.04'):
+                self.__distro_label = 'ubuntu2004'
+            elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 self.__distro_label = 'ubuntu1804'
             else:
                 self.__distro_label = 'ubuntu1604'
