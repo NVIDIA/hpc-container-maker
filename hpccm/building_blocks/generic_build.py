@@ -140,9 +140,9 @@ class generic_build(bb_base, hpccm.templates.annotate,
         self.__run_arguments = kwargs.get('_run_arguments', None)
         self.runtime_environment_variables = kwargs.get('runtime_environment', {})
         self.__unpack = kwargs.get('unpack', True)
+        self.__wd = kwargs.get('wd', '/var/tmp') # working directory
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
 
         # Construct the series of steps to execute
         self.__setup()

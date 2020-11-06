@@ -29,31 +29,49 @@ import hpccm.config
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.building_blocks.generic_build import generic_build
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 
 class nsight_compute(bb_base):
-    """The `nsight_compute` building block installs the
+    """The `nsight_compute` building block downloads and installs the
     [NVIDIA Nsight Compute
     profiler]](https://developer.nvidia.com/nsight-compute).
 
     # Parameters
 
-    eula: Required, by setting this value to `True`, you agree to the Nsight Compute End User License Agreement 
-    that is displayed when running the installer interactively.
-    The default value is `False`.
+    eula: Required, by setting this value to `True`, you agree to the
+    Nsight Compute End User License Agreement that is displayed when
+    running the installer interactively.  The default value is
+    `False`.
 
-    run_file: Path to NSight Compute's `.run` file to install. The default value is `None`.
+    ospackages: List of OS packages to install prior to building.
+    When using a runfile, the default values are `perl` for Ubuntu and
+    `perl` and `perl-Env` for RHEL-based Linux distributions.
+    Otherwise, the default values are `apt-transport-https`,
+    `ca-certificates`, `gnupg`, and `wget` for Ubuntu and an empty
+    list for RHEL-based Linux distributions.
 
-    install_path: Path where files are installed. Default is `/usr/local/NVIDIA-Nsight-Compute`.
+    prefix: The top level install prefix. The default value is
+    `/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
+    unless `runfile` is set.
 
-    ospackages: List of OS packages to install prior to building.  The
-    default values is `['perl']`.
+    runfile: Path to NSight Compute's `.run` file relative to the
+    local build context. The default value is empty.
+
+    version: the version of Nsight Compute to install.  Note when
+    `runfile` is set this parameter is ignored.  The default value is
+    `2020.2.1`.
 
     # Examples
 
     ```python
-    nsight_compute(eula=True, run_file='nsight-compute-linux-2020.2.0.18-28964561.run')
+    nsight_compute(version='2020.2.1')
     ```
+
+    ```python
+    nsight_compute(eula=True, runfile='nsight-compute-linux-2020.2.0.18-28964561.run')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -61,58 +79,133 @@ class nsight_compute(bb_base):
 
         super(nsight_compute, self).__init__(**kwargs)
 
-        self.__run_file = kwargs.get('run_file', None)
+        self.__arch_label = ''   # Filled in __cpu_arch
+        self.__distro_label = ''     # Filled in by __distro
         self.__eula = kwargs.get('eula', False)
-        self.__wd = '/var/tmp'
-        self.__ospackages = kwargs.pop('ospackages', ['perl'])
-        self.__target = kwargs.get('target', '/usr/local/NVIDIA-Nsight-Compute')
+        self.__ospackages = kwargs.get('ospackages', [])
+        self.__prefix = kwargs.get('prefix',
+                                   '/usr/local/NVIDIA-Nsight-Compute')
+        self.__runfile = kwargs.get('runfile', None)
+        self.__version = kwargs.get('version', '2020.2.1')
+        self.__wd = '/var/tmp/nsight_compute'
 
-        if self.__run_file is None or not self.__run_file.endswith('.run'):
-            raise RuntimeError('Nsight Compute\'s block requires a \'`.run` file\' to be specified via the `run_file` argument.')
-        if not os.path.exists(self.__run_file):
-            raise RuntimeError("Specified Nsight Compute run file path does not exist: `{}`.".format(self.__run_file))
-        if not self.__eula:
-            raise RuntimeError('Nsight Compute EULA was not accepted. To accept, see the documentation for this building block')
+        # Set the Linux distribution specific parameters
+        self.__distro()
 
-        self.__instructions()
+        if self.__runfile:
+            # Runfile based installation
+            if not self.__eula:
+                raise RuntimeError('Nsight Compute EULA was not accepted.')
 
-    def __instructions(self):
+            self.__instructions_runfile()
+
+        else:
+            # Package repository based installation
+
+            # Set the CPU architecture specific parameters
+            self.__cpu_arch()
+
+            # Fill in container instructions
+            self.__instructions_repository()
+
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_label = 'arm64'
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'ppc64el'
+            else:
+                self.__arch_label = 'ppc64le'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'amd64'
+            else:
+                self.__arch_label = 'x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
+
+    def __distro(self):
+        """Based on the Linux distribution, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            if not self.__ospackages:
+                if self.__runfile:
+                    self.__ospackages = ['perl']
+                else:
+                    self.__ospackages = ['apt-transport-https',
+                                         'ca-certificates', 'gnupg', 'wget']
+
+            if hpccm.config.g_linux_version >= StrictVersion('20.04'):
+                self.__distro_label = 'ubuntu2004'
+            elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                self.__distro_label = 'ubuntu1804'
+            else:
+                self.__distro_label = 'ubuntu1604'
+
+        elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if not self.__ospackages:
+                if self.__runfile:
+                    self.__ospackages = ['perl', 'perl-Env']
+
+            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                self.__distro_label = 'rhel8'
+            else:
+                self.__distro_label = 'rhel7'
+
+        else: # pragma: no cover
+            raise RuntimeError('Unknown Linux distribution')
+
+    def __instructions_repository(self):
         """Fill in container instructions"""
 
-        path = self.__run_file
-        pkg = os.path.basename(path)
+        self += comment('NVIDIA Nsight Compute {}'.format(self.__version))
+
+        if self.__ospackages:
+            self += packages(ospackages=self.__ospackages)
+
+        self += packages(
+            apt_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
+            apt_repositories=['deb https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
+            ospackages=['nsight-compute-{}'.format(self.__version)],
+            yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
+            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
+
+    def __instructions_runfile(self):
+        """Fill in container instructions"""
+
+        pkg = os.path.basename(self.__runfile)
 
         install_cmds = [
-            'sh ./{} --nox11 -- -noprompt -targetpath={}'.format(pkg, self.__target)
+            'sh ./{} --nox11 -- -noprompt -targetpath={}'.format(
+                pkg, self.__prefix)
         ]
 
-        install_cmds += self._predeploy_target_commands(self.__target)
-
-        self.__bb = generic_build(
-            annotations={'file': pkg},
-            base_annotation=self.__class__.__name__,
-            comment = False,
-            package=self.__run_file,
-            install=install_cmds,
-            directory=self.__wd,
-            target=self.__target,
-            devel_environment={'PATH': '{}:$PATH'.format(self.__target)},
-            unpack=False
-        )
-
-        self += comment('NVIDIA Nsight Compute {}'.format(pkg))
-        self += packages(ospackages=self.__ospackages)
-        self += self.__bb
-
-
-    def _predeploy_target_commands(self, install_dir):
-        """Gets commands needed to predeploy target-specific files
-
-        When connecting through the GUI on another machine to the container, 
-        this removes the need to copy the files over."""
-        return [
+        # Commands needed to predeploy target-specific files. When
+        # connecting through the GUI on another machine to the
+        # container, this removes the need to copy the files over.
+        install_cmds += [
             'mkdir -p /tmp/var/target',
-            'ln -sf {}/target/*-x?? /tmp/var/target/'.format(install_dir),
-            'ln -sf {}/sections /tmp/var/'.format(install_dir),
+            'ln -sf {}/target/* /tmp/var/target'.format(self.__prefix),
+            'ln -sf {}/sections /tmp/var/'.format(self.__prefix),
             'chmod -R a+w /tmp/var'
         ]
+
+        self.__bb = generic_build(
+            annotations={'runfile': pkg},
+            base_annotation=self.__class__.__name__,
+            comment = False,
+            devel_environment={'PATH': '{}:$PATH'.format(self.__prefix)},
+            directory=self.__wd,
+            install=install_cmds,
+            package=self.__runfile,
+            unpack=False,
+            wd=self.__wd
+        )
+
+        self += comment('NVIDIA Nsight Compute {}'.format(pkg), reformat=False)
+        self += packages(ospackages=self.__ospackages)
+        self += self.__bb

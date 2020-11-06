@@ -3008,30 +3008,47 @@ Stage1 += n.runtime()
 ```python
 nsight_compute(self, **kwargs)
 ```
-The `nsight_compute` building block installs the
+The `nsight_compute` building block downloads and installs the
 [NVIDIA Nsight Compute
 profiler]](https://developer.nvidia.com/nsight-compute).
 
 __Parameters__
 
 
-- __eula__: Required, by setting this value to `True`, you agree to the Nsight Compute End User License Agreement
-that is displayed when running the installer interactively.
-The default value is `False`.
+- __eula__: Required, by setting this value to `True`, you agree to the
+Nsight Compute End User License Agreement that is displayed when
+running the installer interactively.  The default value is
+`False`.
 
-- __run_file__: Path to NSight Compute's `.run` file to install. The default value is `None`.
+- __ospackages__: List of OS packages to install prior to building.
+When using a runfile, the default values are `perl` for Ubuntu and
+`perl` and `perl-Env` for RHEL-based Linux distributions.
+Otherwise, the default values are `apt-transport-https`,
+`ca-certificates`, `gnupg`, and `wget` for Ubuntu and an empty
+list for RHEL-based Linux distributions.
 
-- __install_path__: Path where files are installed. Default is `/usr/local/NVIDIA-Nsight-Compute`.
+- __prefix__: The top level install prefix. The default value is
+`/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
+unless `runfile` is set.
 
-- __ospackages__: List of OS packages to install prior to building.  The
-default values is `['perl']`.
+- __runfile__: Path to NSight Compute's `.run` file relative to the
+local build context. The default value is empty.
+
+- __version__: the version of Nsight Compute to install.  Note when
+`runfile` is set this parameter is ignored.  The default value is
+`2020.2.1`.
 
 __Examples__
 
 
 ```python
-nsight_compute(eula=True, run_file='nsight-compute-linux-2020.2.0.18-28964561.run')
+nsight_compute(version='2020.2.1')
 ```
+
+```python
+nsight_compute(eula=True, runfile='nsight-compute-linux-2020.2.0.18-28964561.run')
+```
+
 
 # nsight_systems
 ```python
