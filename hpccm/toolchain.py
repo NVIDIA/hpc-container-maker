@@ -14,17 +14,23 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Documentation TBD"""
+"""Build toolchain"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
 class toolchain(object):
-    """Documentation TBD"""
+    """Class for the build toolchain.  Attributes map to the commonly used
+       environment variables, e.g, CC is the C compiler, CXX is the
+       C++ compiler."""
+
+    __attrs__ = ['CC', 'CFLAGS', 'CPPFLAGS', 'CUDA_HOME', 'CXX',
+                 'CXXFLAGS', 'F77', 'F90', 'FC', 'FCFLAGS', 'FFLAGS',
+                 'FLIBS', 'LDFLAGS', 'LD_LIBRARY_PATH', 'LIBS']
 
     def __init__(self, **kwargs):
-        """Documentation TBD"""
+        """Initialize toolchain"""
 
         self.CC = kwargs.get('CC')
         self.CFLAGS = kwargs.get('CFLAGS')
@@ -41,3 +47,20 @@ class toolchain(object):
         self.LDFLAGS = kwargs.get('LDFLAGS')
         self.LD_LIBRARY_PATH = kwargs.get('LD_LIBRARY_PATH')
         self.LIBS = kwargs.get('LIBS')
+
+    def __copy__(self):
+        """Copy all the attributes even if __dict__ only returns the pairs
+           with non-null values."""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        for key in self.__attrs__:
+          val = getattr(self, key)
+          setattr(result, key, val if val else None)
+        return result
+
+    @property
+    def __dict__(self):
+        """Return only those attributes that have non-null values.  This
+           enables usage like 'environment(variables=var(toolchain))'"""
+        return {key: getattr(self, key) for key in self.__attrs__
+                if getattr(self, key)}
