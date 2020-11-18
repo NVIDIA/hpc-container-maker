@@ -134,8 +134,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         super(nvhpc, self).__init__(**kwargs)
 
         self.__arch_directory = None # Filled in __cpu_arch()
+        self.__cuda_home = kwargs.get('cuda_home', False)
         self.__cuda_multi = kwargs.get('cuda_multi', True)
         self.__cuda_version = kwargs.get('cuda', None)
+        self.__cuda_version_default = '11.0'
         self.__commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the NVIDIA HPC
@@ -316,10 +318,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                     self.__version.replace('.', ''), self.__arch_directory)
                 if self.__cuda_multi:
                     self.url = baseurl.format('multi')
-                elif self.__cuda_version:
-                    self.url = baseurl.format(self.__cuda_version)
                 else:
-                    self.url = baseurl.format('11.0')
+                    self.url = baseurl.format(
+                        self.__cuda_version if self.__cuda_version
+                        else self.__cuda_version_default)
 
         self.__commands.append(self.download_step(wd=self.__wd))
 
@@ -355,6 +357,13 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # Set the environment
         self.environment_variables = self.__environment()
+
+        # Adjust the toolchain
+        if self.__cuda_home:
+            self.toolchain.CUDA_HOME = posixpath.join(
+                self.__basepath, 'cuda',
+                self.__cuda_version if self.__cuda_version
+                else self.__cuda_version_default)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
