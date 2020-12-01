@@ -1,3 +1,9 @@
+# v20.11.0
+
+- Enhancements to the Nsight Compute (`nsight_compute`), Nsight Systems
+  (`nsight_systems`), and NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Adds simple conversion of toolchains to environments.
+
 # v20.10.0
 
 - Adds support for Ubuntu 20.04.
