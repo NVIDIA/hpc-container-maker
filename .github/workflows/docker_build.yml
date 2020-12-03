@@ -17,10 +17,10 @@ jobs:
         - recipes/hpcbase-gnu-mvapich2.py --userarg centos=true
         - recipes/hpcbase-gnu-openmpi.py
         - recipes/hpcbase-gnu-openmpi.py --userarg centos=true
-        - recipes/hpcbase-nvhpc-mvapich2.py
-        - recipes/hpcbase-nvhpc-mvapich2.py --userarg centos=true
-        - recipes/hpcbase-nvhpc-openmpi.py
-        - recipes/hpcbase-nvhpc-openmpi.py --userarg centos=true
+        - recipes/hpcbase-nvhpc-mvapich2.py --userarg nvhpc_eula_accept=yes
+        - recipes/hpcbase-nvhpc-mvapich2.py --userarg nvhpc_eula_accept=yes centos=true
+        - recipes/hpcbase-nvhpc-openmpi.py --userarg nvhpc_eula_accept=yes
+        - recipes/hpcbase-nvhpc-openmpi.py --userarg nvhpc_eula_accept=yes centos=true
         - recipes/hpccm/bootstrap.py
         - recipes/lammps/lammps.py
         - recipes/milc/milc.py
