@@ -12,7 +12,7 @@ container:/> spack load gromacs
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
 from hpccm.templates.git import git
 
-spack_branch = 'master'
+spack_branch = 'develop'
 
 Stage0 += comment(__doc__, reformat=False)
 
