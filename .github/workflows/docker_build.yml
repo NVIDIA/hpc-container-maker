@@ -22,5 +22,5 @@ jobs:
 
     - name: Build container
       run: |
-        hpccm.sh --recipe ${{ matrix.recipe }} > Dockerfile
+        ./hpccm.sh --recipe ${{ matrix.recipe }} > Dockerfile
         sudo docker build -t container -f Dockerfile .
