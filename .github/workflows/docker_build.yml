@@ -8,10 +8,25 @@ jobs:
     strategy:
       matrix:
         recipe:
+        - recipes/easybuild.py
         - recipes/examples/basic.py
+        - recipes/examples/cloverleaf.py
         - recipes/examples/multistage.py
+        - recipes/gromacs/gromacs.py
+        - recipes/hpcbase-gnu-mvapich2.py
+        - recipes/hpcbase-gnu-mvapich2.py --userarg centos=true
         - recipes/hpcbase-gnu-openmpi.py
         - recipes/hpcbase-gnu-openmpi.py --userarg centos=true
+        - recipes/hpcbase-nvhpc-mvapich2.py
+        - recipes/hpcbase-nvhpc-mvapich2.py --userarg centos=true
+        - recipes/hpcbase-nvhpc-openmpi.py
+        - recipes/hpcbase-nvhpc-openmpi.py --userarg centos=true
+        - recipes/hpccm/bootstrap.py
+        - recipes/lammps/lammps.py
+        - recipes/milc/milc.py
+        - recipes/mpi_bandwidth.py
+        - recipes/osu_benchmarks/osu_benchmarks.py
+        - recipes/spack.py
 
     steps:
     - uses: actions/checkout@v2
