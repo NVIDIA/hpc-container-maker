@@ -7,7 +7,11 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        recipe: [recipes/examples/basic.py, recipes/examples/multistage.py]
+        recipe:
+        - recipes/examples/basic.py
+        - recipes/examples/multistage.py
+        - recipes/hpcbase-gnu-openmpi.py
+        - recipes/hpcbase-gnu-openmpi.py --userarg centos=true
 
     steps:
     - uses: actions/checkout@v2
