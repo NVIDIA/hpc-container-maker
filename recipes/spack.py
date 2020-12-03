@@ -33,7 +33,6 @@ Stage0 += apt_get(ospackages=ospackages)
 Stage0 += shell(commands=[
     git().clone_step(repository='https://github.com/spack/spack',
                      branch=spack_branch, path='/opt'),
-    '/opt/spack/bin/spack bootstrap',
     'ln -s /opt/spack/share/spack/setup-env.sh /etc/profile.d/spack.sh',
     'ln -s /opt/spack/share/spack/spack-completion.bash /etc/profile.d'])
 Stage0 += environment(variables={'PATH': '/opt/spack/bin:$PATH',
