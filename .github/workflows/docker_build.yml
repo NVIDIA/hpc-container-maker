@@ -32,7 +32,7 @@ jobs:
           - recipe: recipes/hpccm/bootstrap.py
           - recipe: recipes/lammps/lammps.py
           - recipe: recipes/milc/milc.py
-          - recipe: - recipes/mpi_bandwidth.py
+          - recipe: recipes/mpi_bandwidth.py
           - recipe: recipes/osu_benchmarks/osu_benchmarks.py
             context: recipes/osu_benchmarks
           - recipe: recipes/spack.py
