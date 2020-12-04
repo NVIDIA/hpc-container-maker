@@ -20,7 +20,8 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 ###############################################################################
 # Devel stage
 ###############################################################################
-Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04', _as='devel')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:10.1-devel-ubuntu16.04',
+                    _as='devel')
 
 Stage0 += gnu()
 Stage0 += cmake(eula=True)
@@ -77,7 +78,7 @@ Stage0 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
 ###############################################################################
 # Release stage
 ###############################################################################
-Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:10.1-base-ubuntu16.04')
 
 Stage1 += Stage0.runtime(exclude=['generic_cmake'])
 

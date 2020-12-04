@@ -14,11 +14,11 @@ Contents:
 
 # Choose between either Ubuntu 16.04 (default) or CentOS 7
 # Add '--userarg centos=true' to the command line to select CentOS
-devel_image = 'nvidia/cuda:10.1-devel-ubuntu16.04'
-runtime_image = 'nvidia/cuda:10.1-runtime-ubuntu16.04'
+devel_image = 'nvcr.io/nvidia/cuda:10.1-devel-ubuntu16.04'
+runtime_image = 'nvcr.io/nvidia/cuda:10.1-runtime-ubuntu16.04'
 if USERARG.get('centos', False):
-    devel_image = 'nvidia/cuda:10.1-devel-centos7'
-    runtime_image = 'nvidia/cuda:10.1-runtime-centos7'
+    devel_image = 'nvcr.io/nvidia/cuda:10.1-devel-centos7'
+    runtime_image = 'nvcr.io/nvidia/cuda:10.1-runtime-centos7'
 
 ######
 # Devel stage

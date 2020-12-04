@@ -28,8 +28,8 @@ if arch == 'aarch64':
   default_build_image = 'nvcr.io/ea-cuda-sc19/arm-partners/cuda-aarch64:10.2-devel-ubuntu18.04'
   default_runtime_image = 'nvcr.io/ea-cuda-sc19/arm-partners/cuda-aarch64:10.2-base-ubuntu18.04'
 elif arch == 'x86_64':
-  default_build_image = 'nvidia/cuda:10.1-devel-ubuntu18.04'
-  default_runtime_image = 'nvidia/cuda:10.1-base-ubuntu18.04'
+  default_build_image = 'nvcr.io/nvidia/cuda:10.1-devel-ubuntu18.04'
+  default_runtime_image = 'nvcr.io/nvidia/cuda:10.1-base-ubuntu18.04'
 else:
   raise Exception('unrecognized architecture: {}'.format(arch))
 

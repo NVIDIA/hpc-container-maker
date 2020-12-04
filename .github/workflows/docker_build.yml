@@ -20,6 +20,12 @@ jobs:
           - recipe: recipes/examples/multistage.py
             userargs: none=none
             context: .
+          - recipe: recipes/examples/scif.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/userargs.py
+            userargs: cuda=11.0 ompi=4.0.5
+            context: .
           - recipe: recipes/gromacs/gromacs.py
             userargs: none=none
             context: .

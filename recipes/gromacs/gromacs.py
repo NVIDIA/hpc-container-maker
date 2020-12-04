@@ -12,7 +12,8 @@ Contents:
 gromacs_version = USERARG.get('gromacs', '2020')
 
 Stage0 += comment(__doc__.strip(), reformat=False)
-Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04', _as='build')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:10.1-devel-ubuntu16.04',
+                    _as='build')
 
 Stage0 += python(python3=False)
 
@@ -42,7 +43,7 @@ Stage0 += label(metadata={'gromacs.version': gromacs_version})
 ######
 # Runtime image stage
 ######
-Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:10.1-base-ubuntu16.04')
 
 Stage1 += packages(ospackages=['cuda-cufft-10-1'])
 
