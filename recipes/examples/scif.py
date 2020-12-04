@@ -9,7 +9,7 @@ Stage0 += baseimage(image='nvcr.io/nvidia/cuda:9.1-devel-centos7')
 Stage0 += gnu(fortran=False)
 
 # Install SCI-F
-Stage0 += pip(packages=['scif'])
+Stage0 += pip(packages=['scif'], upgrade=True)
 
 # Download a single copy of the source code
 Stage0 += packages(ospackages=['ca-certificates', 'git'])
@@ -34,7 +34,7 @@ for cc in ['35', '60', '70']:
 Stage1 += baseimage(image='nvcr.io/nvidia/cuda:9.1-base-centos7')
 
 # Install SCI-F
-Stage1 += pip(packages=['scif'])
+Stage1 += pip(packages=['scif'], upgrade=True)
 
 # Install runtime components from the first stage
 Stage1 += Stage0.runtime()
