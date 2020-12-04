@@ -7,26 +7,35 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        recipe:
-        - recipes/easybuild.py
-        - recipes/examples/basic.py
-        - recipes/examples/cloverleaf.py
-        - recipes/examples/multistage.py
-        - recipes/gromacs/gromacs.py
-        - recipes/hpcbase-gnu-mvapich2.py
-        - recipes/hpcbase-gnu-mvapich2.py --userarg centos=true
-        - recipes/hpcbase-gnu-openmpi.py
-        - recipes/hpcbase-gnu-openmpi.py --userarg centos=true
-        - recipes/hpcbase-nvhpc-mvapich2.py --userarg nvhpc_eula_accept=yes
-        - recipes/hpcbase-nvhpc-mvapich2.py --userarg nvhpc_eula_accept=yes centos=true
-        - recipes/hpcbase-nvhpc-openmpi.py --userarg nvhpc_eula_accept=yes
-        - recipes/hpcbase-nvhpc-openmpi.py --userarg nvhpc_eula_accept=yes centos=true
-        - recipes/hpccm/bootstrap.py
-        - recipes/lammps/lammps.py
-        - recipes/milc/milc.py
-        - recipes/mpi_bandwidth.py
-        - recipes/osu_benchmarks/osu_benchmarks.py
-        - recipes/spack.py
+        userargs: [none=none]
+        context: [.]
+        include:
+          - recipe: recipes/easybuild.py
+          - recipe: recipes/examples/basic.py
+          - recipe: recipes/examples/cloverleaf.py
+          - recipe: recipes/examples/multistage.py
+          - recipe: recipes/gromacs/gromacs.py
+          - recipe: recipes/hpcbase-gnu-mvapich2.py
+          - recipe: recipes/hpcbase-gnu-mvapich2.py
+            userargs: centos=true
+          - recipe: recipes/hpcbase-gnu-openmpi.py
+          - recipe: recipes/hpcbase-gnu-openmpi.py
+            userargs: centos=true
+          - recipe: recipes/hpcbase-nvhpc-mvapich2.py
+            userargs: nvhpc_eula_accept=yes
+          - recipe: recipes/hpcbase-nvhpc-mvapich2.py
+            userargs: nvhpc_eula_accept=yes centos=true
+          - recipe: recipes/hpcbase-nvhpc-openmpi.py
+            userargs: nvhpc_eula_accept=yes
+          - recipe: recipes/hpcbase-nvhpc-openmpi.py
+            userargs: nvhpc_eula_accept=yes centos=true
+          - recipe: recipes/hpccm/bootstrap.py
+          - recipe: recipes/lammps/lammps.py
+          - recipe: recipes/milc/milc.py
+          - recipe: - recipes/mpi_bandwidth.py
+          - recipe: recipes/osu_benchmarks/osu_benchmarks.py
+            context: recipes/osu_benchmarks
+          - recipe: recipes/spack.py
 
     steps:
     - uses: actions/checkout@v2
@@ -41,5 +50,5 @@ jobs:
 
     - name: Build container
       run: |
-        ./hpccm.sh --recipe ${{ matrix.recipe }} > Dockerfile
-        sudo docker build -t container -f Dockerfile .
+        ./hpccm.sh --recipe ${{ matrix.recipe }} --userarg ${{ matrix.userargs }} > Dockerfile
+        sudo docker build -f Dockerfile ${{ matrix.context }}
