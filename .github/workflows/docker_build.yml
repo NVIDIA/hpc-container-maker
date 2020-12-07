@@ -2,7 +2,7 @@ name: Docker Build
 
 on:
   schedule:
-    - cron: '0 0 * * 1' # Weekly
+    - cron: '0 12 * * 3' # Weekly
 
 jobs:
   build:

@@ -1,6 +1,8 @@
 name: Singularity Build
 
-on: push
+on:
+  schedule:
+    - cron: '0 13 * * 3' # Weekly
 
 jobs:
   build:
@@ -86,7 +88,7 @@ jobs:
     - name: Install Singularity
       run: |
         # Dependencies
-        sudo apt-get update -y 
+        sudo apt-get update -y
         sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup
         # Singularity
         wget https://github.com/hpcng/singularity/releases/download/v3.7.0/singularity-3.7.0.tar.gz
