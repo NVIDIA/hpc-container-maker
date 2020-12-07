@@ -85,8 +85,10 @@ jobs:
 
     - name: Install Singularity
       run: |
+        # Dependencies
         sudo apt-get update -y 
         sudo apt-get install -y build-essential libseccomp-dev pkg-config squashfs-tools cryptsetup
+        # Singularity
         wget https://github.com/hpcng/singularity/releases/download/v3.7.0/singularity-3.7.0.tar.gz
         tar -xzf singularity-3.7.0.tar.gz
         cd singularity
@@ -97,5 +99,5 @@ jobs:
 
     - name: Build container
       run: |
-        ./hpccm.sh --format Singularity --recipe ${{ matrix.recipe }} --userarg ${{ matrix.userargs }} > Singularity.def
+        ./hpccm.sh --format singularity --singularity-version 3.7.0 --recipe ${{ matrix.recipe }} --userarg ${{ matrix.userargs }} > Singularity.def
         sudo singularity build image.sif Singularity.def
