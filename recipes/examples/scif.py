@@ -3,13 +3,13 @@ Build the CUDA-STREAM benchmark for multiple CUDA compute capabilities.
 
 Make each build available as a SCI-F application.
 """
-Stage0 += baseimage(image='nvidia/cuda:9.1-devel-centos7')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:9.1-devel-centos7', _as='devel')
 
 # Install the GNU compiler
 Stage0 += gnu(fortran=False)
 
 # Install SCI-F
-Stage0 += pip(packages=['scif'])
+Stage0 += pip(packages=['scif'], upgrade=True)
 
 # Download a single copy of the source code
 Stage0 += packages(ospackages=['ca-certificates', 'git'])
@@ -31,10 +31,10 @@ for cc in ['35', '60', '70']:
   Stage0 += stream
 
 # Runtime stage
-Stage1 += baseimage(image='nvidia/cuda:9.1-base-centos7')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:9.1-base-centos7')
 
 # Install SCI-F
-Stage1 += pip(packages=['scif'])
+Stage1 += pip(packages=['scif'], upgrade=True)
 
 # Install runtime components from the first stage
 Stage1 += Stage0.runtime()

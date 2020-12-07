@@ -1,0 +1,91 @@
+name: Docker Build
+
+on:
+  schedule:
+    - cron: '0 12 * * 3' # Weekly
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - recipe: recipes/easybuild.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/basic.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/cloverleaf.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/multistage.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/scif.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/examples/userargs.py
+            userargs: cuda=11.0 ompi=4.0.5
+            context: .
+          - recipe: recipes/gromacs/gromacs.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/hpcbase-gnu-mvapich2.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/hpcbase-gnu-mvapich2.py
+            userargs: centos=true
+            context: .
+          - recipe: recipes/hpcbase-gnu-openmpi.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/hpcbase-gnu-openmpi.py
+            userargs: centos=true
+            context: .
+          - recipe: recipes/hpcbase-nvhpc-mvapich2.py
+            userargs: nvhpc_eula_accept=yes
+            context: .
+          - recipe: recipes/hpcbase-nvhpc-mvapich2.py
+            userargs: nvhpc_eula_accept=yes centos=true
+            context: .
+          - recipe: recipes/hpcbase-nvhpc-openmpi.py
+            userargs: nvhpc_eula_accept=yes
+            context: .
+          - recipe: recipes/hpcbase-nvhpc-openmpi.py
+            userargs: nvhpc_eula_accept=yes centos=true
+            context: .
+          - recipe: recipes/hpccm/bootstrap.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/lammps/lammps.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/milc/milc.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/mpi_bandwidth.py
+            userargs: none=none
+            context: .
+          - recipe: recipes/osu_benchmarks/osu_benchmarks.py
+            userargs: none=none
+            context: recipes/osu_benchmarks
+          - recipe: recipes/spack.py
+            userargs: none=none
+            context: .
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install six
+
+    - name: Build container
+      run: |
+        ./hpccm.sh --recipe ${{ matrix.recipe }} --userarg ${{ matrix.userargs }} > Dockerfile
+        sudo docker build -f Dockerfile ${{ matrix.context }}

@@ -11,7 +11,7 @@ $ hpccm.py --recipe recipes/examples/userargs.py --userarg cuda=9.0 ompi=2.1.2
 
 # Set the image tag based on the specified version (default to 9.1)
 cuda_version = USERARG.get('cuda', '9.1')
-image = 'nvidia/cuda:{}-devel-ubuntu16.04'.format(cuda_version)
+image = 'nvcr.io/nvidia/cuda:{}-devel-ubuntu16.04'.format(cuda_version)
 
 Stage0.baseimage(image)
 

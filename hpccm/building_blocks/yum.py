@@ -181,7 +181,7 @@ class yum(bb_base):
                 # dnf-utils will be installed above if repositories are
                 # enabled
                 self.__commands.append('yum install -y dnf-utils')
-            self.__commands.append('yum-config-manager --set-enabled PowerTools')
+            self.__commands.append('yum-config-manager --set-enabled powertools')
 
         if (self.__release_stream and
             hpccm.config.g_linux_version >= StrictVersion('8.0')):

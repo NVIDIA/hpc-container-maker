@@ -20,7 +20,8 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 ###############################################################################
 # Devel stage
 ###############################################################################
-Stage0 += baseimage(image='nvidia/cuda:10.1-devel-ubuntu16.04', _as='devel')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:10.1-devel-ubuntu18.04',
+                    _as='devel')
 
 Stage0 += gnu()
 Stage0 += cmake(eula=True)
@@ -29,7 +30,7 @@ Stage0 += openmpi(version='3.1.4')
 
 # build QUDA
 Stage0 += packages(ospackages=['ca-certificates', 'git'])
-Stage0 += generic_cmake(branch='v0.8.0',
+Stage0 += generic_cmake(branch='develop',
                         cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
                                     '-D QUDA_DIRAC_CLOVER=ON',
                                     '-D QUDA_DIRAC_DOMAIN_WALL=ON',
@@ -51,7 +52,8 @@ Stage0 += generic_cmake(branch='v0.8.0',
                         repository='https://github.com/lattice/quda.git')
 
 # build MILC
-Stage0 += generic_build(build=['cp Makefile ks_imp_rhmc',
+Stage0 += generic_build(branch='develop',
+                        build=['cp Makefile ks_imp_rhmc',
                                'cd ks_imp_rhmc',
                                'make -j 1 su3_rhmd_hisq \
                                 CC=/usr/local/openmpi/bin/mpicc \
@@ -69,7 +71,6 @@ Stage0 += generic_build(build=['cp Makefile ks_imp_rhmc',
                                 WANTQIO=""'],
                         install=['mkdir -p /usr/local/milc/bin',
                                  'cp /var/tmp/milc_qcd/ks_imp_rhmc/su3_rhmd_hisq /usr/local/milc/bin'],
-                        branch='master',
                         prefix='/usr/local/milc',
                         repository='https://github.com/milc-qcd/milc_qcd')
 Stage0 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
@@ -77,7 +78,7 @@ Stage0 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
 ###############################################################################
 # Release stage
 ###############################################################################
-Stage1 += baseimage(image='nvidia/cuda:10.1-base-ubuntu16.04')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:10.1-base-ubuntu18.04')
 
 Stage1 += Stage0.runtime(exclude=['generic_cmake'])
 

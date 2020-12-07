@@ -91,7 +91,7 @@ From: ubuntu:16.04
         rf = os.path.join(path, '..', 'recipes', 'examples', 'multistage.py')
         r = recipe(rf, single_stage=True)
         self.assertEqual(r.strip(),
-r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
+r'''FROM nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04 AS devel
 
 # GNU compiler
 RUN apt-get update -y && \
@@ -124,7 +124,7 @@ ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
                    singularity_version='2.6')
         self.assertEqual(r.strip(),
 r'''BootStrap: docker
-From: nvidia/cuda:9.0-devel-ubuntu16.04
+From: nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04
 %post
     . /.singularity.d/env/10-docker*.sh
 
@@ -169,7 +169,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 r'''# NOTE: this definition file depends on features only available in
 # Singularity 3.2 and later.
 BootStrap: docker
-From: nvidia/cuda:9.0-devel-ubuntu16.04
+From: nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04
 Stage: devel
 %post
     . /.singularity.d/env/10-docker*.sh
@@ -205,7 +205,7 @@ Stage: devel
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH
 
 BootStrap: docker
-From: nvidia/cuda:9.0-runtime-ubuntu16.04
+From: nvcr.io/nvidia/cuda:9.0-runtime-ubuntu16.04
 %post
     . /.singularity.d/env/10-docker*.sh
 
@@ -231,7 +231,7 @@ From: nvidia/cuda:9.0-runtime-ubuntu16.04
         rf = os.path.join(path, '..', 'recipes', 'examples', 'userargs.py')
         r = recipe(rf, userarg={'cuda': '9.0', 'ompi': '2.1.2'})
         self.assertEqual(r.strip(),
-r'''FROM nvidia/cuda:9.0-devel-ubuntu16.04
+r'''FROM nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04
 
 # OpenMPI version 2.1.2
 RUN apt-get update -y && \

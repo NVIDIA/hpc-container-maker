@@ -89,7 +89,7 @@ r'''RUN rpm --import https://www.example.com/key.pub && \
 r'''RUN rpm --import https://www.example.com/key.pub && \
     yum install -y dnf-utils && \
     yum-config-manager --add-repo http://www.example.com/example.repo && \
-    yum-config-manager --set-enabled PowerTools && \
+    yum-config-manager --set-enabled powertools && \
     yum install -y \
         example && \
     rm -rf /var/cache/yum/*''')
@@ -158,7 +158,7 @@ r'''RUN yum install -y \
         y = yum(ospackages=['hwloc-devel'], powertools=True)
         self.assertEqual(str(y),
 r'''RUN yum install -y dnf-utils && \
-    yum-config-manager --set-enabled PowerTools && \
+    yum-config-manager --set-enabled powertools && \
     yum install -y \
         hwloc-devel && \
     rm -rf /var/cache/yum/*''')

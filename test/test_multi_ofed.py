@@ -216,7 +216,7 @@ RUN yum install -y \
         numactl-libs && \
     rm -rf /var/cache/yum/*
 RUN yum install -y dnf-utils && \
-    yum-config-manager --set-enabled PowerTools && \
+    yum-config-manager --set-enabled powertools && \
     yum install -y yum-utils && \
     mkdir -p /var/tmp/packages_download && \
     yumdownloader --destdir=/var/tmp/packages_download -x \*i?86 --archlist=x86_64 --disablerepo=mlnx\* \
