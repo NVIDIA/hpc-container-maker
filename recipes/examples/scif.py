@@ -3,7 +3,7 @@ Build the CUDA-STREAM benchmark for multiple CUDA compute capabilities.
 
 Make each build available as a SCI-F application.
 """
-Stage0 += baseimage(image='nvcr.io/nvidia/cuda:9.1-devel-centos7')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:9.1-devel-centos7', _as='devel')
 
 # Install the GNU compiler
 Stage0 += gnu(fortran=False)
