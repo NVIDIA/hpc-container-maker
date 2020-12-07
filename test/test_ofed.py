@@ -147,7 +147,7 @@ RUN yum install -y --disablerepo=mlnx\* \
         self.assertEqual(str(o),
 r'''# OFED
 RUN yum install -y dnf-utils && \
-    yum-config-manager --set-enabled PowerTools && \
+    yum-config-manager --set-enabled powertools && \
     yum install -y --disablerepo=mlnx\* \
         libibmad \
         libibmad-devel \

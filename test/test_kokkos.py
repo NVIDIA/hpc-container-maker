@@ -84,7 +84,7 @@ ENV PATH=/usr/local/kokkos/bin:$PATH''')
         self.assertEqual(str(k),
 r'''# Kokkos version 3.2.00
 RUN yum install -y dnf-utils && \
-    yum-config-manager --set-enabled PowerTools && \
+    yum-config-manager --set-enabled powertools && \
     yum install -y \
         gzip \
         hwloc-devel \
