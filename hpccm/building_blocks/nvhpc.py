@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
 import logging
 import re
 import posixpath
@@ -60,8 +61,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     cuda_multi: Boolean flag to specify whether the NVIDIA HPC SDK
     support for multiple CUDA versions should be installed.  The
-    default value is `True`, except for aarch64 processors where the
-    default is `False`.
+    default value is `True`.
 
     environment: Boolean flag to specify whether the environment
     (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
@@ -102,7 +102,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `20.9`.
+    file name.  The default value is `20.11`.
 
     # Examples
 
@@ -137,7 +137,6 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__cuda_home = kwargs.get('cuda_home', False)
         self.__cuda_multi = kwargs.get('cuda_multi', True)
         self.__cuda_version = kwargs.get('cuda', None)
-        self.__cuda_version_default = '11.0'
         self.__commands = [] # Filled in by __setup()
 
         # By setting this value to True, you agree to the NVIDIA HPC
@@ -153,12 +152,17 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '20.9')
+        self.__version = kwargs.get('version', '20.11')
         self.__wd = '/var/tmp' # working directory
         self.__year = '' # Filled in by __version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
+
+        if StrictVersion(self.__version) >= StrictVersion('20.11'):
+            self.__cuda_version_default = '11.1'
+        else:
+            self.__cuda_version_default = '11.0'
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -199,7 +203,8 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             self.__arch_directory = 'Linux_aarch64'
-            self.__cuda_multi = False # CUDA multi packages not available
+            if StrictVersion(self.__version) < StrictVersion('20.11'):
+                self.__cuda_multi = False # CUDA multi packages not available
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_directory = 'Linux_ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
