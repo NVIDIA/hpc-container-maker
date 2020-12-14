@@ -58,6 +58,13 @@ class toolchain(object):
           setattr(result, key, val if val else None)
         return result
 
+    def __deepcopy__(self, memo):
+        """Copy all the attributes even if __dict__ only returns the pairs
+           with non-null values."""
+        result = self.__copy__()
+        memo[id(self)] = result
+        return result
+
     @property
     def __dict__(self):
         """Return only those attributes that have non-null values.  This
