@@ -110,7 +110,7 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__version = kwargs.get('version', '1.5.1')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()

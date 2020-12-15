@@ -134,7 +134,8 @@ class libsim(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__url = r'http://portal.nersc.gov/project/visit/releases/{0}/{1}'
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp/visit' # working directory
+        self.__wd = kwargs.get('wd', posixpath.join(
+            hpccm.config.g_wd, 'visit')) # working directory
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()

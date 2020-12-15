@@ -156,7 +156,7 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__pgi_version = kwargs.get('pgi_version', '19.10')
         self.__release = kwargs.get('release', '1')
         self.version = kwargs.get('version', '2.3.4')
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',

@@ -108,7 +108,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__prefix = kwargs.pop('prefix', '/usr/local/nccl')
         self.__src_directory = kwargs.pop('src_directory', None)
         self.__version = kwargs.pop('version', '2.7.8-1')
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__build:
             # Install prebuild package

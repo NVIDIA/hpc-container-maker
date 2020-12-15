@@ -198,7 +198,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         self.__toolchain = kwargs.get('toolchain', toolchain())
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Construct the series of steps to execute
         self.__setup()

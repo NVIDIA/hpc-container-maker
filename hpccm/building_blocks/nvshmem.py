@@ -112,7 +112,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__shmem = kwargs.pop('shmem', None)
         self.__src_directory = kwargs.pop('src_directory', None)
         self.__version = kwargs.pop('version', '1.0.1-0')
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the download specific parameters
         self.__download()

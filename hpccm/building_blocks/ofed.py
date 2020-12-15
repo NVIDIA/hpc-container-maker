@@ -94,7 +94,7 @@ class ofed(bb_base):
         self.__powertools = False # enable the CentOS PowerTools repo
         self.__prefix = kwargs.get('prefix', None)
         self.__symlink = kwargs.get('symlink', False)
-        self.__wd = '/var/tmp'
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the Linux distribution specific parameters
         self.__distro()

@@ -20,6 +20,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import posixpath
+
 import hpccm.config
 
 from hpccm.building_blocks.apt_get import apt_get
@@ -132,8 +134,9 @@ class packages(bb_base):
         self.__apt_repositories = kwargs.get('apt_repositories', [])
         self.__aptitude = kwargs.get('aptitude', False)
         self.__download = kwargs.get('download', False)
-        self.__download_directory = kwargs.get('download_directory',
-                                               '/var/tmp/packages_download')
+        self.__download_directory = kwargs.get(
+            'download_directory',
+            posixpath.join(hpccm.config.g_wd, 'packages_download'))
         self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__epel = kwargs.get('epel', False)

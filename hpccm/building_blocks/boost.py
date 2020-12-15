@@ -113,7 +113,7 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__version = kwargs.get('version', '1.74.0')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if self.__sourceforge:
             self.__baseurl = 'https://sourceforge.net/projects/boost/files/boost/__version__'

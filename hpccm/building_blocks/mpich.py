@@ -150,7 +150,8 @@ class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             configure_opts=self.__configure_opts,
             devel_environment=self.environment_variables,
             # Run test suite (must be after install)
-            postinstall=['cd /var/tmp/mpich-{}'.format(self.__version),
+            postinstall=['cd {0}/mpich-{1}'.format(hpccm.config.g_wd,
+                                                   self.__version),
                          'RUNTESTS_SHOWPROGRESS=1 make testing'] if self.__check else None,
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
