@@ -21,7 +21,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.templates.envvars
@@ -88,11 +87,6 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
                 posixpath.join(self.__prefix, 'lib64'))
 
-        if StrictVersion(self.__version) >= StrictVersion('2.1'):
-            url='{0}/{1}.tar.gz'.format(self.__baseurl, self.__version)
-        else:
-            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version)
-
         # Setup build configuration
         self.__bb = generic_build(
             annotations={'version': self.__version},
@@ -106,7 +100,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             libdir='lib64',
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
-            url=url,
+            url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version),
             **kwargs)
 
         # Container instructions

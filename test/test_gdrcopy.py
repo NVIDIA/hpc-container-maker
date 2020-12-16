@@ -43,12 +43,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/2.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.1.tar.gz -C /var/tmp -z && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.1 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/gdrcopy-2.1 /var/tmp/2.1.tar.gz
+    rm -rf /var/tmp/gdrcopy-2.1 /var/tmp/v2.1.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
@@ -64,12 +64,12 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/2.1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/2.1.tar.gz -C /var/tmp -z && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.1 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
     make PREFIX=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/gdrcopy-2.1 /var/tmp/2.1.tar.gz
+    rm -rf /var/tmp/gdrcopy-2.1 /var/tmp/v2.1.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
