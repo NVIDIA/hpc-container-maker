@@ -15,7 +15,7 @@
 from __future__ import absolute_import
 
 __all__ = ['baseimage', 'blob', 'comment', 'copy', 'environment', 'label',
-           'raw', 'runscript', 'shell', 'user', 'workdir']
+           'raw', 'runscript', 'shell', 'user', 'workdir', 'arg']
 
 from hpccm.primitives.baseimage import baseimage
 from hpccm.primitives.blob import blob
@@ -28,3 +28,4 @@ from hpccm.primitives.runscript import runscript
 from hpccm.primitives.shell import shell
 from hpccm.primitives.user import user
 from hpccm.primitives.workdir import workdir
+from hpccm.primitives.arg import arg
