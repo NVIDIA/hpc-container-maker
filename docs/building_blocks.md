@@ -4026,6 +4026,94 @@ Stage0 += p
 Stage1 += p.runtime()
 ```
 
+# rdma_core
+```python
+rdma_core(self, **kwargs)
+```
+The `rdma_core` building block configures, builds, and installs the
+[RDMA Core](https://github.com/linux-rdma/rdma-core) component.
+
+The [CMake](#cmake) building block should be installed prior to
+this building block.
+
+__Parameters__
+
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __branch__: The git branch to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the default branch for the repository.
+
+- __commit__: The git commit to clone.  Only recognized if the
+`repository` parameter is specified.  The default is empty, i.e.,
+use the latest commit on the default branch for the repository.
+
+- __environment__: Boolean flag to specify whether the environment
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+modified to include RDMA Core. The default is True.
+
+- __ldconfig__: Boolean flag to specify whether the RDMA Core library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the RDMA Core library
+directory. The default value is False.
+
+- __ospackages__: List of OS packages to install prior to configuring
+and building.  For Ubuntu, the default values are `libudev-dev`,
+`libnl-3-dev`, `libnl-route-3-dev`, `make`, `pkg-config`,
+`python3-docutils`, `pandoc`, and `wget`.  For RHEL-based Linux
+distributions, the default values are `libnl3-devel`,
+`libudev-devel`, `make`, `pkgconfig`, `pandoc`, `python-docutils`,
+and `wget`.  If the `repository` parameter is set, then
+`ca-certificates` and `git` are also included.
+
+- __prefix__: The top level install location.  The default value is
+`/usr/local/rdma-core`.
+
+- __repository__: The location of the git repository that should be used to build RDMA Core.  If True, then use the default `https://github.com/linux-rdma/rdma-core.git`
+repository.  The default is empty, i.e., use the release package
+specified by `version`.
+
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default value is empty.
+
+- __url__: The location of the tarball that should be used to build RDMA
+Core.  The default is empty, i.e., use the release package
+specified by `version`.
+
+- __version__: The version of RDMA Core source to download.  The default
+value is `31.2`.
+
+__Examples__
+
+
+```python
+rdma_core(prefix='/opt/rdma-core/31.2', version='31.2')
+```
+
+```python
+rdma_core(repository='https://github.com/linux-rdma/rdma-core.git')
+```
+
+
+## runtime
+```python
+rdma_core.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+r = rdma_core(...)
+Stage0 += r
+Stage1 += r.runtime()
+```
+
 # scif
 ```python
 scif(self, **kwargs)

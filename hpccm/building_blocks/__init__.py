@@ -61,6 +61,7 @@ __all__ = ['amgx',
            'pmix',
            'pnetcdf',
            'python',
+           'rdma_core',
            'scif',
            'sensei',
            'slurm_pmi2',
@@ -115,6 +116,7 @@ from hpccm.building_blocks.pip import pip
 from hpccm.building_blocks.pmix import pmix
 from hpccm.building_blocks.pnetcdf import pnetcdf
 from hpccm.building_blocks.python import python
+from hpccm.building_blocks.rdma_core import rdma_core
 from hpccm.building_blocks.scif import scif
 from hpccm.building_blocks.sensei import sensei
 from hpccm.building_blocks.slurm_pmi2 import slurm_pmi2
