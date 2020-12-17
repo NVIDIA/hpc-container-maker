@@ -51,6 +51,7 @@ generate:
   - hpccm.building_blocks.pmix+
   - hpccm.building_blocks.pnetcdf+
   - hpccm.building_blocks.python+
+  - hpccm.building_blocks.rdma_core+
   - hpccm.building_blocks.scif+
   - hpccm.building_blocks.sensei+
   - hpccm.building_blocks.slurm_pmi2+
