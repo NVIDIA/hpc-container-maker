@@ -199,6 +199,27 @@ __Examples__
 environment(variables={'PATH': '/usr/local/bin:$PATH'})
 ```
 
+# arg
+```python
+arg(self, **kwargs)
+```
+
+The `arg` primitive sets the corresponding environment variables.
+These variables could have a default value or not. For the former
+case the value should be especified on the command line used to
+build the image. This primitive is specific to the Docker container.
+For the Singularity and bash container this primitive return only a
+empry string.
+
+- __variables__: A dictionary of key / value pairs.  The default is an
+empty dictionary.
+
+__Examples__
+
+```python
+arg(variables={'HTTP_PROXY':'proxy.example.com', 'NO_PROXY':'example.com'})
+```
+
 # label
 ```python
 label(self, **kwargs)
