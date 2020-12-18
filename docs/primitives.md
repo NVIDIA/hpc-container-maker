@@ -229,6 +229,7 @@ arg(variables={'HTTP_PROXY':'proxy.example.com', 'NO_PROXY':'example.com'})
 ```bash
     HTTP_PROXY="proxy.example.com" \
     NO_PROXY="example.com \
+    recipe.sh
 ```
 
 # label
