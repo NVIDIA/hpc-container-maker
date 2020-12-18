@@ -1,3 +1,12 @@
+# v20.12.0
+
+- Adds a RDMA Core (`rdma_core`) building block.
+- Fixes and enhancements to the gdrcopy (`gdrcopy`) and NVIDIA HPC SDK
+  (`nvhpc`) building blocks.
+- Add a configuration option to specify the working directory used inside
+  the container when building.
+- Fix issue with deepcopies of toolchains.
+
 # v20.11.0
 
 - Enhancements to the Nsight Compute (`nsight_compute`), Nsight Systems
