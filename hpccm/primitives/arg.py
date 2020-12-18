@@ -14,7 +14,7 @@
 
 # pylint: disable=invalid-name, too-few-public-methods
 
-"""Environment primitive"""
+"""Arg primitive"""
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -29,7 +29,10 @@ from hpccm.common import container_type
 class arg(object):
     """The `arg` primitive sets the corresponding environment
     variables during the build time of a docker container. 
-    This primitive is docker specific and is ignored for singularity
+    Singularity and "bash" containers does not have a strict version of the
+    ARG keyword found on Dockerfiles but is possible to simulate
+    the behavior of this keyword as a build time parameter for the
+    Singularity and bash containers using environment variables.
 
     # Parameters
 
@@ -39,10 +42,21 @@ class arg(object):
     # Examples
 
     ```python
-    arg(variables={'HTTP_PROXY': 'proxy.example.com', 'NO_PROXY':'example.com'})
-    ```
-    """
+    arg(variables={'HTTP_PROXY':'proxy.example.com', 'NO_PROXY':'example.com'})
 
+    ```bash
+        SINGULARITYENV_HTTP_PROXY="proxy.example.com" \
+        SINGULARITYENV_NO_PROXY="example.com \
+        singularity build image.sif recipe.def"
+    ```
+
+    ```bash
+        HTTP_PROXY="proxy.example.com" \
+        NO_PROXY="example.com \
+        recipe.sh"
+    ```
+
+    """
     def __init__(self, **kwargs):
         """Initialize primitive"""
         self.__variables = kwargs.get('variables', {})
@@ -50,14 +64,23 @@ class arg(object):
     def __str__(self):
         """String representation of the primitive"""
         if self.__variables:
-
-            if hpccm.config.g_ctype == container_type.SINGULARITY or \
-               hpccm.config.g_ctype == container_type.BASH:
-                return ""
+            string = ""
+            num_vars  = len(self.__variables)
+            variables = self.__variables
+            if hpccm.config.g_ctype == container_type.SINGULARITY:
+                if num_vars > 0:
+                    string += "%post" + "\n"
+                for count, (key, val) in enumerate(sorted(variables.items())):
+                    eol = "" if count == num_vars - 1 else "\n"
+                    string += '    {0}=${{{0}:-"{1}"}}'.format(key, val) + eol
+                return string
+            elif hpccm.config.g_ctype == container_type.BASH:
+                for count, (key, val) in enumerate(sorted(variables.items())):
+                    eol = "" if count == num_vars - 1 else "\n"
+                    string += '{0}=${{{0}:-"{1}"}}'.format(key, val) + eol
+                return string
             elif hpccm.config.g_ctype == container_type.DOCKER:
-                string = ""
-                num_vars = len(self.__variables)
-                for count, (key, val) in enumerate(sorted(self.__variables.items())):
+                for count, (key, val) in enumerate(sorted(variables.items())):
                     eol = "" if count == num_vars - 1 else "\n"
                     if val == "":
                         string += 'ARG {0}'.format(key) + eol

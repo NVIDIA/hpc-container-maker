@@ -204,12 +204,12 @@ environment(variables={'PATH': '/usr/local/bin:$PATH'})
 arg(self, **kwargs)
 ```
 
-The `arg` primitive sets the corresponding environment variables.
-These variables could have a default value or not. For the former
-case the value should be especified on the command line used to
-build the image. This primitive is specific to the Docker container.
-For the Singularity and bash container this primitive return only a
-empry string.
+The `arg` primitive sets the corresponding environment
+variables during the build time of a docker container.
+Singularity and "bash" containers does not have a strict version of the
+ARG keyword found on Dockerfiles but is possible to simulate
+the behavior of this keyword as a build time parameter for the
+Singularity and bash containers using environment variables.
 
 - __variables__: A dictionary of key / value pairs.  The default is an
 empty dictionary.
@@ -218,6 +218,17 @@ __Examples__
 
 ```python
 arg(variables={'HTTP_PROXY':'proxy.example.com', 'NO_PROXY':'example.com'})
+```
+
+```bash
+    SINGULARITYENV_HTTP_PROXY="proxy.example.com" \
+    SINGULARITYENV_NO_PROXY="example.com \
+    singularity build image.sif recipe.def"
+```
+
+```bash
+    HTTP_PROXY="proxy.example.com" \
+    NO_PROXY="example.com \
 ```
 
 # label

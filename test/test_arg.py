@@ -60,31 +60,25 @@ class Test_arg(unittest.TestCase):
     def test_single_singularity(self):
         """Single arg variable specified"""
         e = arg(variables={'A': 'B'})
-        self.assertEqual(str(e), '')
+        self.assertEqual(str(e), '%post\n    A=${A:-"B"}')
+
+    @singularity
+    def test_single_singularity_nodefault(self):
+        """Single arg variable specified"""
+        e = arg(variables={'A': ''})
+        self.assertEqual(str(e), '%post\n    A=${A:-""}')
 
     @bash
     def test_single_bash(self):
         """Single arg variable specified"""
         e = arg(variables={'A': 'B'})
-        self.assertEqual(str(e), '')
-
-    @docker
-    def test_single_export_docker(self):
-        """Single arg variable specified"""
-        e = arg(variables={'A': 'B'})
-        self.assertEqual(str(e), 'ARG A=B')
-
-    @singularity
-    def test_single_export_singularity(self):
-        """Single arg variable specified"""
-        e = arg(variables={'A': 'B'})
-        self.assertEqual(str(e),'')
+        self.assertEqual(str(e), 'A=${A:-"B"}')
 
     @bash
-    def test_single_export_bash(self):
+    def test_single_bash_nodefault(self):
         """Single arg variable specified"""
-        e = arg(variables={'A': 'B'})
-        self.assertEqual(str(e), '')
+        e = arg(variables={'A': ''})
+        self.assertEqual(str(e), 'A=${A:-""}')
 
     @docker
     def test_multiple_docker(self):
@@ -107,13 +101,37 @@ ARG TWO''')
     @singularity
     def test_multiple_singularity(self):
         """Multiple arg variables specified"""
-        e = arg(variables={'ONE': 1, 'TWO': 2, 'THREE': 3},
-                        _export=False)
-        self.assertEqual(str(e),'')
+        e = arg(variables={'ONE': 1, 'TWO': 2, 'THREE': 3})
+        self.assertEqual(str(e),
+'''%post
+    ONE=${ONE:-"1"}
+    THREE=${THREE:-"3"}
+    TWO=${TWO:-"2"}''')
+
+    @singularity
+    def test_multiple_singularity_nodefault(self):
+        """Multiple arg variables specified"""
+        e = arg(variables={'ONE':"", 'TWO':"", 'THREE':""})
+        self.assertEqual(str(e),
+'''%post
+    ONE=${ONE:-""}
+    THREE=${THREE:-""}
+    TWO=${TWO:-""}''')
 
     @bash
     def test_multiple_bash(self):
         """Multiple arg variables specified"""
-        e = arg(variables={'ONE': 1, 'TWO': 2, 'THREE': 3},
-                        _export=False)
-        self.assertEqual(str(e),'')
+        e = arg(variables={'ONE': 1, 'TWO': 2, 'THREE': 3})
+        self.assertEqual(str(e),
+'''ONE=${ONE:-"1"}
+THREE=${THREE:-"3"}
+TWO=${TWO:-"2"}''')
+
+    @bash
+    def test_multiple_bash_nodefault(self):
+        """Multiple arg variables specified"""
+        e = arg(variables={'ONE': "", 'TWO': "", 'THREE': ""})
+        self.assertEqual(str(e),
+'''ONE=${ONE:-""}
+THREE=${THREE:-""}
+TWO=${TWO:-""}''')
