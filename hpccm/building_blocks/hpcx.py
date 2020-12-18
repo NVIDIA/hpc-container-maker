@@ -129,7 +129,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__version = kwargs.get('version', '2.7.0')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',

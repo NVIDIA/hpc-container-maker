@@ -41,6 +41,7 @@ g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
 g_singularity_version = StrictVersion('2.6') # Singularity version
+g_wd = '/var/tmp' # Working directory
 
 def get_cpu_architecture():
   """Return the architecture string for the currently configured CPU
@@ -187,3 +188,14 @@ def set_singularity_version(ver):
   """
   this = sys.modules[__name__]
   this.g_singularity_version = StrictVersion(ver)
+
+def set_working_directory(wd):
+  """Set the working directory to use for staging inside the container
+
+  # Arguments
+
+  wd (string): working directory path
+
+  """
+  this = sys.modules[__name__]
+  this.g_wd = wd

@@ -99,7 +99,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__version = kwargs.get('version', '3.18.3')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Construct the series of steps to execute
         self.__setup()

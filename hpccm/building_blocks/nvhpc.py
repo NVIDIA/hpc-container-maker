@@ -153,7 +153,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
         self.__version = kwargs.get('version', '20.11')
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',

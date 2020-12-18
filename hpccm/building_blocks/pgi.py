@@ -134,7 +134,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__system_libnuma = kwargs.get('system_libnuma', True)
         self.__tarball = kwargs.get('tarball', '')
         self.__version = '' # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='pgcc', CXX='pgc++', F77='pgfortran',
                                    F90='pgfortran', FC='pgfortran')

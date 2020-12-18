@@ -83,9 +83,21 @@ __Arguments__
 - __ver (string)__: Singularity definition file format version.
 
 
+## set_working_directory
+```python
+set_working_directory(wd)
+```
+Set the working directory to use for staging inside the container
+
+__Arguments__
+
+
+- __wd (string)__: working directory path
+
+
 # recipe
 ```python
-recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None)
+recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp')
 ```
 Recipe builder
 
@@ -110,6 +122,9 @@ The default is '2.6'.
 
 - __userarg__: A dictionary of key / value pairs provided to the recipe
 as the `USERARG` dictionary.
+
+- __working_directory__: path to use as the working directory in the
+container specification
 
 
 # Stage

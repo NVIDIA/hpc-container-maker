@@ -125,7 +125,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__prefix = kwargs.get('prefix', '/opt/arm')
         self.__tarball = kwargs.get('tarball', None)
         self.__version = kwargs.get('version', '20.3')
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
                                    F77='armflang', F90='armflang',

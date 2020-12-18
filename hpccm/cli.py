@@ -58,6 +58,9 @@ def main(): # pragma: no cover
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
                         nargs='+', help='specify user parameters')
     parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('--working-directory', '--wd', type=str,
+                        default='/var/tmp',
+                        help='set container working directory')
     args = parser.parse_args()
 
     # configure logger
@@ -68,7 +71,8 @@ def main(): # pragma: no cover
                           raise_exceptions=args.print_exceptions,
                           single_stage=args.single_stage,
                           singularity_version=args.singularity_version,
-                          userarg=args.userarg)
+                          userarg=args.userarg,
+                          working_directory=args.working_directory)
     print(recipe)
 
 if __name__ == "__main__": # pragma: no cover

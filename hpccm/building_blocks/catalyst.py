@@ -128,7 +128,7 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
         self.__url = r'https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version={0}\&type=catalyst\&os=Sources\&downloadFile={1}'
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Validate edition choice
         if self.__edition not in [

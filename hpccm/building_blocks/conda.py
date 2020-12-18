@@ -113,7 +113,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__version = kwargs.get('version', '4.8.3')
 
         self.__commands = [] # Filled in by __setup()
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__eula:
             logging.warning('Anaconda EULA was not accepted.  To accept, see the documentation for this building block')

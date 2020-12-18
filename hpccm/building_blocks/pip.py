@@ -94,7 +94,7 @@ class pip(bb_base, hpccm.templates.rm):
         self.__pip = kwargs.get('pip', 'pip')
         self.__requirements = kwargs.get('requirements', None)
         self.__upgrade = kwargs.get('upgrade', False)
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below

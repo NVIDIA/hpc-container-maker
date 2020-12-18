@@ -98,8 +98,9 @@ class yum(bb_base):
         self.__commands = []
         self.__download = kwargs.get('download', False)
         self.__download_args = kwargs.get('download_args', '')
-        self.__download_directory = kwargs.get('download_directory',
-                                               '/var/tmp/yum_download')
+        self.__download_directory = kwargs.get(
+            'download_directory',
+            posixpath.join(hpccm.config.g_wd, '/var/tmp/yum_download'))
         self.__epel = kwargs.get('epel', False)
         self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)

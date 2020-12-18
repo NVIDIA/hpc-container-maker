@@ -125,7 +125,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             self.__installdir = posixpath.join(
                 self.__prefix, 'charm-v{}'.format(self.__version))
 
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.__commands = [] # Filled in by __setup()
 

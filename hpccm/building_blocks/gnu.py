@@ -159,7 +159,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
         self.prefix = kwargs.get('prefix', '/usr/local/gnu')
         self.__source = kwargs.get('source', False)
         self.__version = kwargs.get('version', None)
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.__commands = []       # Filled in below
         self.__compiler_debs = []  # Filled in below

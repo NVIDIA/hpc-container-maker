@@ -196,7 +196,7 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__runtime_version = kwargs.get('runtime_version', '2020.2-14')
         self.__tarball = kwargs.get('tarball', None)
         self.__tbb = kwargs.get('tbb', True)
-        self.__wd = '/var/tmp' # working directory
+        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='icc', CXX='icpc', F77='ifort',
                                    F90='ifort', FC='ifort')

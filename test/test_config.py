@@ -199,3 +199,14 @@ class Test_config(unittest.TestCase):
     def test_get_format_singularity(self):
         """Get container format"""
         self.assertEqual(hpccm.config.get_format(), 'singularity')
+
+    def test_set_working_directory(self):
+        """Set working directory"""
+        # save default value in order to switch back later
+        default_wd = hpccm.config.g_wd
+
+        hpccm.config.set_working_directory('/a/b')
+        self.assertEqual(hpccm.config.g_wd, '/a/b')
+
+        # reset to the default working directory
+        hpccm.config.set_working_directory(default_wd)

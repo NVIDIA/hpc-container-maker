@@ -88,7 +88,8 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
             exit(1)
 
 def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
-           single_stage=False, singularity_version='2.6', userarg=None):
+           single_stage=False, singularity_version='2.6', userarg=None,
+           working_directory='/var/tmp'):
     """Recipe builder
 
     # Arguments
@@ -112,6 +113,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     userarg: A dictionary of key / value pairs provided to the recipe
     as the `USERARG` dictionary.
 
+    working_directory: path to use as the working directory in the
+    container specification
+
     """
 
     # Make user arguments available
@@ -129,6 +133,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
 
     # Set the global Singularity version
     hpccm.config.g_singularity_version = StrictVersion(singularity_version)
+
+    # Set the global working directory
+    hpccm.config.g_wd = working_directory
 
     # Any included recipes that are specified using relative paths will
     # need to prepend the path to the main recipe in order to be found.

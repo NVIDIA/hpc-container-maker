@@ -23,6 +23,7 @@ from __future__ import print_function
 import os
 
 from distutils.version import StrictVersion
+import posixpath
 
 import hpccm.config
 
@@ -87,7 +88,8 @@ class nsight_compute(bb_base):
                                    '/usr/local/NVIDIA-Nsight-Compute')
         self.__runfile = kwargs.get('runfile', None)
         self.__version = kwargs.get('version', '2020.2.1')
-        self.__wd = '/var/tmp/nsight_compute'
+        self.__wd = kwargs.get('wd', posixpath.join(
+            hpccm.config.g_wd, 'nsight_compute')) # working directory
 
         # Set the Linux distribution specific parameters
         self.__distro()
