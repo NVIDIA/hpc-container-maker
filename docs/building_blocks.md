@@ -777,6 +777,10 @@ default values are `make` and `wget`.
 - __prefix__: The top level install location.  The default value is
 `/usr/local/gdrcopy`.
 
+- __toolchain__: The toolchain object.  This should be used if
+non-default compilers or other toolchain options are needed.  The
+default is empty.
+
 - __version__: The version of gdrcopy source to download.  The default
 value is `2.1`.
 

@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import posixpath
+from six.moves import shlex_quote
 
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -30,6 +31,7 @@ from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
 from hpccm.primitives.comment import comment
+from hpccm.toolchain import toolchain
 
 class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `gdrcopy` building block builds and installs the user space
@@ -56,6 +58,10 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     prefix: The top level install location.  The default value is
     `/usr/local/gdrcopy`.
 
+    toolchain: The toolchain object.  This should be used if
+    non-default compilers or other toolchain options are needed.  The
+    default is empty.
+
     version: The version of gdrcopy source to download.  The default
     value is `2.1`.
 
@@ -76,6 +82,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/gdrcopy')
+        self.__toolchain = kwargs.pop('toolchain', toolchain())
         self.__version = kwargs.pop('version', '2.1')
 
         # Setup the environment variables
@@ -87,13 +94,24 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
                 posixpath.join(self.__prefix, 'lib64'))
 
+        # Since gdrcopy does not use autotools or CMake, the toolchain
+        # requires special handling.
+        make_opts = vars(self.__toolchain)
+        if 'CFLAGS' in make_opts:
+            # CFLAGS is derived from COMMONCFLAGS, so rename.  See
+            # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
+            make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
+        make_opts['PREFIX'] = self.__prefix
+        make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
+                                  for key, value in sorted(make_opts.items())])
+
         # Setup build configuration
         self.__bb = generic_build(
             annotations={'version': self.__version},
             base_annotation=self.__class__.__name__,
             # Work around "install -D" issue on CentOS
             build=['mkdir -p {0}/include {0}/lib64'.format(self.__prefix),
-                   'make PREFIX={} lib lib_install'.format(self.__prefix)],
+                   'make {} lib lib_install'.format(make_opts_str)],
             comment=False,
             devel_environment=self.environment_variables,
             directory='gdrcopy-{}'.format(self.__version),

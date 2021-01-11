@@ -25,6 +25,7 @@ import unittest
 from helpers import centos, docker, ubuntu
 
 from hpccm.building_blocks.gdrcopy import gdrcopy
+from hpccm.toolchain import toolchain
 
 class Test_gdrcopy(unittest.TestCase):
     def setUp(self):
@@ -94,6 +95,29 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     echo "/usr/local/gdrcopy/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/gdrcopy-1.3 /var/tmp/v1.3.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
+
+    @ubuntu
+    @docker
+    def test_toolchain(self):
+        """Toolchain"""
+        tc = toolchain(CC='gcc', CFLAGS='-O2')
+        g = gdrcopy(toolchain=tc, version='2.1')
+        self.assertEqual(str(g),
+r'''# GDRCOPY version 2.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.1 && \
+    mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
+    make CC=gcc COMMONCFLAGS=-O2 PREFIX=/usr/local/gdrcopy lib lib_install && \
+    rm -rf /var/tmp/gdrcopy-2.1 /var/tmp/v2.1.tar.gz
+ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
 
     @ubuntu
