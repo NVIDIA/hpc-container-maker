@@ -215,6 +215,21 @@ COPY --from=0 /usr/local/tcl /usr/local/tcl''')
 
     @ubuntu
     @docker
+    def test_runtime_manual(self):
+        """Runtime"""
+        g = generic_autotools(
+            directory='tcl8.6.9/unix',
+            prefix='/usr/local/tcl',
+            runtime=['/usr/local/tcl/bin/tclsh*', '/usr/local/tcl/lib'],
+            url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
+COPY --from=0 /usr/local/tcl/bin/tclsh* /usr/local/tcl/bin/
+COPY --from=0 /usr/local/tcl/lib /usr/local/tcl/lib''')
+
+    @ubuntu
+    @docker
     def test_runtime_annotate(self):
         """Runtime"""
         g = generic_autotools(

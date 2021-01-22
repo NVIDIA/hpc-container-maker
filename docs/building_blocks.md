@@ -905,6 +905,10 @@ specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+- __runtime__: The list of files / directories to copy into the runtime
+stage.  The default is an empty list, i.e., copy the entire
+prefix.
+
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
@@ -1029,6 +1033,10 @@ specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+- __runtime__: The list of files / directories to copy into the runtime
+stage.  The default is an empty list, i.e., copy the entire
+prefix.
+
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
 stage.  The default is an empty dictionary.
@@ -1150,6 +1158,10 @@ this parameter or the `package` or `url` parameters must be
 specified.
 
 - ___run_arguments__: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+
+- __runtime__: The list of files / directories to copy into the runtime
+stage.  The default is an empty list, i.e., copy the entire
+prefix.
 
 - __runtime_environment__: Dictionary of environment variables and
 values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
