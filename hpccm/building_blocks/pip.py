@@ -144,7 +144,12 @@ class pip(bb_base, hpccm.templates.rm):
             cmds = []
 
             if self.__upgrade:
-                cmds.append('{0} install --upgrade pip'.format(self.__pip))
+                # pip version 21 and later no longer support Python 2
+                if self.__pip.startswith('pip3'):
+                    cmds.append('{0} install --upgrade pip'.format(self.__pip))
+                else:
+                    cmds.append('{0} install --upgrade "pip < 21.0"'.format(
+                        self.__pip))
 
             if self.__requirements:
                 self += copy(src=self.__requirements,

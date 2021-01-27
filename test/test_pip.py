@@ -164,5 +164,5 @@ RUN apt-get update -y && \
         python-setuptools \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip --no-cache-dir install --upgrade pip && \
+RUN pip --no-cache-dir install --upgrade "pip < 21.0" && \
     pip --no-cache-dir install hpccm''')
