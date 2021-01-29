@@ -125,6 +125,10 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
 
     _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
 
+    runtime: The list of files / directories to copy into the runtime
+    stage.  The default is an empty list, i.e., copy the entire
+    prefix.
+
     runtime_environment: Dictionary of environment variables and
     values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
     stage.  The default is an empty dictionary.
@@ -194,6 +198,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         self.__preconfigure = kwargs.get('preconfigure', [])
         self.__recursive = kwargs.get('recursive', False)
         self.__run_arguments = kwargs.get('_run_arguments', None)
+        self.__runtime = kwargs.get('runtime', [])
         self.runtime_environment_variables = kwargs.get('runtime_environment', {})
         self.__toolchain = kwargs.get('toolchain', toolchain())
 
@@ -320,7 +325,22 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
                     self.rt += comment(self.url, reformat=False)
                 elif self.repository:
                     self.rt += comment(self.repository, reformat=False)
-            self.rt += copy(_from=_from, src=self.prefix, dest=self.prefix)
+
+            if self.__runtime:
+                for src in self.__runtime:
+                    if '*' in posixpath.basename(src):
+                        # When using COPY with more than one source file,
+                        # the destination must be a directory and end with
+                        # a /
+                        dest = posixpath.dirname(src) + '/'
+                    else:
+                        dest = src
+
+                    self.rt += copy(_from=_from, src=src, dest=dest)
+            else:
+                # Copy the entire prefix
+                self.rt += copy(_from=_from, src=self.prefix, dest=self.prefix)
+
             if self.ldconfig:
                 self.rt += shell(commands=[self.ldcache_step(
                     directory=posixpath.join(self.prefix, self.__libdir))])

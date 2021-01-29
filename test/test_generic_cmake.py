@@ -257,6 +257,29 @@ COPY --from=0 /usr/local/gromacs /usr/local/gromacs''')
 
     @ubuntu
     @docker
+    def test_runtime_manual(self):
+        """Runtime"""
+        g = generic_cmake(
+            cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                        '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                        '-D GMX_BUILD_OWN_FFTW=ON',
+                        '-D GMX_GPU=ON',
+                        '-D GMX_MPI=OFF',
+                        '-D GMX_OPENMP=ON',
+                        '-D GMX_PREFER_STATIC_LIBS=ON',
+                        '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+            directory='gromacs-2018.2',
+            prefix='/usr/local/gromacs',
+            runtime=['/usr/local/gromacs/bin/*', '/usr/local/gromacs/share'],
+            url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
+COPY --from=0 /usr/local/gromacs/bin/* /usr/local/gromacs/bin/
+COPY --from=0 /usr/local/gromacs/share /usr/local/gromacs/share''')
+
+    @ubuntu
+    @docker
     def test_runtime_annotate(self):
         """Runtime"""
         g = generic_cmake(

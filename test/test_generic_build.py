@@ -177,3 +177,17 @@ LABEL hpccm.openblas.branch=v0.3.6 \
         self.assertEqual(r,
 r'''# https://github.com/bcumming/cuda-stream
 COPY --from=0 /usr/local/cuda-stream/bin /usr/local/cuda-stream/bin''')
+
+    @ubuntu
+    @docker
+    def test_runtime_manual(self):
+        """Runtime"""
+        g = generic_build(build=['make ARCH=sm_70'],
+                          install=['cp stream /usr/local/cuda-stream/bin/cuda-stream'],
+                          prefix='/usr/local/cuda-stream/bin',
+                          repository='https://github.com/bcumming/cuda-stream',
+                          runtime=['/usr/local/cuda-stream/bin'])
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# https://github.com/bcumming/cuda-stream
+COPY --from=0 /usr/local/cuda-stream/bin /usr/local/cuda-stream/bin''')
