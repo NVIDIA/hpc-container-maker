@@ -1,3 +1,9 @@
+# v21.1.0
+
+- Fixes and enhancements to the gdrcopy (`gdrcopy`), pip (`pip`), and
+  generic (`generic_autotools`, `generic_build`, `generic_cmake`) building
+  blocks.
+
 # v20.12.0
 
 - Adds a RDMA Core (`rdma_core`) building block.
