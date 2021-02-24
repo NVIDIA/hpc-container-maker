@@ -41,6 +41,7 @@ class Test_nvhpc(unittest.TestCase):
 r'''# NVIDIA HPC SDK version 21.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bc \
         debianutils \
         g++ \
         gcc \
@@ -67,6 +68,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/21.2/comm_libs/nvshmem/lib:
         self.assertEqual(str(n),
 r'''# NVIDIA HPC SDK version 21.2
 RUN yum install -y \
+        bc \
         gcc \
         gcc-c++ \
         gcc-gfortran \
@@ -95,6 +97,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/21.2/comm_libs/nvshmem/lib:
 r'''# NVIDIA HPC SDK version 20.7
 COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
+        bc \
         gcc \
         gcc-c++ \
         gcc-gfortran \
@@ -122,6 +125,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:
 r'''# NVIDIA HPC SDK version 20.7
 COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
+        bc \
         gcc \
         gcc-c++ \
         gcc-gfortran \
@@ -154,6 +158,7 @@ ENV CC=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc \
 r'''# NVIDIA HPC SDK version 21.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bc \
         debianutils \
         g++ \
         gcc \
@@ -181,6 +186,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/lib
 r'''# NVIDIA HPC SDK version 20.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        bc \
         debianutils \
         g++ \
         gcc \
