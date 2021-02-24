@@ -20,8 +20,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        if [ "${{ matrix.python-version }}" = "3.5" ]; then
+          python -m pip install --upgrade "pip < 21.0"
+        else
+          python -m pip install --upgrade pip
+        fi
         pip install six
+      shell: bash
 
     - name: Run unit tests
       run: bash ./runtests.sh
