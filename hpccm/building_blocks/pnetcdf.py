@@ -63,8 +63,8 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     Underscores in the parameter name are converted to dashes.
 
     environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    PnetCDF. The default is True.
+    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+    modified to include PnetCDF. The default is True.
 
     ldconfig: Boolean flag to specify whether the PnetCDF library
     directory should be added dynamic linker cache.  If False, then
@@ -135,6 +135,10 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__download()
 
         # Set the environment variables
+        self.environment_variables['CPATH'] = '{}:$CPATH'.format(
+            posixpath.join(self.__prefix, 'include'))
+        self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
+            posixpath.join(self.__prefix, 'lib'))
         self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))
         if not self.ldconfig:
