@@ -26,6 +26,7 @@ jobs:
           python -m pip install --upgrade pip
         fi
         pip install six
+      shell: bash
 
     - name: Run unit tests
       run: bash ./runtests.sh
