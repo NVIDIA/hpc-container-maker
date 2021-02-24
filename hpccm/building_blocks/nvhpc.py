@@ -81,10 +81,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     environment.  The default value is `True`.
 
     ospackages: List of OS packages to install prior to installing the
-    NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
-    `gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
+    NVIDIA HPC SDK.  For Ubuntu, the default values are `bc`,
+    `debianutils`, `gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
     `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-    the default values are `gcc`, `gcc-c++`, `gcc-gfortran`,
+    the default values are `bc`, `gcc`, `gcc-c++`, `gcc-gfortran`,
     `libatomic`, `numactl-libs`, `openssh-clients`, `wget`, and
     `which`.
 
@@ -102,7 +102,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `20.11`.
+    file name.  The default value is `21.2`.
 
     # Examples
 
@@ -152,14 +152,16 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '20.11')
+        self.__version = kwargs.get('version', '21.2')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
 
-        if StrictVersion(self.__version) >= StrictVersion('20.11'):
+        if StrictVersion(self.__version) >= StrictVersion('21.2'):
+            self.__cuda_version_default = '11.2'
+        elif StrictVersion(self.__version) >= StrictVersion('20.11'):
             self.__cuda_version_default = '11.1'
         else:
             self.__cuda_version_default = '11.0'
@@ -218,14 +220,14 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['debianutils', 'gcc', 'g++', 'gfortran',
-                                     'libatomic1', 'libnuma1',
+                self.__ospackages = ['bc', 'debianutils', 'gcc', 'g++',
+                                     'gfortran', 'libatomic1', 'libnuma1',
                                      'openssh-client', 'wget']
             self.__runtime_ospackages = ['libatomic1', 'libnuma1',
                                          'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                self.__ospackages = ['gcc', 'gcc-c++', 'gcc-gfortran',
+                self.__ospackages = ['bc', 'gcc', 'gcc-c++', 'gcc-gfortran',
                                      'libatomic', 'openssh-clients',
                                      'numactl-libs', 'wget', 'which']
             self.__runtime_ospackages = ['libatomic', 'numactl-libs',

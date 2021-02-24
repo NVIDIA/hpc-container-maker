@@ -3136,10 +3136,10 @@ default value is `False`.
 environment.  The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing the
-NVIDIA HPC SDK.  For Ubuntu, the default values are `debianutils`,
-`gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
+NVIDIA HPC SDK.  For Ubuntu, the default values are `bc`,
+`debianutils`, `gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
 `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-the default values are `gcc`, `gcc-c++`, `gcc-gfortran`,
+the default values are `bc`, `gcc`, `gcc-c++`, `gcc-gfortran`,
 `libatomic`, `numactl-libs`, `openssh-clients`, `wget`, and
 `which`.
 
@@ -3157,7 +3157,7 @@ wildcards are supported.  The default is an empty list.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `20.11`.
+file name.  The default value is `21.2`.
 
 __Examples__
 
