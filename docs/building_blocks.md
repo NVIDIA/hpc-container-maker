@@ -3931,8 +3931,8 @@ configuring.  For instance, `enable_foo=True` maps to
 Underscores in the parameter name are converted to dashes.
 
 - __environment__: Boolean flag to specify whether the environment
-(`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-PnetCDF. The default is True.
+(`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+modified to include PnetCDF. The default is True.
 
 - __ldconfig__: Boolean flag to specify whether the PnetCDF library
 directory should be added dynamic linker cache.  If False, then

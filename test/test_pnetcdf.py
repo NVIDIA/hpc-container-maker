@@ -55,7 +55,9 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/pnetcdf-1.12.1 /var/tmp/pnetcdf-1.12.1.tar.gz
-ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
+ENV CPATH=/usr/local/pnetcdf/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/pnetcdf/lib:$LIBRARY_PATH \
     PATH=/usr/local/pnetcdf/bin:$PATH''')
 
     @ubuntu
@@ -83,7 +85,9 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) install && \
     echo "/usr/local/pnetcdf/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
     rm -rf /var/tmp/parallel-netcdf-1.10.0 /var/tmp/parallel-netcdf-1.10.0.tar.gz
-ENV PATH=/usr/local/pnetcdf/bin:$PATH''')
+ENV CPATH=/usr/local/pnetcdf/include:$CPATH \
+    LIBRARY_PATH=/usr/local/pnetcdf/lib:$LIBRARY_PATH \
+    PATH=/usr/local/pnetcdf/bin:$PATH''')
 
     @ubuntu
     @docker
@@ -98,5 +102,7 @@ RUN apt-get update -y && \
         libatomic1 && \
     rm -rf /var/lib/apt/lists/*
 COPY --from=0 /usr/local/pnetcdf /usr/local/pnetcdf
-ENV LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
+ENV CPATH=/usr/local/pnetcdf/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/pnetcdf/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/pnetcdf/lib:$LIBRARY_PATH \
     PATH=/usr/local/pnetcdf/bin:$PATH''')
