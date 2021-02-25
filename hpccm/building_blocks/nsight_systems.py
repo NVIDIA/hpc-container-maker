@@ -41,7 +41,7 @@ class nsight_systems(bb_base):
     package should be installed.  The default is True.
 
     version: The version of Nsight Systems to install.  The default
-    value is `2020.4.1`.
+    value is `2021.1.1`.
 
     # Examples
 
@@ -60,7 +60,7 @@ class nsight_systems(bb_base):
         self.__cli = kwargs.get('cli', True)
         self.__distro_label = ''     # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__version = kwargs.get('version', '2020.4.1')
+        self.__version = kwargs.get('version', '2021.1.1')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
