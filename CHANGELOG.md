@@ -1,3 +1,8 @@
+# v21.2.0
+- Refreshes default component versions for the Nsight Systems
+  (`nsight_systems`) and NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Fixes and enhancements to the PnetCDF (`pnetcdf`) building block.
+
 # v21.1.0
 
 - Fixes and enhancements to the gdrcopy (`gdrcopy`), pip (`pip`), and
