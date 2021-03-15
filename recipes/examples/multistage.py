@@ -9,27 +9,23 @@ $ hpccm.py --recipe recipes/examples/multistage.py
 ######
 
 # Devel stage base image
-Stage0.name = 'devel'
-Stage0.baseimage('nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04',
+                    _as='devel')
 
 # Install compilers (upstream)
-g = gnu()
-Stage0 += g
+Stage0 += gnu()
 
 # Build FFTW using all default options
-f = fftw()
-Stage0 += f
+Stage0 += fftw()
 
 ######
 # Runtime stage
 ######
 
 # Runtime stage base image
-Stage1.baseimage('nvcr.io/nvidia/cuda:9.0-runtime-ubuntu16.04')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:9.0-runtime-ubuntu16.04')
 
-# Compiler runtime (upstream)
-Stage1 += g.runtime()
-
-# Copy the FFTW build from the devel stage and setup the runtime environment.
+# Copy the compiler runtime and FFTW from the devel stage and setup the
+# runtime environment.
 # The _from option is not necessary, but increases clarity.
-Stage1 += f.runtime(_from=Stage0.name)
+Stage1 += Stage0.runtime(_from='devel')
