@@ -53,7 +53,7 @@ Stage0 += openmpi(cuda=False, infiniband=False, pmi='/usr/local/slurm-pmi2',
 
 # MPI Bandwidth
 Stage0 += shell(commands=[
-    'wget -q -nc --no-check-certificate -P /var/tmp https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c',
+    'wget -q -nc --no-check-certificate -P /var/tmp https://hpc-tutorials.llnl.gov/mpi/examples/mpi_bandwidth.c',
     'mpicc -o /usr/local/bin/mpi_bandwidth /var/tmp/mpi_bandwidth.c'])
 
 ### Runtime distributable stage

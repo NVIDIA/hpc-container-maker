@@ -186,7 +186,7 @@ standard output.
 ## MPI Bandwidth
 
 The [MPI
-Bandwidth](https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c)
+Bandwidth](https://hpc-tutorials.llnl.gov/mpi/examples/mpi_bandwidth.c)
 sample program from the Lawrence Livermore National Laboratory (LLNL)
 will be used as a proxy application to illustrate how to use HPCCM
 recipes to create application containers.
@@ -623,7 +623,7 @@ Stage0 += pip(packages=['scif'])
 
 # Download MPI Bandwidth source code
 Stage0 += shell(commands=[
-    'wget --user-agent "" -q -nc --no-check-certificate -P /var/tmp https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_bandwidth.c'])
+    'wget --user-agent "" -q -nc --no-check-certificate -P /var/tmp https://hpc-tutorials.llnl.gov/mpi/examples/mpi_bandwidth.c'])
 
 # OpenMPI 3.1 w/ InfiniBand verbs
 ompi31 = scif(name='ompi-3.1-ibverbs')
