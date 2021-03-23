@@ -88,7 +88,7 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
         self.__download = kwargs.get('download', False)
         self.__download_directory = kwargs.get(
             'download_directory',
-            posixpath.join(hpccm.config.g_wd, '/var/tmp/apt_get_download'))
+            posixpath.join(hpccm.config.g_wd, 'apt_get_download'))
         self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__keys = kwargs.get('keys', [])

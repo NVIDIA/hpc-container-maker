@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32
+from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32, singularity37
 
 from hpccm.primitives.copy import copy
 
@@ -239,6 +239,13 @@ r'''%files
 
     @singularity
     def test_chown_singularity(self):
-        """Docker --chown syntax"""
+        """Singularity --chown syntax"""
         c = copy(_chown='alice:alice', src='foo', dest='bar')
         self.assertEqual(str(c), '%files\n    foo bar')
+
+    @singularity37
+    def test_temp_staging(self):
+        """Singularity staged files through tmp"""
+        c = copy(src='foo', dest='/var/tmp/foo')
+        with self.assertRaises(RuntimeError):
+            str(c)
