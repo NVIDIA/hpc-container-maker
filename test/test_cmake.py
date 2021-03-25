@@ -68,6 +68,26 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_eula(self):
+        """3.20 binary naming"""
+        c = cmake(version='3.20.0')
+        self.assertEqual(str(c),
+r'''# CMake version 3.20.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.20.0/cmake-3.20.0-linux-x86_64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.20.0-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.20.0-linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
+
     @x86_64
     @ubuntu
     @docker
