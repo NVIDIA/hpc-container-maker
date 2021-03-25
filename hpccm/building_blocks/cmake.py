@@ -84,7 +84,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
 
         super(cmake, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.get('baseurl', 'https://cmake.org/files')
+        self.__baseurl = kwargs.get('baseurl', 'https://github.com/Kitware/CMake/releases/download')
         self.__bootstrap_opts = kwargs.get('bootstrap_opts', [])
 
         # By setting this value to True, you agree to the CMake
@@ -129,16 +129,11 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     def __binary(self):
         """Install the pre-compiled binary"""
 
-        # The download URL has the format contains vMAJOR.MINOR in the
-        # path and the runfile contains MAJOR.MINOR.REVISION, so pull
-        # apart the full version to get the MAJOR and MINOR
-        # components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major = int(match.groupdict()['major'])
-        minor = int(match.groupdict()['minor'])
-        major_minor = '{0}.{1}'.format(major, minor)
+        runfile = 'cmake-{}-linux-x86_64.sh'
+        if LooseVersion(self.__version) < LooseVersion('3.20'):
+            runfile = 'cmake-{}-Linux-x86_64.sh'
 
-        runfile = 'cmake-{}-Linux-x86_64.sh'.format(self.__version)
+        runfile = runfile.format(self.__version)
         if LooseVersion(self.__version) < LooseVersion('3.1'):
             runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
             # CMake releases of versions < 3.1 are only include 32-bit
@@ -150,7 +145,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
             else: # pragma: no cover
                 raise RuntimeError('Unknown Linux distribution')
 
-        url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, runfile)
+        url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version, runfile)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url, directory=self.__wd))
@@ -175,15 +170,8 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     def __build(self):
         """Build from source"""
 
-        # The download URL has the format contains vMAJOR.MINOR in the
-        # path and the tarball contains MAJOR.MINOR.REVISION, so pull
-        # apart the full version to get the MAJOR and MINOR
-        # components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
         tarball = 'cmake-{}.tar.gz'.format(self.__version)
-        url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+        url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version, tarball)
 
         # Include SSL packages
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:

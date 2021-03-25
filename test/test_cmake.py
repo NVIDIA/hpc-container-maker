@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.18/cmake-3.18.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.18.3/cmake-3.18.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
@@ -62,10 +62,30 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.18/cmake-3.18.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.18.3/cmake-3.18.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
     rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH''')
+
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_eula(self):
+        """3.20 binary naming"""
+        c = cmake(version='3.20.0')
+        self.assertEqual(str(c),
+r'''# CMake version 3.20.0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.20.0/cmake-3.20.0-linux-x86_64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.20.0-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.20.0-linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -81,7 +101,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.16.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.16.3-Linux-x86_64.sh
@@ -100,7 +120,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.10.3/cmake-3.10.3-Linux-x86_64.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.10.3-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.10.3-Linux-x86_64.sh
@@ -120,7 +140,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.0/cmake-3.0.0-Linux-i386.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.0.0/cmake-3.0.0-Linux-i386.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.0.0-Linux-i386.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.0.0-Linux-i386.sh
@@ -139,7 +159,7 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.0/cmake-3.0.0-Linux-i386.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.0.0/cmake-3.0.0-Linux-i386.sh && \
     mkdir -p /usr/local && \
     /bin/sh /var/tmp/cmake-3.0.0-Linux-i386.sh --prefix=/usr/local --skip-license && \
     rm -rf /var/tmp/cmake-3.0.0-Linux-i386.sh
@@ -158,7 +178,7 @@ RUN yum install -y \
         openssl-devel \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.14.5/cmake-3.14.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/cmake-3.14.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
     make -j$(nproc) && \
@@ -179,7 +199,7 @@ RUN yum install -y \
         openssl-devel \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.14/cmake-3.14.5.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.14.5/cmake-3.14.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/cmake-3.14.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/cmake-3.14.5 && ./bootstrap --prefix=/usr/local --parallel=$(nproc) && \
     make -j$(nproc) && \
