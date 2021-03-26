@@ -45,7 +45,7 @@ class downloader(hpccm.base_object):
         super(downloader, self).__init__(**kwargs)
 
     def download_step(self, allow_unknown_filetype=True, recursive=False,
-                      unpack=True, wd='/var/tmp'):
+                      unpack=True, wd=hpccm.config.g_wd):
         """Get source code"""
 
         if not self.repository and not self.package and not self.url:

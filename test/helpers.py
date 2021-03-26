@@ -126,6 +126,15 @@ def singularity32(function):
 
     return wrapper
 
+def singularity37(function):
+    """Decorator to set the global singularity version"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_ctype = container_type.SINGULARITY
+        hpccm.config.g_singularity_version = StrictVersion('3.7')
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def ubuntu(function):
     """Decorator to set the Linux distribution to Ubuntu 16.04"""
     def wrapper(*args, **kwargs):

@@ -167,6 +167,18 @@ class copy(object):
             return '\n'.join(instructions)
 
         elif hpccm.config.g_ctype == container_type.SINGULARITY:
+            # If any of the files are being staged in /tmp or /var/tmp,
+            # issue a warning or error depending on the Singularity
+            # version.
+            # https://github.com/NVIDIA/hpc-container-maker/issues/345
+            if (not self.__from and
+                any(f['dest'].startswith(('/var/tmp', '/tmp')) for f in files)):
+                msg = 'Singularity 3.6 and later no longer allow a temporary directory to be used to stage files into the container image.  Modify the recipe or, in many cases, use --working-directory or hpccm.config.set_working_directory() to specify another location.'
+                if hpccm.config.g_singularity_version >= StrictVersion('3.6'):
+                    raise RuntimeError(msg)
+                else:
+                    logging.warning(msg)
+
             # Format:
             # %files
             #     src1 dest
