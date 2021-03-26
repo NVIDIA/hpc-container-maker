@@ -249,3 +249,9 @@ r'''%files
         c = copy(src='foo', dest='/var/tmp/foo')
         with self.assertRaises(RuntimeError):
             str(c)
+
+    @singularity37
+    def test_from_temp_staging(self):
+        """Singularity files from previous stage in tmp"""
+        c = copy(_from='base', src='foo', dest='/var/tmp/foo')
+        self.assertEqual(str(c), '%files from base\n    foo /var/tmp/foo')
