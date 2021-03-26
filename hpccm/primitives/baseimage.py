@@ -97,7 +97,7 @@ class baseimage(object):
             hpccm.config.set_cpu_architecture('ppc64le')
         elif self.__arch == 'x86_64':
             hpccm.config.set_cpu_architecture('x86_64')
-        elif re.search(r'aarch64|arm64v8', self.image):
+        elif re.search(r'aarch64|arm64', self.image):
             hpccm.config.set_cpu_architecture('aarch64')
         elif re.search(r'ppc64le', self.image):
             hpccm.config.set_cpu_architecture('ppc64le')
