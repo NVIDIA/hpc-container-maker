@@ -50,8 +50,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/Ubuntu16.04/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04
+    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
+    rm -rf /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -71,8 +71,8 @@ RUN yum install -y epel-release && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/RHEL7/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-7 && ./arm-compiler-for-linux_20.3_RHEL-7.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-7
+    cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64 && ./arm-compiler-for-linux_20.3_RHEL-7.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
+    rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -93,8 +93,8 @@ RUN yum install -y epel-release && \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/RHEL8/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-8 && ./arm-compiler-for-linux_20.3_RHEL-8.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic,thunderx2t99 && \
-    rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-8
+    cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64 && ./arm-compiler-for-linux_20.3_RHEL-8.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic,thunderx2t99 && \
+    rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -126,8 +126,8 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 COPY Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04
+    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
+    rm -rf /var/tmp/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64

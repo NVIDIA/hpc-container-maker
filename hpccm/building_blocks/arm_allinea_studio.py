@@ -236,7 +236,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         if self.__microarchitectures:
             install_args.append('--only-install-microarchitectures={}'.format(
                 ','.join(self.__microarchitectures)))
-        package_directory = 'arm-compiler-for-linux_{0}_{1}'.format(self.__version, self.__package_string)
+        package_directory = 'arm-compiler-for-linux_{0}_{1}_aarch64'.format(self.__version, self.__package_string)
         self.__commands.append('cd {0} && ./{1} {2}'.format(
             posixpath.join(self.__wd, package_directory),
             self.__installer_template.format(self.__version),
