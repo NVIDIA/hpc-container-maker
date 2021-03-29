@@ -64,7 +64,7 @@ class shell(object):
 
     ```python
     # Cache Go packages
-    shell(_arguments=['--mount=type=cache,target=/root/.cache/go-build']
+    shell(_arguments='--mount=type=cache,target=/root/.cache/go-build',
           commands=['cd /path/to/go-src', 'go build'])
     ```
 
