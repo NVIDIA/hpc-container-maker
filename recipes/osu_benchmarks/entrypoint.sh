@@ -77,6 +77,25 @@ if [[ "${DETECTED_MOFED} " != " " && "${DETECTED_NVPEERMEM} " == " " ]]; then
   echo "      Multi-node communication performance may be reduced."
 fi
 
+# set PMIx client configuration to match the server
+# enroot already handles this, so only do this under singularity
+# https://github.com/NVIDIA/enroot/blob/master/conf/hooks/extra/50-slurm-pmi.sh
+if [[ -z "${SLURM_MPI_TYPE-}" || "${SLURM_MPI_TYPE}" == pmix* ]]; then
+    if [ -d /.singularity.d ]; then
+        echo "Configuring PMIX"
+
+        if [ -n "${PMIX_PTL_MODULE-}" ] && [ -z "${PMIX_MCA_ptl-}" ]; then
+            export PMIX_MCA_ptl=${PMIX_PTL_MODULE}
+        fi
+        if [ -n "${PMIX_SECURITY_MODE-}" ] && [ -z "${PMIX_MCA_psec-}" ]; then
+            export PMIX_MCA_psec=${PMIX_SECURITY_MODE}
+        fi
+        if [ -n "${PMIX_GDS_MODULE-}" ] && [ -z "${PMIX_MCA_gds-}" ]; then
+            export PMIX_MCA_gds=${PMIX_GDS_MODULE}
+         fi
+    fi
+fi
+
 echo
 
 if [[ $# -eq 0 ]]; then
