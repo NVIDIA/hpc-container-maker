@@ -2,7 +2,8 @@
 # that supports both OFED 4.x and 5.x.
 
 # Development stage
-Stage0 += baseimage(image='nvcr.io/nvidia/cuda:11.0-devel-ubuntu18.04')
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:11.0-devel-ubuntu18.04',
+                    _as='devel')
 
 # Compiler
 Stage0 += gnu()
@@ -18,15 +19,15 @@ Stage0 += multi_ofed(inbox=False, mlnx_versions=mlnx_versions,
                      prefix="/usr/local/ofed", symlink=False)
 
 # RDMA-core based OFED support
-Stage0 += mlnx_ofed(version="5.1-0.6.6.0", symlink=False)
+Stage0 += mlnx_ofed(version="5.2-2.2.0.0", symlink=False)
 
 # UCX default - RDMA-core based OFED
-Stage0 += ucx(version='1.9.0', cuda=True,
+Stage0 += ucx(version='1.10.0', cuda=True,
               gdrcopy='/usr/local/gdrcopy', knem='/usr/local/knem',
               disable_static=True, enable_mt=True)
 
 # UCX - Mellanox legacy support
-Stage0 += ucx(version='1.9.0',
+Stage0 += ucx(version='1.10.0',
               build_environment={
                   "LD_LIBRARY_PATH": "/usr/local/ofed/4.6-1.0.1.1/lib:${LD_LIBRARY_PATH}"},
               cuda=True, environment=False, gdrcopy='/usr/local/gdrcopy',
@@ -39,21 +40,19 @@ Stage0 += ucx(version='1.9.0',
 Stage0 += shell(commands=[
     'ln -s /usr/local/ucx-mlnx-legacy/{1}/* /usr/local/ofed/{0}/usr/{1}'.format(version, directory) for version in mlnx_versions for directory in ['bin', 'lib']])
 
-# PMI support
-Stage0 += slurm_pmi2(prefix="/usr/local/pmi")
-Stage0 += pmix()
+# PMI2 support
+Stage0 += slurm_pmi2(prefix="/usr/local/pmi", version='20.11.4')
 
 # OpenMPI
 Stage0 += openmpi(cuda=True, infiniband=False, ldconfig=True, ucx=True,
                   version='4.0.5',
                   disable_oshmem=True, disable_static=True,
                   enable_mca_no_build='btl-uct', with_slurm=False,
-                  with_pmi='/usr/local/pmi',
-                  with_pmix='/usr/local/pmix') 
+                  with_pmi='/usr/local/pmi')
 
 # Deployment stage
 Stage1 += baseimage(image='nvcr.io/nvidia/cuda:11.0-base-ubuntu18.04')
-Stage1 += Stage0.runtime()
+Stage1 += Stage0.runtime(_from='devel')
 
 # Allow running MPI as root
 Stage1 += environment(variables={'OMPI_ALLOW_RUN_AS_ROOT': '1',
@@ -66,5 +65,4 @@ Stage1 += runscript(commands=['/usr/local/bin/entrypoint.sh'])
 # Performance and compatibility tuning
 Stage1 += environment(variables={'CUDA_CACHE_DISABLE': '1',
                                  'MELLANOX_VISIBLE_DEVICES': 'all', # enroot
-                                 'OMPI_MCA_pml': 'ucx',
-                                 'UCX_TLS': 'all'})
+                                 'OMPI_MCA_pml': 'ucx'})

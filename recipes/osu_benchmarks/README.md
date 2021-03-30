@@ -24,8 +24,10 @@ $ singularity build osu_benchmarks.sif docker-daemon://osu_benchmarks:latest
 ## Run
 
 ```
-$ srun -N 2 -n 2 singularity run --nv osu_benchmarks.sif get_local_rank osu_bw
+$ srun -N 2 -n 2 --mpi=pmix singularity run --nv osu_benchmarks.sif get_local_rank osu_bw
 ```
+
+On some systems `--mpi=pmi2` may be more appropriate.
 
 Note: Setting the
 [`UCX_TLS`](https://github.com/openucx/ucx/wiki/UCX-environment-parameters)
