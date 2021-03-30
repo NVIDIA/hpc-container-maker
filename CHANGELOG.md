@@ -1,3 +1,13 @@
+# v21.3.0
+- Updates MPI Bandwidth and OSU Micro-Benchmarks example recipes and
+  removes obsolete syntax from several other examples.
+- Fixes to the Arm Allinea Studio (`arm_allinea_studio`) and CMake
+  (`cmake`) building blocks.
+- Detects and reports Singularity recipes that stage files from the
+  host in /tmp or /var/tmp.
+- Fixes to the documentation of the `shell` primitive.
+
+
 # v21.2.0
 - Refreshes default component versions for the Nsight Systems
   (`nsight_systems`) and NVIDIA HPC SDK (`nvhpc`) building blocks.
