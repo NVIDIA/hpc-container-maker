@@ -101,7 +101,13 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             # CFLAGS is derived from COMMONCFLAGS, so rename.  See
             # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
             make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
-        make_opts['PREFIX'] = self.__prefix
+
+        # Version 2.2 changed the flag to lowercase prefix
+        if LooseVersion(self.__version) >= LooseVersion('2.2'):
+            make_opts['prefix'] = self.__prefix
+        else:
+            make_opts['PREFIX'] = self.__prefix
+            
         make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
                                   for key, value in sorted(make_opts.items())])
 
