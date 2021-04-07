@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.mvapich2_gdr import mvapich2_gdr
 
@@ -31,6 +31,7 @@ class Test_mvapich2_gdr(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
+    @x86_64
     @ubuntu
     @docker
     def test_defaults_ubuntu(self):
@@ -58,6 +59,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3.3/mcast/no-openacc/cuda9.2/mofed4.5/mp
     PATH=/opt/mvapich2/gdr/2.3.3/mcast/no-openacc/cuda9.2/mofed4.5/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
+    @x86_64
     @centos
     @docker
     def test_default_centos(self):
@@ -81,6 +83,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3.4/mcast/no-openacc/cuda10.2/mofed4.7/m
     PATH=/opt/mvapich2/gdr/2.3.4/mcast/no-openacc/cuda10.2/mofed4.7/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_ldconfig(self):
@@ -109,6 +112,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://m
 ENV PATH=/opt/mvapich2/gdr/2.3.3/mcast/no-openacc/cuda9.2/mofed4.5/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_options(self):
@@ -136,6 +140,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3/mcast/no-openacc/cuda9.2/mofed3.4/mpir
     PATH=/opt/mvapich2/gdr/2.3/mcast/no-openacc/cuda9.2/mofed3.4/mpirun/pgi17.10/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_package(self):
@@ -162,6 +167,7 @@ ENV LD_LIBRARY_PATH=/opt/mvapich2/gdr/2.3/mcast/no-openacc/cuda10.0/mofed4.3/mpi
     PATH=/opt/mvapich2/gdr/2.3/mcast/no-openacc/cuda10.0/mofed4.3/mpirun/gnu4.8.5/bin:$PATH \
     PROFILE_POSTLIB="-L/usr/local/cuda/lib64/stubs -lnvidia-ml"''')
 
+    @x86_64
     @ubuntu
     @docker
     def test_runtime(self):

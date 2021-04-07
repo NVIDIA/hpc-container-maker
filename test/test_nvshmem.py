@@ -46,7 +46,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.nvidia.com/nvshmem-src-101-0 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-src-101-0 -C /var/tmp && \
     cd /var/tmp/nvshmem_src_1.0.1-0 && \
-    CUDA_HOME=/usr/local/cuda NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
+    CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
     rm -rf /var/tmp/nvshmem_src_1.0.1-0 /var/tmp/nvshmem-src-101-0
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
@@ -104,7 +104,7 @@ RUN apt-get update -y && \
 COPY nvshmem-0.3.2EA.tar.gz /var/tmp/nvshmem-0.3.2EA.tar.gz
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-0.3.2EA.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvshmem-0.3.2EA && \
-    CUDA_HOME=/usr/local/cuda NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
+    CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
     rm -rf /var/tmp/nvshmem-0.3.2EA /var/tmp/nvshmem-0.3.2EA.tar.gz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
