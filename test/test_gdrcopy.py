@@ -34,9 +34,52 @@ class Test_gdrcopy(unittest.TestCase):
 
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
+    def test_defaults_ubuntu_default(self):
         """Default gdrcopy building block"""
         g = gdrcopy()
+        self.assertEqual(str(g),
+r'''# GDRCOPY version 2.2
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.2 && \
+    mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
+    make prefix=/usr/local/gdrcopy lib lib_install && \
+    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')
+
+    @centos
+    @docker
+    def test_defaults_centos_default(self):
+        """Default gdrcopy building block"""
+        g = gdrcopy()
+        self.assertEqual(str(g),
+r'''# GDRCOPY version 2.2
+RUN yum install -y \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.2 && \
+    mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
+    make prefix=/usr/local/gdrcopy lib lib_install && \
+    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')        
+
+    @ubuntu
+    @docker
+    def test_defaults_ubuntu_21(self):
+        """Default gdrcopy building block"""
+        g = gdrcopy(version="2.1")
         self.assertEqual(str(g),
 r'''# GDRCOPY version 2.1
 RUN apt-get update -y && \
@@ -56,9 +99,9 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @centos
     @docker
-    def test_defaults_centos(self):
+    def test_defaults_centos_21(self):
         """Default gdrcopy building block"""
-        g = gdrcopy()
+        g = gdrcopy(version="2.1")
         self.assertEqual(str(g),
 r'''# GDRCOPY version 2.1
 RUN yum install -y \
@@ -99,7 +142,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_toolchain(self):
+    def test_toolchain_21(self):
         """Toolchain"""
         tc = toolchain(CC='gcc', CFLAGS='-O2')
         g = gdrcopy(toolchain=tc, version='2.1')
@@ -122,7 +165,30 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_runtime(self):
+    def test_toolchain_default(self):
+        """Toolchain"""
+        tc = toolchain(CC='gcc', CFLAGS='-O2')
+        g = gdrcopy(toolchain=tc)
+        self.assertEqual(str(g),
+r'''# GDRCOPY version 2.2
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.2 && \
+    mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
+    make CC=gcc COMMONCFLAGS=-O2 prefix=/usr/local/gdrcopy lib lib_install && \
+    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')    
+
+    @ubuntu
+    @docker
+    def test_runtime_default(self):
         """Runtime"""
         g = gdrcopy()
         r = g.runtime()
@@ -130,5 +196,5 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 r'''# GDRCOPY
 COPY --from=0 /usr/local/gdrcopy /usr/local/gdrcopy
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
-    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LD_LIBRARY_PATH \
-    LIBRARY_PATH=/usr/local/gdrcopy/lib64:$LIBRARY_PATH''')
+    LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')
