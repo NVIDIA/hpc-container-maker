@@ -782,13 +782,13 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of gdrcopy source to download.  The default
-value is `2.1`.
+value is `2.2`.
 
 __Examples__
 
 
 ```python
-gdrcopy(prefix='/opt/gdrcopy/1.3', version='1.3')
+gdrcopy(prefix='/opt/gdrcopy/2.1', version='2.1')
 ```
 
 
