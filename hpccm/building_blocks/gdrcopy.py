@@ -86,6 +86,18 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__toolchain = kwargs.pop('toolchain', toolchain())
         self.__version = kwargs.pop('version', '2.2')
 
+
+        # Since gdrcopy does not use autotools or CMake, the toolchain
+        # requires special handling.
+        make_opts = vars(self.__toolchain)
+        if 'CFLAGS' in make_opts:
+            # CFLAGS is derived from COMMONCFLAGS, so rename.  See
+            # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
+            make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
+
+        make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
+                                  for key, value in sorted(make_opts.items())])
+                                  
         # Version 2.2 changed the flag to lowercase prefix and the lib directory
         if LooseVersion(self.__version) >= LooseVersion('2.2'):
             make_opts['prefix'] = self.__prefix
@@ -103,16 +115,6 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
                 posixpath.join(self.__prefix, libdir))
 
-        # Since gdrcopy does not use autotools or CMake, the toolchain
-        # requires special handling.
-        make_opts = vars(self.__toolchain)
-        if 'CFLAGS' in make_opts:
-            # CFLAGS is derived from COMMONCFLAGS, so rename.  See
-            # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
-            make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
-
-        make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
-                                  for key, value in sorted(make_opts.items())])
 
         # Setup build configuration
         self.__bb = generic_build(
