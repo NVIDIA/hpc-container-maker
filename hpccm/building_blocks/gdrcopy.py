@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import posixpath
 from six.moves import shlex_quote
+from distutils.version import LooseVersion
 
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -85,14 +86,22 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__toolchain = kwargs.pop('toolchain', toolchain())
         self.__version = kwargs.pop('version', '2.2')
 
+        # Version 2.2 changed the flag to lowercase prefix and the lib directory
+        if LooseVersion(self.__version) >= LooseVersion('2.2'):
+            make_opts['prefix'] = self.__prefix
+            libdir = 'lib'
+        else:
+            make_opts['PREFIX'] = self.__prefix        
+            libdir = 'lib64'
+
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
             posixpath.join(self.__prefix, 'include'))
         self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
-            posixpath.join(self.__prefix, 'lib64'))
+            posixpath.join(self.__prefix, libdir))
         if not self.ldconfig:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
-                posixpath.join(self.__prefix, 'lib64'))
+                posixpath.join(self.__prefix, 'libdir))
 
         # Since gdrcopy does not use autotools or CMake, the toolchain
         # requires special handling.
@@ -102,12 +111,6 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
             make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
 
-        # Version 2.2 changed the flag to lowercase prefix
-        if LooseVersion(self.__version) >= LooseVersion('2.2'):
-            make_opts['prefix'] = self.__prefix
-        else:
-            make_opts['PREFIX'] = self.__prefix
-
         make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
                                   for key, value in sorted(make_opts.items())])
 
@@ -116,12 +119,12 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             annotations={'version': self.__version},
             base_annotation=self.__class__.__name__,
             # Work around "install -D" issue on CentOS
-            build=['mkdir -p {0}/include {0}/lib64'.format(self.__prefix),
+            build=['mkdir -p {0}/include {0}/{1}'.format(self.__prefix, libdir),
                    'make {} lib lib_install'.format(make_opts_str)],
             comment=False,
             devel_environment=self.environment_variables,
             directory='gdrcopy-{}'.format(self.__version),
-            libdir='lib64',
+            libdir=libdir,
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
             url='{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version),
