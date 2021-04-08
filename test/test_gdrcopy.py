@@ -23,6 +23,7 @@ import logging # pylint: disable=unused-import
 import unittest
 
 from helpers import centos, docker, ubuntu
+from distutils.version import LooseVersion
 
 from hpccm.building_blocks.gdrcopy import gdrcopy
 from hpccm.toolchain import toolchain
@@ -34,7 +35,7 @@ class Test_gdrcopy(unittest.TestCase):
 
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
+    def test_defaults_ubuntu_22(self):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
@@ -56,7 +57,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @centos
     @docker
-    def test_defaults_centos(self):
+    def test_defaults_centos_22(self):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
@@ -77,7 +78,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
+    def test_defaults_ubuntu_21(self):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
@@ -99,7 +100,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @centos
     @docker
-    def test_defaults_centos(self):
+    def test_defaults_centos_21(self):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
@@ -142,7 +143,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_toolchain(self):
+    def test_toolchain_21(self):
         """Toolchain"""
         tc = toolchain(CC='gcc', CFLAGS='-O2')
         g = gdrcopy(toolchain=tc, version='2.1')
@@ -165,7 +166,7 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_toolchain(self):
+    def test_toolchain_22(self):
         """Toolchain"""
         tc = toolchain(CC='gcc', CFLAGS='-O2')
         g = gdrcopy(toolchain=tc, version='2.2')

@@ -83,7 +83,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/gdrcopy')
         self.__toolchain = kwargs.pop('toolchain', toolchain())
-        self.__version = kwargs.pop('version', '2.1')
+        self.__version = kwargs.pop('version', '2.2')
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
@@ -107,7 +107,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             make_opts['prefix'] = self.__prefix
         else:
             make_opts['PREFIX'] = self.__prefix
-            
+
         make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
                                   for key, value in sorted(make_opts.items())])
 
