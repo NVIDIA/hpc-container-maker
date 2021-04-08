@@ -101,7 +101,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             posixpath.join(self.__prefix, libdir))
         if not self.ldconfig:
             self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(
-                posixpath.join(self.__prefix, 'libdir))
+                posixpath.join(self.__prefix, libdir))
 
         # Since gdrcopy does not use autotools or CMake, the toolchain
         # requires special handling.
