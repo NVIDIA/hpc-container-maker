@@ -95,16 +95,16 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             # https://github.com/NVIDIA/gdrcopy/blob/master/src/Makefile#L9
             make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
 
-        make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
-                                  for key, value in sorted(make_opts.items())])
-                                  
         # Version 2.2 changed the flag to lowercase prefix and the lib directory
         if LooseVersion(self.__version) >= LooseVersion('2.2'):
             make_opts['prefix'] = self.__prefix
             libdir = 'lib'
         else:
             make_opts['PREFIX'] = self.__prefix        
-            libdir = 'lib64'
+            libdir = 'lib64'            
+
+        make_opts_str = ' '.join(['{0}={1}'.format(key, shlex_quote(value))
+                                  for key, value in sorted(make_opts.items())])
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
