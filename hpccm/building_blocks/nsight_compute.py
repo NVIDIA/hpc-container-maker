@@ -196,11 +196,11 @@ class nsight_compute(bb_base):
             'chmod -R a+w /tmp/var'
         ]
 
-        args = {}
+        kwargs = {}
         if self.__runfile.strip().startswith(('http://', 'https://')):
-            args['url'] = self.__runfile
+            kwargs['url'] = self.__runfile
         else:
-            args['package'] = self.__runfile
+            kwargs['package'] = self.__runfile
 
         self.__bb = generic_build(
             annotations={'runfile': pkg},
@@ -211,7 +211,7 @@ class nsight_compute(bb_base):
             install=install_cmds,
             unpack=False,
             wd=self.__wd,
-            **args
+            **kwargs
         )
 
         self += comment('NVIDIA Nsight Compute {}'.format(pkg), reformat=False)
