@@ -145,6 +145,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__eula = kwargs.get('eula', False)
 
         self.__extended_environment = kwargs.get('extended_environment', False)
+        self.__hpcx = kwargs.get('_hpcx', False)
         self.__mpi = kwargs.get('mpi', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
@@ -254,12 +255,13 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             e['FC'] = posixpath.join(self.__basepath, 'compilers', 'bin',
                                      'nvfortran')
 
-        cpath = [
-            posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'include'),
-            posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'include'),
-            posixpath.join(self.__basepath, 'math_libs', 'include'),
-            posixpath.join(self.__basepath, 'compilers', 'include'),
-            posixpath.join(self.__basepath, 'cuda', 'include')]
+        #cpath = [
+        #    posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'include'),
+        #    posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'include'),
+        #    posixpath.join(self.__basepath, 'math_libs', 'include'),
+        #    posixpath.join(self.__basepath, 'compilers', 'include'),
+        #    posixpath.join(self.__basepath, 'cuda', 'include')]
+        cpath = []
 
         ld_library_path = [
             posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'lib'),
@@ -276,14 +278,73 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             posixpath.join(self.__basepath, 'cuda', 'bin')]
 
         if self.__mpi:
-            cpath.append(
-                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
+            #cpath.append(
+            #    posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
             ld_library_path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
             path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'))
+        elif self.__hpcx:
+            # Set environment for HPC-X
+            hpcx_dir = posixpath.join(self.__basepath, 'comm_libs', 'hpcx',
+                                      'hpcx-2.7.4')
 
-        #e['CPATH'] = '{}:$CPATH'.format(':'.join(cpath))
+            hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx', 'mt')
+            #hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx')
+            hpcx_sharp_dir = posixpath.join(hpcx_dir, 'sharp')
+            hpcx_nccl_rdma_sharp_plugin_dir = posixpath.join(
+                hpcx_dir, 'nccl_rdma_sharp_plugin')
+            hpcx_hcoll_dir = posixpath.join(hpcx_dir, 'hcoll')
+            hpcx_mpi_dir = posixpath.join(hpcx_dir, 'ompi')
+            hpcx_oshmem_dir = hpcx_mpi_dir
+
+            cpath.append(':'.join([
+                posixpath.join(hpcx_hcoll_dir, 'include'),
+                posixpath.join(hpcx_mpi_dir, 'include'),
+                posixpath.join(hpcx_sharp_dir, 'include'),
+                posixpath.join(hpcx_ucx_dir, 'include'),
+                '$CPATH']))
+            e['HPCX_DIR'] = hpcx_dir
+            e['HPCX_HCOLL_DIR'] = hpcx_hcoll_dir
+            e['HPCX_MPI_DIR'] = hpcx_mpi_dir
+            e['HPCX_NCCL_RDMA_SHARP_PLUGIN_DIR'] = hpcx_nccl_rdma_sharp_plugin_dir
+            e['HPCX_OSHMEM_DIR'] = hpcx_oshmem_dir
+            e['HPCX_SHARP_DIR'] = hpcx_sharp_dir
+            e['HPCX_UCX_DIR'] = hpcx_ucx_dir
+            e['LIBRARY_PATH'] = ':'.join([
+                posixpath.join(hpcx_hcoll_dir, 'lib'),
+                posixpath.join(hpcx_mpi_dir, 'lib'),
+                posixpath.join(hpcx_nccl_rdma_sharp_plugin_dir, 'lib'),
+                posixpath.join(hpcx_sharp_dir, 'lib'),
+                posixpath.join(hpcx_ucx_dir, 'lib'),
+                '$LIBRARY_PATH'])
+            ld_library_path.append(':'.join([
+                posixpath.join(hpcx_hcoll_dir, 'lib'),
+                posixpath.join(hpcx_mpi_dir, 'lib'),
+                posixpath.join(hpcx_nccl_rdma_sharp_plugin_dir, 'lib'),
+                posixpath.join(hpcx_sharp_dir, 'lib'),
+                posixpath.join(hpcx_ucx_dir, 'lib'),
+                posixpath.join(hpcx_ucx_dir, 'lib', 'ucx'),
+                '$LD_LIBRARY_PATH']))
+            e['MPI_HOME'] = hpcx_mpi_dir
+            e['OMPI_HOME'] = hpcx_mpi_dir
+            e['OPAL_PREFIX'] = hpcx_mpi_dir
+            e['OSHMEM_HOME'] = hpcx_mpi_dir
+            path.append(':'.join([
+                posixpath.join(hpcx_hcoll_dir, 'bin'),
+                posixpath.join(hpcx_mpi_dir, 'bin'),
+                posixpath.join(hpcx_ucx_dir, 'bin'),
+                '$PATH']))
+            e['PKG_CONFIG_PATH'] = ':'.join([
+                posixpath.join(hpcx_hcoll_dir, 'lib', 'pkgconfig'),
+                posixpath.join(hpcx_mpi_dir, 'lib', 'pkgconfig'),
+                posixpath.join(hpcx_sharp_dir, 'lib', 'pkgconfig'),
+                posixpath.join(hpcx_ucx_dir, 'lib', 'pkgconfig'),
+                '$PKG_CONFIG_PATH'])
+            e['SHMEM_HOME'] = hpcx_mpi_dir
+
+        if cpath:
+            e['CPATH'] = '{}:$CPATH'.format(':'.join(cpath))
         e['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(':'.join(
             ld_library_path))
         e['MANPATH'] = '{}:$MANPATH'.format(
