@@ -186,6 +186,9 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         e['NVSHMEM_PREFIX'] = self.__prefix
 
+        # Default to 0 unless MPI/SHMEM is requested
+        e['NVSHMEM_MPI_SUPPORT'] = 0
+
         if self.__cuda:
             e['CUDA_HOME'] = self.__cuda
 
