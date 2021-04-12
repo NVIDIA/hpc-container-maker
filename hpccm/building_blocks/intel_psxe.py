@@ -200,6 +200,10 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         self.toolchain = toolchain(CC='icc', CXX='icpc', F77='ifort',
                                    F90='ifort', FC='ifort')
+        self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('intel')
+        self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('intel')
+        self.toolchain.FFLAGS = hpccm.config.get_cpu_optimization_flags('intel')
+        self.toolchain.FCFLAGS = hpccm.config.get_cpu_optimization_flags('intel')
 
         self.__bashrc = ''   # Filled in by __distro()
         self.__commands = [] # Filled in by __setup()

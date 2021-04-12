@@ -130,6 +130,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
                                    F77='armflang', F90='armflang',
                                    FC='armflang')
+        self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('clang')
+        self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('clang')
 
         if hpccm.config.g_cpu_arch != cpu_arch.AARCH64: # pragma: no cover
             logging.warning('Using arm_allinea_studio on a non-aarch64 processor')

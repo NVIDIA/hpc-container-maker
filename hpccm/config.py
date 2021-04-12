@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 from distutils.version import StrictVersion
+import archspec.cpu
 import logging
 import platform
 import sys
@@ -37,6 +38,7 @@ if platform.machine() == 'aarch64':
   g_cpu_arch = cpu_arch.AARCH64
 elif platform.machine() == 'ppc64le':
   g_cpu_arch = cpu_arch.PPC64LE
+g_cpu_target = None                  # CPU optimization target
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = StrictVersion('16.04') # Linux distribution version
@@ -61,6 +63,32 @@ def get_cpu_architecture():
     return 'x86_64'
   else: # pragma: no cover
     raise RuntimeError('Unrecognized processor architecture')
+
+def get_cpu_optimization_flags(compiler, version='9999'):
+  """Return the CPU optimization flags for the target and compiler
+  combination.
+
+  # Arguments
+
+  compiler: A compiler family string recognized by archspec.
+
+  version: The version of the compiler.  The default version is
+  `9999`, i.e., assume the compiler supports the latest optimization
+  flags.
+  """
+  this = sys.modules[__name__]
+
+  if this.g_cpu_target not in archspec.cpu.TARGETS:
+    logging.warning('unrecognized CPU target "{}"'.format(this.g_cpu_target))
+    return None
+
+  if this.g_cpu_target:
+    try:
+      return archspec.cpu.TARGETS[this.g_cpu_target].optimization_flags(compiler, version)
+    except Exception as e:
+      logging.warning('get_cpu_optimization_flags: {}'.format(e))
+
+  return None
 
 def get_format():
   """Return the container format string for the currently configured
@@ -121,6 +149,17 @@ def set_cpu_architecture(arch):
   else:
     logging.warning('Unable to determine the CPU architecture, defaulting to x86_64')
     this.g_cpu_arch = cpu_arch.X86_64
+
+def set_cpu_target(target):
+  """Set the CPU optimization target
+
+  # Arguments
+
+  target (string): A CPU microarchitecture string recognized by
+  archspec.
+  """
+  this = sys.modules[__name__]
+  this.g_cpu_target = target
 
 def set_linux_distro(distro):
 

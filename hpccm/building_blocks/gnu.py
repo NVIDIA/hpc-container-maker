@@ -188,14 +188,18 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
 
         if self.__cc:
             self.toolchain.CC = posixpath.join(directory, 'gcc')
+            self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('gcc', self.__version)
 
         if self.__cxx:
             self.toolchain.CXX = posixpath.join(directory, 'g++')
+            self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('gcc', self.__version)
 
         if self.__fortran:
             self.toolchain.FC = posixpath.join(directory, 'gfortran')
             self.toolchain.F77 = posixpath.join(directory, 'gfortran')
             self.toolchain.F90 = posixpath.join(directory, 'gfortran')
+            self.toolchain.FFLAGS = hpccm.config.get_cpu_optimization_flags('gcc', self.__version)
+            self.toolchain.FCFLAGS = hpccm.config.get_cpu_optimization_flags('gcc', self.__version)
 
         if "LD_LIBRARY_PATH" in self.environment_variables:
             self.toolchain.LD_LIBRARY_PATH = self.environment_variables["LD_LIBRARY_PATH"]
@@ -411,11 +415,13 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             self.__compiler_debs.append('gcc')
             self.__compiler_rpms.append('gcc')
             self.toolchain.CC = 'gcc'
+            self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('gcc')
 
         if self.__cxx:
             self.__compiler_debs.append('g++')
             self.__compiler_rpms.append('gcc-c++')
             self.toolchain.CXX = 'g++'
+            self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('gcc')
 
         if self.__fortran:
             self.__compiler_debs.append('gfortran')
@@ -425,6 +431,8 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             self.toolchain.F77 = 'gfortran'
             self.toolchain.F90 = 'gfortran'
             self.toolchain.FC = 'gfortran'
+            self.toolchain.FFLAGS = hpccm.config.get_cpu_optimization_flags('gcc')
+            self.toolchain.FCFLAGS = hpccm.config.get_cpu_optimization_flags('gcc')
 
         # Install an alternate version, i.e., not the default for
         # the Linux distribution
