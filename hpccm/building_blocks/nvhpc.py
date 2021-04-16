@@ -102,7 +102,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `21.2`.
+    file name.  The default value is `21.3`.
 
     # Examples
 
@@ -153,7 +153,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '21.2')
+        self.__version = kwargs.get('version', '21.3')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __version()
 
