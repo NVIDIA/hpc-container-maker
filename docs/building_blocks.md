@@ -3047,7 +3047,7 @@ list for RHEL-based Linux distributions.
 `/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
 unless `runfile` is set.
 
-- __runfile__: Path to NSight Compute's `.run` file relative to the
+- __runfile__: Path or URL to NSight Compute's `.run` file relative to the
 local build context. The default value is empty.
 
 - __version__: the version of Nsight Compute to install.  Note when
