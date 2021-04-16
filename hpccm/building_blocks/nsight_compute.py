@@ -56,7 +56,7 @@ class nsight_compute(bb_base):
     `/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
     unless `runfile` is set.
 
-    runfile: Path to NSight Compute's `.run` file relative to the
+    runfile: Path or URL to NSight Compute's `.run` file relative to the
     local build context. The default value is empty.
 
     version: the version of Nsight Compute to install.  Note when
@@ -136,7 +136,7 @@ class nsight_compute(bb_base):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 if self.__runfile:
-                    self.__ospackages = ['perl']
+                    self.__ospackages = ['perl', 'wget']
                 else:
                     self.__ospackages = ['apt-transport-https',
                                          'ca-certificates', 'gnupg', 'wget']
@@ -151,7 +151,7 @@ class nsight_compute(bb_base):
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 if self.__runfile:
-                    self.__ospackages = ['perl', 'perl-Env']
+                    self.__ospackages = ['perl', 'perl-Env', 'wget']
 
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                 self.__distro_label = 'rhel8'
@@ -196,6 +196,12 @@ class nsight_compute(bb_base):
             'chmod -R a+w /tmp/var'
         ]
 
+        kwargs = {}
+        if self.__runfile.strip().startswith(('http://', 'https://')):
+            kwargs['url'] = self.__runfile
+        else:
+            kwargs['package'] = self.__runfile
+
         self.__bb = generic_build(
             annotations={'runfile': pkg},
             base_annotation=self.__class__.__name__,
@@ -203,9 +209,9 @@ class nsight_compute(bb_base):
             devel_environment={'PATH': '{}:$PATH'.format(self.__prefix)},
             directory=self.__wd,
             install=install_cmds,
-            package=self.__runfile,
             unpack=False,
-            wd=self.__wd
+            wd=self.__wd,
+            **kwargs
         )
 
         self += comment('NVIDIA Nsight Compute {}'.format(pkg), reformat=False)

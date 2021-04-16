@@ -153,10 +153,34 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/arm6
 r'''# NVIDIA Nsight Compute nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        perl && \
+        perl \
+        wget && \
     rm -rf /var/lib/apt/lists/*
 COPY nsight_compute-linux-x86_64-2020.2.0.18_28964561.run /var/tmp/nsight_compute/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
 RUN cd /var/tmp/nsight_compute && \
+    sh ./nsight_compute-linux-x86_64-2020.2.0.18_28964561.run --nox11 -- -noprompt -targetpath=/usr/local/NVIDIA-Nsight-Compute && \
+    mkdir -p /tmp/var/target && \
+    ln -sf /usr/local/NVIDIA-Nsight-Compute/target/* /tmp/var/target && \
+    ln -sf /usr/local/NVIDIA-Nsight-Compute/sections /tmp/var/ && \
+    chmod -R a+w /tmp/var && \
+    rm -rf /var/tmp/nsight_compute /var/tmp/nsight_compute/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
+ENV PATH=/usr/local/NVIDIA-Nsight-Compute:$PATH''')
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_basic_ubuntu_url(self):
+        """Default nsight_compute building block"""
+        n = nsight_compute(eula=True, runfile='https://foo/bar/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run')
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Compute nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        perl \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp/nsight_compute && wget -q -nc --no-check-certificate -P /var/tmp/nsight_compute https://foo/bar/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run && \
+    cd /var/tmp/nsight_compute && \
     sh ./nsight_compute-linux-x86_64-2020.2.0.18_28964561.run --nox11 -- -noprompt -targetpath=/usr/local/NVIDIA-Nsight-Compute && \
     mkdir -p /tmp/var/target && \
     ln -sf /usr/local/NVIDIA-Nsight-Compute/target/* /tmp/var/target && \
