@@ -92,7 +92,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         super(llvm, self).__init__(**kwargs)
 
         # Current LLVM trunk version
-        self.__trunk_version = '12'
+        self.__trunk_version = '13'
 
         self.__apt_keys = []       # Filled in below
         self.__apt_repositories = [] # Filled in below
