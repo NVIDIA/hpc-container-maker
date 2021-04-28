@@ -82,16 +82,12 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
     version: The version of NVSHMEM source to download.  The default
-    value is `1.0.1-0`.
+    value is `2.1.2`.
 
     # Examples
 
     ```python
-    nvshmem(mpi='/usr/local/openmpi', version='1.0.1-0')
-    ```
-
-    ```python
-    nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
+    nvshmem(mpi='/usr/local/openmpi', version='2.1.2')
     ```
 
     """
@@ -109,9 +105,10 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__mpi = kwargs.pop('mpi', None)
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
+        self.__release = kwargs.pop('release', '0')
         self.__shmem = kwargs.pop('shmem', None)
         self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '1.0.1-0')
+        self.__version = kwargs.pop('version', '2.1.2')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the download specific parameters
@@ -217,10 +214,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Set download source based on user parameters"""
 
         if not self.package and not self.repository and not self.url:
-            shortened = 'nvshmem-src-{}'.format(
-                self.__version.replace('.', ''))
-            self.__src_directory = 'nvshmem_src_{}'.format(self.__version)
-            self.url = 'https://developer.nvidia.com/{0}'.format(shortened)
+            self.url = 'https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_{0}-{1}.txz'.format(self.__version, self.__release)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
