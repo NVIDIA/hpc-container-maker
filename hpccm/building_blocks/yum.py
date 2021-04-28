@@ -58,6 +58,10 @@ class yum(bb_base):
     if `download` is False. If empty, then the downloaded packages are
     not extracted. The default value is an empty string.
 
+    force_add_repo: Boolean flag to specify whether adding a
+    repository should be considered successful no matter the actual
+    result.  The default value is False.
+
     keys: A list of GPG keys to import.  The default is an empty list.
 
     ospackages: A list of packages to install.  The default is an
@@ -104,6 +108,7 @@ class yum(bb_base):
         self.__epel = kwargs.get('epel', False)
         self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
+        self.__force_add_repo = kwargs.get('force_add_repo', False)
         self.__keys = kwargs.get('keys', [])
         self.__opts = ['-y']
         self.ospackages = kwargs.get('ospackages', [])
@@ -166,8 +171,12 @@ class yum(bb_base):
                 self.__commands.append('yum install -y yum-utils')
 
             for repo in self.__repositories:
-                self.__commands.append(
-                    'yum-config-manager --add-repo {}'.format(repo))
+                if self.__force_add_repo:
+                    self.__commands.append(
+                        '(yum-config-manager --add-repo {} || true)'.format(repo))
+                else:
+                    self.__commands.append(
+                        'yum-config-manager --add-repo {}'.format(repo))
 
         if self.__epel:
             # This needs to be a discrete, preliminary step so that

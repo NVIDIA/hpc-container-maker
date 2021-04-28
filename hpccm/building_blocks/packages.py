@@ -74,6 +74,11 @@ class packages(bb_base):
     if `download` is False. If empty, then the downloaded packages are
     not extracted. The default value is an empty string.
 
+    force_add_repo: Boolean flag to specify whether adding a
+    repository should be considered successful no matter the actual
+    result.  This parameter is only valid for yum repositories.  The
+    default value is False.
+
     ospackages: A list of packages to install.  The list is used for
     both Ubuntu and RHEL-based Linux distributions, therefore only
     packages with the consistent names across Linux distributions
@@ -140,6 +145,7 @@ class packages(bb_base):
         self.__extra_opts = kwargs.get('extra_opts', [])
         self.__extract = kwargs.get('extract', None)
         self.__epel = kwargs.get('epel', False)
+        self.__force_add_repo = kwargs.get('force_add_repo', False)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__powertools = kwargs.get('powertools', False)
         self.__release_stream = kwargs.get('release_stream', False)
@@ -180,6 +186,7 @@ class packages(bb_base):
                         extra_opts=self.__extra_opts,
                         extract=self.__extract,
                         epel=self.__epel,
+                        force_add_repo=self.__force_add_repo,
                         keys=self.__yum_keys,
                         ospackages=ospackages,
                         powertools=self.__powertools,
