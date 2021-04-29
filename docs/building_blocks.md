@@ -3247,17 +3247,13 @@ context. The default value is empty. Either this parameter or
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
 - __version__: The version of NVSHMEM source to download.  The default
-value is `1.0.1-0`.
+value is `2.1.2`.
 
 __Examples__
 
 
 ```python
-nvshmem(mpi='/usr/local/openmpi', version='1.0.1-0')
-```
-
-```python
-nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
+nvshmem(mpi='/usr/local/openmpi', version='2.1.2')
 ```
 
 

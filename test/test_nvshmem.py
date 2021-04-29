@@ -37,17 +37,17 @@ class Test_nvshmem(unittest.TestCase):
         """nvshmem defaults"""
         n = nvshmem()
         self.assertEqual(str(n),
-r'''# NVSHMEM 1.0.1-0
+r'''# NVSHMEM 2.1.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.nvidia.com/nvshmem-src-101-0 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-src-101-0 -C /var/tmp && \
-    cd /var/tmp/nvshmem_src_1.0.1-0 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.1.2/source/nvshmem_src_2.1.2-0.txz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
+    cd /var/tmp/nvshmem_src_2.1.2-0 && \
     CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
-    rm -rf /var/tmp/nvshmem_src_1.0.1-0 /var/tmp/nvshmem-src-101-0
+    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
@@ -93,7 +93,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     @docker
     def test_package_ubuntu(self):
         """nvshmem source package"""
-        n = nvshmem(package='nvshmem-0.3.2EA.tar.gz')
+        n = nvshmem(package='nvshmem_src_2.1.2-0.txz')
         self.assertEqual(str(n),
 r'''# NVSHMEM
 RUN apt-get update -y && \
@@ -101,11 +101,11 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-COPY nvshmem-0.3.2EA.tar.gz /var/tmp/nvshmem-0.3.2EA.tar.gz
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-0.3.2EA.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvshmem-0.3.2EA && \
+COPY nvshmem_src_2.1.2-0.txz /var/tmp/nvshmem_src_2.1.2-0.txz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
+    cd /var/tmp/nvshmem_src_2.1.2-0 && \
     CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
-    rm -rf /var/tmp/nvshmem-0.3.2EA /var/tmp/nvshmem-0.3.2EA.tar.gz
+    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
@@ -119,7 +119,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
                         'NVCC_GENCODE': '-gencode=arch=compute_70,code=sm_70',
                         'NVSHMEM_VERBOSE': 1},
                     mpi='/usr/local/openmpi',
-                    package='nvshmem-0.3.2EA.tar.gz',
+                    package='nvshmem_src_2.1.2-0.txz',
                     shmem='/usr/local/openmpi')
         self.assertEqual(str(n),
 r'''# NVSHMEM
@@ -128,12 +128,12 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-COPY nvshmem-0.3.2EA.tar.gz /var/tmp/nvshmem-0.3.2EA.tar.gz
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem-0.3.2EA.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvshmem-0.3.2EA && \
+COPY nvshmem_src_2.1.2-0.txz /var/tmp/nvshmem_src_2.1.2-0.txz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
+    cd /var/tmp/nvshmem_src_2.1.2-0 && \
     CUDA_HOME=/usr/local/cuda GDRCOPY_HOME=/usr/local/gdrcopy MPI_HOME=/usr/local/openmpi NVCC_GENCODE=-gencode=arch=compute_70,code=sm_70 NVSHMEM_MPI_SUPPORT=1 NVSHMEM_PREFIX=/usr/local/nvshmem NVSHMEM_SHMEM_SUPPORT=1 NVSHMEM_VERBOSE=1 SHMEM_HOME=/usr/local/openmpi make -j$(nproc) install && \
     ./scripts/install_hydra.sh /var/tmp /usr/local/nvshmem && \
-    rm -rf /var/tmp/nvshmem-0.3.2EA /var/tmp/nvshmem-0.3.2EA.tar.gz
+    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
@@ -155,7 +155,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     @docker
     def test_source_runtime(self):
         """Runtime"""
-        n = nvshmem(package='nvshmem-0.3.2EA.tar.gz')
+        n = nvshmem(package='nvshmem_src_2.1.2-0.txz')
         r = n.runtime()
         self.assertEqual(r,
 r'''# NVSHMEM
