@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64
 
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 
@@ -77,6 +77,36 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
     mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.1-2.3.7.1/ubuntu18.04/mellanox_mlnx_ofed.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ibverbs-providers \
+        ibverbs-utils \
+        libibmad-dev \
+        libibmad5 \
+        libibumad-dev \
+        libibumad3 \
+        libibverbs-dev \
+        libibverbs1 \
+        librdmacm-dev \
+        librdmacm1 && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @ubuntu20
+    @docker
+    def test_defaults_ubuntu20(self):
+        """Default mlnx_ofed building block"""
+        mofed = mlnx_ofed()
+        self.assertEqual(str(mofed),
+r'''# Mellanox OFED version 5.1-2.3.7.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/5.1-2.3.7.1/ubuntu20.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-providers \
