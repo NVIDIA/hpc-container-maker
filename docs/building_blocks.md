@@ -3623,6 +3623,11 @@ packages are extracted they are deleted. This parameter is ignored
 if `download` is False. If empty, then the downloaded packages are
 not extracted. The default value is an empty string.
 
+- __force_add_repo__: Boolean flag to specify whether adding a
+repository should be considered successful no matter the actual
+result.  This parameter is only valid for yum repositories.  The
+default value is False.
+
 - __ospackages__: A list of packages to install.  The list is used for
 both Ubuntu and RHEL-based Linux distributions, therefore only
 packages with the consistent names across Linux distributions
@@ -4656,6 +4661,10 @@ i.e., the package manager is bypassed. After the downloaded
 packages are extracted they are deleted. This parameter is ignored
 if `download` is False. If empty, then the downloaded packages are
 not extracted. The default value is an empty string.
+
+- __force_add_repo__: Boolean flag to specify whether adding a
+repository should be considered successful no matter the actual
+result.  The default value is False.
 
 - __keys__: A list of GPG keys to import.  The default is an empty list.
 

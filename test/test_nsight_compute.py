@@ -63,7 +63,7 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
 r'''# NVIDIA Nsight Compute 2020.2.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*''')
@@ -122,7 +122,7 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/p
 r'''# NVIDIA Nsight Compute 2020.2.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le/nvidia.pub && \
     yum install -y yum-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*''')
@@ -137,7 +137,7 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc6
 r'''# NVIDIA Nsight Compute 2020.2.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/arm64/nvidia.pub && \
     yum install -y yum-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/arm64 && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/arm64 || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*''')

@@ -172,6 +172,8 @@ class nsight_compute(bb_base):
         self += packages(
             apt_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
             apt_repositories=['deb https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
+            # https://github.com/NVIDIA/hpc-container-maker/issues/367
+            force_add_repo=True,
             ospackages=['nsight-compute-{}'.format(self.__version)],
             yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
             yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
