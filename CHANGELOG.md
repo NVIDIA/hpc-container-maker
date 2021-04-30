@@ -1,3 +1,9 @@
+# v21.4.0
+- Fixes and enhancements to the gdrcopy (`gdrcopy`), LLVM (`llvm`),
+  Mellanox OFED (`mlnx_ofed`), Nsight Compute (`nsight_compute`), Nsight
+  Systems (`nsight_systems`), NVIDIA HPC SDK (`nvhpc`), and NVSHMEM
+  (`nvshmem`) building blocks.
+
 # v21.3.0
 - Updates MPI Bandwidth and OSU Micro-Benchmarks example recipes and
   removes obsolete syntax from several other examples.
