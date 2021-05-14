@@ -176,6 +176,15 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             if not self.__configure_opts:
                 self.__configure_opts = ['--enable-shared', '--enable-openmp',
                                          '--enable-threads', '--enable-sse2']
+
+                if hpccm.config.test_cpu_feature_flag('avx'):
+                    self.__configure_opts.append('--enable-avx')
+
+                if hpccm.config.test_cpu_feature_flag('avx'):
+                    self.__configure_opts.append('--enable-avx2')
+
+                if hpccm.config.test_cpu_feature_flag('avx512'):
+                    self.__configure_opts.append('--enable-avx512')
         else:
             if not self.__configure_opts:
                 self.__configure_opts = ['--enable-shared', '--enable-openmp',

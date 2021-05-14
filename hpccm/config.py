@@ -238,3 +238,25 @@ def set_working_directory(wd):
   """
   this = sys.modules[__name__]
   this.g_wd = wd
+
+def test_cpu_feature_flag(flag):
+  """Return True or False depending on whether the CPU supports the
+  given feature flag
+
+  # Arguments
+
+  flag: A CPU feature flag, e.g., `avx`.
+  """
+  this = sys.modules[__name__]
+
+  if this.g_cpu_target not in archspec.cpu.TARGETS:
+    logging.warning('unrecognized CPU target "{}"'.format(this.g_cpu_target))
+    return False
+
+  if this.g_cpu_target:
+    try:
+      return flag in archspec.cpu.TARGETS[this.g_cpu_target]
+    except Exception as e:
+      logging.warning('get_cpu_optimization_flags: {}'.format(e))
+
+  return False

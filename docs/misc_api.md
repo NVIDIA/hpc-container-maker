@@ -123,6 +123,18 @@ __Arguments__
 - __wd (string)__: working directory path
 
 
+## test_cpu_feature_flag
+```python
+test_cpu_feature_flag(flag)
+```
+Return True or False depending on whether the CPU supports the
+given feature flag
+
+__Arguments__
+
+
+- __flag__: A CPU feature flag, e.g., `avx`.
+
 # recipe
 ```python
 recipe(recipe_file, cpu_target=None, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp')

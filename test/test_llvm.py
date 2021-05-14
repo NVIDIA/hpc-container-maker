@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64, zen2
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -430,3 +430,11 @@ RUN apt-get update -y && \
         tc = l.toolchain
         self.assertEqual(tc.CC, 'clang')
         self.assertEqual(tc.CXX, 'clang++')
+
+    @zen2
+    def test_toolchain_zen2(self):
+        """CPU arch optimization flags"""
+        l = llvm()
+        tc = l.toolchain
+        self.assertEqual(tc.CFLAGS, '-march=znver2 -mtune=znver2')
+        self.assertEqual(tc.CXXFLAGS, '-march=znver2 -mtune=znver2')

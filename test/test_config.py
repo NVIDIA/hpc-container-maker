@@ -23,7 +23,7 @@ from distutils.version import StrictVersion
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import bash, centos, docker, singularity, ubuntu
+from helpers import bash, broadwell, centos, docker, icelake, singularity, thunderx2, ubuntu, zen2
 
 import hpccm.config
 
@@ -210,3 +210,32 @@ class Test_config(unittest.TestCase):
 
         # reset to the default working directory
         hpccm.config.set_working_directory(default_wd)
+
+    def test_set_cpu_target(self):
+        """Set CPU optimization target"""
+        # save default value in order to switch back later
+        default_cpu_target = hpccm.config.g_cpu_target
+
+        hpccm.config.set_cpu_target('broadwell')
+        self.assertEqual(hpccm.config.g_cpu_target, 'broadwell')
+
+        # reset to the default cpu optimization target
+        hpccm.config.set_cpu_target(default_cpu_target)
+
+    @thunderx2
+    def test_get_cpu_optimization_flags(self):
+        """Get CPU optimization flags"""
+        flags = hpccm.config.get_cpu_optimization_flags('gcc')
+        self.assertEqual(flags, '-mcpu=thunderx2t99')
+
+    @icelake
+    def test_get_cpu_optimization_flags_old_compiler(self):
+        """Get CPU optimization flags"""
+        flags = hpccm.config.get_cpu_optimization_flags('gcc', version='4.8.5')
+        self.assertEqual(flags, None)
+
+    @zen2
+    def test_test_feature_flag(self):
+        """Test CPU feature flags"""
+        self.assertTrue(hpccm.config.test_cpu_feature_flag('avx2'))
+        self.assertFalse(hpccm.config.test_cpu_feature_flag('foo'))
