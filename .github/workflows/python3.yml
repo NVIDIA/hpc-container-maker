@@ -25,7 +25,7 @@ jobs:
         else
           python -m pip install --upgrade pip
         fi
-        pip install six
+        pip install six archspec
       shell: bash
 
     - name: Run unit tests
