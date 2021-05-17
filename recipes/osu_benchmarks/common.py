@@ -41,7 +41,7 @@ Stage0 += shell(commands=[
     'ln -s /usr/local/ucx-mlnx-legacy/{1}/* /usr/local/ofed/{0}/usr/{1}'.format(version, directory) for version in mlnx_versions for directory in ['bin', 'lib']])
 
 # PMI2 support
-Stage0 += slurm_pmi2(prefix="/usr/local/pmi", version='20.11.4')
+Stage0 += slurm_pmi2(prefix="/usr/local/pmi", version='20.11.7')
 
 # OpenMPI
 Stage0 += openmpi(cuda=True, infiniband=False, ldconfig=True, ucx=True,

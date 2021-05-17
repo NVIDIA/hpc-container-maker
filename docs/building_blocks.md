@@ -4339,7 +4339,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of SLURM source to download.  The default
-value is `20.02.5`.
+value is `20.11.7`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -4356,7 +4356,7 @@ __Examples__
 
 
 ```python
-slurm_pmi2(prefix='/opt/pmi', version='19.05.4')
+slurm_pmi2(prefix='/opt/pmi', version='20.02.7')
 ```
 
 
