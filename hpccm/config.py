@@ -78,15 +78,17 @@ def get_cpu_optimization_flags(compiler, version='9999'):
   """
   this = sys.modules[__name__]
 
+  if not this.g_cpu_target:
+    return None
+
   if this.g_cpu_target not in archspec.cpu.TARGETS:
     logging.warning('unrecognized CPU target "{}"'.format(this.g_cpu_target))
     return None
 
-  if this.g_cpu_target:
-    try:
-      return archspec.cpu.TARGETS[this.g_cpu_target].optimization_flags(compiler, version)
-    except Exception as e:
-      logging.warning('get_cpu_optimization_flags: {}'.format(e))
+  try:
+    return archspec.cpu.TARGETS[this.g_cpu_target].optimization_flags(compiler, version)
+  except Exception as e:
+    logging.warning('get_cpu_optimization_flags: {}'.format(e))
 
   return None
 
