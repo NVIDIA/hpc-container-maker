@@ -180,7 +180,7 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
                 if hpccm.config.test_cpu_feature_flag('avx'):
                     self.__configure_opts.append('--enable-avx')
 
-                if hpccm.config.test_cpu_feature_flag('avx'):
+                if hpccm.config.test_cpu_feature_flag('avx2'):
                     self.__configure_opts.append('--enable-avx2')
 
                 if hpccm.config.test_cpu_feature_flag('avx512'):
