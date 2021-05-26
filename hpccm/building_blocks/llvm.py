@@ -112,7 +112,9 @@ class llvm(bb_base, hpccm.templates.envvars):
         # Output toolchain
         self.toolchain = toolchain()
         self.toolchain.CC = 'clang'
+        self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('clang')
         self.toolchain.CXX = 'clang++'
+        self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('clang')
 
         # Set the packages to install based on the Linux distribution
         # and CPU architecture

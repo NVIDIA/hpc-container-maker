@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+import archspec.cpu
 import argparse
 import logging
 
@@ -42,17 +43,20 @@ class KeyValue(argparse.Action): # pylint: disable=too-few-public-methods
 
 def main(): # pragma: no cover
     parser = argparse.ArgumentParser(description='HPC Container Maker')
+    parser.add_argument('--cpu-target', type=str, default=None,
+                        choices=[a for a in sorted(archspec.cpu.TARGETS)],
+                        help='cpu microarchitecture optimization target')
     parser.add_argument('--format', type=str, default='docker',
                         choices=[i.name.lower() for i in hpccm.container_type],
                         help='select output format')
     parser.add_argument('--print-exceptions', action='store_true',
                         default=False,
                         help='print exceptions (stack traces)')
+    parser.add_argument('--recipe', required=True,
+                        help='generate a container spec for the RECIPE file')
     parser.add_argument('--single-stage', action='store_true', default=False,
                         help='only process the first stage of a multi-stage ' +
                         'recipe')
-    parser.add_argument('--recipe', required=True,
-                        help='generate a container spec for the RECIPE file')
     parser.add_argument('--singularity-version', type=str, default='2.6',
                         help='set Singularity definition file format version')
     parser.add_argument('--userarg', action=KeyValue, metavar='key=value',
@@ -67,6 +71,7 @@ def main(): # pragma: no cover
     logging.basicConfig(format='%(levelname)s: %(message)s')
 
     recipe = hpccm.recipe(args.recipe,
+                          cpu_target=args.cpu_target,
                           ctype=hpccm.container_type[args.format.upper()],
                           raise_exceptions=args.print_exceptions,
                           single_stage=args.single_stage,

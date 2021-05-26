@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, centos8, docker, ubuntu, ubuntu18
+from helpers import broadwell, centos, centos8, docker, ubuntu, ubuntu18
 
 from hpccm.building_blocks.gnu import gnu
 
@@ -292,3 +292,13 @@ RUN echo "/usr/local/gnu/lib64" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig''')
         self.assertEqual(tc.F90, "/usr/local/gnu/bin/gfortran")
         if tc.LD_LIBRARY_PATH:
             self.assertTrue("/usr/local/gnu/lib64" in tc.LD_LIBRARY_PATH)
+
+    @broadwell
+    def test_toolchain_broadwell(self):
+        """CPU arch optimization flags"""
+        g = gnu()
+        tc = g.toolchain
+        self.assertEqual(tc.CFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.CXXFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.FFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.FCFLAGS, '-march=broadwell -mtune=broadwell')

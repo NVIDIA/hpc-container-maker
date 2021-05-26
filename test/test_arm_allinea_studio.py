@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ubuntu
+from helpers import aarch64, centos, centos8, docker, thunderx2, ubuntu
 
 from hpccm.building_blocks.arm_allinea_studio import arm_allinea_studio
 
@@ -164,3 +164,11 @@ ENV LD_LIBRARY_PATH=/opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarc
         self.assertEqual(tc.FC, 'armflang')
         self.assertEqual(tc.F77, 'armflang')
         self.assertEqual(tc.F90, 'armflang')
+
+    @thunderx2
+    def test_toolchain_thunderx2(self):
+        """CPU target optimization flags"""
+        a = arm_allinea_studio(eula=True)
+        tc = a.toolchain
+        self.assertEqual(tc.CFLAGS, '-mcpu=thunderx2t99')
+        self.assertEqual(tc.CXXFLAGS, '-mcpu=thunderx2t99')

@@ -87,14 +87,17 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
             logging.error(e)
             exit(1)
 
-def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
-           single_stage=False, singularity_version='2.6', userarg=None,
+def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
+           raise_exceptions=False, single_stage=False,
+           singularity_version='2.6', userarg=None,
            working_directory='/var/tmp'):
     """Recipe builder
 
     # Arguments
 
     recipe_file: path to a recipe file (required).
+
+    cpu_target: A CPU microarchitecture string recognized by archspec.
 
     ctype: Enum representing the container specification format.  The
     default is `container_type.DOCKER`.
@@ -127,6 +130,9 @@ def recipe(recipe_file, ctype=container_type.DOCKER, raise_exceptions=False,
     stages = [Stage(), Stage()]
     Stage0 = stages[0] # alias # pylint: disable=unused-variable
     Stage1 = stages[1] # alias # pylint: disable=unused-variable
+
+    # Set the CPU target
+    hpccm.config.set_cpu_target(cpu_target)
 
     # Set the global container type
     hpccm.config.g_ctype = ctype

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import broadwell, centos, docker, ubuntu
 
 from hpccm.building_blocks.intel_psxe import intel_psxe
 
@@ -172,3 +172,13 @@ RUN echo "source /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64" >> /etc/
         self.assertEqual(tc.FC, 'ifort')
         self.assertEqual(tc.F77, 'ifort')
         self.assertEqual(tc.F90, 'ifort')
+
+    @broadwell
+    def test_toolchain_broadwell(self):
+        """CPU arch optimization flags"""
+        psxe = intel_psxe(tarball='foo.tgz')
+        tc = psxe.toolchain
+        self.assertEqual(tc.CFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.CXXFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.FFLAGS, '-march=broadwell -mtune=broadwell')
+        self.assertEqual(tc.FCFLAGS, '-march=broadwell -mtune=broadwell')

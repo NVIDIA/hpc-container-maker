@@ -8,6 +8,22 @@ Return the architecture string for the currently configured CPU
 architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
 
 
+## get_cpu_optimization_flags
+```python
+get_cpu_optimization_flags(compiler, version='9999')
+```
+Return the CPU optimization flags for the target and compiler
+combination.
+
+__Arguments__
+
+
+- __compiler__: A compiler family string recognized by archspec.
+
+- __version__: The version of the compiler.  The default version is
+`9999`, i.e., assume the compiler supports the latest optimization
+flags.
+
 ## get_format
 ```python
 get_format()
@@ -47,6 +63,18 @@ __Arguments__
 - __arch (string)__: Value values are `aarch64`, `ppc64le`, and `x86_64`.
 `arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
 for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
+
+## set_cpu_target
+```python
+set_cpu_target(target)
+```
+Set the CPU optimization target
+
+__Arguments__
+
+
+- __target (string)__: A CPU microarchitecture string recognized by
+archspec.
 
 ## set_linux_distro
 ```python
@@ -95,9 +123,21 @@ __Arguments__
 - __wd (string)__: working directory path
 
 
+## test_cpu_feature_flag
+```python
+test_cpu_feature_flag(flag)
+```
+Return True or False depending on whether the CPU supports the
+given feature flag
+
+__Arguments__
+
+
+- __flag__: A CPU feature flag, e.g., `avx`.
+
 # recipe
 ```python
-recipe(recipe_file, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp')
+recipe(recipe_file, cpu_target=None, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp')
 ```
 Recipe builder
 
@@ -105,6 +145,8 @@ __Arguments__
 
 
 - __recipe_file__: path to a recipe file (required).
+
+- __cpu_target__: A CPU microarchitecture string recognized by archspec.
 
 - __ctype__: Enum representing the container specification format.  The
 default is `container_type.DOCKER`.

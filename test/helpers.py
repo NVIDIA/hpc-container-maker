@@ -42,6 +42,14 @@ def bash(function):
 
     return wrapper
 
+def broadwell(function):
+    """Decorator to set the CPU type to Broadwell"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_target = 'broadwell'
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def centos(function):
     """Decorator to set the Linux distribution to CentOS 7"""
     def wrapper(*args, **kwargs):
@@ -60,10 +68,26 @@ def centos8(function):
 
     return wrapper
 
+def cpu_target_none(function):
+    """Decorator to set the CPU type to None"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_target = None
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def docker(function):
     """Decorator to set the global container type to docker"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.DOCKER
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def icelake(function):
+    """Decorator to set the CPU type to Ice Lake"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_target = 'icelake'
         return function(*args, **kwargs)
 
     return wrapper
@@ -135,6 +159,14 @@ def singularity37(function):
 
     return wrapper
 
+def thunderx2(function):
+    """Decorator to set the CPU type to ThunderX2"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_target = 'thunderx2'
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def ubuntu(function):
     """Decorator to set the Linux distribution to Ubuntu 16.04"""
     def wrapper(*args, **kwargs):
@@ -166,6 +198,14 @@ def x86_64(function):
     """Decorator to set the CPU architecture to x86_64"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_cpu_arch = cpu_arch.X86_64
+        return function(*args, **kwargs)
+
+    return wrapper
+
+def zen2(function):
+    """Decorator to set the CPU type to Zen 2"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_cpu_target = 'zen2'
         return function(*args, **kwargs)
 
     return wrapper
