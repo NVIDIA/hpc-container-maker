@@ -51,7 +51,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/lib/apt/lists/*''')
+    rm -rf /var/lib/apt/lists/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @x86_64
     @centos8
@@ -66,7 +67,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/cache/yum/*''')
+    rm -rf /var/cache/yum/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @x86_64
     @ubuntu
@@ -88,7 +90,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/lib/apt/lists/*''')
+    rm -rf /var/lib/apt/lists/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @ppc64le
     @ubuntu18
@@ -110,7 +113,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/p
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/lib/apt/lists/*''')
+    rm -rf /var/lib/apt/lists/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @ppc64le
     @centos
@@ -125,7 +129,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc6
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/cache/yum/*''')
+    rm -rf /var/cache/yum/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @aarch64
     @centos
@@ -140,7 +145,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/arm6
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/arm64 || true) && \
     yum install -y \
         nsight-compute-2020.2.1 && \
-    rm -rf /var/cache/yum/*''')
+    rm -rf /var/cache/yum/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @x86_64
     @ubuntu
@@ -164,7 +170,8 @@ RUN cd /var/tmp/nsight_compute && \
     ln -sf /usr/local/NVIDIA-Nsight-Compute/sections /tmp/var/ && \
     chmod -R a+w /tmp/var && \
     rm -rf /var/tmp/nsight_compute /var/tmp/nsight_compute/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
-ENV PATH=/usr/local/NVIDIA-Nsight-Compute:$PATH''')
+ENV PATH=/usr/local/NVIDIA-Nsight-Compute:$PATH
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
 
     @x86_64
     @ubuntu
@@ -187,4 +194,5 @@ RUN mkdir -p /var/tmp/nsight_compute && wget -q -nc --no-check-certificate -P /v
     ln -sf /usr/local/NVIDIA-Nsight-Compute/sections /tmp/var/ && \
     chmod -R a+w /tmp/var && \
     rm -rf /var/tmp/nsight_compute /var/tmp/nsight_compute/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run
-ENV PATH=/usr/local/NVIDIA-Nsight-Compute:$PATH''')
+ENV PATH=/usr/local/NVIDIA-Nsight-Compute:$PATH
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')

@@ -26,14 +26,16 @@ from distutils.version import StrictVersion
 import posixpath
 
 import hpccm.config
+import hpccm.templates.envvars
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.building_blocks.generic_build import generic_build
 from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.primitives.environment import environment
 
-class nsight_compute(bb_base):
+class nsight_compute(bb_base, hpccm.templates.envvars):
     """The `nsight_compute` building block downloads and installs the
     [NVIDIA Nsight Compute
     profiler]](https://developer.nvidia.com/nsight-compute).
@@ -93,6 +95,12 @@ class nsight_compute(bb_base):
 
         # Set the Linux distribution specific parameters
         self.__distro()
+
+        # Disables deployment of section files to prevent warning
+        # when there is no home or home is read-only:
+        self.environment_variables[
+            'NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT'
+        ] = '1'
 
         if self.__runfile:
             # Runfile based installation
@@ -178,6 +186,8 @@ class nsight_compute(bb_base):
             yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
             yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
 
+        self += environment(variables=self.environment_step())
+
     def __instructions_runfile(self):
         """Fill in container instructions"""
 
@@ -219,3 +229,4 @@ class nsight_compute(bb_base):
         self += comment('NVIDIA Nsight Compute {}'.format(pkg), reformat=False)
         self += packages(ospackages=self.__ospackages)
         self += self.__bb
+        self += environment(variables=self.environment_variables)
