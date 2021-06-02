@@ -1,3 +1,8 @@
+# v21.5.0
+- Adds CPU microarchitecture optimization support via `archspec`.
+- Fixes and enhancements to the Nsight Compute (`nsight_compute`),
+  NVIDIA HPC SDK (`nvhpc`), and PMI (`slurm_pmi2`) building blocks.
+
 # v21.4.0
 - Fixes and enhancements to the gdrcopy (`gdrcopy`), LLVM (`llvm`),
   Mellanox OFED (`mlnx_ofed`), Nsight Compute (`nsight_compute`), Nsight
