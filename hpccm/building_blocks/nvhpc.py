@@ -102,7 +102,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `21.3`.
+    file name.  The default value is `21.5`.
 
     # Examples
 
@@ -153,14 +153,16 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '21.3')
+        self.__version = kwargs.get('version', '21.5')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
 
-        if StrictVersion(self.__version) >= StrictVersion('21.2'):
+        if StrictVersion(self.__version) >= StrictVersion('21.5'):
+            self.__cuda_version_default = '11.3'
+        elif StrictVersion(self.__version) >= StrictVersion('21.2'):
             self.__cuda_version_default = '11.2'
         elif StrictVersion(self.__version) >= StrictVersion('20.11'):
             self.__cuda_version_default = '11.1'
@@ -286,8 +288,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'))
         elif self.__hpcx:
             # Set environment for HPC-X
+            hpcx_version = '2.8.1'
+            if StrictVersion(self.__version) < StrictVersion('21.5'):
+              hpcx_version = '2.7.4'
             hpcx_dir = posixpath.join(self.__basepath, 'comm_libs', 'hpcx',
-                                      'hpcx-2.7.4')
+                                      'hpcx-{}'.format(hpcx_version))
 
             hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx', 'mt')
             #hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx')
