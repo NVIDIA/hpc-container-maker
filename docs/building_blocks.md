@@ -245,7 +245,7 @@ repository.  For versions of Boost older than 1.63.0, the
 SourceForge repository should be used.  The default is False.
 
 - __version__: The version of Boost source to download.  The default
-value is `1.74.0`.
+value is `1.76.0`.
 
 __Examples__
 
