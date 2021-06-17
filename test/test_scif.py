@@ -98,7 +98,7 @@ RUN --mount=type=bind,target=/scif/apps/foo/src scif install /scif/recipes/{1}''
     def test_allsections_singularity(self):
         """One of each SCI-f section type"""
         s = scif(name='foo')
-        s += copy(src='file', dest='/tmp/file')
+        s += copy(src='file', dest='/src/file')
         s += comment('My app')
         s += environment(variables={'ONE': '1'})
         s += label(metadata={'A': 'B'})
@@ -109,7 +109,7 @@ RUN --mount=type=bind,target=/scif/apps/foo/src scif install /scif/recipes/{1}''
 r'''%appenv foo
     export ONE=1
 %appfiles foo
-    file /tmp/file
+    file /src/file
 %apphelp foo
 My app
 %appinstall foo
@@ -127,7 +127,7 @@ My app
         # See comment in the test_defaults_docker test case
         scif_file = tempfile.NamedTemporaryFile(delete=False, suffix='.scif')
         s = scif(name='foo', file=scif_file.name)
-        s += copy(src='file', dest='/tmp/file')
+        s += copy(src='file', dest='/src/file')
         s += comment('My app')
         s += environment(variables={'ONE': '1'})
         s += label(metadata={'A': 'B'})
@@ -152,7 +152,7 @@ r'''%appenv foo
     export ONE=1
 
 %appfiles foo
-    file /tmp/file
+    file /src/file
 
 %apphelp foo
 My app
