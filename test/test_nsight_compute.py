@@ -52,7 +52,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
     rm -rf /var/lib/apt/lists/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @x86_64
     @centos8
@@ -68,7 +69,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @x86_64
     @ubuntu
@@ -91,7 +93,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
     rm -rf /var/lib/apt/lists/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @ppc64le
     @ubuntu18
@@ -114,7 +117,8 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/p
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
     rm -rf /var/lib/apt/lists/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @ppc64le
     @centos
@@ -130,7 +134,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc6
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @aarch64
     @centos
@@ -146,7 +151,8 @@ RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/arm6
     yum install -y \
         nsight-compute-2020.2.1 && \
     rm -rf /var/cache/yum/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1''')
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 
     @x86_64
     @ubuntu
