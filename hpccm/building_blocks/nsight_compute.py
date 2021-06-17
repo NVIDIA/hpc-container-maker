@@ -186,6 +186,8 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
             yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
             yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
 
+        # The distro packages do not link nsight-compute binaries to /usr/local/bin
+        self.environment_variables['PATH'] = '/opt/nvidia/nsight-compute/{}:$PATH'.format(self.__version)
         self += environment(variables=self.environment_step())
 
     def __instructions_runfile(self):
