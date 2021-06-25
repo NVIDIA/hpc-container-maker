@@ -50,11 +50,11 @@ class baseimage(object):
 
     _distro: The underlying Linux distribution of the base image.
     Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
-    `rhel7`, `rhel8, `ubuntu`, `ubuntu16`, `ubuntu18`, and `ubuntu20`.
-    By default, the primitive attempts to figure out the Linux
-    distribution by inspecting the image identifier, and falls back to
-    `ubuntu` if unable to determine the Linux distribution
-    automatically.
+    `rhel7`, `rhel8, `rockylinux8`, `ubuntu`, `ubuntu16`, `ubuntu18`,
+    and `ubuntu20`.  By default, the primitive attempts to figure out
+    the Linux distribution by inspecting the image identifier, and
+    falls back to `ubuntu` if unable to determine the Linux
+    distribution automatically.
 
     _docker_env: Boolean specifying whether to load the Docker base
      image environment, i.e., source
@@ -128,10 +128,14 @@ class baseimage(object):
             hpccm.config.set_linux_distro('rhel7')
         elif self.__distro == 'rhel8':
             hpccm.config.set_linux_distro('rhel8')
+        elif self.__distro == 'rockylinux8':
+            hpccm.config.set_linux_distro('rockylinux8')
         elif re.search(r'centos:?7', self.image):
             hpccm.config.set_linux_distro('centos7')
         elif re.search(r'centos:?8', self.image):
             hpccm.config.set_linux_distro('centos8')
+        elif re.search(r'rockylinux:?8', self.image):
+            hpccm.config.set_linux_distro('rockylinux8')
         elif re.search(r'centos|rhel|redhat', self.image):
             hpccm.config.set_linux_distro('centos')
         elif re.search(r'ubi:?7', self.image):

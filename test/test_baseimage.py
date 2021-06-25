@@ -210,6 +210,13 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
 
     @docker
+    def test_detect_rockylinux_8(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='rockylinux/rockylinux:8')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.ROCKYLINUX)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+
+    @docker
     def test_detect_ubi7(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:10.1-devel-ubi7')

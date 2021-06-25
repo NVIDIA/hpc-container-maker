@@ -174,9 +174,9 @@ def set_linux_distro(distro):
   # Arguments
 
   distro (string): Valid values are `centos7`, `centos8`, `rhel7`,
-  `rhel8`, `ubuntu16`, `ubuntu18`, and `ubuntu20`.  `ubuntu` is an
-  alias for `ubuntu16`, `centos` is an alias for `centos7`, and `rhel`
-  is an alias for `rhel7`.
+  `rhel8`, `rockylinux8`, `ubuntu16`, `ubuntu18`, and `ubuntu20`.
+  `ubuntu` is an alias for `ubuntu16`, `centos` is an alias for
+  `centos7`, and `rhel` is an alias for `rhel7`.
 
   """
   this = sys.modules[__name__]
@@ -197,6 +197,9 @@ def set_linux_distro(distro):
     this.g_linux_version = StrictVersion('7.0')
   elif distro == 'rhel8':
     this.g_linux_distro = linux_distro.RHEL
+    this.g_linux_version = StrictVersion('8.0')
+  elif distro == 'rockylinux8':
+    this.g_linux_distro = linux_distro.ROCKYLINUX
     this.g_linux_version = StrictVersion('8.0')
   elif distro == 'ubuntu':
     this.g_linux_distro = linux_distro.UBUNTU

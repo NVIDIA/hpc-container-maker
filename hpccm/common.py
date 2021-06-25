@@ -36,3 +36,4 @@ class linux_distro(Enum):
     CENTOS = 2
     RHEL = 2
     REDHAT = 2
+    ROCKYLINUX = 2
