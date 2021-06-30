@@ -105,6 +105,14 @@ class Test_config(unittest.TestCase):
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
 
     @docker
+    def test_set_linux_distro_rockylinux(self):
+        """Set Linux distribution to Rocky Linux"""
+        hpccm.config.set_linux_distro('rockylinux8')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.ROCKYLINUX)
+        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+
+    @docker
     def test_set_linux_distro_invalid(self):
         """Set Linux distribution to an invalid value"""
         hpccm.config.set_linux_distro('invalid')
