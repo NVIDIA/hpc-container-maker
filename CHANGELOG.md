@@ -1,3 +1,10 @@
+# v21.6.0
+- Adds support for Rocky Linux.
+- Refresh default component versions for the Boost (`boost`), HPC-X
+  (`hpcx`), and Mellanox OFED (`mlnx_ofed`) building blocks.
+- Fixes and enhancements to the Nsight Compute (`nsight_compute`)
+  building block.
+
 # v21.5.0
 - Adds CPU microarchitecture optimization support via `archspec`.
 - Fixes and enhancements to the Nsight Compute (`nsight_compute`),
