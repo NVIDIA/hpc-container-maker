@@ -1499,7 +1499,7 @@ library directories. This value is ignored if `hpcxinit` is
 
 - __mlnx_ofed__: The version of Mellanox OFED that should be matched.
 This value is ignored if Inbox OFED is selected.  The default
-value is `4.7-1.0.0.1`.
+value is `5.2-2.2.0.0`.
 
 - __multi_thread__: Boolean flag to specify whether the multi-threaded
 version of Mellanox HPC-X should be used.  The default is `False`.
@@ -1520,7 +1520,7 @@ the default values are `bzip2`, `openssh-clients`, `tar`, and
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.7.0`.
+value is `2.8.1`.
 
 __Examples__
 
@@ -2417,7 +2417,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `5.1-2.3.7.1`.
+value is `5.2-2.2.0.0`.
 
 __Examples__
 

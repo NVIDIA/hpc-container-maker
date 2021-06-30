@@ -78,7 +78,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     mlnx_ofed: The version of Mellanox OFED that should be matched.
     This value is ignored if Inbox OFED is selected.  The default
-    value is `4.7-1.0.0.1`.
+    value is `5.2-2.2.0.0`.
 
     multi_thread: Boolean flag to specify whether the multi-threaded
     version of Mellanox HPC-X should be used.  The default is `False`.
@@ -99,7 +99,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.7.0`.
+    value is `2.8.1`.
 
     # Examples
 
@@ -116,17 +116,17 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         self.__arch = hpccm.config.get_cpu_architecture()
         self.__baseurl = kwargs.get('baseurl',
-                                    'http://www.mellanox.com/downloads/hpc/hpc-x')
+                                    'https://content.mellanox.com/hpc/hpc-x')
         self.__bashrc = '' # Filled in by __distro()
         self.__hpcxinit = kwargs.get('hpcxinit', True)
         self.__inbox = kwargs.get('inbox', False)
-        self.__mlnx_ofed = kwargs.get('mlnx_ofed', '4.7-1.0.0.1')
+        self.__mlnx_ofed = kwargs.get('mlnx_ofed', '5.2-2.2.0.0')
         self.__multi_thread = kwargs.get('multi_thread', False)
         self.__oslabel = kwargs.get('oslabel', '') # Filled in by __distro()
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.7.0')
+        self.__version = kwargs.get('version', '2.8.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -187,13 +187,16 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # The download URL has the format MAJOR.MINOR in the path and
-        # the tarball contains MAJOR.MINOR.REVISION, so pull apart the
-        # full version to get the individual components.
-        match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<revision>\d+)',
-                         self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
+        # For version 2.8 and earlier, the download URL has the format
+        # MAJOR.MINOR in the path and the tarball contains
+        # MAJOR.MINOR.REVISION, so pull apart the full version to get
+        # the individual components.
+        version_string = self.__version
+        if StrictVersion(self.__version) <= StrictVersion('2.8'):
+            match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<revision>\d+)',
+                             self.__version)
+            version_string = '{0}.{1}'.format(match.groupdict()['major'],
+                                              match.groupdict()['minor'])
 
         if self.__inbox:
             # Use inbox OFED
@@ -205,7 +208,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                 self.__version, self.__mlnx_ofed, self.__oslabel, self.__arch)
 
         tarball = self.__label + '.tbz'
-        url = '{0}/v{1}/{2}'.format(self.__baseurl, major_minor, tarball)
+        url = '{0}/v{1}/{2}'.format(self.__baseurl, version_string, tarball)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url, directory=self.__wd))
