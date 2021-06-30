@@ -38,7 +38,7 @@ class Test_mlnx_ofed(unittest.TestCase):
         """Default hpcx building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -46,12 +46,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64''')
 
     @x86_64
     @ubuntu18
@@ -60,7 +60,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
         """Default hpcx building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -68,12 +68,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu18.04-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu18.04-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu18.04-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu18.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu18.04-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu18.04-x86_64''')
 
     @x86_64
     @ubuntu20
@@ -82,7 +82,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
         """Default hpcx building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -90,12 +90,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu20.04-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu20.04-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu20.04-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu20.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu20.04-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu20.04-x86_64''')
 
     @x86_64
     @centos
@@ -104,19 +104,19 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
         """Default mlnx_ofed building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN yum install -y \
         bzip2 \
         openssh-clients \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat7.6-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat7.6-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat7.6-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
     echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat7.6-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat7.6-x86_64''')
 
     @x86_64
     @centos8
@@ -125,26 +125,27 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
         """Default mlnx_ofed building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN yum install -y \
         bzip2 \
         openssh-clients \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat8.0-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat8.0-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat8.0-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat8.0-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat8.0-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat8.0-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
     echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat8.0-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat8.0-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat8.0-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-redhat8.0-x86_64''')
 
     @x86_64
     @ubuntu
     @docker
     def test_prefix_multi_thread(self):
         """Prefix and multi_thread options"""
-        h = hpcx(multi_thread=True, prefix='/opt/hpcx', version='2.5.0')
+        h = hpcx(mlnx_ofed='4.7-1.0.0.1', multi_thread=True,
+                 prefix='/opt/hpcx', version='2.5.0')
         self.assertEqual(str(h),
 r'''# Mellanox HPC-X version 2.5.0
 RUN apt-get update -y && \
@@ -154,7 +155,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
     cp -a /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64 /opt/hpcx && \
     echo "source /opt/hpcx/hpcx-mt-init-ompi.sh" >> /etc/bash.bashrc && \
@@ -176,7 +177,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64.tbz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64.tbz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64.tbz -C /var/tmp -j && \
     cp -a /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
@@ -188,7 +189,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://w
     @docker
     def test_ppc64le_centos(self):
         """ppc64le"""
-        h = hpcx(version='2.5.0')
+        h = hpcx(mlnx_ofed='4.7-1.0.0.1', version='2.5.0')
         self.assertEqual(str(h),
 r'''# Mellanox HPC-X version 2.5.0
 RUN yum install -y \
@@ -197,7 +198,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz -C /var/tmp -j && \
     cp -a /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
@@ -219,7 +220,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64.tbz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64.tbz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64.tbz -C /var/tmp -j && \
     cp -a /var/tmp/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64 /usr/local/hpcx && \
     rm -rf /var/tmp/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64.tbz /var/tmp/hpcx-v2.5.0-gcc-inbox-ubuntu18.04-x86_64
@@ -262,7 +263,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.6-1.0.1.1-redhat7.6-x86_64.tbz && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.6-1.0.1.1-redhat7.6-x86_64.tbz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.6-1.0.1.1-redhat7.6-x86_64.tbz -C /var/tmp -j && \
     cp -a /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.6-1.0.1.1-redhat7.6-x86_64 /usr/local/hpcx && \
     echo "/usr/local/hpcx/hcoll/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
@@ -303,7 +304,7 @@ ENV CPATH=/usr/local/hpcx/hcoll/include:/usr/local/hpcx/ompi/include:/usr/local/
         h = hpcx()
         r = h.runtime()
         self.assertEqual(r,
-r'''# Mellanox HPC-X version 2.7.0
+r'''# Mellanox HPC-X version 2.8.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -311,9 +312,9 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://www.mellanox.com/downloads/hpc/hpc-x/v2.7/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.8.1/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.7.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-ubuntu16.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.8.1-gcc-MLNX_OFED_LINUX-5.2-2.2.0.0-ubuntu16.04-x86_64''')
