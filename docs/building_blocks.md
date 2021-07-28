@@ -1480,7 +1480,7 @@ environment script.  However, HPC-X is not automatically available
 to subsequent container image build steps; the environment is
 available when the container image is run.  To set the HPC-X
 environment in subsequent build steps you can explicitly call
-`source /usr/local/hpcx/hpcx-init.sh && hpcx_init` in each build
+`source /usr/local/hpcx/hpcx-init.sh && hpcx_load` in each build
 step.  If this value is set to `False`, then the environment is
 set such that the environment is visible to both subsequent
 container image build steps and when the container image is run.
