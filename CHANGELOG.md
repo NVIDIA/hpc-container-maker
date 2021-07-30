@@ -1,7 +1,7 @@
 # v21.7.0
 - Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
   building block.
-- Fixes to the HPC-X (`hpcx`) documentation.
+- Fixes to the HPC-X (`hpcx`) building block documentation.
 
 # v21.6.0
 - Adds support for Rocky Linux.
