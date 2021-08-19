@@ -3227,6 +3227,11 @@ The default is empty.
 should be installed.  If True, adds `automake` to the list of OS
 packages.  The default is False.
 
+- __ldconfig__: Boolean flag to specify whether the NVSHMEM library
+directory should be added dynamic linker cache.  If False, then
+`LD_LIBRARY_PATH` is modified to include the NVSHMEM library
+directory. The default value is False.
+
 - __make_variables__: Dictionary of environment variables and values to
 set when building NVSHMEM.  The default is an empty dictionary.
 
@@ -3247,7 +3252,7 @@ context. The default value is empty. Either this parameter or
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
 - __version__: The version of NVSHMEM source to download.  The default
-value is `2.1.2`.
+value is `2.2.1`.
 
 __Examples__
 

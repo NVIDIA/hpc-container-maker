@@ -37,18 +37,19 @@ class Test_nvshmem(unittest.TestCase):
         """nvshmem defaults"""
         n = nvshmem()
         self.assertEqual(str(n),
-r'''# NVSHMEM 2.1.2
+r'''# NVSHMEM 2.2.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.1.2/source/nvshmem_src_2.1.2-0.txz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
-    cd /var/tmp/nvshmem_src_2.1.2-0 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.2.1/source/nvshmem_src_2.2.1-0.txz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.2.1-0.txz -C /var/tmp -J && \
+    cd /var/tmp/nvshmem_src_2.2.1-0 && \
     CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
-    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
+    rm -rf /var/tmp/nvshmem_src_2.2.1-0 /var/tmp/nvshmem_src_2.2.1-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -68,6 +69,7 @@ COPY nvshmem_0.4.1-0+cuda10_x86_64.txz /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.tx
 RUN mkdir -p /usr/local/nvshmem && tar -x -f /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz -C /usr/local/nvshmem -J --strip-components=1 && \
     rm -rf /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -86,6 +88,7 @@ COPY nvshmem_0.4.1-0+cuda10_x86_64.txz /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.tx
 RUN mkdir -p /usr/local/nvshmem && tar -x -f /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz -C /usr/local/nvshmem -J --strip-components=1 && \
     rm -rf /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -107,6 +110,7 @@ RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp 
     CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
     rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -135,6 +139,7 @@ RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp 
     ./scripts/install_hydra.sh /var/tmp /usr/local/nvshmem && \
     rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -148,6 +153,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 r'''# NVSHMEM
 COPY --from=0 /usr/local/nvshmem /usr/local/nvshmem
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
 
@@ -161,5 +167,6 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 r'''# NVSHMEM
 COPY --from=0 /usr/local/nvshmem /usr/local/nvshmem
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
     PATH=/usr/local/nvshmem/bin:$PATH''')
