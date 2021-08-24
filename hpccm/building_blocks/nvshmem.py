@@ -26,6 +26,7 @@ import posixpath
 
 import hpccm.templates.downloader
 import hpccm.templates.envvars
+import hpccm.templates.ldconfig
 import hpccm.templates.rm
 import hpccm.templates.tar
 
@@ -38,7 +39,8 @@ from hpccm.primitives.environment import environment
 from hpccm.primitives.shell import shell
 
 class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
-              hpccm.templates.rm, hpccm.templates.tar):
+              hpccm.templates.ldconfig, hpccm.templates.rm,
+              hpccm.templates.tar):
     """The `nvshmem` building block builds and installs the
     [NVSHMEM](https://developer.nvidia.com/nvshmem) component.
 
@@ -62,6 +64,11 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     should be installed.  If True, adds `automake` to the list of OS
     packages.  The default is False.
 
+    ldconfig: Boolean flag to specify whether the NVSHMEM library
+    directory should be added dynamic linker cache.  If False, then
+    `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
+    directory. The default value is False.
+
     make_variables: Dictionary of environment variables and values to
     set when building NVSHMEM.  The default is an empty dictionary.
 
@@ -82,7 +89,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
     version: The version of NVSHMEM source to download.  The default
-    value is `2.1.2`.
+    value is `2.2.1`.
 
     # Examples
 
@@ -108,7 +115,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__release = kwargs.pop('release', '0')
         self.__shmem = kwargs.pop('shmem', None)
         self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '2.1.2')
+        self.__version = kwargs.pop('version', '2.2.1')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the download specific parameters
@@ -124,6 +131,8 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             posixpath.join(self.__prefix, 'lib'))
         self.environment_variables['PATH'] = '{}:$PATH'.format(
             posixpath.join(self.__prefix, 'bin'))
+        if not self.ldconfig:
+            self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
 
         # Add packages
         if self.__hydra:
