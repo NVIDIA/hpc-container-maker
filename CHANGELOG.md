@@ -1,3 +1,8 @@
+# v21.8.0
+- Refreshes default component version for the NVSHMEM (`nvshmem`)
+  building block
+- Adds NVIDIA HPC SDK example recipe
+
 # v21.7.0
 - Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
   building block.
