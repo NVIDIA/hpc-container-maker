@@ -92,7 +92,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         super(llvm, self).__init__(**kwargs)
 
         # Current LLVM trunk version
-        self.__trunk_version = '13'
+        self.__trunk_version = '14'
 
         self.__apt_keys = []       # Filled in below
         self.__apt_repositories = [] # Filled in below
@@ -338,7 +338,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         """Return the package repositories for the given distro and llvm
         version.  The development branch repositories are not
         versioned and must be handled differently.  Currently the
-        development branch is version 12."""
+        development branch is version 14."""
 
         codename = 'xenial'
         codename_ver = 'xenial'
