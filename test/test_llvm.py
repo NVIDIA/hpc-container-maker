@@ -361,15 +361,15 @@ RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     echo "deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-13 \
-        clang-format-13 \
-        clang-tidy-13 \
-        libomp-13-dev && \
+        clang-14 \
+        clang-format-14 \
+        clang-tidy-14 \
+        libomp-14-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/clang clang $(which clang-13) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-13) 30 && \
-    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-13) 30 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-13) 30''')
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-14) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-14) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-14) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-14) 30''')
 
     @x86_64
     @ubuntu20
@@ -391,15 +391,15 @@ RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     echo "deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        clang-13 \
-        clang-format-13 \
-        clang-tidy-13 \
-        libomp-13-dev && \
+        clang-14 \
+        clang-format-14 \
+        clang-tidy-14 \
+        libomp-14-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN update-alternatives --install /usr/bin/clang clang $(which clang-13) 30 && \
-    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-13) 30 && \
-    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-13) 30 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-13) 30''')
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-14) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-14) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-14) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-14) 30''')
 
     @aarch64
     @ubuntu
