@@ -92,7 +92,7 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     default is empty.
 
     version: The version of FFTW source to download.  This value is
-    ignored if `directory` is set.  The default value is `3.3.8`.
+    ignored if `directory` is set.  The default value is `3.3.10`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -139,7 +139,7 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__mpi = kwargs.pop('mpi', False)
         self.__ospackages = kwargs.pop('ospackages', ['file', 'make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/fftw')
-        self.__version = kwargs.pop('version', '3.3.8')
+        self.__version = kwargs.pop('version', '3.3.10')
 
         # Set the configure options
         self.__configure()
