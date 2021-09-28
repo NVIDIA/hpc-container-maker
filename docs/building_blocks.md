@@ -697,7 +697,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of FFTW source to download.  This value is
-ignored if `directory` is set.  The default value is `3.3.8`.
+ignored if `directory` is set.  The default value is `3.3.10`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
