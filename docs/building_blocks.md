@@ -150,10 +150,10 @@ Studio. The default is True.
 The default value is `False`.
 
 - __microarchitectures__: List of microarchitectures to install.
-Available values are `generic`, `generic-sve`, `neoverse-n1`, and
-`thunderx2t99`.  Irrespective of this setting, the generic
-implementation will always be installed.  The default is
-`generic`.
+Available values are `generic`, `generic-sve` for all versions,
+and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
+Irrespective of this setting, the generic implementation will
+always be installed.
 
 - __ospackages__: List of OS packages to install prior to installing Arm
 Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
@@ -170,7 +170,7 @@ defined, the tarball in the local build context will be used
 rather than downloading the tarball from the web.
 
 - __version__: The version of Arm Allinea Studio to install.  The
-default value is `20.3`.  Due to differences in the packaging
+default value is `21.1`.  Due to differences in the packaging
 scheme, versions prior to 20.2 are not supported.
 
 __Examples__
