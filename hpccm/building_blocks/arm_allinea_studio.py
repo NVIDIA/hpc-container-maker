@@ -68,10 +68,10 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     The default value is `False`.
 
     microarchitectures: List of microarchitectures to install.
-    Available values are `generic`, `generic-sve`, `neoverse-n1`, and
-    `thunderx2t99`.  Irrespective of this setting, the generic
-    implementation will always be installed.  The default is
-    `generic`.
+    Available values are `generic`, `generic-sve` for all versions,
+    and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
+    Irrespective of this setting, the generic implementation will
+    always be installed.
 
     ospackages: List of OS packages to install prior to installing Arm
     Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
@@ -88,7 +88,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     rather than downloading the tarball from the web.
 
     version: The version of Arm Allinea Studio to install.  The
-    default value is `20.3`.  Due to differences in the packaging
+    default value is `21.1`.  Due to differences in the packaging
     scheme, versions prior to 20.2 are not supported.
 
     # Examples
@@ -116,7 +116,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         # https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula
         self.__eula = kwargs.get('eula', False)
 
-        self.__gcc_version = kwargs.get('gcc_version', '9.2.0')
         self.__installer_template = '' # Filled in by __distro()
         self.__microarchitectures = kwargs.get('microarchitectures',
                                                ['generic'])
@@ -124,7 +123,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__package_string = '' # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/arm')
         self.__tarball = kwargs.get('tarball', None)
-        self.__version = kwargs.get('version', '20.3')
+        self.__version = kwargs.get('version', '21.1')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
@@ -168,9 +167,18 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         specified value overrides any defaults."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-            self.__directory_string = 'Ubuntu-16.04'
-            self.__package_string = 'Ubuntu-16.04'
-            self.__url_string = 'Ubuntu16.04'
+            if self.__version <= StrictVersion('20.3'):
+                self.__directory_string = 'Ubuntu-16.04'
+                self.__package_string = 'Ubuntu-16.04'
+                self.__url_string = 'Ubuntu16.04'
+            elif hpccm.config.g_linux_version <= StrictVersion('18.04'):
+                self.__directory_string = 'Ubuntu-18.04'
+                self.__package_string = 'Ubuntu-18.04'
+                self.__url_string = "ACfL"
+            else:
+                self.__directory_string = 'Ubuntu-20.04'
+                self.__package_string = 'Ubuntu-20.04'
+                self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
 
@@ -182,11 +190,17 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                 self.__directory_string = 'RHEL-8'
                 self.__package_string = 'RHEL-8'
-                self.__url_string = 'RHEL8'
+                if self.__version <= '20.3':
+                    self.__url_string = 'RHEL8'
+                else:
+                    self.__url_string = 'ACfL'
             else:
                 self.__directory_string = 'RHEL-7'
                 self.__package_string = 'RHEL-7'
-                self.__url_string = 'RHEL7'
+                if self.__version <= '20.3':
+                    self.__url_string = 'RHEL7'
+                else:
+                    self.__url_string = 'ACfL'
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
 
@@ -217,7 +231,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
             major_minor = '{0}-{1}'.format(match.groupdict()['major'],
                                            match.groupdict()['minor'])
-
             tarball = 'arm-compiler-for-linux_{0}_{1}_aarch64.tar'.format(
                 self.__version, self.__package_string)
             url = '{0}/{1}/{2}/{3}'.format(self.__baseurl, major_minor,
@@ -235,10 +248,14 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         install_args = ['--install-to {}'.format(self.__prefix)]
         if self.__eula:
             install_args.append('--accept')
-        if self.__microarchitectures:
+        if self.__microarchitectures and self.__version <= StrictVersion('20.3'):
             install_args.append('--only-install-microarchitectures={}'.format(
                 ','.join(self.__microarchitectures)))
-        package_directory = 'arm-compiler-for-linux_{0}_{1}_aarch64'.format(self.__version, self.__package_string)
+        if self.__version >= StrictVersion("21.1"):
+            arch_string = ""
+        else:
+            arch_string = "_aarch64"
+        package_directory = 'arm-compiler-for-linux_{0}_{1}{2}'.format(self.__version, self.__package_string, arch_string)
         self.__commands.append('cd {0} && ./{1} {2}'.format(
             posixpath.join(self.__wd, package_directory),
             self.__installer_template.format(self.__version),
@@ -289,15 +306,23 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                         dest=posixpath.join(compiler_redist_path, ''))
 
         # Performance libraries
-        microarch_string = {'generic': 'Generic-AArch64',
-                            'generic-sve': 'Generic-SVE',
-                            'neoverse-n1': 'Neoverse-N1',
-                            'thunderx2t99': 'ThunderX2CN99'}
+        microarch_string = {
+                            '20.3': {
+                                'generic': 'Generic-AArch64',
+                                'generic-sve': 'Generic-SVE',
+                                'neoverse-n1': 'Neoverse-N1',
+                                'thunderx2t99': 'ThunderX2CN99'
+                                },
+                            '21.1': {
+                                'generic': 'AArch64',
+                                'generic-sve': 'AArch64-SVE'
+                                }
+                            }
         for microarch in self.__microarchitectures:
             armpl_arm_redist_path = posixpath.join(
                 self.__prefix,
-                'armpl-{0}.0_{1}_{2}_arm-linux-compiler_{0}_aarch64-linux'.format(
-                    self.__version, microarch_string[microarch],
+                'armpl-{0}.0_{1}_{2}_arm-linux-compiler_aarch64-linux'.format(
+                    self.__version, microarch_string[self.__version][microarch],
                     self.__directory_string),
                 'lib')
             paths.append(armpl_arm_redist_path)
@@ -307,12 +332,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                              'libamath_dummy.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_arm_redist_path, ''))
-
             armpl_gcc_redist_path = posixpath.join(
                 self.__prefix,
-                'armpl-{0}.0_{1}_{2}_gcc_{3}_aarch64-linux'.format(
-                    self.__version, microarch_string[microarch],
-                    self.__directory_string, self.__gcc_version),
+                'armpl-{0}.0_{1}_{2}_gcc_aarch64-linux'.format(
+                    self.__version, microarch_string[self.__version][microarch],
+                    self.__directory_string),
                 'lib')
             paths.append(armpl_gcc_redist_path)
             self.rt += copy(_from=_from,

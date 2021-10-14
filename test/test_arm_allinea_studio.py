@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, thunderx2, ubuntu
+from helpers import aarch64, centos, centos8, docker, thunderx2, ubuntu20, ubuntu
 
 from hpccm.building_blocks.arm_allinea_studio import arm_allinea_studio
 
@@ -32,13 +32,13 @@ class Test_arm_allinea_studio(unittest.TestCase):
         logging.disable(logging.ERROR)
 
     @aarch64
-    @ubuntu
+    @ubuntu20
     @docker
     def test_defaults_ubuntu(self):
         """Default arm_allinea_studio building block"""
         a = arm_allinea_studio(eula=True)
         self.assertEqual(str(a),
-r'''# Arm Allinea Studio version 20.3
+r'''# Arm Allinea Studio version 21.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libc6-dev \
@@ -48,10 +48,10 @@ RUN apt-get update -y && \
         tcl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/Ubuntu16.04/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/21-1/ACfL/arm-compiler-for-linux_21.1_Ubuntu-20.04_aarch64.tar && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-20.04_aarch64.tar -C /var/tmp && \
+    cd /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-20.04 && ./arm-compiler-for-linux_21.1_Ubuntu-20.04.sh --install-to /opt/arm --accept && \
+    rm -rf /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-20.04_aarch64.tar /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-20.04
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -61,7 +61,7 @@ ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
         """Default arm_allinea_studio building block"""
         a = arm_allinea_studio(eula=True)
         self.assertEqual(str(a),
-r'''# Arm Allinea Studio version 20.3
+r'''# Arm Allinea Studio version 21.1
 RUN yum install -y epel-release && \
     yum install -y \
         Lmod \
@@ -69,10 +69,10 @@ RUN yum install -y epel-release && \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/RHEL7/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64 && ./arm-compiler-for-linux_20.3_RHEL-7.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-7_aarch64
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/21-1/ACfL/arm-compiler-for-linux_21.1_RHEL-7_aarch64.tar && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_21.1_RHEL-7_aarch64.tar -C /var/tmp && \
+    cd /var/tmp/arm-compiler-for-linux_21.1_RHEL-7 && ./arm-compiler-for-linux_21.1_RHEL-7.sh --install-to /opt/arm --accept && \
+    rm -rf /var/tmp/arm-compiler-for-linux_21.1_RHEL-7_aarch64.tar /var/tmp/arm-compiler-for-linux_21.1_RHEL-7
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -80,7 +80,7 @@ ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
     @docker
     def test_thunderx2_centos8(self):
         """Default arm_allinea_studio building block"""
-        a = arm_allinea_studio(eula=True,
+        a = arm_allinea_studio(eula=True, version='20.3',
                                microarchitectures=['generic', 'thunderx2t99'])
         self.assertEqual(str(a),
 r'''# Arm Allinea Studio version 20.3
@@ -112,9 +112,9 @@ ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
     def test_tarball(self):
         """tarball"""
         a = arm_allinea_studio(eula=True,
-                               tarball='Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar')
+                               tarball='arm-compiler-for-linux_21.1_Ubuntu-18.04_aarch64.tar')
         self.assertEqual(str(a),
-r'''# Arm Allinea Studio version 20.3
+r'''# Arm Allinea Studio version 21.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libc6-dev \
@@ -124,10 +124,10 @@ RUN apt-get update -y && \
         tcl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-COPY Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar -C /var/tmp && \
-    cd /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64 && ./arm-compiler-for-linux_20.3_Ubuntu-16.04.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic && \
-    rm -rf /var/tmp/Arm-Compiler-for-Linux_20.0_Ubuntu_16.04_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_Ubuntu-16.04_aarch64
+COPY arm-compiler-for-linux_21.1_Ubuntu-18.04_aarch64.tar /var/tmp
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-18.04_aarch64.tar -C /var/tmp && \
+    cd /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-18.04 && ./arm-compiler-for-linux_21.1_Ubuntu-18.04.sh --install-to /opt/arm --accept && \
+    rm -rf /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-18.04_aarch64.tar /var/tmp/arm-compiler-for-linux_21.1_Ubuntu-18.04
 ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
 
     @aarch64
@@ -139,21 +139,21 @@ ENV MODULEPATH=/opt/arm/modulefiles:$MODULEPATH''')
         r = a.runtime()
         self.assertEqual(r,
 r'''# Arm Allinea Studio
-COPY --from=0 /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/libgomp.so \
-    /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/libiomp5.so \
-    /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/libomp.so \
-    /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/libflang.so \
-    /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/libflangrti.so \
-    /opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib/
-COPY --from=0 /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_arm-linux-compiler_20.3_aarch64-linux/lib/libamath.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_arm-linux-compiler_20.3_aarch64-linux/lib/libamath_dummy.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_arm-linux-compiler_20.3_aarch64-linux/lib/libastring.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_arm-linux-compiler_20.3_aarch64-linux/lib/
-COPY --from=0 /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_gcc_9.2.0_aarch64-linux/lib/libamath.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_gcc_9.2.0_aarch64-linux/lib/libamath_dummy.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_gcc_9.2.0_aarch64-linux/lib/libastring.so \
-    /opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_gcc_9.2.0_aarch64-linux/lib/
-ENV LD_LIBRARY_PATH=/opt/arm/arm-linux-compiler-20.3_Generic-AArch64_RHEL-7_aarch64-linux/lib:/opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_arm-linux-compiler_20.3_aarch64-linux/lib:/opt/arm/armpl-20.3.0_Generic-AArch64_RHEL-7_gcc_9.2.0_aarch64-linux/lib:$LD_LIBRARY_PATH''')
+COPY --from=0 /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/libgomp.so \
+    /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/libiomp5.so \
+    /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/libomp.so \
+    /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/libflang.so \
+    /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/libflangrti.so \
+    /opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib/
+COPY --from=0 /opt/arm/armpl-21.1.0_AArch64_RHEL-7_arm-linux-compiler_aarch64-linux/lib/libamath.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_arm-linux-compiler_aarch64-linux/lib/libamath_dummy.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_arm-linux-compiler_aarch64-linux/lib/libastring.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_arm-linux-compiler_aarch64-linux/lib/
+COPY --from=0 /opt/arm/armpl-21.1.0_AArch64_RHEL-7_gcc_aarch64-linux/lib/libamath.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_gcc_aarch64-linux/lib/libamath_dummy.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_gcc_aarch64-linux/lib/libastring.so \
+    /opt/arm/armpl-21.1.0_AArch64_RHEL-7_gcc_aarch64-linux/lib/
+ENV LD_LIBRARY_PATH=/opt/arm/arm-linux-compiler-21.1_Generic-AArch64_RHEL-7_aarch64-linux/lib:/opt/arm/armpl-21.1.0_AArch64_RHEL-7_arm-linux-compiler_aarch64-linux/lib:/opt/arm/armpl-21.1.0_AArch64_RHEL-7_gcc_aarch64-linux/lib:$LD_LIBRARY_PATH''')
 
     def test_toolchain(self):
         """Toolchain"""
