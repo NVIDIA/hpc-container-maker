@@ -167,7 +167,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         specified value overrides any defaults."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-            if self.__version <= StrictVersion('20.3'):
+            if StrictVersion(self.__version) <= StrictVersion('20.3'):
                 self.__directory_string = 'Ubuntu-16.04'
                 self.__package_string = 'Ubuntu-16.04'
                 self.__url_string = 'Ubuntu16.04'
@@ -190,14 +190,14 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             if hpccm.config.g_linux_version >= StrictVersion('8.0'):
                 self.__directory_string = 'RHEL-8'
                 self.__package_string = 'RHEL-8'
-                if self.__version <= '20.3':
+                if StrictVersion(self.__version) <= StrictVersion('20.3'):
                     self.__url_string = 'RHEL8'
                 else:
                     self.__url_string = 'ACfL'
             else:
                 self.__directory_string = 'RHEL-7'
                 self.__package_string = 'RHEL-7'
-                if self.__version <= '20.3':
+                if StrictVersion(self.__version) <= StrictVersion('20.3'):
                     self.__url_string = 'RHEL7'
                 else:
                     self.__url_string = 'ACfL'
@@ -248,10 +248,10 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         install_args = ['--install-to {}'.format(self.__prefix)]
         if self.__eula:
             install_args.append('--accept')
-        if self.__microarchitectures and self.__version <= StrictVersion('20.3'):
+        if self.__microarchitectures and StrictVersion(self.__version) <= StrictVersion('20.3'):
             install_args.append('--only-install-microarchitectures={}'.format(
                 ','.join(self.__microarchitectures)))
-        if self.__version >= StrictVersion("21.1"):
+        if StrictVersion(self.__version) >= StrictVersion("21.1"):
             arch_string = ""
         else:
             arch_string = "_aarch64"
