@@ -33,7 +33,7 @@ from hpccm.primitives.comment import comment
 
 class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `xpmem` building block builds and installs the user space
-    library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
+    library from the [XPMEM](https://github.com/hjelmn/xpmem)
     component.
 
     # Parameters
@@ -111,7 +111,7 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
                                                       'libtool', 'make'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/xpmem')
         self.__repository = kwargs.pop('repository',
-                                       'https://gitlab.com/hjelmn/xpmem.git')
+                                       'https://github.com/hjelmn/xpmem.git')
 
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
