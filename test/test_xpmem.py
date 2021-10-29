@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         libtool \
         make && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/hjelmn/xpmem.git xpmem && cd - && \
     cd /var/tmp/xpmem && \
     autoreconf --install && \
     cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
@@ -75,7 +75,7 @@ RUN yum install -y \
         libtool \
         make && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/hjelmn/xpmem.git xpmem && cd - && \
     cd /var/tmp/xpmem && \
     autoreconf --install && \
     cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
@@ -103,7 +103,7 @@ RUN apt-get update -y && \
         libtool \
         make && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://gitlab.com/hjelmn/xpmem.git xpmem && cd - && \
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/hjelmn/xpmem.git xpmem && cd - && \
     cd /var/tmp/xpmem && \
     autoreconf --install && \
     cd /var/tmp/xpmem &&   ./configure --prefix=/usr/local/xpmem --disable-kernel-module && \
