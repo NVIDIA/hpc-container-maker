@@ -1,3 +1,8 @@
+# v21.10.0
+- Refreshes default component version for the Arm Allinea Studio
+  (`arm_allinea_studio`) building block.
+- Enhancements to the XPMEM (`xpmem`) building block.
+
 # v21.9.0
 - Refreshes default component versions for the FFTW (`fftw`) and
   NVIDIA HPC SDK (`nvhpc`) building blocks.
