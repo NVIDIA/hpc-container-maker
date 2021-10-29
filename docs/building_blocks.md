@@ -4551,7 +4551,7 @@ Stage1 += u.runtime()
 xpmem(self, **kwargs)
 ```
 The `xpmem` building block builds and installs the user space
-library from the [XPMEM](https://gitlab.com/hjelmn/xpmem)
+library from the [XPMEM](https://github.com/hjelmn/xpmem)
 component.
 
 __Parameters__
