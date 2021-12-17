@@ -1,3 +1,7 @@
+# v21.12.0
+- Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
+  building block.
+
 # v21.10.0
 - Refreshes default component version for the Arm Allinea Studio
   (`arm_allinea_studio`) building block.
