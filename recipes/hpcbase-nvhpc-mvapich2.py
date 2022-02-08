@@ -19,11 +19,11 @@ if USERARG.get('nvhpc_eula_accept', False):
 else:
   raise RuntimeError('NVIDIA HPC SDK EULA not accepted. To accept, use "--userarg nvhpc_eula_accept=yes"\nSee NVIDIA HPC SDK EULA at https://docs.nvidia.com/hpc-sdk/eula')
 
-# Choose between either Ubuntu 18.04 (default) or CentOS 8
-# Add '--userarg centos=true' to the command line to select CentOS
+# Choose between either Ubuntu 18.04 (default) or RockyLinux 8
+# Add '--userarg rockylinux=true' to the command line to select RockyLinux
 image = 'ubuntu:18.04'
-if USERARG.get('centos', False):
-  image = 'centos:8'
+if USERARG.get('rockylinux', False):
+  image = 'rockylinux:8'
 
 ######
 # Devel stage
