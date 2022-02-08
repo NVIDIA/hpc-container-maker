@@ -3,7 +3,7 @@ MILC 7.8.1
 
 Contents:
   Ubuntu 16.04
-  CUDA version 10.2
+  CUDA version 11.2
   GNU compilers (upstream)
   OFED (upstream)
   OpenMPI version 3.1.4
@@ -20,7 +20,7 @@ Stage0 += comment(__doc__.strip(), reformat=False)
 ###############################################################################
 # Devel stage
 ###############################################################################
-Stage0 += baseimage(image='nvcr.io/nvidia/cuda:10.2-devel-ubuntu18.04',
+Stage0 += baseimage(image='nvcr.io/nvidia/cuda:11.2.0-devel-ubuntu18.04',
                     _as='devel')
 
 Stage0 += gnu()
@@ -79,9 +79,9 @@ Stage0 += environment(variables={'PATH': '/usr/local/milc/bin:$PATH'})
 ###############################################################################
 # Release stage
 ###############################################################################
-Stage1 += baseimage(image='nvcr.io/nvidia/cuda:10.2-base-ubuntu18.04')
+Stage1 += baseimage(image='nvcr.io/nvidia/cuda:11.2.0-base-ubuntu18.04')
 
-Stage1 += packages(ospackages=['libcublas10'])
+Stage1 += packages(ospackages=['libcublas-11-2'])
 
 Stage1 += Stage0.runtime()
 
