@@ -25,6 +25,7 @@ from distutils.version import StrictVersion
 import logging
 import os
 import sys
+import traceback
 
 import hpccm
 
@@ -84,7 +85,7 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
         if raise_exceptions:
             raise_from(e, e)
         else:
-            logging.error(e)
+            traceback.print_exc()
             exit(1)
 
 def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
