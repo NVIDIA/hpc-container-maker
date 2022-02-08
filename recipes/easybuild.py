@@ -15,9 +15,9 @@ import os
 
 Stage0 += comment(__doc__, reformat=False)
 
-Stage0 += baseimage(image='centos:8')
+Stage0 += baseimage(image='rockylinux:8')
 
-Stage0 += shell(commands=['yum update -y centos-release',
+Stage0 += shell(commands=['yum update -y rocky-release',
                           'rm -rf /var/cache/yum/*'])
 
 # Base dependencies
