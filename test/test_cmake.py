@@ -38,16 +38,16 @@ class Test_cmake(unittest.TestCase):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.18.3
+r'''# CMake version 3.22.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.18.3/cmake-3.18.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.22.2-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.22.2-linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -57,17 +57,16 @@ ENV PATH=/usr/local/bin:$PATH''')
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.18.3
+r'''# CMake version 3.22.2
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.18.3/cmake-3.18.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.18.3-Linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.18.3-Linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.22.2-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.22.2-linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
-
 
     @x86_64
     @ubuntu
