@@ -43,8 +43,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             hpccm.templates.rm):
     """The `nvhpc` building block downloads and installs the [NVIDIA HPC
     SDK](https://developer.nvidia.com/hpc-sdk).  By default, the
-    NVIDIA HPC SDK is downloaded, although a local tar package may
-    used instead by specifying the `package` parameter.
+    NVIDIA HPC SDK is installed from a package repository.
+    Alternatively the tar package can be downloaded by specifying the
+    `tarball` parameter, or a local tar package may used instead by
+    specifying the `package` parameter.
 
     You must agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula) to use this
     building block.
@@ -57,15 +59,16 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     cuda: The default CUDA version to configure.  The default is an
     empty value, i.e., use the latest version supported by the NVIDIA
-    HPC SDK.
+    HPC SDK.  This value is ignored if installing from the package
+    repository.
 
     cuda_multi: Boolean flag to specify whether the NVIDIA HPC SDK
     support for multiple CUDA versions should be installed.  The
     default value is `True`.
 
     environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be modified to
-    include the NVIDIA HPC SDK. The default is True.
+    (`CPATH`, `LD_LIBRARY_PATH`, `MANPATH`, and `PATH`) should be
+    modified to include the NVIDIA HPC SDK. The default is True.
 
     eula: By setting this value to `True`, you agree to the [NVIDIA HPC SDK End-User License Agreement](https://docs.nvidia.com/hpc-sdk/eula).
     The default value is `False`.
@@ -73,30 +76,36 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     extended_environment: Boolean flag to specify whether an extended
     set of environment variables should be defined.  If True, the
     following environment variables `CC`, `CPP`, `CXX`, `F77`, `F90`,
-    and `FC`.  If False, then only `LD_LIBRARY_PATH`, `MANPATH`, and
-    `PATH` will be extended to include the NVIDIA HPC SDK.  The
-    default value is `False`.
+    and `FC`.  If False, then only `CPATH`, `LD_LIBRARY_PATH`,
+    `MANPATH`, and `PATH` will be extended to include the NVIDIA HPC
+    SDK.  The default value is `False`.
 
     mpi: Boolean flag to specify whether MPI should be included in the
     environment.  The default value is `True`.
 
     ospackages: List of OS packages to install prior to installing the
-    NVIDIA HPC SDK.  For Ubuntu, the default values are `bc`,
-    `debianutils`, `gcc`, `g++`, `gfortran`, `libatomic`, `libnuma1`,
-    `openssh-client`, and `wget`.  For RHEL-based Linux distributions,
-    the default values are `bc`, `gcc`, `gcc-c++`, `gcc-gfortran`,
-    `libatomic`, `numactl-libs`, `openssh-clients`, `wget`, and
-    `which`.
+    NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
+    installing from the package repository, then for Ubuntu, the
+    default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
+    `libatomic`, `libnuma1`, `openssh-client`, and `wget`, and for
+    RHEL-based Linux distributions, the default values are `bc`,
+    `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
+    `openssh-clients`, `wget`, and `which`.
 
     package: Path to the NVIDIA HPC SDK tar package file relative to
     the local build context.  The default value is empty.
 
     prefix: The top level install prefix.  The default value is
-    `/opt/nvidia/hpc_sdk`.
+    `/opt/nvidia/hpc_sdk`.  This value is ignored when installing from
+    the package repository.
 
     redist: The list of redistributable files to copy into the runtime
     stage.  The paths are relative to the `REDIST` directory and
     wildcards are supported.  The default is an empty list.
+
+    tarball: Boolean flag to specify whether the NVIDIA HPC SDK should
+    be installed by downloading the tar package file.  If False,
+    install from the package repository.  The default is False.
 
     url: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
 
@@ -108,6 +117,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     ```python
     nvhpc(eula=True)
+    ```
+
+    ```python
+    nvhpc(eula=True, tarball=True)
     ```
 
     ```python
@@ -133,11 +146,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         super(nvhpc, self).__init__(**kwargs)
 
-        self.__arch_directory = None # Filled in __cpu_arch()
-        self.__cuda_home = kwargs.get('cuda_home', False)
+        self.__arch_directory = None # Filled in by __cpu_arch()
+        self.__arch_label = '' # Filled in by __cpu_arch()
         self.__cuda_multi = kwargs.get('cuda_multi', True)
         self.__cuda_version = kwargs.get('cuda', None)
-        self.__commands = [] # Filled in by __setup()
+        self.__commands = [] # Filled in by __setup_tarball()
 
         # By setting this value to True, you agree to the NVIDIA HPC
         # SDK End-User License Agreement
@@ -147,15 +160,17 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__extended_environment = kwargs.get('extended_environment', False)
         self.__hpcx = kwargs.get('_hpcx', False)
         self.__mpi = kwargs.get('mpi', True)
+        self.__nvhpc_package = '' # Filled in by __distro()
         self.__ospackages = kwargs.get('ospackages', [])
         self.__runtime_ospackages = [] # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/nvidia/hpc_sdk')
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
+        self.__tarball = kwargs.get('tarball', False)
         self.__url = kwargs.get('url', None)
         self.__version = kwargs.get('version', '22.2')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
-        self.__year = '' # Filled in by __version()
+        self.__year = '' # Filled in by __get_version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
@@ -189,7 +204,11 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                                          self.__version)
 
         # Construct the series of steps to execute
-        self.__setup()
+        if self.package or self.__tarball or self.__url:
+            self.__setup_tarball()
+
+        # Set the environment
+        self.environment_variables = self.__environment()
 
         # Fill in container instructions
         self.__instructions()
@@ -198,14 +217,26 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Fill in container instructions"""
 
         self += comment('NVIDIA HPC SDK version {}'.format(self.__version))
+
         if self.package:
             # Use package from local build context
             self += copy(src=self.package,
                          dest=posixpath.join(self.__wd,
                                              posixpath.basename(self.package)))
+
         if self.__ospackages:
             self += packages(ospackages=self.__ospackages)
-        self += shell(commands=self.__commands)
+
+        if self.package or self.__tarball or self.__url:
+            # tarball install
+            self += shell(commands=self.__commands)
+        else:
+            # repository install
+            self += packages(
+                apt_repositories=['deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/{} /'.format(self.__arch_label)],
+                ospackages=[self.__nvhpc_package],
+                yum_repositories=['https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo'])
+
         self += environment(variables=self.environment_step())
 
     def __cpu_arch(self):
@@ -214,12 +245,24 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             self.__arch_directory = 'Linux_aarch64'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'arm64'
+            else:
+                self.__arch_label = 'aarch64'
             if StrictVersion(self.__version) < StrictVersion('20.11'):
                 self.__cuda_multi = False # CUDA multi packages not available
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_directory = 'Linux_ppc64le'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'ppc64el'
+            else:
+                self.__arch_label = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_directory = 'Linux_x86_64'
+            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+                self.__arch_label = 'amd64'
+            else:
+                self.__arch_label = 'x86_64'
         else: # pragma: no cover
             raise RuntimeError('Unknown CPU architecture')
 
@@ -228,17 +271,35 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         specified value overrides any defaults."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
+            version = self.__version.replace('.', '-')
+            if self.__cuda_multi:
+                self.__nvhpc_package = 'nvhpc-{}-cuda-multi'.format(version)
+            else:
+                self.__nvhpc_package = 'nvhpc-{}'.format(version)
+
             if not self.__ospackages:
-                self.__ospackages = ['bc', 'debianutils', 'gcc', 'g++',
-                                     'gfortran', 'libatomic1', 'libnuma1',
-                                     'openssh-client', 'wget']
+                if self.package or self.__tarball:
+                    self.__ospackages = ['bc', 'debianutils', 'gcc', 'g++',
+                                         'gfortran', 'libatomic1', 'libnuma1',
+                                         'openssh-client', 'wget']
+                else:
+                    self.__ospackages = ['ca-certificates']
             self.__runtime_ospackages = ['libatomic1', 'libnuma1',
                                          'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
+            if self.__cuda_multi:
+                self.__nvhpc_package = 'nvhpc-cuda-multi-{}'.format(self.__version)
+            else:
+                self.__nvhpc_package = 'nvhpc-{}'.format(self.__version)
+
             if not self.__ospackages:
-                self.__ospackages = ['bc', 'gcc', 'gcc-c++', 'gcc-gfortran',
-                                     'libatomic', 'openssh-clients',
-                                     'numactl-libs', 'wget', 'which']
+                if self.package or self.__tarball:
+                    self.__ospackages = ['bc', 'gcc', 'gcc-c++',
+                                         'gcc-gfortran', 'libatomic',
+                                         'openssh-clients', 'numactl-libs',
+                                         'wget', 'which']
+                else:
+                    self.__ospackages = ['ca-certificates']
             self.__runtime_ospackages = ['libatomic', 'numactl-libs',
                                          'openssh-clients']
         else: # pragma: no cover
@@ -263,13 +324,12 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             e['FC'] = posixpath.join(self.__basepath, 'compilers', 'bin',
                                      'nvfortran')
 
-        #cpath = [
-        #    posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'include'),
-        #    posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'include'),
-        #    posixpath.join(self.__basepath, 'math_libs', 'include'),
-        #    posixpath.join(self.__basepath, 'compilers', 'include'),
-        #    posixpath.join(self.__basepath, 'cuda', 'include')]
-        cpath = []
+        cpath = [
+            posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'include'),
+            posixpath.join(self.__basepath, 'comm_libs', 'nccl', 'include'),
+            posixpath.join(self.__basepath, 'compilers', 'extras', 'qd',
+                           'include', 'qd'),
+            posixpath.join(self.__basepath, 'math_libs', 'include')]
 
         ld_library_path = [
             posixpath.join(self.__basepath, 'comm_libs', 'nvshmem', 'lib'),
@@ -286,8 +346,8 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             posixpath.join(self.__basepath, 'cuda', 'bin')]
 
         if self.__mpi:
-            #cpath.append(
-            #    posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
+            cpath.append(
+                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
             ld_library_path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
             path.append(
@@ -390,7 +450,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             if match and match.groupdict()['year']:
                 self.__year = '20' + match.groupdict()['year']
 
-    def __setup(self):
+    def __setup_tarball(self):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
@@ -440,16 +500,6 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             remove.append(posixpath.join(self.__wd,
                                          posixpath.basename(self.package)))
         self.__commands.append(self.cleanup_step(items=remove))
-
-        # Set the environment
-        self.environment_variables = self.__environment()
-
-        # Adjust the toolchain
-        if self.__cuda_home:
-            self.toolchain.CUDA_HOME = posixpath.join(
-                self.__basepath, 'cuda',
-                self.__cuda_version if self.__cuda_version
-                else self.__cuda_version_default)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
