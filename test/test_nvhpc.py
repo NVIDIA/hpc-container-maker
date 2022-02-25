@@ -37,25 +37,19 @@ class Test_nvhpc(unittest.TestCase):
     def test_defaults_ubuntu(self):
         """Default HPC SDK building block"""
         n = nvhpc(eula=True)
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 22.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        bc \
-        debianutils \
-        g++ \
-        gcc \
-        gfortran \
-        libatomic1 \
-        libnuma1 \
-        openssh-client \
-        wget && \
+        ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/22.2/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+RUN echo "deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nvhpc-22-2-cuda-multi && \
+    rm -rf /var/lib/apt/lists/*
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/man:$MANPATH \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/bin:$PATH''')
 
@@ -65,24 +59,18 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:
     def test_defaults_centos(self):
         """Default HPC SDK building block"""
         n = nvhpc(eula=True)
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 22.2
 RUN yum install -y \
-        bc \
-        gcc \
-        gcc-c++ \
-        gcc-gfortran \
-        libatomic \
-        numactl-libs \
-        openssh-clients \
-        wget \
-        which && \
+        ca-certificates && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/22.2/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
-    rm -rf /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2022_222_Linux_x86_64_cuda_multi.tar.gz
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+RUN yum install -y yum-utils && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo && \
+    yum install -y \
+        nvhpc-cuda-multi-22.2 && \
+    rm -rf /var/cache/yum/*
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/man:$MANPATH \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/bin:$PATH''')
 
@@ -93,7 +81,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/nvshmem/lib:
         """Local package"""
         n = nvhpc(eula=True,
                   package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz')
-        self.assertEqual(str(n),        
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
 COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
@@ -110,7 +98,8 @@ RUN yum install -y \
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/man:$MANPATH \
     PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/bin:$PATH''')
 
@@ -121,7 +110,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/lib:
         """Extended environment"""
         n = nvhpc(eula=True, extended_environment=True,
                   package='nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz')
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
 COPY nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 RUN yum install -y \
@@ -139,6 +128,7 @@ RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_mul
     cd /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi /var/tmp/nvhpc_2020_207_Linux_x86_64_cuda_multi.tar.gz
 ENV CC=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc \
+    CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/comm_libs/mpi/include:$CPATH \
     CPP=cpp \
     CXX=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc++ \
     F77=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvfortran \
@@ -153,8 +143,8 @@ ENV CC=/opt/nvidia/hpc_sdk/Linux_x86_64/20.7/compilers/bin/nvc \
     @docker
     def test_aarch64(self):
         """Default HPC SDK building block on aarch64"""
-        n = nvhpc(cuda_multi=False, eula=True, version='21.2')
-        self.assertEqual(str(n),
+        n = nvhpc(cuda_multi=False, eula=True, version='21.2', tarball=True)
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 21.2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -172,7 +162,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2 && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2 /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/math_libs/include:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/compilers/lib:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/compilers/man:$MANPATH \
     PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/profilers/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/compilers/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/cuda/bin:/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/mpi/bin:$PATH''')
 
@@ -181,8 +172,9 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_aarch64/21.2/comm_libs/nvshmem/lib
     @docker
     def test_ppc64le(self):
         """Default HPC SDK building block on ppc64le"""
-        n = nvhpc(eula=True, cuda_multi=False, cuda='11.0', version='20.7')
-        self.assertEqual(str(n),
+        n = nvhpc(eula=True, cuda_multi=False, cuda='11.0', version='20.7',
+                  tarball=True)
+        self.assertMultiLineEqual(str(n),
 r'''# NVIDIA HPC SDK version 20.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -200,7 +192,8 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0 && NVHPC_ACCEPT_EULA=accept NVHPC_DEFAULT_CUDA=11.0 NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0 /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/math_libs/include:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
     MANPATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/man:$MANPATH \
     PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/cuda/bin:/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/mpi/bin:$PATH''')
 
@@ -211,7 +204,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_ppc64le/20.7/comm_libs/nvshmem/lib
         """Runtime"""
         n = nvhpc(eula=True, redist=['compilers/lib/*'])
         r = n.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# NVIDIA HPC SDK
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -235,7 +228,7 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/mpi/lib:/opt
                           'math_libs/11.0/lib64/libcufft.so.10',
                           'math_libs/11.0/lib64/libcublas.so.11'])
         r = n.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# NVIDIA HPC SDK
 RUN yum install -y \
         libatomic \
@@ -250,21 +243,10 @@ ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.2/comm_libs/11.0/nccl/li
 
     def test_toolchain(self):
         """Toolchain"""
-        n = nvhpc(version='20.9')
+        n = nvhpc()
         tc = n.toolchain
         self.assertEqual(tc.CC, 'nvc')
         self.assertEqual(tc.CXX, 'nvc++')
         self.assertEqual(tc.FC, 'nvfortran')
         self.assertEqual(tc.F77, 'nvfortran')
         self.assertEqual(tc.F90, 'nvfortran')
-        self.assertEqual(tc.CUDA_HOME, None)
-
-        n2 = nvhpc(cuda='11.0', cuda_home=True, version='20.9')
-        tc2 = n2.toolchain
-        self.assertEqual(tc2.CC, 'nvc')
-        self.assertEqual(tc2.CXX, 'nvc++')
-        self.assertEqual(tc2.FC, 'nvfortran')
-        self.assertEqual(tc2.F77, 'nvfortran')
-        self.assertEqual(tc2.F90, 'nvfortran')
-        self.assertEqual(tc2.CUDA_HOME,
-                         '/opt/nvidia/hpc_sdk/Linux_x86_64/20.9/cuda/11.0')
