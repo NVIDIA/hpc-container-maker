@@ -1,3 +1,11 @@
+# v22.2.0
+- Changes the NVIDIA HPC SDK (`nvhpc`) building block to install
+  from the package repository by default.
+- Refreshes default component version for the CMake (`cmake`), 
+  LLVM (`llvm`) an NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Updates to the example recipes for CentOS 8 EOL.
+- Updates the MILC example recipe.
+
 # v21.12.0
 - Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
   building block.
