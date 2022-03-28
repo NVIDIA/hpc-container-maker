@@ -87,7 +87,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
     installing from the package repository, then for Ubuntu, the
     default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
-    `libatomic`, `libnuma1`, `openssh-client`, and `wget`, and for
+    `libatomic1`, `libnuma1`, `openssh-client`, and `wget`, and for
     RHEL-based Linux distributions, the default values are `bc`,
     `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
     `openssh-clients`, `wget`, and `which`.
