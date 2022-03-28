@@ -181,9 +181,12 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-
+            if  hpccm.config.g_linux_version >= StrictVersion('22.04'):
+                python2_package = "python2"
+            else:
+                python2_package = "python"
             if not self.__ospackages:
-                self.__ospackages = ['libc6-dev', 'lmod', 'python', 'tar',
+                self.__ospackages = ['libc6-dev', 'lmod', python2_package, 'tar',
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
