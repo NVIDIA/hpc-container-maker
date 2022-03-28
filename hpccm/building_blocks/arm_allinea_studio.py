@@ -88,7 +88,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     rather than downloading the tarball from the web.
 
     version: The version of Arm Allinea Studio to install.  The
-    default value is `21.1`.  Due to differences in the packaging
+    default value is `22.0`.  Due to differences in the packaging
     scheme, versions prior to 20.2 are not supported.
 
     # Examples
@@ -123,7 +123,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__package_string = '' # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/arm')
         self.__tarball = kwargs.get('tarball', None)
-        self.__version = kwargs.get('version', '21.1')
+        self.__version = kwargs.get('version', '22.0')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
@@ -316,6 +316,9 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                             '21.1': {
                                 'generic': 'AArch64',
                                 'generic-sve': 'AArch64-SVE'
+                                },
+                            '22.0': {
+                                'generic': 'AArch64'
                                 }
                             }
         for microarch in self.__microarchitectures:
@@ -329,7 +332,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.rt += copy(_from=_from,
                             src=[posixpath.join(armpl_arm_redist_path, lib)
                                  for lib in ['libamath.so',
-                                             'libamath_dummy.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_arm_redist_path, ''))
             armpl_gcc_redist_path = posixpath.join(
@@ -342,7 +344,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.rt += copy(_from=_from,
                             src=[posixpath.join(armpl_gcc_redist_path, lib)
                                  for lib in ['libamath.so',
-                                             'libamath_dummy.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_gcc_redist_path, ''))
 
