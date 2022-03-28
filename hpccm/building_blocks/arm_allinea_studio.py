@@ -68,7 +68,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     The default value is `False`.
 
     microarchitectures: List of microarchitectures to install.
-    Available values are `generic`, `generic-sve` for all versions,
+    From 22.0 version, only `generic` is available.
+    Available values are `generic`, `generic-sve` for version 21.1,
     and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
     Irrespective of this setting, the generic implementation will
     always be installed.
