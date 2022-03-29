@@ -406,8 +406,26 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-15) 30 && \
     @docker
     def test_upstream_aarch64(self):
         """Upstream builds for aarch64"""
-        with self.assertRaises(RuntimeError):
-            llvm(upstream=True, version='11')
+        l = llvm(upstream=True, version='11')
+        self.assertMultiLineEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-11 main" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenial-11 main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-11 \
+        libomp-11-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-11) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-11) 30''')
 
     @x86_64
     @ubuntu
