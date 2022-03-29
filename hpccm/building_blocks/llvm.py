@@ -158,8 +158,8 @@ class llvm(bb_base, hpccm.templates.envvars):
 
                 if self.__upstream:
                     # Upstream packages from apt.llvm.org
-                    if hpccm.config.g_cpu_arch != cpu_arch.X86_64:
-                        raise RuntimeError('LLVM upstream builds only available for x86')
+                    if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+                        raise RuntimeError('LLVM upstream builds are not available for ppc64le')
 
                     self.__apt_keys = ['https://apt.llvm.org/llvm-snapshot.gpg.key']
                     self.__apt_repositories = self.__upstream_package_repos()
