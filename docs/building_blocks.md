@@ -150,7 +150,8 @@ Studio. The default is True.
 The default value is `False`.
 
 - __microarchitectures__: List of microarchitectures to install.
-Available values are `generic`, `generic-sve` for all versions,
+From 22.0 version, only `generic` is available.
+Available values are `generic`, `generic-sve` for version 21.1,
 and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
 Irrespective of this setting, the generic implementation will
 always be installed.
@@ -170,7 +171,7 @@ defined, the tarball in the local build context will be used
 rather than downloading the tarball from the web.
 
 - __version__: The version of Arm Allinea Studio to install.  The
-default value is `21.1`.  Due to differences in the packaging
+default value is `22.0`.  Due to differences in the packaging
 scheme, versions prior to 20.2 are not supported.
 
 __Examples__

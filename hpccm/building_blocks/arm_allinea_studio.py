@@ -68,7 +68,8 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     The default value is `False`.
 
     microarchitectures: List of microarchitectures to install.
-    Available values are `generic`, `generic-sve` for all versions,
+    From 22.0 version, only `generic` is available.
+    Available values are `generic`, `generic-sve` for version 21.1,
     and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
     Irrespective of this setting, the generic implementation will
     always be installed.
@@ -88,7 +89,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     rather than downloading the tarball from the web.
 
     version: The version of Arm Allinea Studio to install.  The
-    default value is `21.1`.  Due to differences in the packaging
+    default value is `22.0`.  Due to differences in the packaging
     scheme, versions prior to 20.2 are not supported.
 
     # Examples
@@ -123,7 +124,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         self.__package_string = '' # Filled in by __distro()
         self.__prefix = kwargs.get('prefix', '/opt/arm')
         self.__tarball = kwargs.get('tarball', None)
-        self.__version = kwargs.get('version', '21.1')
+        self.__version = kwargs.get('version', '22.0')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         self.toolchain = toolchain(CC='armclang', CXX='armclang++',
@@ -181,9 +182,12 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-
+            if  hpccm.config.g_linux_version >= StrictVersion('22.04'):
+                python2_package = "python2"
+            else:
+                python2_package = "python"
             if not self.__ospackages:
-                self.__ospackages = ['libc6-dev', 'lmod', 'python', 'tar',
+                self.__ospackages = ['libc6-dev', 'lmod', python2_package, 'tar',
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
@@ -316,6 +320,9 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                             '21.1': {
                                 'generic': 'AArch64',
                                 'generic-sve': 'AArch64-SVE'
+                                },
+                            '22.0': {
+                                'generic': 'AArch64'
                                 }
                             }
         for microarch in self.__microarchitectures:
@@ -329,7 +336,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.rt += copy(_from=_from,
                             src=[posixpath.join(armpl_arm_redist_path, lib)
                                  for lib in ['libamath.so',
-                                             'libamath_dummy.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_arm_redist_path, ''))
             armpl_gcc_redist_path = posixpath.join(
@@ -342,7 +348,6 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
             self.rt += copy(_from=_from,
                             src=[posixpath.join(armpl_gcc_redist_path, lib)
                                  for lib in ['libamath.so',
-                                             'libamath_dummy.so',
                                              'libastring.so']],
                             dest=posixpath.join(armpl_gcc_redist_path, ''))
 
