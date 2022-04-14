@@ -3143,7 +3143,7 @@ environment.  The default value is `True`.
 NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
 installing from the package repository, then for Ubuntu, the
 default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
-`libatomic`, `libnuma1`, `openssh-client`, and `wget`, and for
+`libatomic1`, `libnuma1`, `openssh-client`, and `wget`, and for
 RHEL-based Linux distributions, the default values are `bc`,
 `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
 `openssh-clients`, `wget`, and `which`.
@@ -3167,7 +3167,7 @@ install from the package repository.  The default is False.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `22.2`.
+file name.  The default value is `22.3`.
 
 __Examples__
 
@@ -3882,7 +3882,7 @@ non-default compilers or other toolchain options are needed.  The
 default value is empty.
 
 - __version__: The version of PMIX source to download.  The default value
-is `3.1.5`.
+is `4.1.2`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
