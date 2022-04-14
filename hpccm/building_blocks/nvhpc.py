@@ -107,6 +107,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     be installed by downloading the tar package file.  If False,
     install from the package repository.  The default is False.
 
+    toolchain: The toolchain object to be used to configure the HPC
+    SDK with a specific GNU toolchain.  The default is empty, i.e., use
+    the default GNU toolchain.
+
     url: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
 
     version: The version of the HPC SDK to use.  Note when `package`
@@ -167,6 +171,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__redist = kwargs.get('redist', [])
         self.__stdpar_cudacc = kwargs.get('stdpar_cudacc', None)
         self.__tarball = kwargs.get('tarball', False)
+        self.__toolchain = kwargs.get('toolchain', None)
         self.__url = kwargs.get('url', None)
         self.__version = kwargs.get('version', '22.3')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -236,6 +241,23 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 apt_repositories=['deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/{} /'.format(self.__arch_label)],
                 ospackages=[self.__nvhpc_package],
                 yum_repositories=['https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo'])
+
+        if self.__toolchain:
+            # Regenerate the localrc using the compilers from the specified
+            # toolchain
+            compiler_bin = posixpath.join(self.__basepath, 'compilers', 'bin')
+
+            args = ['-x']
+            if self.__toolchain.CC:
+                args.append('-gcc {}'.format(self.__toolchain.CC))
+            if self.__toolchain.CXX:
+                args.append('-gpp {}'.format(self.__toolchain.CXX))
+            if self.__toolchain.F77:
+                args.append('-g77 {}'.format(self.__toolchain.F77))
+
+            self += shell(commands=['{0} {1} {2}'.format(
+                posixpath.join(compiler_bin, 'makelocalrc'), compiler_bin,
+                ' '.join(args))])
 
         self += environment(variables=self.environment_step())
 

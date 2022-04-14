@@ -3163,6 +3163,10 @@ wildcards are supported.  The default is an empty list.
 be installed by downloading the tar package file.  If False,
 install from the package repository.  The default is False.
 
+- __toolchain__: The toolchain object to be used to configure the HPC
+SDK with a specific GNU toolchain.  The default is empty, i.e., use
+the default GNU toolchain.
+
 - __url__: The location of the package that should be installed.  The default value is `https://developer.download.nvidia.com/hpc-sdk/nvhpc_X_Y_Z_cuda_multi.tar.gz`, where `X, `Y`, and `Z` are the year, version, and architecture whose values are automatically determined.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
