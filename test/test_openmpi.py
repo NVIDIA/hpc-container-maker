@@ -244,6 +244,42 @@ ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
 
     @ubuntu
     @docker
+    def test_cuda_path(self):
+        """git repository value"""
+        ompi = openmpi(branch='v4.0.x',
+                       repository='https://github.com/open-mpi-fork/ompi.git',
+                       cuda='/usr/local/cuda2')
+        self.assertEqual(str(ompi),
+r'''# OpenMPI https://github.com/open-mpi-fork/ompi.git v4.0.x
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        bzip2 \
+        ca-certificates \
+        file \
+        git \
+        hwloc \
+        libnuma-dev \
+        libtool \
+        make \
+        openssh-client \
+        perl \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch v4.0.x --recursive https://github.com/open-mpi-fork/ompi.git ompi && cd - && \
+    cd /var/tmp/ompi && \
+    ./autogen.pl && \
+    cd /var/tmp/ompi &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda=/usr/local/cuda2 --with-verbs && \
+    make -j$(nproc) && \
+    make -j$(nproc) install && \
+    rm -rf /var/tmp/ompi
+ENV LD_LIBRARY_PATH=/usr/local/openmpi/lib:$LD_LIBRARY_PATH \
+    PATH=/usr/local/openmpi/bin:$PATH''')
+
+    @ubuntu
+    @docker
     def test_runtime(self):
         """Runtime"""
         ompi = openmpi()

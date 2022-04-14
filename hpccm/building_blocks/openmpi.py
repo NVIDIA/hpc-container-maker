@@ -262,10 +262,15 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # CUDA
         if self.__cuda:
-            if self.__toolchain.CUDA_HOME:
+            if isinstance(self.__cuda, string_types):
+                # Use specified path
+                self.__configure_opts.append(
+                    '--with-cuda={}'.format(self.__cuda))
+            elif self.__toolchain.CUDA_HOME:
                 self.__configure_opts.append(
                     '--with-cuda={}'.format(self.__toolchain.CUDA_HOME))
             else:
+                # Default location
                 self.__configure_opts.append('--with-cuda')
         else:
             self.__configure_opts.append('--without-cuda')
