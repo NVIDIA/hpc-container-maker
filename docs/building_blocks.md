@@ -2863,7 +2863,7 @@ source.  The default value is False.
 use the latest commit on the default branch for the repository.
 
 - __cuda__: Flag to specify the CUDA version of the package to download.
-The default is `11.0`.  This option is ignored if build is True.
+The default is `11.6`.  This option is ignored if build is True.
 
 - __environment__: Boolean flag to specify whether the environment
 (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
@@ -2885,7 +2885,7 @@ repository.  The default is empty, i.e., use the release package
 specified by `version`.
 
 - __version__: The version of NCCL to install.  The default value is
-`2.7.8-1`.
+`2.12.10-1`.
 
 __Examples__
 
@@ -3053,7 +3053,7 @@ local build context. The default value is empty.
 
 - __version__: the version of Nsight Compute to install.  Note when
 `runfile` is set this parameter is ignored.  The default value is
-`2020.2.1`.
+`2022.1.1`.
 
 __Examples__
 
@@ -3082,7 +3082,7 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2021.1.1`.
+value is `2022.2.1`.
 
 __Examples__
 
