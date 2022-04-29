@@ -25,6 +25,7 @@ import unittest
 from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.nvhpc import nvhpc
+from hpccm.toolchain import toolchain
 
 class Test_nvhpc(unittest.TestCase):
     def setUp(self):
@@ -240,6 +241,30 @@ COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/compilers/lib/* /opt/
 COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/math_libs/11.0/lib64/libcufft.so.10 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64/libcufft.so.10
 COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/math_libs/11.0/lib64/libcublas.so.11 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64/libcublas.so.11
 ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/11.0/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64:$LD_LIBRARY_PATH''')
+
+    @x86_64
+    @ubuntu
+    @docker
+    def test_makelocalrc(self):
+        """makelocalrc"""
+        tc = toolchain(CC='gcc-10', CXX='g++-10', F77='gfortran-10')
+        n = nvhpc(eula=True, mpi=False, toolchain=tc, version='22.3')
+        self.assertMultiLineEqual(str(n),
+r'''# NVIDIA HPC SDK version 22.3
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN echo "deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nvhpc-22-3-cuda-multi && \
+    rm -rf /var/lib/apt/lists/*
+RUN /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/bin/makelocalrc /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/bin -x -gcc gcc-10 -gpp g++-10 -g77 gfortran-10
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/lib64:$LD_LIBRARY_PATH \
+    MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/man:$MANPATH \
+    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/bin:$PATH''')
 
     def test_toolchain(self):
         """Toolchain"""
