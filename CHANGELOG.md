@@ -1,3 +1,14 @@
+# v22.4.0
+- Refreshes default component versions for the Arm Allinea Studio
+  (`arm_allinea_studio`), NCCL (`nccl`), Nsight Compute (`nsight_compute`),
+  Nsight Systems (`nsight_systems`), NVIDIA HPC SDK (`nvhpc`), and PMIX
+  (`pmix`) building blocks
+- Updates the NCCL (`nccl`) building block for the CUDA Linux repository
+  key change
+- Enables upstream Arm packages in the LLVM (`llvm`) building block
+- Updates how the OpenMPI (`openmpi`) building block supports CUDA
+- Adds toolchain parameter to the NVIDIA HPC SDK (`nvhpc`) building block
+
 # v22.2.0
 - Changes the NVIDIA HPC SDK (`nvhpc`) building block to install
   from the package repository by default.
