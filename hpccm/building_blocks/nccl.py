@@ -56,7 +56,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     use the latest commit on the default branch for the repository.
 
     cuda: Flag to specify the CUDA version of the package to download.
-    The default is `11.0`.  This option is ignored if build is True.
+    The default is `11.6`.  This option is ignored if build is True.
 
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
@@ -78,7 +78,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     specified by `version`.
 
     version: The version of NCCL to install.  The default value is
-    `2.7.8-1`.
+    `2.12.10-1`.
 
     # Examples
 
@@ -102,12 +102,12 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__build_environment = '' # Filled in by __configure
         self.__default_repository = 'https://github.com/NVIDIA/nccl.git'
         self.__distro_label = ''     # Filled in by __distro
-        self.__cuda = kwargs.pop('cuda', '11.0')
+        self.__cuda = kwargs.pop('cuda', '11.6')
         self.__make_variables = kwargs.pop('make_variables', {})
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nccl')
         self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '2.7.8-1')
+        self.__version = kwargs.pop('version', '2.12.10-1')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__build:
@@ -123,13 +123,13 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                                                    self.__cuda),
                      'libnccl-dev={0}+cuda{1}'.format(self.__version,
                                                       self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, get_cpu_architecture())],
-                apt_repositories=['deb https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
+                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
+                apt_repositories=['deb https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
                 yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda),
                      'libnccl-devel-{0}+cuda{1}'.format(self.__version,
                                                         self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, get_cpu_architecture())],
-                yum_repositories=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
+                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
+                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
 
         else:
             # Build from source
@@ -246,10 +246,10 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.rt += packages(
                 apt=['libnccl2={0}+cuda{1}'.format(self.__version,
                                                    self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, get_cpu_architecture())],
-                apt_repositories=['deb https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
+                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
+                apt_repositories=['deb https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
                 yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}/7fa2af80.pub'.format(self.__distro_label, get_cpu_architecture())],
-                yum_repositories=['https://developer.download.nvidia.com/compute/machine-learning/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
+                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
+                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
 
         return str(self.rt)

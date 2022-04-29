@@ -63,7 +63,7 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
 
     version: the version of Nsight Compute to install.  Note when
     `runfile` is set this parameter is ignored.  The default value is
-    `2020.2.1`.
+    `2022.1.1`.
 
     # Examples
 
@@ -89,7 +89,7 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
         self.__prefix = kwargs.get('prefix',
                                    '/usr/local/NVIDIA-Nsight-Compute')
         self.__runfile = kwargs.get('runfile', None)
-        self.__version = kwargs.get('version', '2020.2.1')
+        self.__version = kwargs.get('version', '2022.1.1')
         self.__wd = kwargs.get('wd', posixpath.join(
             hpccm.config.g_wd, 'nsight_compute')) # working directory
 
