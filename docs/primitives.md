@@ -23,10 +23,10 @@ is `docker` (Singularity specific).
 - ___distro__: The underlying Linux distribution of the base image.
 Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
 `rhel7`, `rhel8`, `rockylinux8`, `ubuntu`, `ubuntu16`, `ubuntu18`,
-and `ubuntu20`.  By default, the primitive attempts to figure out
-the Linux distribution by inspecting the image identifier, and
-falls back to `ubuntu` if unable to determine the Linux
-distribution automatically.
+`ubuntu20`, and `ubuntu22`.  By default, the primitive attempts to
+figure out the Linux distribution by inspecting the image
+identifier, and falls back to `ubuntu` if unable to determine the
+Linux distribution automatically.
 
 - ___docker_env__: Boolean specifying whether to load the Docker base
  image environment, i.e., source
