@@ -48,6 +48,10 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     # Parameters
 
+    buildlabel: The build label assigned by Mellanox to the tarball.
+    This value is ignored for HPC-X version 2.10 and earlier.  The
+    default value is `cuda11-gdrcopy2-nccl2.11`.
+
     environment: Boolean flag to specify whether the environment
     should be modified to include HPC-X. This option is only
     recognized if `hpcxinit` is False. The default is True.
@@ -78,28 +82,33 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     mlnx_ofed: The version of Mellanox OFED that should be matched.
     This value is ignored if Inbox OFED is selected.  The default
-    value is `5.2-2.2.0.0`.
+    value is `5` for HPC-X version 2.11 and later, and `5.2-2.2.0.0`
+    for earlier HPC-X versions.
 
     multi_thread: Boolean flag to specify whether the multi-threaded
     version of Mellanox HPC-X should be used.  The default is `False`.
 
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04` for
-    Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, and `ubuntu20.04`
-    for Ubuntu 20.04.  For RHEL-based Linux distributions, the default
-    value is `redhat7.6` for version 7 and `redhat8.0` for version 8.
+    Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
+    Ubuntu 20.04, and `ubuntu22.04` for Ubuntu 22.04.  For HPC-X
+    version 2.11 and later and RHEL-based Linux distributions, the
+    default value is `redhat7` for version 7 and `redhat8` for version
+    8.  For HPC-X version 2.10 and earlier and RHEL-based Linux
+    distributions, the default value is `redhat7.6` for version 7 and
+    `redhat8.0` for version 8.
 
     ospackages: List of OS packages to install prior to installing
     Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
-    `openssh-client`, `tar`, and `wget`.  For RHEL-based distributions
-    the default values are `bzip2`, `openssh-clients`, `tar`, and
-    `wget`.
+    `libnuma1`, `openssh-client`, `tar`, and `wget`.  For RHEL-based
+    distributions the default values are `bzip2`, `numactl-libs`,
+    `openssh-clients`, `tar`, and `wget`.
 
     prefix: The top level installation location.  The default value is
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.8.1`.
+    value is `2.11`.
 
     # Examples
 
@@ -118,18 +127,26 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__baseurl = kwargs.get('baseurl',
                                     'https://content.mellanox.com/hpc/hpc-x')
         self.__bashrc = '' # Filled in by __distro()
+        self.__buildlabel = kwargs.get('buildlabel',
+                                       'cuda11-gdrcopy2-nccl2.11')
         self.__hpcxinit = kwargs.get('hpcxinit', True)
         self.__inbox = kwargs.get('inbox', False)
-        self.__mlnx_ofed = kwargs.get('mlnx_ofed', '5.2-2.2.0.0')
+        self.__mlnx_ofed = kwargs.get('mlnx_ofed', None)
         self.__multi_thread = kwargs.get('multi_thread', False)
         self.__oslabel = kwargs.get('oslabel', '') # Filled in by __distro()
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.8.1')
+        self.__version = kwargs.get('version', '2.11')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
+
+        if not self.__mlnx_ofed:
+            if StrictVersion(self.__version) >= StrictVersion('2.11'):
+                self.__mlnx_ofed = '5'
+            else:
+                self.__mlnx_ofed = '5.2-2.2.0.0'
 
         # Output toolchain
         self.toolchain = toolchain(CC='mpicc', CXX='mpicxx', F77='mpif77',
@@ -158,25 +175,35 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                    self.__oslabel = 'ubuntu22.04'
+                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
                     self.__oslabel = 'ubuntu20.04'
                 elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                     self.__oslabel = 'ubuntu18.04'
                 else:
                     self.__oslabel = 'ubuntu16.04'
             if not self.__ospackages:
-                self.__ospackages = ['bzip2', 'openssh-client', 'tar', 'wget']
+                self.__ospackages = ['bzip2', 'libnuma1', 'openssh-client',
+                                     'tar', 'wget']
 
             self.__bashrc = '/etc/bash.bashrc'
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
                 if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    self.__oslabel = 'redhat8.0'
+                    if StrictVersion(self.__version) >= StrictVersion('2.11'):
+                        self.__oslabel = 'redhat8'
+                    else:
+                        self.__oslabel = 'redhat8.0'
                 else:
-                    self.__oslabel = 'redhat7.6'
+                    if StrictVersion(self.__version) >= StrictVersion('2.11'):
+                        self.__oslabel = 'redhat7'
+                    else:
+                        self.__oslabel = 'redhat7.6'
             if not self.__ospackages:
-                self.__ospackages = ['bzip2', 'openssh-clients', 'tar', 'wget']
+                self.__ospackages = ['bzip2', 'numactl-libs',
+                                     'openssh-clients', 'tar', 'wget']
 
             self.__bashrc = '/etc/bashrc'
 
@@ -200,12 +227,23 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if self.__inbox:
             # Use inbox OFED
-            self.__label = 'hpcx-v{0}-gcc-inbox-{1}-{2}'.format(
-                self.__version, self.__oslabel, self.__arch)
+            if StrictVersion(self.__version) >= StrictVersion('2.11'):
+                # Version 2.11 and later include an extra label
+                self.__label = 'hpcx-v{0}-gcc-inbox-{1}-{2}-{3}'.format(
+                    self.__version, self.__oslabel, self.__buildlabel,
+                    self.__arch)
+            else:
+                self.__label = 'hpcx-v{0}-gcc-inbox-{1}-{2}'.format(
+                    self.__version, self.__oslabel, self.__arch)
         else:
             # Use MLNX OFED
-            self.__label = 'hpcx-v{0}-gcc-MLNX_OFED_LINUX-{1}-{2}-{3}'.format(
-                self.__version, self.__mlnx_ofed, self.__oslabel, self.__arch)
+            if StrictVersion(self.__version) >= StrictVersion('2.11'):
+                # Version 2.11 and later include an extra label
+                self.__label = 'hpcx-v{0}-gcc-MLNX_OFED_LINUX-{1}-{2}-{3}-{4}'.format(
+                    self.__version, self.__mlnx_ofed, self.__buildlabel, self.__oslabel, self.__arch)
+            else:
+                self.__label = 'hpcx-v{0}-gcc-MLNX_OFED_LINUX-{1}-{2}-{3}'.format(
+                    self.__version, self.__mlnx_ofed, self.__oslabel, self.__arch)
 
         tarball = self.__label + '.tbz'
         url = '{0}/v{1}/{2}'.format(self.__baseurl, version_string, tarball)

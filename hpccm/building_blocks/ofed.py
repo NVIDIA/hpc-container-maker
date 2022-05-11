@@ -113,7 +113,9 @@ class ofed(bb_base):
             if hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 # Give priority to packages from the Ubuntu repositories over
                 # vendor repositories
-                if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                    self.__extra_opts = ['-t jammy']
+                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
                     self.__extra_opts = ['-t focal']
                 else:
                     self.__extra_opts = ['-t bionic']

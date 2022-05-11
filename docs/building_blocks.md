@@ -1470,6 +1470,10 @@ component.
 __Parameters__
 
 
+- __buildlabel__: The build label assigned by Mellanox to the tarball.
+This value is ignored for HPC-X version 2.10 and earlier.  The
+default value is `cuda11-gdrcopy2-nccl2.11`.
+
 - __environment__: Boolean flag to specify whether the environment
 should be modified to include HPC-X. This option is only
 recognized if `hpcxinit` is False. The default is True.
@@ -1500,28 +1504,33 @@ library directories. This value is ignored if `hpcxinit` is
 
 - __mlnx_ofed__: The version of Mellanox OFED that should be matched.
 This value is ignored if Inbox OFED is selected.  The default
-value is `5.2-2.2.0.0`.
+value is `5` for HPC-X version 2.11 and later, and `5.2-2.2.0.0`
+for earlier HPC-X versions.
 
 - __multi_thread__: Boolean flag to specify whether the multi-threaded
 version of Mellanox HPC-X should be used.  The default is `False`.
 
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04` for
-Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, and `ubuntu20.04`
-for Ubuntu 20.04.  For RHEL-based Linux distributions, the default
-value is `redhat7.6` for version 7 and `redhat8.0` for version 8.
+Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
+Ubuntu 20.04, and `ubuntu22.04` for Ubuntu 22.04.  For HPC-X
+version 2.11 and later and RHEL-based Linux distributions, the
+default value is `redhat7` for version 7 and `redhat8` for version
+8.  For HPC-X version 2.10 and earlier and RHEL-based Linux
+distributions, the default value is `redhat7.6` for version 7 and
+`redhat8.0` for version 8.
 
 - __ospackages__: List of OS packages to install prior to installing
 Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
-`openssh-client`, `tar`, and `wget`.  For RHEL-based distributions
-the default values are `bzip2`, `openssh-clients`, `tar`, and
-`wget`.
+`libnuma1`, `openssh-client`, `tar`, and `wget`.  For RHEL-based
+distributions the default values are `bzip2`, `numactl-libs`,
+`openssh-clients`, `tar`, and `wget`.
 
 - __prefix__: The top level installation location.  The default value is
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.8.1`.
+value is `2.11`.
 
 __Examples__
 

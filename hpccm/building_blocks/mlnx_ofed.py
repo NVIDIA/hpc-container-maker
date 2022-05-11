@@ -168,7 +168,9 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                                  'libnuma1']
 
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                    self.__oslabel = 'ubuntu22.04'
+                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
                     self.__oslabel = 'ubuntu20.04'
                 elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                     self.__oslabel = 'ubuntu18.04'
