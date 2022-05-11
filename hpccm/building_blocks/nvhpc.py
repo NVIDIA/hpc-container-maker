@@ -377,17 +377,17 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         elif self.__hpcx:
             # Set environment for HPC-X
             if StrictVersion(self.__version) >= StrictVersion('22.2'):
-                hpcx_version = '2.10'
+                hpcx_version = 'latest'
             elif StrictVersion(self.__version) >= StrictVersion('21.11'):
-                hpcx_version = '2.10.beta'
+                hpcx_version = 'hpcx-2.10.beta'
             elif StrictVersion(self.__version) >= StrictVersion('21.9'):
-                hpcx_version = '2.9.0'
+                hpcx_version = 'hpcx-2.9.0'
             elif StrictVersion(self.__version) >= StrictVersion('21.7'):
-                hpcx_version = '2.8.1'
+                hpcx_version = 'hpcx-2.8.1'
             elif StrictVersion(self.__version) < StrictVersion('21.5'):
-              hpcx_version = '2.7.4'
+              hpcx_version = 'hpcx-2.7.4'
             hpcx_dir = posixpath.join(self.__basepath, 'comm_libs', 'hpcx',
-                                      'hpcx-{}'.format(hpcx_version))
+                                      hpcx_version)
 
             hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx', 'mt')
             #hpcx_ucx_dir = posixpath.join(hpcx_dir, 'ucx')
