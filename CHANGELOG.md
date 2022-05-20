@@ -1,3 +1,9 @@
+# v22.5.0
+- Adds support for Ubuntu 22.04.
+- Refreshes default component versions for the HPC-X (`hpcx`) and PMI
+  (`slurm_pmi2`) building blocks.
+- Enhancements to the NVIDIA HPC SDK (`nvhpc`) building block.
+
 # v22.4.0
 - Refreshes default component versions for the Arm Allinea Studio
   (`arm_allinea_studio`), NCCL (`nccl`), Nsight Compute (`nsight_compute`),
