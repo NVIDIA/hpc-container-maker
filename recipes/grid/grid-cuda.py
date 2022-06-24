@@ -13,15 +13,15 @@ Contents:
 # pylama: ignore=E0602
 
 # command line options
-gpu_arch = USERARG.get('GPU_ARCH', 'sm_70')
-use_ucx  = USERARG.get('ucx', None) is not None
+gpu_arch = USERARG.get('GPU_ARCH', 'sm_80')
+use_ucx  = USERARG.get('ucx', 1) == 1       # default is ucx
 
 if gpu_arch not in ( 'sm_80', 'sm_70', 'sm_60', 'sm_37' ):
     print('unknown compute capability:', gpu_arch)
     raise
 
-devel_image   = 'nvcr.io/nvidia/cuda:11.6.0-devel-ubuntu20.04'
-runtime_image = 'nvcr.io/nvidia/cuda:11.6.0-base-ubuntu20.04'
+devel_image   = 'nvcr.io/nvidia/cuda:11.6.2-devel-ubuntu20.04'
+runtime_image = 'nvcr.io/nvidia/cuda:11.6.2-base-ubuntu20.04'
 
 # add docstring to Dockerfile
 Stage0 += comment(__doc__.strip(), reformat=False)
@@ -43,17 +43,19 @@ Stage0 += pkgs
 compiler = gnu()
 Stage0 += compiler
 
-# Mellanox OFED
-Stage0 += mlnx_ofed(version='5.4-1.0.3.0')
+# Mellanox OFED 5.6-2.0.9.0
+Stage0 += mlnx_ofed(version='5.6-2.0.9.0')
 
 # OpenMPI
 if use_ucx:
     # UCX depends on KNEM (use latest versions as of 2022-01-22)
     Stage0 += knem(version='1.1.4')
-    Stage0 += ucx(cuda=True, version='1.12.0')
+    # build with gdrcopy
+    Stage0 += gdrcopy()
+    Stage0 += ucx(cuda=True,gdrcopy=True,knem=True,ofed=True,version='1.12.1')
     pass
 
-Stage0 += openmpi(version='4.1.2',
+Stage0 += openmpi(version='4.1.4',
                cuda=True,
                ucx=use_ucx, infiniband=not use_ucx,
                toolchain=compiler.toolchain)
@@ -63,13 +65,21 @@ if not use_ucx:
         'echo "btl_openib_allow_ib = 1" >> /usr/local/openmpi/etc/openmpi-mca-params.conf'])
 
 # build xthi
-Stage0 += generic_build(branch='master',
-                        build=['make all CC=gcc MPICC=/usr/local/openmpi/bin/mpicc', ],
-                        install=['mkdir -p /usr/local/xthi/bin',
-                                 'cp /var/tmp/xthi/xthi /var/tmp/xthi/xthi.nompi /usr/local/xthi/bin'],
-                        prefix='/usr/local/xthi',
-                        repository='https://git.ecdf.ed.ac.uk/dmckain/xthi.git')
-Stage0 += environment(variables={'PATH': '/usr/local/xthi/bin:$PATH'})
+if False:
+    Stage0 += generic_build(branch='master',
+                            build=['make all CC=gcc MPICC=/usr/local/openmpi/bin/mpicc', ],
+                            install=['mkdir -p /usr/local/xthi/bin',
+                                     'cp /var/tmp/xthi/xthi /var/tmp/xthi/xthi.nompi /usr/local/xthi/bin'],
+                            prefix='/usr/local/xthi',
+                            repository='https://git.ecdf.ed.ac.uk/dmckain/xthi.git')
+    Stage0 += environment(variables={'PATH': '/usr/local/xthi/bin:$PATH'})
+    pass
+# build xthi with CUDA from local source
+Stage0 += copy(src=['xthi/xthi.c','xthi/Makefile',],dest='/usr/local/xthi/src',_mkdir=True)
+Stage0 += shell(commands=[ 'cd /usr/local/xthi/src',
+                           'make',
+                           'mkdir /usr/local/xthi/bin',
+                           'cp xthi xthi.nompi /usr/local/xthi/bin'])
 
 # fftw double
 Stage0 += fftw(toolchain=compiler.toolchain,
@@ -93,7 +103,7 @@ Stage0 += fftw(toolchain=compiler.toolchain,
 #Stage0 += openblas(version='0.3.17')
 
 # hdf5
-Stage0 += hdf5()
+Stage0 += hdf5(version='1.12.2')
 
 # LIME
 Stage0 += generic_autotools(branch='c-lime1-3-2',
@@ -153,8 +163,10 @@ if True:
 
     Stage1 += Stage0.runtime()
 
-    # libnuma.so.1 needed by xthi
-    Stage1 += packages(apt=['libnuma1'],yum=['numactl-libs',])
+    Stage1 += copy(_from='devel',src='/usr/local/xthi',dest='/usr/local/xthi')
+
+    # numactl tool and libnuma.so.1 needed by xthi
+    Stage1 += packages(apt=['numactl', 'libnuma1'],yum=['numactl', 'numactl-libs',])
 
     Stage1 += environment(variables={
         'PATH': '/usr/local/xthi/bin:$PATH',
