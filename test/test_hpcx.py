@@ -47,12 +47,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64''')
 
     @x86_64
     @ubuntu18
@@ -70,12 +70,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu18.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu18.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu18.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu18.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu18.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu18.04-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu18.04-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu18.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu18.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu18.04-cuda11-gdrcopy2-nccl2.11-x86_64''')
 
     @x86_64
     @ubuntu20
@@ -93,12 +93,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu20.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu20.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu20.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu20.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu20.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu20.04-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu20.04-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu20.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu20.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu20.04-cuda11-gdrcopy2-nccl2.11-x86_64''')
 
     @x86_64
     @centos
@@ -115,12 +115,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat7-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat7-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat7-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat7-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat7-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat7-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
     echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat7-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat7-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat7-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat7-cuda11-gdrcopy2-nccl2.11-x86_64''')
 
     @x86_64
     @centos8
@@ -137,12 +137,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat8-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat8-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat8-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat8-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat8-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat8-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
     echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat8-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-redhat8-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat8-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-redhat8-cuda11-gdrcopy2-nccl2.11-x86_64''')
 
     @x86_64
     @ubuntu
@@ -323,9 +323,9 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.11/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-cuda11-gdrcopy2-nccl2.11-ubuntu16.04-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64.tbz /var/tmp/hpcx-v2.11-gcc-MLNX_OFED_LINUX-5-ubuntu16.04-cuda11-gdrcopy2-nccl2.11-x86_64''')
