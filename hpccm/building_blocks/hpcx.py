@@ -240,7 +240,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             if StrictVersion(self.__version) >= StrictVersion('2.11'):
                 # Version 2.11 and later include an extra label
                 self.__label = 'hpcx-v{0}-gcc-MLNX_OFED_LINUX-{1}-{2}-{3}-{4}'.format(
-                    self.__version, self.__mlnx_ofed, self.__buildlabel, self.__oslabel, self.__arch)
+                    self.__version, self.__mlnx_ofed, self.__oslabel, self.__buildlabel, self.__arch)
             else:
                 self.__label = 'hpcx-v{0}-gcc-MLNX_OFED_LINUX-{1}-{2}-{3}'.format(
                     self.__version, self.__mlnx_ofed, self.__oslabel, self.__arch)
