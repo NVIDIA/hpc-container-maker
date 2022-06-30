@@ -5,8 +5,8 @@ Contents:
   Ubuntu 20.04 (LTS)
   CUDA version 11.6
   GNU compilers (upstream; 9.3.0)
-  OFED Mellanox 5.4-1.0.3.0 (ConnectX gen 4--6)
-  OpenMPI version 4.1.2
+  OFED Mellanox 5.6-2.0.9.0 (ConnectX gen 4--6)
+  OpenMPI version 4.1.4
 """
 
 # pylint: disable=invalid-name, undefined-variable, used-before-assignment
@@ -39,6 +39,13 @@ pkgs = packages(ospackages=[],
                      'gmp-devel',   'mpfr-devel', 'openssl-devel', 'numactl-devel', ])
 Stage0 += pkgs
 
+# cmake
+Stage0 += cmake(eula=True, version='3.23.2')
+
+# Python3 for scripting in runtime container
+py = python(python2=False)
+Stage0 += py
+
 # GNU compilers
 compiler = gnu()
 Stage0 += compiler
@@ -65,21 +72,11 @@ if not use_ucx:
         'echo "btl_openib_allow_ib = 1" >> /usr/local/openmpi/etc/openmpi-mca-params.conf'])
 
 # build xthi
-if False:
-    Stage0 += generic_build(branch='master',
-                            build=['make all CC=gcc MPICC=/usr/local/openmpi/bin/mpicc', ],
-                            install=['mkdir -p /usr/local/xthi/bin',
-                                     'cp /var/tmp/xthi/xthi /var/tmp/xthi/xthi.nompi /usr/local/xthi/bin'],
-                            prefix='/usr/local/xthi',
-                            repository='https://git.ecdf.ed.ac.uk/dmckain/xthi.git')
-    Stage0 += environment(variables={'PATH': '/usr/local/xthi/bin:$PATH'})
-    pass
-# build xthi with CUDA from local source
-Stage0 += copy(src=['xthi/xthi.c','xthi/Makefile',],dest='/usr/local/xthi/src',_mkdir=True)
-Stage0 += shell(commands=[ 'cd /usr/local/xthi/src',
-                           'make',
-                           'mkdir /usr/local/xthi/bin',
-                           'cp xthi xthi.nompi /usr/local/xthi/bin'])
+Stage0 += generic_cmake(branch='feature/gpu',
+                        cmake_opts=['-DGPU=NVIDIA', ],
+                        install=True,
+                        prefix='/usr/local/xthi',
+                        repository='https://github.com/james-simone/xthi.git')
 
 # fftw double
 Stage0 += fftw(toolchain=compiler.toolchain,
@@ -130,45 +127,43 @@ incdirs = ' -I/usr/local/openmpi/include  -I/usr/local/fftw/include -I/usr/local
 libdirs = ' -L/usr/local/openmpi/lib      -L/usr/local/fftw/lib     -L/usr/local/hdf5/lib     -L/usr/local/scidac/lib '
 
 ### Grid
-if True:
-    Stage0 += generic_autotools(branch='develop',          #commit='135808d',
-                                preconfigure=[ './bootstrap.sh', ],
-                                build_directory='/var/tmp/Grid/build',
-                                build_environment={
-                                    'CXX': 'nvcc',
-                                    'MPICXX': 'mpicxx',
-                                    'CXXFLAGS': '" -std=c++14 ' + farch + incdirs + ' -cudart shared "',
-                                    'LDFLAGS': '" -cudart shared ' + libdirs + '"',
-                                    'LIBS': '"-lmpi"',
-                                },
-                                configure_opts = [
-                                    '--enable-comms=mpi3-auto',
-                                    '--disable-unified',
-                                    '--enable-simd=GPU',
-                                    '--enable-gen-simd-width=64',
-                                    '--enable-accelerator=cuda',
-                                    '--disable-fermion-reps',
-                                    '--disable-gparity',
-                                ],
-                                install=True,
-                                prefix='/usr/local/grid',
-                                repository='https://github.com/paboyle/Grid')
-    pass
+Stage0 += generic_autotools(branch='develop',          #commit='135808d',
+                            preconfigure=[ './bootstrap.sh', ],
+                            build_directory='/var/tmp/Grid/build',
+                            build_environment={
+                                'CXX': 'nvcc',
+                                'MPICXX': 'mpicxx',
+                                'CXXFLAGS': '" -std=c++14 ' + farch + incdirs + ' -cudart shared "',
+                                'LDFLAGS': '" -cudart shared ' + libdirs + '"',
+                                'LIBS': '"-lmpi"',
+                            },
+                            configure_opts = [
+                                '--enable-comms=mpi3-auto',
+                                '--disable-unified',
+                                '--enable-shm=nvlink',
+                                '--enable-simd=GPU',
+                                '--enable-gen-simd-width=64',
+                                '--enable-accelerator=cuda',
+                                '--disable-fermion-reps',
+                                '--disable-gparity',
+                            ],
+                            install=True,
+                            prefix='/usr/local/grid',
+                            repository='https://github.com/paboyle/Grid')
+
 
 ###############################################################################
 # Release stage
 ###############################################################################
-if True:
-    Stage1 += baseimage(image=runtime_image)
 
-    Stage1 += Stage0.runtime()
+Stage1 += baseimage(image=runtime_image)
 
-    Stage1 += copy(_from='devel',src='/usr/local/xthi',dest='/usr/local/xthi')
+Stage1 += Stage0.runtime()
+Stage1 += py.runtime()
 
-    # numactl tool and libnuma.so.1 needed by xthi
-    Stage1 += packages(apt=['numactl', 'libnuma1'],yum=['numactl', 'numactl-libs',])
+# numactl tool and libnuma.so.1 needed by xthi
+Stage1 += packages(apt=['numactl', 'libnuma1'],yum=['numactl', 'numactl-libs',])
 
-    Stage1 += environment(variables={
-        'PATH': '/usr/local/xthi/bin:$PATH',
-        'LD_LIBRARY_PATH': ':$LD_LIBRARY_PATH', })
-    pass
+Stage1 += environment(variables={
+    'PATH': '/usr/local/xthi/bin:$PATH',
+    'LD_LIBRARY_PATH': ':$LD_LIBRARY_PATH', })
