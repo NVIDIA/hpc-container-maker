@@ -1,3 +1,8 @@
+# v22.8.0
+- Refreshes default component versions for the LLVM (`llvm`) and 
+  NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Fixes a package naming bug in the HPC-X (`hpcx`) building block.
+
 # v22.5.0
 - Adds support for Ubuntu 22.04.
 - Refreshes default component versions for the HPC-X (`hpcx`) and PMI
