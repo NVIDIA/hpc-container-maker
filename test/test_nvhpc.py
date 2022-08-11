@@ -39,7 +39,7 @@ class Test_nvhpc(unittest.TestCase):
         """Default HPC SDK building block"""
         n = nvhpc(eula=True)
         self.assertMultiLineEqual(str(n),
-r'''# NVIDIA HPC SDK version 22.3
+r'''# NVIDIA HPC SDK version 22.7
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates && \
@@ -47,12 +47,12 @@ RUN apt-get update -y && \
 RUN echo "deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nvhpc-22-3-cuda-multi && \
+        nvhpc-22-7-cuda-multi && \
     rm -rf /var/lib/apt/lists/*
-ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/include:$CPATH \
-    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
-    MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/man:$MANPATH \
-    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/bin:$PATH''')
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+    MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/man:$MANPATH \
+    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/bin:$PATH''')
 
     @x86_64
     @centos
@@ -61,19 +61,19 @@ ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/include:/opt/n
         """Default HPC SDK building block"""
         n = nvhpc(eula=True)
         self.assertMultiLineEqual(str(n),
-r'''# NVIDIA HPC SDK version 22.3
+r'''# NVIDIA HPC SDK version 22.7
 RUN yum install -y \
         ca-certificates && \
     rm -rf /var/cache/yum/*
 RUN yum install -y yum-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo && \
     yum install -y \
-        nvhpc-cuda-multi-22.3 && \
+        nvhpc-cuda-multi-22.7 && \
     rm -rf /var/cache/yum/*
-ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/include:$CPATH \
-    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
-    MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/man:$MANPATH \
-    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/bin:$PATH''')
+ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/extras/qd/include/qd:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/include:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/include:$CPATH \
+    LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/cuda/lib64:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/lib:$LD_LIBRARY_PATH \
+    MANPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/man:$MANPATH \
+    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nvshmem/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/nccl/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/profilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/cuda/bin:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/bin:$PATH''')
 
     @x86_64
     @centos
@@ -213,10 +213,10 @@ RUN apt-get update -y && \
         libnuma1 \
         openssh-client && \
     rm -rf /var/lib/apt/lists/*
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/compilers/lib/* /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib/
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:$LD_LIBRARY_PATH \
-    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/mpi/bin:$PATH''')
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/REDIST/compilers/lib/* /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib/
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi
+ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib:$LD_LIBRARY_PATH \
+    PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/mpi/bin:$PATH''')
 
     @x86_64
     @centos
@@ -236,11 +236,11 @@ RUN yum install -y \
         numactl-libs \
         openssh-clients && \
     rm -rf /var/cache/yum/*
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/comm_libs/11.0/nccl/lib/libnccl.so /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/11.0/nccl/lib/libnccl.so
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/compilers/lib/* /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib/
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/math_libs/11.0/lib64/libcufft.so.10 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64/libcufft.so.10
-COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/REDIST/math_libs/11.0/lib64/libcublas.so.11 /opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64/libcublas.so.11
-ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/11.0/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/math_libs/11.0/lib64:$LD_LIBRARY_PATH''')
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/REDIST/comm_libs/11.0/nccl/lib/libnccl.so /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/11.0/nccl/lib/libnccl.so
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/REDIST/compilers/lib/* /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib/
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/REDIST/math_libs/11.0/lib64/libcufft.so.10 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/11.0/lib64/libcufft.so.10
+COPY --from=0 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/REDIST/math_libs/11.0/lib64/libcublas.so.11 /opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/11.0/lib64/libcublas.so.11
+ENV LD_LIBRARY_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/comm_libs/11.0/nccl/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/compilers/lib:/opt/nvidia/hpc_sdk/Linux_x86_64/22.7/math_libs/11.0/lib64:$LD_LIBRARY_PATH''')
 
     @x86_64
     @ubuntu
