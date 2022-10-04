@@ -83,6 +83,7 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
 
         super(apt_get, self).__init__()
 
+        self.__apt_key = kwargs.get('_apt_key', True)
         self.__aptitude = kwargs.get('aptitude', False)
         self.__commands = []
         self.__download = kwargs.get('download', False)
@@ -122,8 +123,14 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
 
         if self.__keys:
             for key in self.__keys:
-                self.__commands.append(
-                    'wget -qO - {} | apt-key add -'.format(key))
+                if self.__apt_key:
+                    self.__commands.append(
+                        'wget -qO - {} | apt-key add -'.format(key))
+                else:
+                    self.__commands.extend([
+                        'mkdir -p /usr/share/keyrings',
+                        'wget -qO - {0} | gpg --dearmor -o /usr/share/keyrings/{1}.gpg'.format(
+                            key, os.path.splitext(os.path.basename(key))[0])])
 
         if self.__ppas:
             # Need to install apt-add-repository

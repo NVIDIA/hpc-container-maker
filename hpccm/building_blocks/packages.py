@@ -134,6 +134,7 @@ class packages(bb_base):
         super(packages, self).__init__()
 
         self.__apt = kwargs.get('apt', [])
+        self.__apt_key = kwargs.get('_apt_key', True)
         self.__apt_keys = kwargs.get('apt_keys', [])
         self.__apt_ppas = kwargs.get('apt_ppas', [])
         self.__apt_repositories = kwargs.get('apt_repositories', [])
@@ -166,7 +167,8 @@ class packages(bb_base):
             else:
                 ospackages = self.__ospackages
 
-            self += apt_get(aptitude=self.__aptitude,
+            self += apt_get(_apt_key=self.__apt_key,
+                            aptitude=self.__aptitude,
                             download=self.__download,
                             download_directory=self.__download_directory,
                             extra_opts=self.__extra_opts,
