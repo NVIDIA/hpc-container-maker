@@ -345,7 +345,9 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             # Set libfortran version depending on the Ubuntu version
             if self.__fortran:
                 if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                    if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                    if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                        self.__runtime_debs.append('libgfortran5')
+                    elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                         self.__runtime_debs.append('libgfortran4')
                     elif hpccm.config.g_linux_version >= StrictVersion('16.0'):
                         self.__runtime_debs.append('libgfortran3')

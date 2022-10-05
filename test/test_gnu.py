@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import broadwell, centos, centos8, docker, ubuntu, ubuntu18
+from helpers import broadwell, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20
 
 from hpccm.building_blocks.gnu import gnu
 
@@ -247,6 +247,20 @@ r'''# GNU compiler runtime
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libgfortran4 \
+        libgomp1 && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu20
+    @docker
+    def test_runtime_ubuntu20(self):
+        """Runtime"""
+        g = gnu()
+        r = g.runtime()
+        self.assertEqual(r,
+r'''# GNU compiler runtime
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libgfortran5 \
         libgomp1 && \
     rm -rf /var/lib/apt/lists/*''')
 
