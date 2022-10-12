@@ -3149,13 +3149,15 @@ SDK.  The default value is `False`.
 environment.  The default value is `True`.
 
 - __ospackages__: List of OS packages to install prior to installing the
-NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
-installing from the package repository, then for Ubuntu, the
-default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
-`libatomic1`, `libnuma1`, `openssh-client`, and `wget`, and for
-RHEL-based Linux distributions, the default values are `bc`,
-`gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
-`openssh-clients`, `wget`, and `which`.
+NVIDIA HPC SDK.  The default value is `ca-certificates`, `gnupg`,
+and `wget` for Ubuntu, and `ca-certificates` for RHEL-based Linux
+distributions.  If not installing from the package repository,
+then for Ubuntu, the default values are `bc`, `debianutils`,
+`gcc`, `g++`, `gfortran`, `libatomic1`, `libnuma1`,
+`openssh-client`, and `wget`, and for RHEL-based Linux
+distributions, the default values are `bc`, `gcc`, `gcc-c++`,
+`gcc-gfortran`, `libatomic`, `numactl-libs`, `openssh-clients`,
+`wget`, and `which`.
 
 - __package__: Path to the NVIDIA HPC SDK tar package file relative to
 the local build context.  The default value is empty.
@@ -3180,7 +3182,7 @@ the default GNU toolchain.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `22.7`.
+file name.  The default value is `22.9`.
 
 __Examples__
 
