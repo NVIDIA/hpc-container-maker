@@ -84,13 +84,15 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     environment.  The default value is `True`.
 
     ospackages: List of OS packages to install prior to installing the
-    NVIDIA HPC SDK.  The default value is `ca-certificates`.  If not
-    installing from the package repository, then for Ubuntu, the
-    default values are `bc`, `debianutils`, `gcc`, `g++`, `gfortran`,
-    `libatomic1`, `libnuma1`, `openssh-client`, and `wget`, and for
-    RHEL-based Linux distributions, the default values are `bc`,
-    `gcc`, `gcc-c++`, `gcc-gfortran`, `libatomic`, `numactl-libs`,
-    `openssh-clients`, `wget`, and `which`.
+    NVIDIA HPC SDK.  The default value is `ca-certificates`, `gnupg`,
+    and `wget` for Ubuntu, and `ca-certificates` for RHEL-based Linux
+    distributions.  If not installing from the package repository,
+    then for Ubuntu, the default values are `bc`, `debianutils`,
+    `gcc`, `g++`, `gfortran`, `libatomic1`, `libnuma1`,
+    `openssh-client`, and `wget`, and for RHEL-based Linux
+    distributions, the default values are `bc`, `gcc`, `gcc-c++`,
+    `gcc-gfortran`, `libatomic`, `numactl-libs`, `openssh-clients`,
+    `wget`, and `which`.
 
     package: Path to the NVIDIA HPC SDK tar package file relative to
     the local build context.  The default value is empty.
@@ -115,7 +117,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `22.7`.
+    file name.  The default value is `22.9`.
 
     # Examples
 
@@ -173,7 +175,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__tarball = kwargs.get('tarball', False)
         self.__toolchain = kwargs.get('toolchain', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '22.7')
+        self.__version = kwargs.get('version', '22.9')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __get_version()
 
@@ -239,10 +241,19 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self += shell(commands=self.__commands)
         else:
             # repository install
-            self += packages(
-                apt_repositories=['deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/{} /'.format(self.__arch_label)],
-                ospackages=[self.__nvhpc_package],
-                yum_repositories=['https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo'])
+            if StrictVersion(self.__version) >= StrictVersion('22.9'):
+                # signed packages
+                self += packages(
+                    apt_keys=['https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK'],
+                    apt_repositories=['deb [signed-by=/usr/share/keyrings/DEB-GPG-KEY-NVIDIA-HPC-SDK.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/{} /'.format(self.__arch_label)],
+                    ospackages=[self.__nvhpc_package],
+                    yum_repositories=['https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo'],
+                    _apt_key=False)
+            else:
+                self += packages(
+                    apt_repositories=['deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/{} /'.format(self.__arch_label)],
+                    ospackages=[self.__nvhpc_package],
+                    yum_repositories=['https://developer.download.nvidia.com/hpc-sdk/rhel/nvhpc.repo'])
 
         if self.__toolchain:
             # Regenerate the localrc using the compilers from the specified
@@ -307,7 +318,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                                          'gfortran', 'libatomic1', 'libnuma1',
                                          'openssh-client', 'wget']
                 else:
-                    self.__ospackages = ['ca-certificates']
+                    self.__ospackages = ['ca-certificates', 'gnupg', 'wget']
             self.__runtime_ospackages = ['libatomic1', 'libnuma1',
                                          'openssh-client']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
