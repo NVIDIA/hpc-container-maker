@@ -1,3 +1,9 @@
+# v22.10.0
+- Refreshes default component versions for the NVIDIA HPC SDK (`nvhpc`)
+  building block.
+- Add support for signed apt repositories using signed-by rather than apt-key
+- Update GNU compiler (`gnu`) runtime library version on Ubuntu 20 and later.
+
 # v22.8.0
 - Refreshes default component versions for the LLVM (`llvm`) and 
   NVIDIA HPC SDK (`nvhpc`) building blocks.
