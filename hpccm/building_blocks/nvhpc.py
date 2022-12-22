@@ -117,7 +117,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `22.9`.
+    file name.  The default value is `22.11`.
 
     # Examples
 
@@ -175,14 +175,16 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__tarball = kwargs.get('tarball', False)
         self.__toolchain = kwargs.get('toolchain', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '22.9')
+        self.__version = kwargs.get('version', '22.11')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __get_version()
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
 
-        if StrictVersion(self.__version) >= StrictVersion('22.5'):
+        if StrictVersion(self.__version) >= StrictVersion('22.11'):
+            self.__cuda_version_default = '11.8'
+        elif StrictVersion(self.__version) >= StrictVersion('22.5'):
             self.__cuda_version_default = '11.7'
         elif StrictVersion(self.__version) >= StrictVersion('22.2'):
             self.__cuda_version_default = '11.6'
