@@ -8,9 +8,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11]
-        exclude:
-          - os: ubuntu-latest
+        python-version: [3.7, 3.8, 3.9, 3.10, 3.11]
+        include:
+          - os: macos-latest
+            python-version: [3.5, 3.6]
+          - os: windows-latest
             python-version: [3.5, 3.6]
 
     steps:
