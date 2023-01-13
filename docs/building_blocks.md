@@ -3182,7 +3182,7 @@ the default GNU toolchain.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `22.9`.
+file name.  The default value is `22.11`.
 
 __Examples__
 
@@ -3417,7 +3417,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of OpenBLAS source to download.  The default
-value is `0.3.10`.
+value is `0.3.21`.
 
 __Examples__
 
