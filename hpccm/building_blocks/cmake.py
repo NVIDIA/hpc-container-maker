@@ -60,12 +60,12 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     source: Boolean flag to specify whether to build CMake from
     source.  If True, includes the `libssl-dev` package in the list of
     OS packages for Ubuntu, and `openssl-devel` for RHEL-based
-    distributions.  For x86_64 processors, the default is False, i.e.,
-    use the available pre-compiled package.  For all other processors,
-    the default is True.
+    distributions.  For x86_64 and aarch64 processors, the default is
+    False, i.e., use the available pre-compiled package.  For all
+    other processors, the default is True.
 
     version: The version of CMake to download.  The default value is
-    `3.22.2`.
+    `3.25.1`.
 
     # Examples
 
@@ -96,7 +96,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         self.__parallel = kwargs.get('parallel', '$(nproc)')
         self.__prefix = kwargs.get('prefix', '/usr/local')
         self.__source = kwargs.get('source', False)
-        self.__version = kwargs.get('version', '3.22.2')
+        self.__version = kwargs.get('version', '3.25.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -122,6 +122,9 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if not self.__source and hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             # Use the pre-compiled x86_64 binary
             self.__binary()
+        elif not self.__source and hpccm.config.g_cpu_arch == cpu_arch.AARCH64 and LooseVersion(self.__version) >= LooseVersion('3.20'):
+            # Use the pre-compiled aarch64 binary
+            self.__binary()
         else:
             # Build from source
             self.__build()
@@ -130,7 +133,9 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         """Install the pre-compiled binary"""
 
         runfile = 'cmake-{}-linux-x86_64.sh'
-        if LooseVersion(self.__version) < LooseVersion('3.20'):
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            runfile = 'cmake-{}-linux-aarch64.sh'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64 and LooseVersion(self.__version) < LooseVersion('3.20'):
             runfile = 'cmake-{}-Linux-x86_64.sh'
 
         runfile = runfile.format(self.__version)

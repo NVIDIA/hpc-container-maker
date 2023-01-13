@@ -545,12 +545,12 @@ The default values are `make` and `wget`.
 - __source__: Boolean flag to specify whether to build CMake from
 source.  If True, includes the `libssl-dev` package in the list of
 OS packages for Ubuntu, and `openssl-devel` for RHEL-based
-distributions.  For x86_64 processors, the default is False, i.e.,
-use the available pre-compiled package.  For all other processors,
-the default is True.
+distributions.  For x86_64 and aarch64 processors, the default is
+False, i.e., use the available pre-compiled package.  For all
+other processors, the default is True.
 
 - __version__: The version of CMake to download.  The default value is
-`3.22.2`.
+`3.25.1`.
 
 __Examples__
 
