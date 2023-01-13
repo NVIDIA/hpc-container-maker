@@ -47,6 +47,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/DEB-GPG-KEY-NVIDIA-HPC-SDK.gpg && \
     wget -qO - https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK | gpg --dearmor -o /usr/share/keyrings/DEB-GPG-KEY-NVIDIA-HPC-SDK.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/DEB-GPG-KEY-NVIDIA-HPC-SDK.gpg] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \

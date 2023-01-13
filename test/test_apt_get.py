@@ -69,6 +69,7 @@ r'''RUN wget -qO - https://www.example.com/key.pub | apt-key add - && \
                     repositories=['deb [signed-by=/usr/share/keyrings/key.gpg] http://www.example.com all main'])
         self.assertEqual(str(a),
 r'''RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/key.gpg && \
     wget -qO - https://www.example.com/key.pub | gpg --dearmor -o /usr/share/keyrings/key.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/key.gpg] http://www.example.com all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \

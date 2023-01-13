@@ -129,6 +129,8 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
                 else:
                     self.__commands.extend([
                         'mkdir -p /usr/share/keyrings',
+                        'rm -f /usr/share/keyrings/{}.gpg'.format(
+                            os.path.splitext(os.path.basename(key))[0]),
                         'wget -qO - {0} | gpg --dearmor -o /usr/share/keyrings/{1}.gpg'.format(
                             key, os.path.splitext(os.path.basename(key))[0])])
 
