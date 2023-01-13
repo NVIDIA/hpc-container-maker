@@ -233,9 +233,18 @@ From: foo.sif
     @docker
     def test_detect_nonexistent(self):
         """Base image Linux distribution detection"""
+        arch = hpccm.config.get_cpu_architecture()
+        if arch == 'aarch64':
+            gold = cpu_arch.AARCH64
+        elif arch == 'ppc64le':
+            gold = cpu_arch.PPC64LE
+        elif arch == 'x86_64':
+            gold = cpu_arch.X86_64
+
         b = baseimage(image='nonexistent')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_cpu_arch, gold)
 
     @docker
     def test_distro_ubuntu(self):
@@ -306,12 +315,6 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.PPC64LE)
 
     @docker
-    def test_detect_nonexistent(self):
-        """Base image CPU architecture detection"""
-        b = baseimage(image='foo')
-        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.X86_64)
-
-    @docker
     def test_arch_aarch64(self):
         """Base image CPU architecture specification"""
         b = baseimage(image='foo', _arch='aarch64')
@@ -332,5 +335,13 @@ From: foo.sif
     @docker
     def test_arch_nonexistent(self):
         """Base image CPU architecture specification"""
+        arch = hpccm.config.get_cpu_architecture()
+        if arch == 'aarch64':
+            gold = cpu_arch.AARCH64
+        elif arch == 'ppc64le':
+            gold = cpu_arch.PPC64LE
+        elif arch == 'x86_64':
+            gold = cpu_arch.X86_64
+
         b = baseimage(image='foo', _arch='nonexistent')
-        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.X86_64)
+        self.assertEqual(hpccm.config.g_cpu_arch, gold)
