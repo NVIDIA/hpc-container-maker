@@ -23,6 +23,8 @@ import logging # pylint: disable=unused-import
 import os
 import unittest
 
+from helpers import x86_64
+
 from hpccm.common import container_type
 from hpccm.recipe import recipe
 
@@ -85,6 +87,7 @@ From: ubuntu:16.04
         gfortran
     rm -rf /var/lib/apt/lists/*''')
 
+    @x86_64
     def test_multistage_example_singlestage(self):
         """Single_stage option"""
         path = os.path.dirname(__file__)
@@ -116,6 +119,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ft
     rm -rf /var/tmp/fftw-3.3.10 /var/tmp/fftw-3.3.10.tar.gz
 ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     def test_multistage_example_singularity26(self):
         """Multi-stage recipe with Singularity container type"""
         path = os.path.dirname(__file__)
@@ -158,6 +162,7 @@ From: nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04
 %post
     export LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
 
+    @x86_64
     def test_multistage_example_singularity32(self):
         """Multi-stage recipe with Singularity container type"""
         path = os.path.dirname(__file__)

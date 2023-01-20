@@ -38,8 +38,8 @@ class baseimage(object):
     _arch: The underlying CPU architecture of the base image.  Valid
     values are `aarch64`, `ppc64le`, and `x86_64`.  By default, the
     primitive attemps to figure out the CPU architecture by inspecting
-    the image identifier, and falls back to `x86_64` if unable to
-    determine the CPU architecture automatically.
+    the image identifier, and falls back to system architecture if
+    unable to determine the CPU architecture automatically.
 
     _as: Name for the stage.  When using Singularity multi-stage
     recipes, this value must be specified.  The default value is
@@ -102,7 +102,10 @@ class baseimage(object):
         elif re.search(r'ppc64le', self.image):
             hpccm.config.set_cpu_architecture('ppc64le')
         else:
-            hpccm.config.set_cpu_architecture('x86_64')
+            # Unable to figure out the architecture, so use the
+            # default, which should be the architecture of the machine
+            # running HPCCM
+            pass
 
         # Set the global Linux distribution.  Use the user specified
         # value if available, otherwise try to figure it out based on
