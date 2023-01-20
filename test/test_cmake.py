@@ -38,16 +38,16 @@ class Test_cmake(unittest.TestCase):
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.22.2
+r'''# CMake version 3.25.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1-linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.22.2-linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.22.2-linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.25.1-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.25.1-linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
@@ -57,22 +57,22 @@ ENV PATH=/usr/local/bin:$PATH''')
         """Default cmake building block"""
         c = cmake()
         self.assertEqual(str(c),
-r'''# CMake version 3.22.2
+r'''# CMake version 3.25.1
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1-linux-x86_64.sh && \
     mkdir -p /usr/local && \
-    /bin/sh /var/tmp/cmake-3.22.2-linux-x86_64.sh --prefix=/usr/local && \
-    rm -rf /var/tmp/cmake-3.22.2-linux-x86_64.sh
+    /bin/sh /var/tmp/cmake-3.25.1-linux-x86_64.sh --prefix=/usr/local && \
+    rm -rf /var/tmp/cmake-3.25.1-linux-x86_64.sh
 ENV PATH=/usr/local/bin:$PATH''')
 
     @x86_64
     @ubuntu
     @docker
-    def test_eula(self):
-        """3.20 binary naming"""
+    def test_runfile_name(self):
+        """3.20 runfile naming"""
         c = cmake(version='3.20.0')
         self.assertEqual(str(c),
 r'''# CMake version 3.20.0
@@ -128,7 +128,7 @@ ENV PATH=/usr/local/bin:$PATH''')
     @x86_64
     @ubuntu
     @docker
-    def test_defaults_ubuntu(self):
+    def test_32bit_ubuntu(self):
         """Cmake building block for old 32-bit versions"""
         c = cmake(eula=True, version='3.0.0')
         self.assertEqual(str(c),
@@ -148,7 +148,7 @@ ENV PATH=/usr/local/bin:$PATH''')
     @x86_64
     @centos
     @docker
-    def test_defaults_ubuntu(self):
+    def test_32bit_centos(self):
         """Cmake building block for old 32-bit versions"""
         c = cmake(eula=True, version='3.0.0')
         self.assertEqual(str(c),
@@ -204,4 +204,22 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     make -j$(nproc) && \
     make install && \
     rm -rf /var/tmp/cmake-3.14.5.tar.gz /var/tmp/cmake-3.14.5
+ENV PATH=/usr/local/bin:$PATH''')
+
+    @aarch64
+    @centos
+    @docker
+    def test_aarch64_binary(self):
+        """Arm binary package"""
+        c = cmake(eula=True, version='3.25.1')
+        self.assertEqual(str(c),
+r'''# CMake version 3.25.1
+RUN yum install -y \
+        make \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/Kitware/CMake/releases/download/v3.25.1/cmake-3.25.1-linux-aarch64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.25.1-linux-aarch64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.25.1-linux-aarch64.sh
 ENV PATH=/usr/local/bin:$PATH''')
