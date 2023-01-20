@@ -38,7 +38,7 @@ class Test_nsight_compute(unittest.TestCase):
         """Default nsight_compute building block"""
         n = nsight_compute()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2022.1.1
+r'''# NVIDIA Nsight Compute 2022.4.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -46,14 +46,16 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-compute-2022.1.1 && \
+        nsight-compute-2022.4.0 && \
     rm -rf /var/lib/apt/lists/*
 ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2022.1.1:$PATH''')
+    PATH=/opt/nvidia/nsight-compute/2022.4.0:$PATH''')
 
     @x86_64
     @centos8
@@ -62,15 +64,15 @@ ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
         """Default nsight_compute building block"""
         n = nsight_compute()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2022.1.1
+r'''# NVIDIA Nsight Compute 2022.4.0
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
-        nsight-compute-2022.1.1 && \
+        nsight-compute-2022.4.0 && \
     rm -rf /var/cache/yum/*
 ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2022.1.1:$PATH''')
+    PATH=/opt/nvidia/nsight-compute/2022.4.0:$PATH''')
 
     @x86_64
     @ubuntu
@@ -87,8 +89,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
@@ -111,8 +115,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \

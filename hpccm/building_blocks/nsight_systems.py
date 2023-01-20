@@ -41,12 +41,12 @@ class nsight_systems(bb_base):
     package should be installed.  The default is True.
 
     version: The version of Nsight Systems to install.  The default
-    value is `2022.2.1`.
+    value is `2022.5.1`.
 
     # Examples
 
     ```python
-    nsight_systems(version='2020.2.1')
+    nsight_systems(version='2020.5.1')
     ```
 
     """
@@ -60,7 +60,7 @@ class nsight_systems(bb_base):
         self.__cli = kwargs.get('cli', True)
         self.__distro_label = ''     # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__version = kwargs.get('version', '2022.2.1')
+        self.__version = kwargs.get('version', '2022.5.1')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -86,12 +86,13 @@ class nsight_systems(bb_base):
 
         self += packages(
             apt_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
-            apt_repositories=['deb https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
+            apt_repositories=['deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
             # https://github.com/NVIDIA/hpc-container-maker/issues/367
             force_add_repo=True,
             ospackages=[package],
             yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
-            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
+            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)],
+            _apt_key=False)
 
     def __cpu_arch(self):
         """Based on the CPU architecture, set values accordingly.  A user
@@ -121,7 +122,9 @@ class nsight_systems(bb_base):
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
                                      'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= StrictVersion('20.04'):
+            if hpccm.config.g_linux_version >= StrictVersion('22.04'):
+                self.__distro_label = 'ubuntu2204'
+            elif hpccm.config.g_linux_version >= StrictVersion('20.04'):
                 self.__distro_label = 'ubuntu2004'
             elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 self.__distro_label = 'ubuntu1804'

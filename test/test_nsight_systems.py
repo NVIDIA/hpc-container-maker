@@ -38,7 +38,7 @@ class Test_nsight_systems(unittest.TestCase):
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2022.2.1
+r'''# NVIDIA Nsight Systems 2022.5.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -46,11 +46,13 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2022.2.1 && \
+        nsight-systems-cli-2022.5.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -60,12 +62,12 @@ RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/a
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2022.2.1
+r'''# NVIDIA Nsight Systems 2022.5.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
-        nsight-systems-cli-2022.2.1 && \
+        nsight-systems-cli-2022.5.1 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -83,8 +85,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-cli-2020.1.1 && \
@@ -105,8 +109,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-2020.1.1 && \
@@ -127,8 +133,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-systems-cli-2020.1.1 && \

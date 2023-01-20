@@ -63,12 +63,12 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
 
     version: the version of Nsight Compute to install.  Note when
     `runfile` is set this parameter is ignored.  The default value is
-    `2022.1.1`.
+    `2022.4.0`.
 
     # Examples
 
     ```python
-    nsight_compute(version='2020.2.1')
+    nsight_compute(version='2020.4.0')
     ```
 
     ```python
@@ -89,7 +89,7 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
         self.__prefix = kwargs.get('prefix',
                                    '/usr/local/NVIDIA-Nsight-Compute')
         self.__runfile = kwargs.get('runfile', None)
-        self.__version = kwargs.get('version', '2022.1.1')
+        self.__version = kwargs.get('version', '2022.4.0')
         self.__wd = kwargs.get('wd', posixpath.join(
             hpccm.config.g_wd, 'nsight_compute')) # working directory
 
@@ -149,7 +149,9 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
                     self.__ospackages = ['apt-transport-https',
                                          'ca-certificates', 'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= StrictVersion('20.04'):
+            if hpccm.config.g_linux_version >= StrictVersion('22.04'):
+                self.__distro_label = 'ubuntu2204'
+            elif hpccm.config.g_linux_version >= StrictVersion('20.04'):
                 self.__distro_label = 'ubuntu2004'
             elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
                 self.__distro_label = 'ubuntu1804'
@@ -179,12 +181,13 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
 
         self += packages(
             apt_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
-            apt_repositories=['deb https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
+            apt_repositories=['deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/{0}/{1}/ /'.format(self.__distro_label, self.__arch_label)],
             # https://github.com/NVIDIA/hpc-container-maker/issues/367
             force_add_repo=True,
             ospackages=['nsight-compute-{}'.format(self.__version)],
             yum_keys=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}/nvidia.pub'.format(self.__distro_label, self.__arch_label)],
-            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
+            yum_repositories=['https://developer.download.nvidia.com/devtools/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)],
+            _apt_key=False)
 
         # The distro packages do not link nsight-compute binaries to /usr/local/bin
         self.environment_variables['PATH'] = '/opt/nvidia/nsight-compute/{}:$PATH'.format(self.__version)
