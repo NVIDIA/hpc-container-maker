@@ -1,3 +1,12 @@
+# v23.2.0
+- Refreshes default component versions for the CMake (`cmake`), OpenBLAS
+  (`openblas`), Nsight Compute (`nsight_compute`), Nsight Systems
+  (`nsight_systems`), and NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Fallback to the same system architecture as the current system rather
+  then defaulting to x86_64 if the image architecture cannot be determined.
+- Enhances the CMake (`cmake`) building block to use the precompiled packages
+  for Arm.
+
 # v22.10.0
 - Refreshes default component versions for the NVIDIA HPC SDK (`nvhpc`)
   building block.
