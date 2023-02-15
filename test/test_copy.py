@@ -232,6 +232,18 @@ r'''%files
     foo bar''')
 
     @docker
+    def test_chmod_docker(self):
+        """Docker --chmod syntax"""
+        c = copy(_chmod='0755', src='foo', dest='bar')
+        self.assertEqual(str(c), 'COPY --chmod=0755 foo bar')
+
+    @singularity
+    def test_chmod_singularity(self):
+        """Singularity --chmod syntax"""
+        c = copy(_chmod='0755', src='foo', dest='bar')
+        self.assertEqual(str(c), '%files\n    foo bar')
+
+    @docker
     def test_chown_docker(self):
         """Docker --chown syntax"""
         c = copy(_chown='alice:alice', src='foo', dest='bar')

@@ -118,6 +118,9 @@ __Parameters__
 identifier.  This also causes the Singularity block to named
 `%appfiles` rather than `%files` (Singularity specific).
 
+- ___chmod__: Set the permissions of the file(s) in the container image
+(Docker specific).
+
 - ___chown__: Set the ownership of the file(s) in the container image
 (Docker specific).
 
