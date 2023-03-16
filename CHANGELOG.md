@@ -1,3 +1,6 @@
+# v23.3.0
+- Refreshes default component version for the LLVM ('llvm') building block.
+
 # v23.2.0
 - Refreshes default component versions for the CMake (`cmake`), OpenBLAS
   (`openblas`), Nsight Compute (`nsight_compute`), Nsight Systems
