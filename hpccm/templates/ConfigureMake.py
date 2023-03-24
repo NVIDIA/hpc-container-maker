@@ -72,7 +72,8 @@ class ConfigureMake(hpccm.base_object):
         return 'make -j{} check'.format(parallel)
 
     def configure_step(self, build_directory=None, directory=None,
-                       environment=[], opts=[], toolchain=None):
+                       environment=[], export_environment=False, opts=[],
+                       toolchain=None):
         """Generate configure command line string"""
 
         change_directory = ''
@@ -138,7 +139,10 @@ class ConfigureMake(hpccm.base_object):
                 e.append('LIBS={}'.format(shlex_quote(
                     toolchain.LIBS)))
 
-        configure_env = ' '.join(e)
+        if export_environment:
+            configure_env = 'export {} &&'.format(' '.join(e))
+        else:
+            configure_env = ' '.join(e)
 
         # Build set of configuration command line options
         optlist = []

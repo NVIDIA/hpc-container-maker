@@ -869,6 +869,10 @@ Underscores in the parameter name are converted to dashes.
 should be modified (see `devel_environment` and
 `runtime_environment`).  The default is True.
 
+- __export_build_environment__: Boolean flag to specify whether the
+build environment should be exported, or merely set on the
+configure command line.  The default is False.
+
 - __install__: Boolean flag to specify whether the `make install` step
 should be performed.  The default is True.
 

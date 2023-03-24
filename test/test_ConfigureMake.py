@@ -121,3 +121,17 @@ class Test_ConfigureMake(unittest.TestCase):
                            without_bar=True, prefix=None)
         configure = cm.configure_step()
         self.assertEqual(configure, './configure --disable-long-option --enable-foo --with-foo --with-foo2=/usr --without-bar')
+
+    def test_export_environment(self):
+        """export_environment"""
+        cm = ConfigureMake()
+
+        tc = toolchain(CC='mpicc', CXX='mpicxx', FC='mpifc')
+        env = ['OMPI_CC=mycc', 'OMPI_CXX=mycxx', 'OMPI_FC=myfc']
+
+        configure = cm.configure_step(environment=env, toolchain=tc)
+        self.assertEqual(configure, 'OMPI_CC=mycc OMPI_CXX=mycxx OMPI_FC=myfc CC=mpicc CXX=mpicxx FC=mpifc ./configure --prefix=/usr/local')
+
+        ex_configure = cm.configure_step(environment=env,
+                                         export_environment=True, toolchain=tc)
+        self.assertEqual(ex_configure, 'export OMPI_CC=mycc OMPI_CXX=mycxx OMPI_FC=myfc CC=mpicc CXX=mpicxx FC=mpifc && ./configure --prefix=/usr/local')
