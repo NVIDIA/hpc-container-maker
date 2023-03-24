@@ -98,6 +98,10 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
     should be modified (see `devel_environment` and
     `runtime_environment`).  The default is True.
 
+    export_build_environment: Boolean flag to specify whether the
+    build environment should be exported, or merely set on the
+    configure command line.  The default is False.
+
     install: Boolean flag to specify whether the `make install` step
     should be performed.  The default is True.
 
@@ -191,6 +195,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.configure_opts = kwargs.get('configure_opts', [])
         self.__directory = kwargs.get('directory', None)
         self.environment_variables = kwargs.get('devel_environment', {})
+        self.__export_build_environment = kwargs.get('export_build_environment', False)
         self.__install = kwargs.get('install', True)
         self.__libdir = kwargs.get('libdir', 'lib')
         self.__make = kwargs.get('make', True)
@@ -266,6 +271,7 @@ class generic_autotools(bb_base, hpccm.templates.ConfigureMake,
         self.__commands.append(self.configure_step(
             build_directory=self.__build_directory,
             directory=self.src_directory, environment=build_environment,
+            export_environment=self.__export_build_environment,
             toolchain=self.__toolchain))
 
         # Post configure setup
