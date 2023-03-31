@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from distutils.version import LooseVersion
 import logging
 import posixpath
 
@@ -66,10 +66,10 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
     python_subversion: The Python version to install.  This value is
     ignored if the Conda version is less than 4.8.  The default is
-    `py38` if using Python 3, and `py27` if using Python 2.
+    `py310` if using Python 3, and `py27` if using Python 2.
 
     version: The version of Anaconda to download.  The default value
-    is `4.8.3`.
+    is `23.1.0-1` if using Python 3, and `4.8.3` if using Python 2.
 
     # Examples
 
@@ -109,8 +109,8 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__python2 = kwargs.get('python2', False)
         self.__python_version = '2' if self.__python2 else '3'
         self.__python_subversion = kwargs.get(
-            'python_subversion', 'py27' if self.__python2 else 'py38')
-        self.__version = kwargs.get('version', '4.8.3')
+            'python_subversion', 'py27' if self.__python2 else 'py310')
+        self.__version = kwargs.get('version', '4.8.3' if self.__python2 else '23.1.0-1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -152,7 +152,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        if StrictVersion(self.__version) >= StrictVersion('4.8'):
+        if LooseVersion(self.__version) >= LooseVersion('4.8'):
             miniconda = 'Miniconda{0}-{1}_{2}-Linux-{3}.sh'.format(
                 self.__python_version, self.__python_subversion,
                 self.__version, self.__arch_pkg)
