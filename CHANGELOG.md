@@ -1,3 +1,11 @@
+# v23.5.0
+- Add the ability to export the build environment to the generic
+  Autotools building block (`generic_autotools`).
+- Update the Anaconda (`conda`) package for the new upstream versioning
+  scheme, and refreshes the default component version.
+- Fix the Python building block (`python`) to use the correct name of the
+  Python 2 package on Ubuntu 22.04
+
 # v23.3.0
 - Refreshes default component version for the LLVM ('llvm') building block.
 
