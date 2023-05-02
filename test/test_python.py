@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, centos8, docker, ubuntu
+from helpers import centos, centos8, docker, ubuntu, ubuntu22
 
 from hpccm.building_blocks.python import python
 
@@ -41,6 +41,19 @@ r'''# Python
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         python \
+        python3 && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @ubuntu22
+    @docker
+    def test_defaults_ubuntu22(self):
+        """Default python building block"""
+        p = python()
+        self.assertEqual(str(p),
+r'''# Python
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python2 \
         python3 && \
     rm -rf /var/lib/apt/lists/*''')
 
