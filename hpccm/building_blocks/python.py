@@ -21,8 +21,13 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from distutils.version import StrictVersion
+
+import hpccm.config
+
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
+from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 
@@ -69,11 +74,19 @@ class python(bb_base):
         self.__rpms = [] # Filled in below
 
         if self.__python2:
-            self.__debs.append('python')
+            if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
+                hpccm.config.g_linux_version >= StrictVersion('22.0')):
+                self.__debs.append('python2')
+            else:
+                self.__debs.append('python')
             self.__rpms.append('python2')
 
             if self.__devel:
-                self.__debs.append('python-dev')
+                if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
+                    hpccm.config.g_linux_version >= StrictVersion('22.0')):
+                    self.__debs.append('python2-dev')
+                else:
+                    self.__debs.append('python-dev')
                 self.__rpms.append('python2-devel')
 
         if self.__python3:
