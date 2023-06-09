@@ -50,7 +50,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
     buildlabel: The build label assigned by Mellanox to the tarball.
     This value is ignored for HPC-X version 2.10 and earlier.  The
-    default value is `cuda11-gdrcopy2-nccl2.11`.
+    default value is `cuda12-gdrcopy2-nccl2.17`.
 
     environment: Boolean flag to specify whether the environment
     should be modified to include HPC-X. This option is only
@@ -108,12 +108,12 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.11`.
+    value is `2.15`.
 
     # Examples
 
     ```python
-    hpcx(prefix='/usr/local/hpcx', version='2.6.0')
+    hpcx(prefix='/usr/local/hpcx', version='2.15')
     ```
 
     """
@@ -128,7 +128,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                     'https://content.mellanox.com/hpc/hpc-x')
         self.__bashrc = '' # Filled in by __distro()
         self.__buildlabel = kwargs.get('buildlabel',
-                                       'cuda11-gdrcopy2-nccl2.11')
+                                       'cuda12-gdrcopy2-nccl2.17')
         self.__hpcxinit = kwargs.get('hpcxinit', True)
         self.__inbox = kwargs.get('inbox', False)
         self.__mlnx_ofed = kwargs.get('mlnx_ofed', None)
@@ -137,7 +137,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.11')
+        self.__version = kwargs.get('version', '2.15')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory

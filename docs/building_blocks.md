@@ -1476,7 +1476,7 @@ __Parameters__
 
 - __buildlabel__: The build label assigned by Mellanox to the tarball.
 This value is ignored for HPC-X version 2.10 and earlier.  The
-default value is `cuda11-gdrcopy2-nccl2.11`.
+default value is `cuda12-gdrcopy2-nccl2.17`.
 
 - __environment__: Boolean flag to specify whether the environment
 should be modified to include HPC-X. This option is only
@@ -1534,13 +1534,13 @@ distributions the default values are `bzip2`, `numactl-libs`,
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.11`.
+value is `2.15`.
 
 __Examples__
 
 
 ```python
-hpcx(prefix='/usr/local/hpcx', version='2.6.0')
+hpcx(prefix='/usr/local/hpcx', version='2.15')
 ```
 
 
