@@ -2431,7 +2431,7 @@ container entry point.  The default value is empty, i.e., install
 via the package manager to the standard system locations.
 
 - __version__: The version of Mellanox OFED to download.  The default
-value is `5.2-2.2.0.0`.
+value is `5.6-2.0.9.0`.
 
 __Examples__
 
