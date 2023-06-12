@@ -3186,7 +3186,7 @@ the default GNU toolchain.
 
 - __version__: The version of the HPC SDK to use.  Note when `package`
 is set the version is determined automatically from the package
-file name.  The default value is `23.1`.
+file name.  The default value is `23.5`.
 
 __Examples__
 
