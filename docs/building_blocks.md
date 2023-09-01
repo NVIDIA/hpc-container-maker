@@ -3246,14 +3246,14 @@ Stage1 += n.runtime()
 nvshmem(self, **kwargs)
 ```
 The `nvshmem` building block builds and installs the
-[NVSHMEM](https://developer.nvidia.com/nvshmem) component.
+[NVSHMEM](https://developer.nvidia.com/nvshmem) component.  CMake
+version 3.19 or later is required and must be installed separately.
 
 __Parameters__
 
 
-- __binary_tarball__: Path to NVSHMEM binary tarball relative to the
-build context. The default value is empty. Either this parameter
-or `package` must be specified.
+- __cmake_opts__: List of additional options to pass to `cmake`.  The
+default value is an empty list.
 
 - __cuda__: Flag to specify the path to the CUDA installation.  The
 default is `/usr/local/cuda`.
@@ -3265,27 +3265,16 @@ include NVSHMEM. The default is True.
 - __gdrcopy__: Flag to specify the path to the GDRCOPY installation.
 The default is empty.
 
-- __hydra__: Boolean flag to specify whether the Hydra process launcher
-should be installed.  If True, adds `automake` to the list of OS
-packages.  The default is False.
-
 - __ldconfig__: Boolean flag to specify whether the NVSHMEM library
 directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
 directory. The default value is False.
-
-- __make_variables__: Dictionary of environment variables and values to
-set when building NVSHMEM.  The default is an empty dictionary.
 
 - __mpi__: Flag to specify the path to the MPI installation.  The
 default is empty, i.e., do not build NVSHMEM with MPI support.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
-
-- __package__: Path to the NVSHMEM source package relative to the build
-context. The default value is empty. Either this parameter or
-`binary_tarball` must be specified.
 
 - __prefix__: The top level install location.  The default value is
 `/usr/local/nvshmem`.
@@ -3294,13 +3283,13 @@ context. The default value is empty. Either this parameter or
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
 - __version__: The version of NVSHMEM source to download.  The default
-value is `2.2.1`.
+value is `2.9.0-2`.
 
 __Examples__
 
 
 ```python
-nvshmem(mpi='/usr/local/openmpi', version='2.1.2')
+nvshmem(mpi='/usr/local/nvshmem', version='2.9.0-2')
 ```
 
 
