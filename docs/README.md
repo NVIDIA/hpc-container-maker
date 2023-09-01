@@ -1,8 +1,6 @@
 [![Python 3](https://github.com/NVIDIA/hpc-container-maker/workflows/Python%203/badge.svg)](https://github.com/NVIDIA/hpc-container-maker/actions?query=workflow%3A%22Python+3%22)
-[![Python 2](https://github.com/NVIDIA/hpc-container-maker/workflows/Python%202/badge.svg)](https://github.com/NVIDIA/hpc-container-maker/actions?query=workflow%3A%22Python+2%22)
 [![Conda](https://img.shields.io/conda/dn/conda-forge/hpccm?label=Conda%20downloads)](https://anaconda.org/conda-forge/hpccm)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/hpccm?label=PyPI%20downloads)](https://pypi.org/project/hpccm/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/NVIDIA/hpc-container-maker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/NVIDIA/hpc-container-maker/context:python)
 [![License](https://img.shields.io/github/license/NVIDIA/hpc-container-maker)](https://github.com/NVIDIA/hpc-container-maker/blob/master/LICENSE)
 
 # HPC Container Maker
