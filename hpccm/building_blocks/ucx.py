@@ -25,6 +25,7 @@ from six import string_types
 
 from distutils.version import StrictVersion
 import posixpath
+import re
 
 import hpccm.config
 import hpccm.templates.downloader
@@ -373,7 +374,9 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.repository = self.__default_repository
 
         if not self.repository and not self.url:
-            tarball = 'ucx-{}.tar.gz'.format(self.__version)
+            # Workaround to deal with UCX -rc versions:
+            tarball_ucx_rc_version_fix = re.sub(r'-rc.*$', '', self.__version)
+            tarball = 'ucx-{}.tar.gz'.format(tarball_ucx_rc_version_fix)
             self.url = '{0}/v{1}/{2}'.format(self.__baseurl, self.__version,
                                              tarball)
 
