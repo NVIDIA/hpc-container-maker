@@ -3252,6 +3252,12 @@ version 3.19 or later is required and must be installed separately.
 __Parameters__
 
 
+- __build_examples__: Boolean flag to specify whether the NVSHMEM
+examples should be built.  The default is False.
+
+- __build_packages__: Boolean flag to specify whether the RPM and deb
+packages should be built.  The default is False.
+
 - __cmake_opts__: List of additional options to pass to `cmake`.  The
 default value is an empty list.
 

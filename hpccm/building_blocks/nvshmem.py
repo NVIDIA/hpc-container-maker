@@ -47,6 +47,12 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     # Parameters
 
+    build_examples: Boolean flag to specify whether the NVSHMEM
+    examples should be built.  The default is False.
+
+    build_packages: Boolean flag to specify whether the RPM and deb
+    packages should be built.  The default is False.
+
     cmake_opts: List of additional options to pass to `cmake`.  The
     default value is an empty list.
 
@@ -93,6 +99,8 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         super(nvshmem, self).__init__(**kwargs)
 
+        self.__build_examples = kwargs.pop('build_examples', False)
+        self.__build_packages = kwargs.pop('build_packages', False)
         self.__cmake_opts = kwargs.pop('cmake_opts', [])
         self.__cuda = kwargs.pop('cuda', '/usr/local/cuda')
         self.__gdrcopy = kwargs.pop('gdrcopy', None)
@@ -137,6 +145,14 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     def __configure(self):
         """Setup build options based on user parameters"""
+
+        if self.__build_examples is False:
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_EXAMPLES=OFF')
+
+        if self.__build_packages is False:
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_PACKAGES=OFF')
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_DEB_PACKAGES=OFF')
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_RPM_PACKAGES=OFF')
 
         if self.__cuda:
             self.__cmake_opts.append('-DCUDA_HOME={}'.format(self.__cuda))
