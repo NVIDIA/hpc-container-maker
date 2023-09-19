@@ -37,56 +37,18 @@ class Test_nvshmem(unittest.TestCase):
         """nvshmem defaults"""
         n = nvshmem()
         self.assertEqual(str(n),
-r'''# NVSHMEM 2.2.1
+r'''# NVSHMEM 2.9.0-2
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.2.1/source/nvshmem_src_2.2.1-0.txz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.2.1-0.txz -C /var/tmp -J && \
-    cd /var/tmp/nvshmem_src_2.2.1-0 && \
-    CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
-    rm -rf /var/tmp/nvshmem_src_2.2.1-0 /var/tmp/nvshmem_src_2.2.1-0.txz
-ENV CPATH=/usr/local/nvshmem/include:$CPATH \
-    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
-    LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
-    PATH=/usr/local/nvshmem/bin:$PATH''')
-
-    @ubuntu
-    @docker
-    def test_binary_tarball_ubuntu(self):
-        """nvshmem binary tarball"""
-        n = nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
-        self.assertEqual(str(n),
-r'''# NVSHMEM
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        make \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-COPY nvshmem_0.4.1-0+cuda10_x86_64.txz /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
-RUN mkdir -p /usr/local/nvshmem && tar -x -f /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz -C /usr/local/nvshmem -J --strip-components=1 && \
-    rm -rf /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
-ENV CPATH=/usr/local/nvshmem/include:$CPATH \
-    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
-    LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
-    PATH=/usr/local/nvshmem/bin:$PATH''')
-
-    @centos
-    @docker
-    def test_binary_tarball_centos(self):
-        """nvshmem binary tarball"""
-        n = nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
-        self.assertEqual(str(n),
-r'''# NVSHMEM
-RUN yum install -y \
-        make \
-        wget && \
-    rm -rf /var/cache/yum/*
-COPY nvshmem_0.4.1-0+cuda10_x86_64.txz /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
-RUN mkdir -p /usr/local/nvshmem && tar -x -f /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz -C /usr/local/nvshmem -J --strip-components=1 && \
-    rm -rf /var/tmp/nvshmem_0.4.1-0+cuda10_x86_64.txz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.9.0/source/nvshmem_src_2.9.0-2.txz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.txz -C /var/tmp -J && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda /var/tmp/nvshmem_src_2.9.0-2 && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
@@ -96,7 +58,7 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     @docker
     def test_package_ubuntu(self):
         """nvshmem source package"""
-        n = nvshmem(package='nvshmem_src_2.1.2-0.txz')
+        n = nvshmem(package='nvshmem_src_2.9.0-2.tar.xz')
         self.assertEqual(str(n),
 r'''# NVSHMEM
 RUN apt-get update -y && \
@@ -104,11 +66,12 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-COPY nvshmem_src_2.1.2-0.txz /var/tmp/nvshmem_src_2.1.2-0.txz
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
-    cd /var/tmp/nvshmem_src_2.1.2-0 && \
-    CUDA_HOME=/usr/local/cuda NVSHMEM_MPI_SUPPORT=0 NVSHMEM_PREFIX=/usr/local/nvshmem make -j$(nproc) install && \
-    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
+COPY nvshmem_src_2.9.0-2.tar.xz /var/tmp/nvshmem_src_2.9.0-2.tar.xz
+RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.tar.xz -C /var/tmp -J && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda /var/tmp/nvshmem_src_2.9.0-2 && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.tar.xz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
@@ -116,28 +79,26 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 
     @centos
     @docker
-    def test_package_options_centos(self):
-        """nvshmem source package with all options"""
-        n = nvshmem(gdrcopy='/usr/local/gdrcopy', hydra=True,
-                    make_variables={
-                        'NVCC_GENCODE': '-gencode=arch=compute_70,code=sm_70',
-                        'NVSHMEM_VERBOSE': 1},
+    def test_cmake_options_centos(self):
+        """nvshmem with cmake options"""
+        n = nvshmem(cmake_opts=['-DNVSHMEM_USE_NCCL=1',
+                                '-DNVSHMEM_UCX_SUPPORT=1'],
+                    gdrcopy='/usr/local/gdrcopy',
                     mpi='/usr/local/openmpi',
-                    package='nvshmem_src_2.1.2-0.txz',
-                    shmem='/usr/local/openmpi')
+                    shmem='/usr/local/openmpi',
+                    version='2.9.0-2')
         self.assertEqual(str(n),
-r'''# NVSHMEM
+r'''# NVSHMEM 2.9.0-2
 RUN yum install -y \
-        automake \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-COPY nvshmem_src_2.1.2-0.txz /var/tmp/nvshmem_src_2.1.2-0.txz
-RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.1.2-0.txz -C /var/tmp -J && \
-    cd /var/tmp/nvshmem_src_2.1.2-0 && \
-    CUDA_HOME=/usr/local/cuda GDRCOPY_HOME=/usr/local/gdrcopy MPI_HOME=/usr/local/openmpi NVCC_GENCODE=-gencode=arch=compute_70,code=sm_70 NVSHMEM_MPI_SUPPORT=1 NVSHMEM_PREFIX=/usr/local/nvshmem NVSHMEM_SHMEM_SUPPORT=1 NVSHMEM_VERBOSE=1 SHMEM_HOME=/usr/local/openmpi make -j$(nproc) install && \
-    ./scripts/install_hydra.sh /var/tmp /usr/local/nvshmem && \
-    rm -rf /var/tmp/nvshmem_src_2.1.2-0 /var/tmp/nvshmem_src_2.1.2-0.txz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.9.0/source/nvshmem_src_2.9.0-2.txz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.txz -C /var/tmp -J && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_USE_NCCL=1 -DNVSHMEM_UCX_SUPPORT=1 -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DGDRCOPY_HOME=/usr/local/gdrcopy -DNVSHMEM_MPI_SUPPORT= 1 -DMPI_HOME=/usr/local/openmpi -DNVSHMEM_SHMEM_SUPPORT=1 -DSHMEM_HOME=/usr/local/openmpi /var/tmp/nvshmem_src_2.9.0-2 && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.txz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
@@ -145,23 +106,9 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
 
     @ubuntu
     @docker
-    def test_binary_runtime(self):
+    def test_runtime(self):
         """Runtime"""
-        n = nvshmem(binary_tarball='nvshmem_0.4.1-0+cuda10_x86_64.txz')
-        r = n.runtime()
-        self.assertEqual(r,
-r'''# NVSHMEM
-COPY --from=0 /usr/local/nvshmem /usr/local/nvshmem
-ENV CPATH=/usr/local/nvshmem/include:$CPATH \
-    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
-    LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
-    PATH=/usr/local/nvshmem/bin:$PATH''')
-
-    @ubuntu
-    @docker
-    def test_source_runtime(self):
-        """Runtime"""
-        n = nvshmem(package='nvshmem_src_2.1.2-0.txz')
+        n = nvshmem()
         r = n.runtime()
         self.assertEqual(r,
 r'''# NVSHMEM
