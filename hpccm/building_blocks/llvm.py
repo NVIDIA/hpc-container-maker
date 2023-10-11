@@ -104,7 +104,7 @@ class llvm(bb_base, hpccm.templates.envvars):
         self.__runtime_rpms = []   # Filled in below
         self.__toolset = kwargs.get('toolset', False)
         # Current LLVM trunk version
-        self.__trunk_version = kwargs.get('_trunk_version', '17')
+        self.__trunk_version = kwargs.get('_trunk_version', '18')
         self.__upstream = kwargs.get('upstream', False)
         self.__version = kwargs.get('version', None)
 
