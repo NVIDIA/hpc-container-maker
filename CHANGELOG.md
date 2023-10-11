@@ -1,3 +1,10 @@
+# v23.10.0
+- Refreshes default component versions for HPC-X (`hpcx`), LLVM (`llvm`),
+  Mellanox OFED (`mlnx_ofed`), NVIDIA HPC SDK (`nvhpc`), and NVSHMEM
+  (`nvshmem`) building blocks.
+- Modifies the NVSHMEM (`nvshmem`) building block to build with CMake.
+- Removes testing with Python 2.
+
 # v23.5.0
 - Add the ability to export the build environment to the generic
   Autotools building block (`generic_autotools`).
