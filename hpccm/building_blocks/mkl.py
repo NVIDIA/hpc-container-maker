@@ -93,7 +93,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
         self.__mklvars = kwargs.get('mklvars', True)
         self.__ospackages = kwargs.get('ospackages', [])
         self.__version = kwargs.get('version', '2020.0-088')
-        self.__year = '2019' # Also used by 2018 and 2020 versions
+        self.__year = '2023'
 
         self.__bashrc = ''      # Filled in by __distro()
 
