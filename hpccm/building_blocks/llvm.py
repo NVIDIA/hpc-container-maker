@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion, StrictVersion
+from packaging.version import Version
 import logging
 
 import hpccm.config
@@ -133,7 +133,7 @@ class llvm(bb_base, hpccm.templates.envvars):
                 self.__version = self.__trunk_version
 
             if self.__version:
-                if LooseVersion(self.__version) <= LooseVersion('6.0'):
+                if Version(self.__version) <= Version('6.0'):
                     self.__compiler_debs = ['clang-{}'.format(self.__version)]
                     self.__runtime_debs = [
                         'libclang1-{}'.format(self.__version)]
@@ -236,7 +236,7 @@ class llvm(bb_base, hpccm.templates.envvars):
             compiler_version = ''
 
             if self.__version:
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
                     # Multiple versions are not available for CentOS 8
                     self.__compiler_rpms = ['clang', 'llvm-libs']
                     self.__runtime_rpms = ['llvm-libs']
@@ -278,7 +278,7 @@ class llvm(bb_base, hpccm.templates.envvars):
             else:
                 # Distro default
                 self.__compiler_rpms = ['clang']
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
                     # CentOS 8
                     self.__runtime_rpms = ['llvm-libs']
                     compiler_version = '8'
@@ -342,29 +342,29 @@ class llvm(bb_base, hpccm.templates.envvars):
         codename = 'xenial'
         codename_ver = 'xenial'
 
-        if (hpccm.config.g_linux_version >= StrictVersion('22.0') and
-            hpccm.config.g_linux_version < StrictVersion('23.0')):
+        if (hpccm.config.g_linux_version >= Version('22.0') and
+            hpccm.config.g_linux_version < Version('23.0')):
             codename = 'jammy'
             if self.__version == self.__trunk_version:
                 codename_ver = 'jammy'
             else:
                 codename_ver = 'jammy-{}'.format(self.__version)
-        elif (hpccm.config.g_linux_version >= StrictVersion('20.0') and
-            hpccm.config.g_linux_version < StrictVersion('21.0')):
+        elif (hpccm.config.g_linux_version >= Version('20.0') and
+            hpccm.config.g_linux_version < Version('21.0')):
             codename = 'focal'
             if self.__version == self.__trunk_version:
                 codename_ver = 'focal'
             else:
                 codename_ver = 'focal-{}'.format(self.__version)
-        elif (hpccm.config.g_linux_version >= StrictVersion('18.0') and
-            hpccm.config.g_linux_version < StrictVersion('19.0')):
+        elif (hpccm.config.g_linux_version >= Version('18.0') and
+            hpccm.config.g_linux_version < Version('19.0')):
             codename = 'bionic'
             if self.__version == self.__trunk_version:
                 codename_ver = 'bionic'
             else:
                 codename_ver = 'bionic-{}'.format(self.__version)
-        elif (hpccm.config.g_linux_version >= StrictVersion('16.0') and
-              hpccm.config.g_linux_version < StrictVersion('17.0')):
+        elif (hpccm.config.g_linux_version >= Version('16.0') and
+              hpccm.config.g_linux_version < Version('17.0')):
             codename = 'xenial'
             if self.__version == self.__trunk_version:
                 codename_ver = 'xenial'

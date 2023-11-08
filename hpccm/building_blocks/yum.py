@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -153,7 +153,7 @@ class yum(bb_base):
         # Use yum version 4 is requested.  yum 4 is the default on
         # CentOS 8.
         yum = 'yum'
-        if self.__yum4 and hpccm.config.g_linux_version < StrictVersion('8.0'):
+        if self.__yum4 and hpccm.config.g_linux_version < Version('8.0'):
             self.__commands.append('yum install -y nextgen-yum4')
             yum = 'yum4'
 
@@ -163,7 +163,7 @@ class yum(bb_base):
 
         if self.__repositories:
             # Need yum-config-manager
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 # CentOS 8
                 self.__commands.append('yum install -y dnf-utils')
             else:
@@ -184,7 +184,7 @@ class yum(bb_base):
             self.__commands.append('yum install -y epel-release')
 
         if (self.__powertools and
-            hpccm.config.g_linux_version >= StrictVersion('8.0')):
+            hpccm.config.g_linux_version >= Version('8.0')):
             # This needs to be a discrete, preliminary step so that
             # packages from PowerTools are available to be installed.
             if not self.__repositories:
@@ -194,13 +194,13 @@ class yum(bb_base):
             self.__commands.append('yum-config-manager --set-enabled powertools')
 
         if (self.__release_stream and
-            hpccm.config.g_linux_version >= StrictVersion('8.0')):
+            hpccm.config.g_linux_version >= Version('8.0')):
             # This needs to be a discrete, preliminary step so that
             # packages from release stream are available to be installed.
             self.__commands.append('yum install -y centos-release-stream')
 
         if (self.__scl and
-            hpccm.config.g_linux_version < StrictVersion('8.0')):
+            hpccm.config.g_linux_version < Version('8.0')):
             # This needs to be a discrete, preliminary step so that
             # packages from SCL are available to be installed.
             self.__commands.append('yum install -y centos-release-scl')

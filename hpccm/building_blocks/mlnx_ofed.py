@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion, StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -163,22 +163,29 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         """Based on the Linux distribution, set values accordingly.  A user
            specified value overrides any defaults."""
 
+        # packaging.version.Version cannot handle version strings like
+        # 5.0-1.2.3.4.  Only the part before the dash is needed, so
+        # get the first half.
+        version_nodash = self.__version
+        if '-' in self.__version:
+            version_nodash = self.__version.split('-')[0]
+
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             self.__deppackages = ['libnl-3-200', 'libnl-route-3-200',
                                  'libnuma1']
 
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                if hpccm.config.g_linux_version >= Version('22.0'):
                     self.__oslabel = 'ubuntu22.04'
-                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                elif hpccm.config.g_linux_version >= Version('20.0'):
                     self.__oslabel = 'ubuntu20.04'
-                elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                elif hpccm.config.g_linux_version >= Version('18.0'):
                     self.__oslabel = 'ubuntu18.04'
                 else:
                     self.__oslabel = 'ubuntu16.04'
 
             if not self.__packages:
-                if LooseVersion(self.__version) >= LooseVersion('5.0'):
+                if Version(version_nodash) >= Version('5.0'):
                     # Uses UPSTREAM libs
                     self.__packages = ['libibverbs1', 'libibverbs-dev',
                                        'ibverbs-providers', 'ibverbs-utils',
@@ -196,13 +203,13 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                                        'librdmacm-dev', 'librdmacm1']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 self.__deppackages = ['libnl3', 'numactl-libs']
             else:
                 self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
 
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
                     self.__oslabel = 'rhel8.0'
                 else:
                     if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
@@ -211,7 +218,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                         self.__oslabel = 'rhel7.2'
 
             if not self.__packages:
-                if LooseVersion(self.__version) >= LooseVersion('5.0'):
+                if Version(version_nodash) >= Version('5.0'):
                     # Uses UPSTREAM libs
                     self.__packages = ['libibverbs', 'libibverbs-utils',
                                        'libibumad', 'librdmacm',

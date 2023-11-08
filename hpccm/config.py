@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import archspec.cpu
 import logging
 import platform
@@ -41,8 +41,8 @@ elif platform.machine() == 'ppc64le':
 g_cpu_target = None                  # CPU optimization target
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
-g_linux_version = StrictVersion('16.04') # Linux distribution version
-g_singularity_version = StrictVersion('2.6') # Singularity version
+g_linux_version = Version('16.04') # Linux distribution version
+g_singularity_version = Version('2.6') # Singularity version
 g_wd = '/var/tmp' # Working directory
 
 def get_cpu_architecture():
@@ -182,44 +182,44 @@ def set_linux_distro(distro):
   this = sys.modules[__name__]
   if distro == 'centos':
     this.g_linux_distro = linux_distro.CENTOS
-    this.g_linux_version = StrictVersion('7.0')
+    this.g_linux_version = Version('7.0')
   elif distro == 'centos7':
     this.g_linux_distro = linux_distro.CENTOS
-    this.g_linux_version = StrictVersion('7.0')
+    this.g_linux_version = Version('7.0')
   elif distro == 'centos8':
     this.g_linux_distro = linux_distro.CENTOS
-    this.g_linux_version = StrictVersion('8.0')
+    this.g_linux_version = Version('8.0')
   elif distro == 'rhel':
     this.g_linux_distro = linux_distro.RHEL
-    this.g_linux_version = StrictVersion('7.0')
+    this.g_linux_version = Version('7.0')
   elif distro == 'rhel7':
     this.g_linux_distro = linux_distro.RHEL
-    this.g_linux_version = StrictVersion('7.0')
+    this.g_linux_version = Version('7.0')
   elif distro == 'rhel8':
     this.g_linux_distro = linux_distro.RHEL
-    this.g_linux_version = StrictVersion('8.0')
+    this.g_linux_version = Version('8.0')
   elif distro == 'rockylinux8':
     this.g_linux_distro = linux_distro.ROCKYLINUX
-    this.g_linux_version = StrictVersion('8.0')
+    this.g_linux_version = Version('8.0')
   elif distro == 'ubuntu':
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('16.04')
+    this.g_linux_version = Version('16.04')
   elif distro == 'ubuntu16':
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('16.04')
+    this.g_linux_version = Version('16.04')
   elif distro == 'ubuntu18':
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('18.04')
+    this.g_linux_version = Version('18.04')
   elif distro == 'ubuntu20':
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('20.04')
+    this.g_linux_version = Version('20.04')
   elif distro == 'ubuntu22':
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('22.04')
+    this.g_linux_version = Version('22.04')
   else:
     logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
     this.g_linux_distro = linux_distro.UBUNTU
-    this.g_linux_version = StrictVersion('16.04')
+    this.g_linux_version = Version('16.04')
 
 def set_singularity_version(ver):
   """Set the Singularity definition file format version
@@ -234,7 +234,7 @@ def set_singularity_version(ver):
 
   """
   this = sys.modules[__name__]
-  this.g_singularity_version = StrictVersion(ver)
+  this.g_singularity_version = Version(ver)
 
 def set_working_directory(wd):
   """Set the working directory to use for staging inside the container

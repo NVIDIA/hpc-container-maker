@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -183,7 +183,7 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Set download source based on user parameters"""
 
         # Version 1.11.0 changed the package name
-        if LooseVersion(self.__version) >= LooseVersion('1.11.0'):
+        if Version(self.__version) >= Version('1.11.0'):
             pkgname = 'pnetcdf'
         else:
             pkgname = 'parallel-netcdf'

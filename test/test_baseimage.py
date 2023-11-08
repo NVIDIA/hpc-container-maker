@@ -24,7 +24,7 @@ import unittest
 
 from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import hpccm.config
 
 from hpccm.primitives.baseimage import baseimage
@@ -144,91 +144,91 @@ From: foo.sif
         """Base image Linux distribution detection"""
         b = baseimage(image='ubuntu:sixteen')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_detect_ubuntu16(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-ubuntu16.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_detect_ubuntu18(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.2-devel-ubuntu18.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('18.04'))
 
     @docker
     def test_detect_ubuntu20(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:11.0-devel-ubuntu20.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
 
     @docker
     def test_detect_ubuntu_16(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='ubuntu:16.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_detect_ubuntu_18(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='ubuntu:18.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('18.04'))
 
     @docker
     def test_detect_ubuntu_20(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='ubuntu:20.04')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
 
     @docker
     def test_detect_centos(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-centos7')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
     @docker
     def test_detect_centos_7(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='centos:7')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
     @docker
     def test_detect_centos_8(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='centos:8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_detect_rockylinux_8(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='rockylinux/rockylinux:8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.ROCKYLINUX)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_detect_ubi7(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:10.1-devel-ubi7')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.RHEL)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
     @docker
     def test_detect_ubi8(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:10.1-devel-ubi8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.RHEL)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_detect_nonexistent(self):
@@ -243,7 +243,7 @@ From: foo.sif
 
         b = baseimage(image='nonexistent')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
         self.assertEqual(hpccm.config.g_cpu_arch, gold)
 
     @docker
@@ -251,56 +251,56 @@ From: foo.sif
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='ubuntu')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_distro_ubuntu16(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='ubuntu16')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_distro_ubuntu18(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='ubuntu18')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('18.04'))
 
     @docker
     def test_distro_ubuntu20(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='ubuntu20')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('20.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
 
     @docker
     def test_distro_centos(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='centos')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
     @docker
     def test_distro_centos7(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='centos7')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
     @docker
     def test_distro_centos8(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='centos8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_distro_nonexistent(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='nonexistent')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @docker
     def test_detect_aarch64(self):

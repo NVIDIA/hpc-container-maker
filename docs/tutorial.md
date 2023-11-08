@@ -308,15 +308,15 @@ specified using this option are inserted into a Python dictionary
 named `USERARG` that can be accessed inside a recipe.
 
 ```python
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 cuda_version = USERARG.get('cuda', '9.1')
-if StrictVersion(cuda_version) < StrictVersion('9.0'):
+if Version(cuda_version) < Version('9.0'):
   raise RuntimeError('invalid CUDA version: {}'.format(cuda_version))
 Stage0 += baseimage(image='nvidia/cuda:{}-devel-ubuntu16.04'.format(cuda_version))
 
 ompi_version = USERARG.get('ompi', '3.1.2')
-if not StrictVersion(ompi_version):
+if not Version(ompi_version):
   raise RuntimeError('invalid OpenMPI version: {}'.format(ompi_version))
 Stage0 += openmpi(infiniband=False, version=ompi_version)
 ```
@@ -353,7 +353,7 @@ provide equivalent functionality.
 #!/usr/bin/env python
 
 from __future__ import print_function
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 import argparse
 import hpccm
@@ -372,11 +372,11 @@ args = parser.parse_args()
 
 Stage0 = hpccm.Stage()
 
-if StrictVersion(args.cuda) < StrictVersion('9.0'):
+if Version(args.cuda) < Version('9.0'):
   raise RuntimeError('invalid CUDA version: {}'.format(args.cuda))
 Stage0 += baseimage(image='nvidia/cuda:{}-devel-ubuntu16.04'.format(args.cuda))
 
-if not StrictVersion(args.ompi):
+if not Version(args.ompi):
   raise RuntimeError('invalid OpenMPI version: {}'.format(args.ompi))
 Stage0 += openmpi(infiniband=False, version=args.ompi)
 

@@ -5,11 +5,11 @@ $ hpccm --recipe nvhpc.py --userarg eula=yes
 
 $ hpccm --recipe nvhpc.py --userarg eula=yes cuda_multi=no arch=x86_64
 """
-from distutils.version import StrictVersion
+from packaging.version import Version
 import platform
 
 # Verify correct version of HPCCM is used
-if StrictVersion(hpccm.__version__) < StrictVersion('21.7.0'):
+if Version(hpccm.__version__) < Version('21.7.0'):
   raise RuntimeError('requires HPCCM version 21.7.0 or later')
 
 arch = USERARG.get('arch', platform.machine())

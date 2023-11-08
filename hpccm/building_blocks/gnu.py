@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -345,11 +345,11 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
             # Set libfortran version depending on the Ubuntu version
             if self.__fortran:
                 if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                    if hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                    if hpccm.config.g_linux_version >= Version('20.0'):
                         self.__runtime_debs.append('libgfortran5')
-                    elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                    elif hpccm.config.g_linux_version >= Version('18.0'):
                         self.__runtime_debs.append('libgfortran4')
-                    elif hpccm.config.g_linux_version >= StrictVersion('16.0'):
+                    elif hpccm.config.g_linux_version >= Version('16.0'):
                         self.__runtime_debs.append('libgfortran3')
                     else: # pragma: no cover
                         raise RuntimeError('Unrecognized Ubuntu version')
@@ -374,7 +374,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                     # Default for CentOS 7
                     toolset_path = '/opt/rh/devtoolset-{}/root/usr/bin'.format(
                         self.__version)
-                    if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                    if hpccm.config.g_linux_version >= Version('8.0'):
                         # CentOS 8
                         toolset_path = '/opt/rh/gcc-toolset-{}/root/usr/bin'.format(self.__version)
 
@@ -447,7 +447,7 @@ class gnu(bb_base, hpccm.templates.ConfigureMake, hpccm.templates.envvars,
                 '{0}-{1}'.format(x, self.__version)
                 for x in self.__compiler_debs]
 
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 # CentOS 8
                 self.__compiler_rpms = [
                     'gcc-toolset-{1}-{0}'.format(x, self.__version)

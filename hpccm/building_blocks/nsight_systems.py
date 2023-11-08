@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 import hpccm.config
 
@@ -122,17 +122,17 @@ class nsight_systems(bb_base):
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
                                      'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= StrictVersion('22.04'):
+            if hpccm.config.g_linux_version >= Version('22.04'):
                 self.__distro_label = 'ubuntu2204'
-            elif hpccm.config.g_linux_version >= StrictVersion('20.04'):
+            elif hpccm.config.g_linux_version >= Version('20.04'):
                 self.__distro_label = 'ubuntu2004'
-            elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
+            elif hpccm.config.g_linux_version >= Version('18.0'):
                 self.__distro_label = 'ubuntu1804'
             else:
                 self.__distro_label = 'ubuntu1604'
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 self.__distro_label = 'rhel8'
             else:
                 self.__distro_label = 'rhel7'

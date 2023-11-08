@@ -293,6 +293,7 @@ RUN rpm --import https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox &&
         """Runtime"""
         mofed = mlnx_ofed(version='5.0-2.1.8.0')
         r = mofed.runtime()
+        self.maxDiff = None
         self.assertEqual(r,
 r'''# Mellanox OFED version 5.0-2.1.8.0
 RUN apt-get update -y && \

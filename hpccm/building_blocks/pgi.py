@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 import re
 import posixpath
@@ -219,7 +219,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         pgi_path = posixpath.join(self.__basepath, self.__version)
         mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi')
-        if LooseVersion(self.__version) >= LooseVersion('19.4'):
+        if Version(self.__version) >= Version('19.4'):
             mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi-3.1.3')
 
         if runtime:
@@ -396,7 +396,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         pgi_path = posixpath.join(self.__basepath, self.__version)
         src_path = pgi_path
-        if (LooseVersion(self.__version) >= LooseVersion('19.4') and
+        if (Version(self.__version) >= Version('19.4') and
             hpccm.config.g_cpu_arch == cpu_arch.X86_64):
             # Too many levels of symlinks for the Docker builder to
             # handle, so use the real path
@@ -407,8 +407,8 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         # REDIST workaround for incorrect libcudaforwrapblas.so
         # symlink
-        if (LooseVersion(self.__version) >= LooseVersion('18.10') and
-            LooseVersion(self.__version) < LooseVersion('19.10') and
+        if (Version(self.__version) >= Version('18.10') and
+            Version(self.__version) < Version('19.10') and
             hpccm.config.g_cpu_arch == cpu_arch.X86_64):
             self.rt += copy(_from=_from,
                             src=posixpath.join(pgi_path, 'lib',
@@ -418,7 +418,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
 
         if self.__mpi:
             mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi')
-            if LooseVersion(self.__version) >= LooseVersion('19.4'):
+            if Version(self.__version) >= Version('19.4'):
                 mpi_path = posixpath.join(pgi_path, 'mpi', 'openmpi-3.1.3')
             self.rt += copy(_from=_from, src=mpi_path, dest=mpi_path)
 

@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from six import string_types
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -347,7 +347,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                                               'ca-certificates', 'git',
                                               'libtool'])
 
-            if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+            if hpccm.config.g_linux_version >= Version('18.0'):
                 self.__runtime_ospackages = ['libbinutils']
             else:
                 self.__runtime_ospackages = ['binutils']

@@ -15,10 +15,10 @@
 #  ucx (default: 1.6.1)
 ########
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import hpccm.version
 
-if StrictVersion(hpccm.__version__) < StrictVersion('19.11.0'):
+if Version(hpccm.__version__) < Version('19.11.0'):
   raise Exception('requires HPCCM version 19.11.0 or later')
 
 # Use appropriate container base images based on the CPU architecture

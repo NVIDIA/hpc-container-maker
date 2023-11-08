@@ -33,7 +33,7 @@ import hpccm.templates.wget
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
-from distutils.version import LooseVersion
+from packaging.version import Version
 from hpccm.primitives.comment import comment
 from hpccm.primitives.shell import shell
 from hpccm.primitives.environment import environment
@@ -122,7 +122,7 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         if not self.__source and hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             # Use the pre-compiled x86_64 binary
             self.__binary()
-        elif not self.__source and hpccm.config.g_cpu_arch == cpu_arch.AARCH64 and LooseVersion(self.__version) >= LooseVersion('3.20'):
+        elif not self.__source and hpccm.config.g_cpu_arch == cpu_arch.AARCH64 and Version(self.__version) >= Version('3.20'):
             # Use the pre-compiled aarch64 binary
             self.__binary()
         else:
@@ -135,11 +135,11 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
         runfile = 'cmake-{}-linux-x86_64.sh'
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             runfile = 'cmake-{}-linux-aarch64.sh'
-        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64 and LooseVersion(self.__version) < LooseVersion('3.20'):
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64 and Version(self.__version) < Version('3.20'):
             runfile = 'cmake-{}-Linux-x86_64.sh'
 
         runfile = runfile.format(self.__version)
-        if LooseVersion(self.__version) < LooseVersion('3.1'):
+        if Version(self.__version) < Version('3.1'):
             runfile = 'cmake-{}-Linux-i386.sh'.format(self.__version)
             # CMake releases of versions < 3.1 are only include 32-bit
             # binaries:

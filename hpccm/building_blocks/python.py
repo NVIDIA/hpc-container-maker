@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 import hpccm.config
 
@@ -75,7 +75,7 @@ class python(bb_base):
 
         if self.__python2:
             if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
-                hpccm.config.g_linux_version >= StrictVersion('22.0')):
+                hpccm.config.g_linux_version >= Version('22.0')):
                 self.__debs.append('python2')
             else:
                 self.__debs.append('python')
@@ -83,7 +83,7 @@ class python(bb_base):
 
             if self.__devel:
                 if (hpccm.config.g_linux_distro == linux_distro.UBUNTU and
-                    hpccm.config.g_linux_version >= StrictVersion('22.0')):
+                    hpccm.config.g_linux_version >= Version('22.0')):
                     self.__debs.append('python2-dev')
                 else:
                     self.__debs.append('python-dev')

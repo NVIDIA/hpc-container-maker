@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import logging
 import posixpath
 
@@ -152,7 +152,7 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        if LooseVersion(self.__version) >= LooseVersion('4.8'):
+        if Version(self.__version) >= Version('4.8'):
             miniconda = 'Miniconda{0}-{1}_{2}-Linux-{3}.sh'.format(
                 self.__python_version, self.__python_subversion,
                 self.__version, self.__arch_pkg)
