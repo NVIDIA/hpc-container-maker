@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging
 import re
 import posixpath
@@ -182,27 +182,27 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
 
-        if StrictVersion(self.__version) >= StrictVersion('23.7'):
+        if Version(self.__version) >= Version('23.7'):
             self.__cuda_version_default = '12.2'
-        elif StrictVersion(self.__version) >= StrictVersion('23.5'):
+        elif Version(self.__version) >= Version('23.5'):
             self.__cuda_version_default = '12.1'
-        if StrictVersion(self.__version) >= StrictVersion('23.1'):
+        if Version(self.__version) >= Version('23.1'):
             self.__cuda_version_default = '12.0'
-        elif StrictVersion(self.__version) >= StrictVersion('22.11'):
+        elif Version(self.__version) >= Version('22.11'):
             self.__cuda_version_default = '11.8'
-        elif StrictVersion(self.__version) >= StrictVersion('22.5'):
+        elif Version(self.__version) >= Version('22.5'):
             self.__cuda_version_default = '11.7'
-        elif StrictVersion(self.__version) >= StrictVersion('22.2'):
+        elif Version(self.__version) >= Version('22.2'):
             self.__cuda_version_default = '11.6'
-        elif StrictVersion(self.__version) >= StrictVersion('21.11'):
+        elif Version(self.__version) >= Version('21.11'):
             self.__cuda_version_default = '11.5'
-        elif StrictVersion(self.__version) >= StrictVersion('21.7'):
+        elif Version(self.__version) >= Version('21.7'):
             self.__cuda_version_default = '11.4'
-        elif StrictVersion(self.__version) >= StrictVersion('21.5'):
+        elif Version(self.__version) >= Version('21.5'):
             self.__cuda_version_default = '11.3'
-        elif StrictVersion(self.__version) >= StrictVersion('21.2'):
+        elif Version(self.__version) >= Version('21.2'):
             self.__cuda_version_default = '11.2'
-        elif StrictVersion(self.__version) >= StrictVersion('20.11'):
+        elif Version(self.__version) >= Version('20.11'):
             self.__cuda_version_default = '11.1'
         else:
             self.__cuda_version_default = '11.0'
@@ -249,7 +249,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self += shell(commands=self.__commands)
         else:
             # repository install
-            if StrictVersion(self.__version) >= StrictVersion('22.9'):
+            if Version(self.__version) >= Version('22.9'):
                 # signed packages
                 self += packages(
                     apt_keys=['https://developer.download.nvidia.com/hpc-sdk/ubuntu/DEB-GPG-KEY-NVIDIA-HPC-SDK'],
@@ -292,7 +292,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 self.__arch_label = 'arm64'
             else:
                 self.__arch_label = 'aarch64'
-            if StrictVersion(self.__version) < StrictVersion('20.11'):
+            if Version(self.__version) < Version('20.11'):
                 self.__cuda_multi = False # CUDA multi packages not available
         elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_directory = 'Linux_ppc64le'
@@ -395,20 +395,20 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
             path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'))
-        elif self.__hpcx and StrictVersion(self.__version) >= StrictVersion('23.5'):
+        elif self.__hpcx and Version(self.__version) >= Version('23.5'):
             path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'hpcx', 'bin'))
         elif self.__hpcx:
             # Set environment for HPC-X
-            if StrictVersion(self.__version) >= StrictVersion('22.2'):
+            if Version(self.__version) >= Version('22.2'):
                 hpcx_version = 'latest'
-            elif StrictVersion(self.__version) >= StrictVersion('21.11'):
+            elif Version(self.__version) >= Version('21.11'):
                 hpcx_version = 'hpcx-2.10.beta'
-            elif StrictVersion(self.__version) >= StrictVersion('21.9'):
+            elif Version(self.__version) >= Version('21.9'):
                 hpcx_version = 'hpcx-2.9.0'
-            elif StrictVersion(self.__version) >= StrictVersion('21.7'):
+            elif Version(self.__version) >= Version('21.7'):
                 hpcx_version = 'hpcx-2.8.1'
-            elif StrictVersion(self.__version) < StrictVersion('21.5'):
+            elif Version(self.__version) < Version('21.5'):
               hpcx_version = 'hpcx-2.7.4'
             hpcx_dir = posixpath.join(self.__basepath, 'comm_libs', 'hpcx',
                                       hpcx_version)

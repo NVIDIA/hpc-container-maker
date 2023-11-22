@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from six import raise_from
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging
 import os
 import sys
@@ -139,7 +139,7 @@ def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
     hpccm.config.g_ctype = ctype
 
     # Set the global Singularity version
-    hpccm.config.g_singularity_version = StrictVersion(singularity_version)
+    hpccm.config.g_singularity_version = Version(singularity_version)
 
     # Set the global working directory
     hpccm.config.g_wd = working_directory
@@ -158,7 +158,7 @@ def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
         del stages[1:]
     elif len(Stage1) > 0:
         if (ctype == container_type.SINGULARITY and
-            hpccm.config.g_singularity_version < StrictVersion('3.2')):
+            hpccm.config.g_singularity_version < Version('3.2')):
             # Singularity prior to version 3.2 did not support
             # multi-stage builds.  If the Singularity version is not
             # sufficient to support multi-stage, provide advice to

@@ -19,7 +19,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 import unittest
 
@@ -56,17 +56,17 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_linux_distro('ubuntu')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
         hpccm.config.set_linux_distro('ubuntu16')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
         hpccm.config.set_linux_distro('ubuntu18')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('18.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('18.04'))
 
     @docker
     def test_set_linux_distro_centos(self):
@@ -74,17 +74,17 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_linux_distro('centos')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
         hpccm.config.set_linux_distro('centos7')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
         hpccm.config.set_linux_distro('centos8')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.CENTOS)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_set_linux_distro_rhel(self):
@@ -92,17 +92,17 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_linux_distro('rhel')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.RHEL)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
         hpccm.config.set_linux_distro('rhel7')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.RHEL)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('7.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('7.0'))
 
         hpccm.config.set_linux_distro('rhel8')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.RHEL)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_set_linux_distro_rockylinux(self):
@@ -110,7 +110,7 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_linux_distro('rockylinux8')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.ROCKYLINUX)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('8.0'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
 
     @docker
     def test_set_linux_distro_invalid(self):
@@ -118,14 +118,13 @@ class Test_config(unittest.TestCase):
         hpccm.config.set_linux_distro('invalid')
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.UBUNTU)
-        self.assertEqual(hpccm.config.g_linux_version, StrictVersion('16.04'))
+        self.assertEqual(hpccm.config.g_linux_version, Version('16.04'))
 
     @singularity
     def test_set_singularity_version(self):
         """Set Singularity version"""
         hpccm.config.set_singularity_version('10.0')
-        self.assertEqual(hpccm.config.g_singularity_version,
-                         StrictVersion('10.0'))
+        self.assertEqual(hpccm.config.g_singularity_version, Version('10.0'))
 
     @docker
     def test_set_cpu_architecture_aarch64(self):

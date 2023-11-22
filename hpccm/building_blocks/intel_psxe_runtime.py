@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 import posixpath
 
@@ -256,7 +256,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
                                                   'lib'))
             path.append(posixpath.join(basepath, 'mpi', 'intel64', 'bin'))
 
-            if LooseVersion(self.__version) >= LooseVersion('2019'):
+            if Version(self.__version) >= Version('2019'):
                 env['FI_PROVIDER_PATH'] = posixpath.join(
                     basepath, 'mpi', 'intel64', 'libfabric', 'lib', 'prov')
                 ld_library_path.append(posixpath.join(
@@ -264,7 +264,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
                 path.append(posixpath.join(basepath, 'mpi', 'intel64',
                                            'libfabric', 'bin'))
 
-            if LooseVersion(self.__version) >= LooseVersion('2020'):
+            if Version(self.__version) >= Version('2020'):
                 ld_library_path.append(posixpath.join(
                     basepath, 'mpi', 'intel64', 'lib', 'release'))
 

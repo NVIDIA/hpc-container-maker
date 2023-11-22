@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging
 import posixpath
 import re
@@ -168,11 +168,11 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         specified value overrides any defaults."""
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-            if StrictVersion(self.__version) <= StrictVersion('20.3'):
+            if Version(self.__version) <= Version('20.3'):
                 self.__directory_string = 'Ubuntu-16.04'
                 self.__package_string = 'Ubuntu-16.04'
                 self.__url_string = 'Ubuntu16.04'
-            elif hpccm.config.g_linux_version <= StrictVersion('18.04'):
+            elif hpccm.config.g_linux_version <= Version('18.04'):
                 self.__directory_string = 'Ubuntu-18.04'
                 self.__package_string = 'Ubuntu-18.04'
                 self.__url_string = "ACfL"
@@ -182,7 +182,7 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                 self.__url_string = "ACfL"
 
             self.__installer_template = 'arm-compiler-for-linux_{{}}_{0}.sh'.format(self.__directory_string)
-            if  hpccm.config.g_linux_version >= StrictVersion('22.04'):
+            if  hpccm.config.g_linux_version >= Version('22.04'):
                 python2_package = "python2"
             else:
                 python2_package = "python"
@@ -191,17 +191,17 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
                                      'tcl', 'wget']
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 self.__directory_string = 'RHEL-8'
                 self.__package_string = 'RHEL-8'
-                if StrictVersion(self.__version) <= StrictVersion('20.3'):
+                if Version(self.__version) <= Version('20.3'):
                     self.__url_string = 'RHEL8'
                 else:
                     self.__url_string = 'ACfL'
             else:
                 self.__directory_string = 'RHEL-7'
                 self.__package_string = 'RHEL-7'
-                if StrictVersion(self.__version) <= StrictVersion('20.3'):
+                if Version(self.__version) <= Version('20.3'):
                     self.__url_string = 'RHEL7'
                 else:
                     self.__url_string = 'ACfL'
@@ -252,10 +252,10 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         install_args = ['--install-to {}'.format(self.__prefix)]
         if self.__eula:
             install_args.append('--accept')
-        if self.__microarchitectures and StrictVersion(self.__version) <= StrictVersion('20.3'):
+        if self.__microarchitectures and Version(self.__version) <= Version('20.3'):
             install_args.append('--only-install-microarchitectures={}'.format(
                 ','.join(self.__microarchitectures)))
-        if StrictVersion(self.__version) >= StrictVersion("21.1"):
+        if Version(self.__version) >= Version("21.1"):
             arch_string = ""
         else:
             arch_string = "_aarch64"

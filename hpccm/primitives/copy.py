@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging  # pylint: disable=unused-import
 import posixpath
 
@@ -174,7 +174,7 @@ class copy(object):
             if (not self.__from and
                 any(f['dest'].startswith(('/var/tmp', '/tmp')) for f in files)):
                 msg = 'Singularity 3.6 and later no longer allow a temporary directory to be used to stage files into the container image.  Modify the recipe or, in many cases, use --working-directory or hpccm.config.set_working_directory() to specify another location.'
-                if hpccm.config.g_singularity_version >= StrictVersion('3.6'):
+                if hpccm.config.g_singularity_version >= Version('3.6'):
                     raise RuntimeError(msg)
                 else:
                     logging.warning(msg)
@@ -190,7 +190,7 @@ class copy(object):
             #     src3 dest3
             section = '%files'
             if (self.__from and
-                hpccm.config.g_singularity_version >= StrictVersion('3.2')):
+                hpccm.config.g_singularity_version >= Version('3.2')):
                 section = section + ' from {}'.format(self.__from)
 
             if self._app:

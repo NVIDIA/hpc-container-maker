@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 import re
 
@@ -175,7 +175,7 @@ class baseimage(object):
                                                        self.image)
 
             if (self.__as and
-                hpccm.config.g_singularity_version >= StrictVersion('3.2')):
+                hpccm.config.g_singularity_version >= Version('3.2')):
                 image = image + '\nStage: {}'.format(self.__as)
 
                 image = str(comment('NOTE: this definition file depends on features only available in Singularity 3.2 and later.')) + '\n' + image

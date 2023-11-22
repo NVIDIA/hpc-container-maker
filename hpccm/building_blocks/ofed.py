@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -110,12 +110,12 @@ class ofed(bb_base):
             self.__deppackages = ['libnl-3-200', 'libnl-route-3-200',
                                  'libnuma1']
 
-            if hpccm.config.g_linux_version >= StrictVersion('18.0'):
+            if hpccm.config.g_linux_version >= Version('18.0'):
                 # Give priority to packages from the Ubuntu repositories over
                 # vendor repositories
-                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                if hpccm.config.g_linux_version >= Version('22.0'):
                     self.__extra_opts = ['-t jammy']
-                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                elif hpccm.config.g_linux_version >= Version('20.0'):
                     self.__extra_opts = ['-t focal']
                 else:
                     self.__extra_opts = ['-t bionic']
@@ -158,7 +158,7 @@ class ofed(bb_base):
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             self.__extra_opts = [r'--disablerepo=mlnx\*']
 
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 self.__deppackages = ['libnl3', 'numactl-libs']
                 self.__ospackages = ['libibmad', 'libibmad-devel',
                                      'libibumad', 'libibverbs',

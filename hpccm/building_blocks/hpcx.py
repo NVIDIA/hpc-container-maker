@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 import re
 
@@ -152,25 +152,25 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__buildlabel:
-            if StrictVersion(self.__version) >= StrictVersion('2.16'):
+            if Version(self.__version) >= Version('2.16'):
                 self.__buildlabel = 'cuda12-gdrcopy2-nccl2.18'
-            elif StrictVersion(self.__version) >= StrictVersion('2.15'):
+            elif Version(self.__version) >= Version('2.15'):
                 self.__buildlabel = 'cuda12-gdrcopy2-nccl2.17'
-            elif StrictVersion(self.__version) >= StrictVersion('2.14'):
+            elif Version(self.__version) >= Version('2.14'):
                 self.__buildlabel = 'cuda11-gdrcopy2-nccl2.16'
-            elif StrictVersion(self.__version) >= StrictVersion('2.12'):
+            elif Version(self.__version) >= Version('2.12'):
                 self.__buildlabel = 'cuda11-gdrcopy2-nccl2.12'
-            elif StrictVersion(self.__version) >= StrictVersion('2.10'):
+            elif Version(self.__version) >= Version('2.10'):
                 self.__buildlabel = 'cuda11-gdrcopy2-nccl2.11'
 
         if not self.__mlnx_ofed:
-            if StrictVersion(self.__version) >= StrictVersion('2.10'):
+            if Version(self.__version) >= Version('2.10'):
                 self.__mlnx_ofed = '5'
             else:
                 self.__mlnx_ofed = '5.2-2.2.0.0'
 
         if not self.__ofedlabel:
-            if StrictVersion(self.__version) >= StrictVersion('2.16'):
+            if Version(self.__version) >= Version('2.16'):
                 self.__ofedlabel = 'gcc-mlnx_ofed'
             else:
                 self.__ofedlabel = 'gcc-MLNX_OFED_LINUX-{}'.format(self.__mlnx_ofed)
@@ -202,11 +202,11 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('22.0'):
+                if hpccm.config.g_linux_version >= Version('22.0'):
                     self.__oslabel = 'ubuntu22.04'
-                elif hpccm.config.g_linux_version >= StrictVersion('20.0'):
+                elif hpccm.config.g_linux_version >= Version('20.0'):
                     self.__oslabel = 'ubuntu20.04'
-                elif hpccm.config.g_linux_version >= StrictVersion('18.0'):
+                elif hpccm.config.g_linux_version >= Version('18.0'):
                     self.__oslabel = 'ubuntu18.04'
                 else:
                     self.__oslabel = 'ubuntu16.04'
@@ -218,13 +218,13 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
-                    if StrictVersion(self.__version) >= StrictVersion('2.10'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
+                    if Version(self.__version) >= Version('2.10'):
                         self.__oslabel = 'redhat8'
                     else:
                         self.__oslabel = 'redhat8.0'
                 else:
-                    if StrictVersion(self.__version) >= StrictVersion('2.10'):
+                    if Version(self.__version) >= Version('2.10'):
                         self.__oslabel = 'redhat7'
                     else:
                         self.__oslabel = 'redhat7.6'
@@ -246,7 +246,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         # MAJOR.MINOR.REVISION, so pull apart the full version to get
         # the individual components.
         version_string = self.__version
-        if StrictVersion(self.__version) <= StrictVersion('2.8'):
+        if Version(self.__version) <= Version('2.8'):
             match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<revision>\d+)',
                              self.__version)
             version_string = '{0}.{1}'.format(match.groupdict()['major'],
@@ -254,7 +254,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if self.__inbox:
             # Use inbox OFED
-            if StrictVersion(self.__version) >= StrictVersion('2.10'):
+            if Version(self.__version) >= Version('2.10'):
                 # Version 2.11 and later include an extra label
                 self.__label = 'hpcx-v{0}-gcc-inbox-{1}-{2}-{3}'.format(
                     self.__version, self.__oslabel, self.__buildlabel,
@@ -264,7 +264,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                     self.__version, self.__oslabel, self.__arch)
         else:
             # Use MLNX OFED
-            if StrictVersion(self.__version) >= StrictVersion('2.10'):
+            if Version(self.__version) >= Version('2.10'):
                 # Version 2.10 and later include an extra label
                 self.__label = 'hpcx-v{0}-{1}-{2}-{3}-{4}'.format(
                     self.__version, self.__ofedlabel, self.__oslabel, self.__buildlabel, self.__arch)
@@ -311,7 +311,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
             hpcx_mpi_dir = posixpath.join(hpcx_dir, 'ompi')
             hpcx_oshmem_dir = hpcx_mpi_dir
             hpcx_mpi_tests_dir = posixpath.join(hpcx_mpi_dir, 'tests')
-            if StrictVersion(self.__version) >= StrictVersion('2.7'):
+            if Version(self.__version) >= Version('2.7'):
                 hpcx_osu_dir = posixpath.join(hpcx_mpi_tests_dir,
                                               'osu-micro-benchmarks-5.6.2')
                 hpcx_osu_cuda_dir = posixpath.join(

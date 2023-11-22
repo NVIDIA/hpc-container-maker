@@ -23,7 +23,7 @@ from __future__ import print_function
 
 from six import string_types
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -190,7 +190,7 @@ class rdma_core(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 self.__ospackages = ['libnl3-devel', 'libudev-devel', 'make',
                                      'pkgconfig', 'pandoc', 'wget']
 
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
                     self.__ospackages.append('python3-docutils')
                 else:
                     self.__ospackages.append('python-docutils')

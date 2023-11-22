@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -120,7 +120,7 @@ class multi_ofed(bb_base, hpccm.templates.annotate):
                                      'libnuma1']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
-                if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+                if hpccm.config.g_linux_version >= Version('8.0'):
                     self.__ospackages = ['libnl3', 'numactl-libs']
                 else:
                     self.__ospackages = ['libnl', 'libnl3', 'numactl-libs']

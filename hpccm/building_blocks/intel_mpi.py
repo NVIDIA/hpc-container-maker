@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import logging
 
 import hpccm.config
@@ -143,7 +143,7 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             # subsequent build steps and when starting the container,
             # but this may miss some things relative to the mpivars
             # environment script.
-            if LooseVersion(self.__version) >= LooseVersion('2019.0'):
+            if Version(self.__version) >= Version('2019.0'):
               self.environment_variables={
                   'FI_PROVIDER_PATH': '/opt/intel/compilers_and_libraries/linux/mpi/intel64/libfabric/lib/prov',
                   'I_MPI_ROOT': '/opt/intel/compilers_and_libraries/linux/mpi',

@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 import hpccm.config
 import hpccm.templates.downloader
@@ -194,7 +194,7 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
             if not self.__ospackages:
                 self.__ospackages = ['hwloc-devel', 'make']
 
-            if hpccm.config.g_linux_version >= StrictVersion('8.0'):
+            if hpccm.config.g_linux_version >= Version('8.0'):
                 # hwloc-devel is in the CentOS powertools repository
                 self.__powertools = True
         else: # pragma: no cover

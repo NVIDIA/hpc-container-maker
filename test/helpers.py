@@ -19,7 +19,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 import logging # pylint: disable=unused-import
 
 import hpccm.config
@@ -54,7 +54,7 @@ def centos(function):
     """Decorator to set the Linux distribution to CentOS 7"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.CENTOS
-        hpccm.config.g_linux_version = StrictVersion('7.0')
+        hpccm.config.g_linux_version = Version('7.0')
         return function(*args, **kwargs)
 
     return wrapper
@@ -63,7 +63,7 @@ def centos8(function):
     """Decorator to set the Linux distribution to CentOS 8"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.CENTOS
-        hpccm.config.g_linux_version = StrictVersion('8.0')
+        hpccm.config.g_linux_version = Version('8.0')
         return function(*args, **kwargs)
 
     return wrapper
@@ -136,7 +136,7 @@ def singularity26(function):
     """Decorator to set the global singularity version"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.SINGULARITY
-        hpccm.config.g_singularity_version = StrictVersion('2.6')
+        hpccm.config.g_singularity_version = Version('2.6')
         return function(*args, **kwargs)
 
     return wrapper
@@ -145,7 +145,7 @@ def singularity32(function):
     """Decorator to set the global singularity version"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.SINGULARITY
-        hpccm.config.g_singularity_version = StrictVersion('3.2')
+        hpccm.config.g_singularity_version = Version('3.2')
         return function(*args, **kwargs)
 
     return wrapper
@@ -154,7 +154,7 @@ def singularity37(function):
     """Decorator to set the global singularity version"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_ctype = container_type.SINGULARITY
-        hpccm.config.g_singularity_version = StrictVersion('3.7')
+        hpccm.config.g_singularity_version = Version('3.7')
         return function(*args, **kwargs)
 
     return wrapper
@@ -171,7 +171,7 @@ def ubuntu(function):
     """Decorator to set the Linux distribution to Ubuntu 16.04"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
-        hpccm.config.g_linux_version = StrictVersion('16.04')
+        hpccm.config.g_linux_version = Version('16.04')
         return function(*args, **kwargs)
 
     return wrapper
@@ -180,7 +180,7 @@ def ubuntu18(function):
     """Decorator to set the Linux distribution to Ubuntu 18.04"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
-        hpccm.config.g_linux_version = StrictVersion('18.04')
+        hpccm.config.g_linux_version = Version('18.04')
         return function(*args, **kwargs)
 
     return wrapper
@@ -189,7 +189,7 @@ def ubuntu20(function):
     """Decorator to set the Linux distribution to Ubuntu 20.04"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
-        hpccm.config.g_linux_version = StrictVersion('20.04')
+        hpccm.config.g_linux_version = Version('20.04')
         return function(*args, **kwargs)
 
     return wrapper
@@ -198,7 +198,7 @@ def ubuntu22(function):
     """Decorator to set the Linux distribution to Ubuntu 22.04"""
     def wrapper(*args, **kwargs):
         hpccm.config.g_linux_distro = linux_distro.UBUNTU
-        hpccm.config.g_linux_version = StrictVersion('22.04')
+        hpccm.config.g_linux_version = Version('22.04')
         return function(*args, **kwargs)
 
     return wrapper

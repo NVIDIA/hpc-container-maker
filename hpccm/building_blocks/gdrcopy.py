@@ -23,7 +23,7 @@ from __future__ import print_function
 
 import posixpath
 from six.moves import shlex_quote
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -96,7 +96,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             make_opts['COMMONCFLAGS'] = make_opts.pop('CFLAGS')
 
         # Version 2.2 changed the flag to lowercase prefix and the lib directory
-        if LooseVersion(self.__version) >= LooseVersion('2.2'):
+        if Version(self.__version) >= Version('2.2'):
             make_opts['prefix'] = self.__prefix
             libdir = 'lib'
         else:

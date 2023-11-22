@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from distutils.version import LooseVersion
+from packaging.version import Version
 import posixpath
 
 import hpccm.config
@@ -118,7 +118,7 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__version = kwargs.get('version', '6.10.2')
 
         # Version 6.9.0 dropped the 'v' from directory name
-        if LooseVersion(self.__version) >= LooseVersion('6.9.0'):
+        if Version(self.__version) >= Version('6.9.0'):
             self.__installdir = posixpath.join(
                 self.__prefix, 'charm-{}'.format(self.__version))
         else:
