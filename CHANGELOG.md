@@ -1,3 +1,9 @@
+# v23.11.0
+- Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
+  building block.
+- Fix the MKL (`mkl`) building block to use the new signing key.
+- Replaces use of the deprecated Python distutils package with packaging.
+
 # v23.10.0
 - Refreshes default component versions for HPC-X (`hpcx`), LLVM (`llvm`),
   Mellanox OFED (`mlnx_ofed`), NVIDIA HPC SDK (`nvhpc`), and NVSHMEM
