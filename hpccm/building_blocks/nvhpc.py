@@ -117,7 +117,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     version: The version of the HPC SDK to use.  Note when `package`
     is set the version is determined automatically from the package
-    file name.  The default value is `23.9`.
+    file name.  The default value is `23.11`.
 
     # Examples
 
@@ -175,7 +175,7 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__tarball = kwargs.get('tarball', False)
         self.__toolchain = kwargs.get('toolchain', None)
         self.__url = kwargs.get('url', None)
-        self.__version = kwargs.get('version', '23.9')
+        self.__version = kwargs.get('version', '23.11')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
         self.__year = '' # Filled in by __get_version()
 
@@ -389,12 +389,13 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             posixpath.join(self.__basepath, 'cuda', 'bin')]
 
         if self.__mpi:
-            cpath.append(
-                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
-            ld_library_path.append(
-                posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
             path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'bin'))
+            if Version(self.__version) < Version('23.11'):
+                cpath.append(
+                    posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'include'))
+                ld_library_path.append(
+                    posixpath.join(self.__basepath, 'comm_libs', 'mpi', 'lib'))
         elif self.__hpcx and Version(self.__version) >= Version('23.5'):
             path.append(
                 posixpath.join(self.__basepath, 'comm_libs', 'hpcx', 'bin'))
