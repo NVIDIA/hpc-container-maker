@@ -95,7 +95,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.9.0/source/nvshmem_src_2.9.0-2.txz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.txz -C /var/tmp -J && \
-    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_USE_NCCL=1 -DNVSHMEM_UCX_SUPPORT=1 -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DGDRCOPY_HOME=/usr/local/gdrcopy -DNVSHMEM_MPI_SUPPORT= 1 -DMPI_HOME=/usr/local/openmpi -DNVSHMEM_SHMEM_SUPPORT=1 -DSHMEM_HOME=/usr/local/openmpi /var/tmp/nvshmem_src_2.9.0-2 && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_USE_NCCL=1 -DNVSHMEM_UCX_SUPPORT=1 -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DGDRCOPY_HOME=/usr/local/gdrcopy -DNVSHMEM_MPI_SUPPORT=1 -DMPI_HOME=/usr/local/openmpi -DNVSHMEM_SHMEM_SUPPORT=1 -DSHMEM_HOME=/usr/local/openmpi /var/tmp/nvshmem_src_2.9.0-2 && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.txz

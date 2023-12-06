@@ -161,7 +161,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.__cmake_opts.append('-DGDRCOPY_HOME={}'.format(self.__gdrcopy))
 
         if self.__mpi:
-            self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT= 1')
+            self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=1')
             self.__cmake_opts.append('-DMPI_HOME={}'.format(self.__mpi))
         #else:
         #    self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=0')
