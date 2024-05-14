@@ -174,9 +174,9 @@ def set_linux_distro(distro):
   # Arguments
 
   distro (string): Valid values are `centos7`, `centos8`, `rhel7`,
-  `rhel8`, `rockylinux8`, `ubuntu16`, `ubuntu18`, `ubuntu20`, and
-  `ubuntu22`.  `ubuntu` is an alias for `ubuntu16`, `centos` is an
-  alias for `centos7`, and `rhel` is an alias for `rhel7`.
+  `rhel8`, `rockylinux8`, `rockylinux9`, `ubuntu16`, `ubuntu18`, `ubuntu20`,
+  `ubuntu22`, and `ubuntu24`.  `ubuntu` is an alias for `ubuntu16`, `centos`
+  is an alias for `centos7`, and `rhel` is an alias for `rhel7`.
 
   """
   this = sys.modules[__name__]
@@ -201,6 +201,9 @@ def set_linux_distro(distro):
   elif distro == 'rockylinux8':
     this.g_linux_distro = linux_distro.ROCKYLINUX
     this.g_linux_version = Version('8.0')
+  elif distro == 'rockylinux9':
+    this.g_linux_distro = linux_distro.ROCKYLINUX
+    this.g_linux_version = Version('9.0')
   elif distro == 'ubuntu':
     this.g_linux_distro = linux_distro.UBUNTU
     this.g_linux_version = Version('16.04')
@@ -216,6 +219,9 @@ def set_linux_distro(distro):
   elif distro == 'ubuntu22':
     this.g_linux_distro = linux_distro.UBUNTU
     this.g_linux_version = Version('22.04')
+  elif distro == 'ubuntu24':
+    this.g_linux_distro = linux_distro.UBUNTU
+    this.g_linux_version = Version('24.04')
   else:
     logging.warning('Unable to determine the Linux distribution, defaulting to Ubuntu')
     this.g_linux_distro = linux_distro.UBUNTU
