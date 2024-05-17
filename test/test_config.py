@@ -68,6 +68,21 @@ class Test_config(unittest.TestCase):
                          hpccm.linux_distro.UBUNTU)
         self.assertEqual(hpccm.config.g_linux_version, Version('18.04'))
 
+        hpccm.config.set_linux_distro('ubuntu20')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
+
+        hpccm.config.set_linux_distro('ubuntu22')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('22.04'))
+
+        hpccm.config.set_linux_distro('ubuntu24')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('24.04'))
+
     @docker
     def test_set_linux_distro_centos(self):
         """Set Linux distribution to CentOS"""
@@ -111,6 +126,11 @@ class Test_config(unittest.TestCase):
         self.assertEqual(hpccm.config.g_linux_distro,
                          hpccm.linux_distro.ROCKYLINUX)
         self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
+
+        hpccm.config.set_linux_distro('rockylinux9')
+        self.assertEqual(hpccm.config.g_linux_distro,
+                         hpccm.linux_distro.ROCKYLINUX)
+        self.assertEqual(hpccm.config.g_linux_version, Version('9.0'))
 
     @docker
     def test_set_linux_distro_invalid(self):
