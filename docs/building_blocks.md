@@ -1475,6 +1475,7 @@ __Parameters__
 
 
 - __buildlabel__: The build label assigned by Mellanox to the tarball.
+For versions 2.17 and later, the default value is `cuda12`.
 For version 2.16 the default value is `cuda12-gdrcopy2-nccl2.18`.
 For version 2.15 the default value is `cuda12-gdrcopy2-nccl2.17`.
 For version 2.14 the default value is `cuda11-gdrcopy2-nccl2.16`.
@@ -1543,7 +1544,7 @@ distributions the default values are `bzip2`, `numactl-libs`,
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.16`.
+value is `2.19`.
 
 __Examples__
 

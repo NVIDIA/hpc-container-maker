@@ -49,6 +49,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     # Parameters
 
     buildlabel: The build label assigned by Mellanox to the tarball.
+    For versions 2.17 and later, the default value is `cuda12`.
     For version 2.16 the default value is `cuda12-gdrcopy2-nccl2.18`.
     For version 2.15 the default value is `cuda12-gdrcopy2-nccl2.17`.
     For version 2.14 the default value is `cuda11-gdrcopy2-nccl2.16`.
@@ -117,7 +118,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.16`.
+    value is `2.19`.
 
     # Examples
 
@@ -146,13 +147,15 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.16')
+        self.__version = kwargs.get('version', '2.19')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__buildlabel:
-            if Version(self.__version) >= Version('2.16'):
+            if Version(self.__version) >= Version('2.17'):
+                self.__buildlabel = 'cuda12'
+            elif Version(self.__version) >= Version('2.16'):
                 self.__buildlabel = 'cuda12-gdrcopy2-nccl2.18'
             elif Version(self.__version) >= Version('2.15'):
                 self.__buildlabel = 'cuda12-gdrcopy2-nccl2.17'
@@ -218,7 +221,9 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= Version('8.0'):
+                if hpccm.config.g_linux_version >= Version('9.0'):
+                    self.__oslabel = 'redhat9'
+                elif hpccm.config.g_linux_version >= Version('8.0'):
                     if Version(self.__version) >= Version('2.10'):
                         self.__oslabel = 'redhat8'
                     else:
