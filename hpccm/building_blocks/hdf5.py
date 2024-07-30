@@ -132,7 +132,7 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         super(hdf5, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.pop('baseurl', 'http://www.hdfgroup.org/ftp/HDF5/releases')
+        self.__baseurl = kwargs.pop('baseurl', 'https://support.hdfgroup.org/ftp/HDF5/releases')
         self.__check = kwargs.pop('check', False)
         self.__configure_opts = kwargs.pop('configure_opts',
                                            ['--enable-cxx',
