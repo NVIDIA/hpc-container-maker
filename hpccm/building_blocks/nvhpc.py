@@ -181,6 +181,10 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         self.toolchain = toolchain(CC='nvc', CXX='nvc++', F77='nvfortran',
                                    F90='nvfortran', FC='nvfortran')
+        self.toolchain.CFLAGS = hpccm.config.get_cpu_optimization_flags('nvhpc', version=self.__version)
+        self.toolchain.CXXFLAGS = hpccm.config.get_cpu_optimization_flags('nvhpc', version=self.__version)
+        self.toolchain.FFLAGS = hpccm.config.get_cpu_optimization_flags('nvhpc', version=self.__version)
+        self.toolchain.FCFLAGS = hpccm.config.get_cpu_optimization_flags('nvhpc', version=self.__version)
 
         if Version(self.__version) >= Version('23.7'):
             self.__cuda_version_default = '12.2'

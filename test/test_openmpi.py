@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ubuntu
+from helpers import centos, cpu_target_none, docker, ubuntu
 
 from hpccm.building_blocks.nvhpc import nvhpc
 from hpccm.building_blocks.openmpi import openmpi
@@ -117,6 +117,7 @@ ENV PATH=/usr/local/openmpi/bin:$PATH''')
 
     @ubuntu
     @docker
+    @cpu_target_none
     def test_nvhpc(self):
         """HPC SDK toolchain"""
         compiler = nvhpc(eula=True)
