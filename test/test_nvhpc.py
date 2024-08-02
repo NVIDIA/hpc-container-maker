@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64
+from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64, zen2
 
 from hpccm.building_blocks.nvhpc import nvhpc
 from hpccm.toolchain import toolchain
@@ -282,3 +282,13 @@ ENV CPATH=/opt/nvidia/hpc_sdk/Linux_x86_64/22.3/comm_libs/nvshmem/include:/opt/n
         self.assertEqual(tc.FC, 'nvfortran')
         self.assertEqual(tc.F77, 'nvfortran')
         self.assertEqual(tc.F90, 'nvfortran')
+
+    @zen2
+    def test_toolchain_zen2(self):
+        """CPU arch optimization flags"""
+        n = nvhpc()
+        tc = n.toolchain
+        self.assertEqual(tc.CFLAGS, '-tp zen2')
+        self.assertEqual(tc.CXXFLAGS, '-tp zen2')
+        self.assertEqual(tc.FFLAGS, '-tp zen2')
+        self.assertEqual(tc.FCFLAGS, '-tp zen2')
