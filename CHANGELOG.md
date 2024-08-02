@@ -1,3 +1,13 @@
+# v24.8.0
+- Refreshes default component versions for the HPC-X (`hpcx`) and NVIDIA
+  HPC SDK (`nvhpc`) building blocks.
+- Update the HDF-5 (`hdf5`) and HPC-X (`hpcx`) building blocks for new
+  download configurations.
+- Adds CPU microarchitecture optimization support via `archspec` for the
+  NVIDIA HPC SDK (`nvhpc`) building block.
+- Fix a bug in the NVSHMEM (`nvshmem`) building block.
+- Adds support for Ubuntu 24.04 and Rockylinux 9.
+
 # v23.11.0
 - Refreshes default component version for the NVIDIA HPC SDK (`nvhpc`)
   building block.
