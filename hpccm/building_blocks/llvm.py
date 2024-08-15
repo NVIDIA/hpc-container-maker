@@ -342,13 +342,13 @@ class llvm(bb_base, hpccm.templates.envvars):
         codename = 'xenial'
         codename_ver = 'xenial'
 
-        if (hpccm.config.g_linux_version >= Version('23.0') and
+        if (hpccm.config.g_linux_version >= Version('24.0') and
             hpccm.config.g_linux_version < Version('25.0')):
             codename = 'noble'
             if self.__version == self.__trunk_version:
                 codename_ver = 'noble'
             else:
-                codename_ver = 'jammy-{}'.format(self.__version)
+                codename_ver = 'noble-{}'.format(self.__version)
         elif (hpccm.config.g_linux_version >= Version('22.0') and
             hpccm.config.g_linux_version < Version('23.0')):
             codename = 'jammy'
