@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64, zen2
+from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, ubuntu24, x86_64, zen2
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -372,6 +372,35 @@ RUN update-alternatives --install /usr/bin/clang clang $(which clang-18) 30 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-18) 30''')
 
     @x86_64
+    @ubuntu24
+    @docker
+    def test_upstream_ubuntu24(self):
+        """Upstream builds"""
+        l = llvm(extra_tools=True, upstream=True)
+        self.assertEqual(str(l),
+r'''# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble main" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb-src http://apt.llvm.org/noble/ llvm-toolchain-noble main" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-18 \
+        clang-format-18 \
+        clang-tidy-18 \
+        libomp-18-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-18) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-18) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-18) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-18) 30''')
+
     @ubuntu20
     @docker
     def test_upstream_ubuntu20(self):

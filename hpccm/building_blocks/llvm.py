@@ -337,12 +337,19 @@ class llvm(bb_base, hpccm.templates.envvars):
         """Return the package repositories for the given distro and llvm
         version.  The development branch repositories are not
         versioned and must be handled differently.  Currently the
-        development branch is version 14."""
+        development branch is version self.__trunk_version."""
 
         codename = 'xenial'
         codename_ver = 'xenial'
 
-        if (hpccm.config.g_linux_version >= Version('22.0') and
+        if (hpccm.config.g_linux_version >= Version('24.0') and
+            hpccm.config.g_linux_version < Version('25.0')):
+            codename = 'noble'
+            if self.__version == self.__trunk_version:
+                codename_ver = 'noble'
+            else:
+                codename_ver = 'noble-{}'.format(self.__version)
+        elif (hpccm.config.g_linux_version >= Version('22.0') and
             hpccm.config.g_linux_version < Version('23.0')):
             codename = 'jammy'
             if self.__version == self.__trunk_version:
