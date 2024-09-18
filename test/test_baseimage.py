@@ -189,6 +189,20 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
 
     @docker
+    def test_detect_ubuntu_22(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='ubuntu:22.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('22.04'))
+
+    @docker
+    def test_detect_ubuntu_24(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='ubuntu:24.04')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('24.04'))
+
+    @docker
     def test_detect_centos(self):
         """Base image Linux distribution detection"""
         b = baseimage(image='nvidia/cuda:9.0-devel-centos7')
@@ -215,6 +229,13 @@ From: foo.sif
         b = baseimage(image='rockylinux/rockylinux:8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.ROCKYLINUX)
         self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
+
+    @docker
+    def test_detect_rockylinux_9(self):
+        """Base image Linux distribution detection"""
+        b = baseimage(image='rockylinux/rockylinux:9')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.ROCKYLINUX)
+        self.assertEqual(hpccm.config.g_linux_version, Version('9.0'))
 
     @docker
     def test_detect_ubi7(self):
@@ -275,6 +296,20 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_linux_version, Version('20.04'))
 
     @docker
+    def test_distro_ubuntu22(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='ubuntu22')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('22.04'))
+
+    @docker
+    def test_distro_ubuntu24(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='ubuntu24')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('24.04'))
+
+    @docker
     def test_distro_centos(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='centos')
@@ -294,6 +329,20 @@ From: foo.sif
         b = baseimage(image='foo', _distro='centos8')
         self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
         self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
+
+    @docker
+    def test_distro_rockylinux8(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='rockylinux8')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, Version('8.0'))
+
+    @docker
+    def test_distro_rockylinux9(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='rockylinux9')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.CENTOS)
+        self.assertEqual(hpccm.config.g_linux_version, Version('9.0'))
 
     @docker
     def test_distro_nonexistent(self):

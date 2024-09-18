@@ -121,6 +121,8 @@ class baseimage(object):
             hpccm.config.set_linux_distro('ubuntu20')
         elif self.__distro == 'ubuntu22':
             hpccm.config.set_linux_distro('ubuntu22')
+        elif self.__distro == 'ubuntu24':
+            hpccm.config.set_linux_distro('ubuntu24')
         elif self.__distro == 'centos':
             hpccm.config.set_linux_distro('centos')
         elif self.__distro == 'centos7':
