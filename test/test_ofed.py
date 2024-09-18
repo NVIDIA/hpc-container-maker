@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20, ppc64le, x86_64
+from helpers import aarch64, centos, centos8, docker, rockylinux9, ubuntu, ubuntu18, ubuntu20, ubuntu22, ubuntu24, ppc64le, x86_64
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -115,6 +115,58 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
+    @ubuntu22
+    @docker
+    def test_defaults_ubuntu22(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t jammy \
+        dapl2-utils \
+        ibutils \
+        ibverbs-providers \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libdapl2 \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @ubuntu24
+    @docker
+    def test_defaults_ubuntu24(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t noble \
+        dapl2-utils \
+        ibutils \
+        ibverbs-providers \
+        ibverbs-utils \
+        infiniband-diags \
+        libdapl-dev \
+        libdapl2 \
+        libibmad-dev \
+        libibmad5 \
+        libibverbs-dev \
+        libibverbs1 \
+        librdmacm-dev \
+        librdmacm1 \
+        rdmacm-utils && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
     @centos
     @docker
     def test_defaults_centos(self):
@@ -149,6 +201,26 @@ r'''# OFED
 RUN yum install -y dnf-utils && \
     yum-config-manager --set-enabled powertools && \
     yum install -y --disablerepo=mlnx\* \
+        libibmad \
+        libibmad-devel \
+        libibumad \
+        libibverbs \
+        libibverbs-utils \
+        libmlx5 \
+        librdmacm \
+        rdma-core \
+        rdma-core-devel && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @rockylinux9
+    @docker
+    def test_defaults_rockylinux9(self):
+        """Default ofed building block"""
+        o = ofed()
+        self.assertEqual(str(o),
+r'''# OFED
+RUN yum install -y --disablerepo=mlnx\* \
         libibmad \
         libibmad-devel \
         libibumad \
