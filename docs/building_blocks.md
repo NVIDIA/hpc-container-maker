@@ -3335,7 +3335,7 @@ they are not available.  For Ubuntu 16.04 and ppc64le processors,
 the `libibcm1` and `libibcm-dev` packages are not installed
 because they are not available.
 
-For Ubuntu 18.04, the following packages are installed:
+For Ubuntu 18.04 and later, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
 `infiniband-diags`, `libdapl2`, `libdapl-dev`, `libibmad5`,
 `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
@@ -3347,7 +3347,7 @@ installed: `dapl`, `dapl-devel`, `ibutils`, `libibcm`, `libibmad`,
 `libibverbs-utils`, `librdmacm`, `rdma-core`, and
 `rdma-core-devel`.
 
-For RHEL-based 8.x distributions, the following packages are
+For RHEL-based 8.x distributions and later, the following packages are
 installed: `libibmad`, `libibmad-devel`, `libmlx5`, `libibumad`,
 `libibverbs`, `libibverbs-utils`, `librdmacm`, `rdma-core`, and
 `rdma-core-devel`.

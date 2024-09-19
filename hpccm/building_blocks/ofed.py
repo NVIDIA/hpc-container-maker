@@ -48,7 +48,7 @@ class ofed(bb_base):
     the `libibcm1` and `libibcm-dev` packages are not installed
     because they are not available.
 
-    For Ubuntu 18.04, the following packages are installed:
+    For Ubuntu 18.04 and later, the following packages are installed:
     `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
     `infiniband-diags`, `libdapl2`, `libdapl-dev`, `libibmad5`,
     `libibmad-dev`, `libibverbs1`, `libibverbs-dev`, `librdmacm1`,
@@ -60,7 +60,7 @@ class ofed(bb_base):
     `libibverbs-utils`, `librdmacm`, `rdma-core`, and
     `rdma-core-devel`.
 
-    For RHEL-based 8.x distributions, the following packages are
+    For RHEL-based 8.x distributions and later, the following packages are
     installed: `libibmad`, `libibmad-devel`, `libmlx5`, `libibumad`,
     `libibverbs`, `libibverbs-utils`, `librdmacm`, `rdma-core`, and
     `rdma-core-devel`.
@@ -113,7 +113,9 @@ class ofed(bb_base):
             if hpccm.config.g_linux_version >= Version('18.0'):
                 # Give priority to packages from the Ubuntu repositories over
                 # vendor repositories
-                if hpccm.config.g_linux_version >= Version('22.0'):
+                if hpccm.config.g_linux_version >= Version('24.0'):
+                    self.__extra_opts = ['-t noble']
+                elif hpccm.config.g_linux_version >= Version('22.0'):
                     self.__extra_opts = ['-t jammy']
                 elif hpccm.config.g_linux_version >= Version('20.0'):
                     self.__extra_opts = ['-t focal']
@@ -165,7 +167,8 @@ class ofed(bb_base):
                                      'libibverbs-utils', 'libmlx5',
                                      'librdmacm',
                                      'rdma-core', 'rdma-core-devel']
-                self.__powertools = True
+                if hpccm.config.g_linux_version < Version('9.0'):
+                    self.__powertools = True
             else:
                 self.__deppackages = ['libnl', 'libnl3', 'numactl-libs']
                 self.__ospackages = ['dapl', 'dapl-devel', 'ibutils',
