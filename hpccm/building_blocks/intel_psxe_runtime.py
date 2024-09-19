@@ -176,6 +176,7 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
 
         self += packages(
             apt=self.__apt,
+            _apt_key=True,
             apt_keys = ['https://apt.repos.intel.com/{0}/GPG-PUB-KEY-INTEL-PSXE-RUNTIME-{0}'.format(self.__year)],
             apt_repositories=apt_repositories,
             aptitude=True,

@@ -133,6 +133,7 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
             self += packages(ospackages=self.__ospackages)
 
         self += packages(
+            _apt_key=True,
             apt_keys=[self.__key],
             apt_repositories=['https://linux.mellanox.com/public/repo/mlnx_ofed/{0}/{1}/mellanox_mlnx_ofed.list'.format(self.__version, self.__oslabel)],
             download=bool(self.__prefix),
