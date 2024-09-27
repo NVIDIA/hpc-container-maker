@@ -126,6 +126,7 @@ class intel_mpi(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
         self += packages(
+            _apt_key=True,
             apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             apt_repositories=['deb https://apt.repos.intel.com/mpi all main'],
             ospackages=['intel-mpi-{}'.format(self.__version)],

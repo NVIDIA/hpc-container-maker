@@ -381,8 +381,8 @@ class llvm(bb_base, hpccm.templates.envvars):
             raise RuntimeError('Unsupported Ubuntu version')
 
         return [
-            'deb http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver),
-            'deb-src http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver)]
+            'deb [signed-by=/usr/share/keyrings/llvm-snapshot.gpg.gpg] http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver),
+            'deb-src [signed-by=/usr/share/keyrings/llvm-snapshot.gpg.gpg] http://apt.llvm.org/{0}/ llvm-toolchain-{1} main'.format(codename, codename_ver)]
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific

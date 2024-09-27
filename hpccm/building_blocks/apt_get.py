@@ -83,7 +83,7 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
 
         super(apt_get, self).__init__()
 
-        self.__apt_key = kwargs.get('_apt_key', True)
+        self.__apt_key = kwargs.get('_apt_key', False)
         self.__aptitude = kwargs.get('aptitude', False)
         self.__commands = []
         self.__download = kwargs.get('download', False)

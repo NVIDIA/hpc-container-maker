@@ -118,6 +118,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
             raise RuntimeError('Intel EULA was not accepted.  To accept, see the documentation for this building block')
 
         self += packages(
+            _apt_key=True,
             apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             apt_repositories=['deb https://apt.repos.intel.com/mkl all main'],
             ospackages=['intel-mkl-64bit-{}'.format(self.__version)],

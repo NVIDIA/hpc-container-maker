@@ -46,25 +46,9 @@ r'''RUN apt-get update -y && \
 
     @ubuntu
     @docker
-    def test_add_repo(self):
-        """Add repo and key"""
-        a = apt_get(keys=['https://www.example.com/key.pub'],
-                    ospackages=['example'],
-                    repositories=['deb http://www.example.com all main'])
-        self.assertEqual(str(a),
-r'''RUN wget -qO - https://www.example.com/key.pub | apt-key add - && \
-    echo "deb http://www.example.com all main" >> /etc/apt/sources.list.d/hpccm.list && \
-    apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        example && \
-    rm -rf /var/lib/apt/lists/*''')
-
-    @ubuntu
-    @docker
     def test_add_repo_signed_by(self):
         """Add repo and key, using the signed-by method rather than apt-key"""
-        a = apt_get(_apt_key=False,
-                    keys=['https://www.example.com/key.pub'],
+        a = apt_get(keys=['https://www.example.com/key.pub'],
                     ospackages=['example'],
                     repositories=['deb [signed-by=/usr/share/keyrings/key.gpg] http://www.example.com all main'])
         self.assertEqual(str(a),

@@ -46,8 +46,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/3bf863cc.gpg && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnccl-dev=2.12.10-1+cuda11.6 \
@@ -69,8 +71,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/3bf863cc.gpg && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnccl-dev=2.12.10-1+cuda11.6 \
@@ -92,8 +96,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/3bf863cc.gpg && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnccl-dev=2.4.8-1+cuda9.2 \
@@ -217,8 +223,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/3bf863cc.gpg && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         libnccl2=2.12.10-1+cuda11.6 && \
