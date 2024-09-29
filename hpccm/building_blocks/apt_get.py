@@ -178,7 +178,7 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
                     regex = posixpath.join(
                         self.__download_directory,
                         '(' + '|'.join(sorted(self.ospackages)) + ').*deb')
-                    self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -exec dpkg --extract {{}} {2} \;'.format(self.__download_directory, regex, self.__extract))
+                    self.__commands.append('find {0} -regextype posix-extended -type f -regex "{1}" -exec dpkg --extract {{}} {2} ;'.format(self.__download_directory, regex, self.__extract))
 
                     # Cleanup downloaded packages
                     self.__commands.append(
