@@ -1,3 +1,13 @@
+# v24.10.0
+- Refreshes default component versions for the LLVM (`llvm`) and NVIDIA
+  HPC SDK (`nvhpc`) building blocks.
+- Update the inbox OFED ('ofed') building block for the latest Linux
+  distributions.
+- Fix issues with the detection of the latest Ubuntu and Rockylinux
+  distributions.
+- Changes the default behavior of the `apt_get` building block to not
+  use `apt-key`.  Note, this may be a breaking change for some recipes.
+
 # v24.8.0
 - Refreshes default component versions for the HPC-X (`hpcx`) and NVIDIA
   HPC SDK (`nvhpc`) building blocks.
