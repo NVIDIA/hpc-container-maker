@@ -120,7 +120,7 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
         self += packages(
             _apt_key=True,
             apt_keys=['https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
-            apt_repositories=['deb https://apt.repos.intel.com/mkl all main'],
+            apt_repositories=['deb [signed-by=/usr/share/keyrings/'+'GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.gpg'.format(self.__year+'] https://apt.repos.intel.com/mkl all main'],
             ospackages=['intel-mkl-64bit-{}'.format(self.__version)],
             yum_keys=['https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-{}.PUB'.format(self.__year)],
             yum_repositories=['https://yum.repos.intel.com/mkl/setup/intel-mkl.repo'])
