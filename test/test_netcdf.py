@@ -36,7 +36,7 @@ class Test_netcdf(unittest.TestCase):
     def test_defaults_ubuntu(self):
         """Default netcdf building block"""
         n = netcdf()
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NetCDF version 4.7.4, NetCDF C++ version 4.3.1, NetCDF Fortran
 # version 4.5.3
 RUN apt-get update -y && \
@@ -44,6 +44,7 @@ RUN apt-get update -y && \
         ca-certificates \
         file \
         libcurl4-openssl-dev \
+        libxml2-dev \
         m4 \
         make \
         wget \
@@ -77,13 +78,14 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     def test_defaults_centos(self):
         """Default netcdf building block"""
         n = netcdf()
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NetCDF version 4.7.4, NetCDF C++ version 4.3.1, NetCDF Fortran
 # version 4.5.3
 RUN yum install -y \
         ca-certificates \
         file \
         libcurl-devel \
+        libxml2-devel \
         m4 \
         make \
         wget \
@@ -118,7 +120,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """ldconfig option"""
         n = netcdf(ldconfig=True, version='4.6.1', version_cxx='4.3.0',
                    version_fortran='4.4.4')
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NetCDF version 4.6.1, NetCDF C++ version 4.3.0, NetCDF Fortran
 # version 4.4.4
 RUN apt-get update -y && \
@@ -126,6 +128,7 @@ RUN apt-get update -y && \
         ca-certificates \
         file \
         libcurl4-openssl-dev \
+        libxml2-dev \
         m4 \
         make \
         wget \
@@ -162,7 +165,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Runtime"""
         n = netcdf()
         r = n.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# NetCDF
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

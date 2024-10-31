@@ -23,6 +23,8 @@ from __future__ import print_function
 
 from packaging.version import Version
 import posixpath
+import re
+from copy import copy as _copy
 
 import hpccm.config
 import hpccm.templates.envvars
@@ -33,6 +35,7 @@ from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
+from hpccm.toolchain import toolchain
 
 class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `netcdf` building block downloads, configures, builds, and
@@ -80,10 +83,10 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     ospackages: List of OS packages to install prior to configuring
     and building.  For Ubuntu, the default values are
-    `ca-certificates`, `file`, `libcurl4-openssl-dev`, `m4`, `make`,
-    `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-    default values are `ca-certificates`, `file`, `libcurl-devel`
-    `m4`, `make`, `wget`, and `zlib-devel`.
+    `ca-certificates`, `file`, `libcurl4-openssl-dev`, `libxml2-dev`, `m4`,
+    `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+    default values are `ca-certificates`, `file`, `libcurl-devel`,
+    `libxml2-devel`, `m4`, `make`, `wget`, and `zlib-devel`.
 
     prefix: The top level install location.  The default location is
     `/usr/local/netcdf`.
@@ -134,6 +137,9 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/netcdf')
         self.__runtime_ospackages = [] # Filled in by __distro()
+        # Create a copy of the toolchain so that it can be modified
+        # without impacting the original
+        self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
         self.__version = kwargs.pop('version', '4.7.4')
         self.__version_cxx = kwargs.pop('version_cxx', '4.3.1')
         self.__version_fortran = kwargs.pop('version_fortran', '4.5.3')
@@ -165,6 +171,7 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             directory=self.__directory_c,
             prefix=self.__prefix,
             runtime_environment=self.environment_variables,
+            toolchain=self.__toolchain,
             url=self.__url_c,
             **kwargs)]
 
@@ -180,12 +187,19 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
                 # Checks fail when using parallel make.  Disable it.
                 parallel=1 if self.__check else '$(nproc)',
                 prefix=self.__prefix,
+                toolchain=self.__toolchain,
                 url='{0}/v{1}.tar.gz'.format(self.__baseurl_cxx,
                                              self.__version_cxx),
                 **kwargs))
 
         # Setup optional Fortran build configuration
         if self.__fortran:
+            # PIC workaround when using the NVIDIA compilers
+            if self.__toolchain.FC and re.match('.*nvfortran',
+                                                self.__toolchain.FC):
+                if not self.__toolchain.FCFLAGS:
+                    self.__toolchain.FCFLAGS = '-fPIC'
+
             comments.append('NetCDF Fortran version {}'.format(self.__version_fortran))
             self.__bb.append(generic_autotools(
                 annotations={'version': self.__version_fortran},
@@ -196,6 +210,7 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
                 # Checks fail when using parallel make.  Disable it.
                 parallel=1 if self.__check else '$(nproc)',
                 prefix=self.__prefix,
+                toolchain=self.__toolchain,
                 url='{0}/v{1}.tar.gz'.format(self.__baseurl_fortran,
                                              self.__version_fortran),
                 **kwargs))
@@ -212,14 +227,14 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
                 self.__ospackages = ['ca-certificates', 'file',
-                                     'libcurl4-openssl-dev', 'm4', 'make',
-                                     'wget', 'zlib1g-dev']
+                                     'libcurl4-openssl-dev', 'libxml2-dev',
+                                     'm4', 'make', 'wget', 'zlib1g-dev']
             self.__runtime_ospackages = ['zlib1g']
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__ospackages:
                 self.__ospackages = ['ca-certificates', 'file',
-                                     'libcurl-devel', 'm4', 'make',
-                                     'wget', 'zlib-devel']
+                                     'libcurl-devel', 'libxml2-devel', 'm4',
+                                     'make', 'wget', 'zlib-devel']
                 if self.__check:
                     self.__ospackages.append('diffutils')
             self.__runtime_ospackages = ['zlib']

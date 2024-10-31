@@ -36,8 +36,8 @@ class Test_hdf5(unittest.TestCase):
     def test_defaults_ubuntu(self):
         """Default hdf5 building block"""
         h = hdf5()
-        self.assertEqual(str(h),
-r'''# HDF5 version 1.12.0
+        self.assertMultiLineEqual(str(h),
+r'''# HDF5 version 1.14.5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -46,12 +46,12 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.12.0.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/hdf5-1.12.0 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.14.5.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/hdf5-1.14.5 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.12.0 /var/tmp/hdf5-1.12.0.tar.bz2
+    rm -rf /var/tmp/hdf5-1.14.5 /var/tmp/hdf5-1.14.5.tar.gz
 ENV CPATH=/usr/local/hdf5/include:$CPATH \
     HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
@@ -63,8 +63,8 @@ ENV CPATH=/usr/local/hdf5/include:$CPATH \
     def test_defaults_centos(self):
         """Default hdf5 building block"""
         h = hdf5()
-        self.assertEqual(str(h),
-r'''# HDF5 version 1.12.0
+        self.assertMultiLineEqual(str(h),
+r'''# HDF5 version 1.14.5
 RUN yum install -y \
         bzip2 \
         file \
@@ -72,12 +72,12 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.12.0.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/hdf5-1.12.0 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.14.5.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/hdf5-1.14.5 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
     make -j$(nproc) install && \
-    rm -rf /var/tmp/hdf5-1.12.0 /var/tmp/hdf5-1.12.0.tar.bz2
+    rm -rf /var/tmp/hdf5-1.14.5 /var/tmp/hdf5-1.14.5.tar.gz
 ENV CPATH=/usr/local/hdf5/include:$CPATH \
     HDF5_DIR=/usr/local/hdf5 \
     LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH \
@@ -89,7 +89,7 @@ ENV CPATH=/usr/local/hdf5/include:$CPATH \
     def test_ldconfig(self):
         """ldconfig option"""
         h = hdf5(ldconfig=True, version='1.10.4')
-        self.assertEqual(str(h),
+        self.assertMultiLineEqual(str(h),
 r'''# HDF5 version 1.10.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -117,7 +117,7 @@ ENV CPATH=/usr/local/hdf5/include:$CPATH \
         """Runtime"""
         h = hdf5()
         r = h.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# HDF5
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
