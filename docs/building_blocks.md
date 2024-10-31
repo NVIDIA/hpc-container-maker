@@ -1412,7 +1412,7 @@ non-default compilers or other toolchain options are needed.  The
 default is empty.
 
 - __version__: The version of HDF5 source to download.  This value is
-ignored if `directory` is set.  The default value is `1.12.0`.
+ignored if `directory` is set.  The default value is `1.14.5`.
 
 - __with_PACKAGE[=ARG]__: Flags to control optional packages when
 configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -2988,10 +2988,10 @@ directory. The default value is False.
 
 - __ospackages__: List of OS packages to install prior to configuring
 and building.  For Ubuntu, the default values are
-`ca-certificates`, `file`, `libcurl4-openssl-dev`, `m4`, `make`,
-`wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-default values are `ca-certificates`, `file`, `libcurl-devel`
-`m4`, `make`, `wget`, and `zlib-devel`.
+`ca-certificates`, `file`, `libcurl4-openssl-dev`, `libxml2-dev`, `m4`,
+`make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+default values are `ca-certificates`, `file`, `libcurl-devel`,
+`libxml2-devel`, `m4`, `make`, `wget`, and `zlib-devel`.
 
 - __prefix__: The top level install location.  The default location is
 `/usr/local/netcdf`.
