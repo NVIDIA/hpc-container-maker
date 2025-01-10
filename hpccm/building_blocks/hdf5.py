@@ -21,6 +21,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 
+from packaging.version import Version
+
 import posixpath
 import re
 from copy import copy as _copy
@@ -92,7 +94,7 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     default is empty.
 
     version: The version of HDF5 source to download.  This value is
-    ignored if `directory` is set.  The default value is `1.12.0`.
+    ignored if `directory` is set.  The default value is `1.14.5`.
 
     with_PACKAGE[=ARG]: Flags to control optional packages when
     configuring.  For instance, `with_foo=True` maps to `--with-foo`
@@ -132,7 +134,7 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
         super(hdf5, self).__init__(**kwargs)
 
-        self.__baseurl = kwargs.pop('baseurl', 'https://support.hdfgroup.org/ftp/HDF5/releases')
+        self.__baseurl = kwargs.pop('baseurl', False)
         self.__check = kwargs.pop('check', False)
         self.__configure_opts = kwargs.pop('configure_opts',
                                            ['--enable-cxx',
@@ -143,7 +145,14 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         # without impacting the original
         self.__toolchain = _copy(kwargs.pop('toolchain', toolchain()))
         self.__runtime_ospackages = [] # Filled in by __distro()
-        self.__version = kwargs.pop('version', '1.12.0')
+        self.__version = kwargs.pop('version', '1.14.5')
+
+        if not self.__baseurl:
+            # Download path changed with version 1.14
+            if Version(self.__version) >= Version('1.14'):
+                self.__baseurl = 'https://support.hdfgroup.org/releases/hdf5'
+            else:
+                self.__baseurl = 'https://support.hdfgroup.org/ftp/HDF5/releases'
 
         # Set the Linux distribution specific parameters
         self.__distro()
@@ -214,11 +223,19 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         # path and the tarball contains MAJOR.MINOR.REVISION, so pull
         # apart the full version to get the MAJOR and MINOR components.
         match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)', self.__version)
-        major_minor = '{0}.{1}'.format(match.groupdict()['major'],
-                                       match.groupdict()['minor'])
-        tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
-        self.__url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(
-            self.__baseurl, major_minor, self.__version, tarball)
+        if Version(self.__version) >= Version('1.14'):
+            major_minor = 'v{0}_{1}'.format(match.groupdict()['major'],
+                                            match.groupdict()['minor'])
+            tarball = 'hdf5-{}.tar.gz'.format(self.__version)
+            self.__url = '{0}/{1}/v{2}/downloads/{3}'.format(
+                self.__baseurl, major_minor, self.__version.replace('.', '_'),
+                tarball)
+        else:
+            major_minor = '{0}.{1}'.format(match.groupdict()['major'],
+                                           match.groupdict()['minor'])
+            tarball = 'hdf5-{}.tar.bz2'.format(self.__version)
+            self.__url = '{0}/hdf5-{1}/hdf5-{2}/src/{3}'.format(
+                self.__baseurl, major_minor, self.__version, tarball)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
