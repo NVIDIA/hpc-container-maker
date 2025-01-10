@@ -52,8 +52,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add - && \
-    echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | gpg --dearmor -o /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg] https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2020.0-088 && \
@@ -89,8 +91,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add - && \
-    echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | gpg --dearmor -o /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg] https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2018.2-046 && \
@@ -111,8 +115,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add - && \
-    echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | gpg --dearmor -o /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg] https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2019.4-070 && \
@@ -137,8 +143,10 @@ RUN apt-get update -y && \
         gnupg \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | apt-key add - && \
-    echo "deb https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB | gpg --dearmor -o /usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.gpg] https://apt.repos.intel.com/mkl all main" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         intel-mkl-64bit-2020.0-088 && \
