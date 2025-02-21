@@ -25,17 +25,12 @@ import posixpath
 
 import hpccm.config
 import hpccm.templates.annotate
-import hpccm.templates.rm
-import hpccm.templates.tar
-import hpccm.templates.wget
 
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.packages import packages
 from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
-from hpccm.primitives.copy import copy
 from hpccm.primitives.label import label
-from hpccm.primitives.shell import shell
 
 class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
                 hpccm.templates.tar, hpccm.templates.wget):
