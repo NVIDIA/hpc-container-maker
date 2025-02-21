@@ -635,6 +635,68 @@ Stage0 += c
 Stage1 += c.runtime()
 ```
 
+# doca_ofed
+```python
+doca_ofed(self, **kwargs)
+```
+The `doca_ofed` building block downloads and installs the [NVIDIA
+DOCA Software Framework](https://developer.nvidia.com/networking/doca).
+
+__Parameters__
+
+
+- __annotate__: Boolean flag to specify whether to include annotations
+(labels).  The default is False.
+
+- __archlabel__: The CPU architecture label assigned by Mellanox to the
+package repository.  The default value is `x86_64` for x86_64
+processors and `arm64-sbsa` for aarch64 processors.
+
+- __oslabel__: The Linux distribution label assigned by Mellanox to the
+package repository.  For Ubuntu, the default value is
+`ubuntuXX.04` where `XX` is derived from the base image.  For
+RHEL-base Linux distributions, the default value is `rhelX.Y`
+where `X.Y` is `9.2` for RHEL 9.x and `8.6` for RHEL 8.x.
+
+- __ospackages__: List of OS packages to install prior to installing
+DOCA OFED.  The default values are `ca-certificates`, `gnupg`, and
+`wget`.
+
+- __packages__: List of packages to install from Mellanox OFED.  For
+Ubuntu, the default values are `ibverbs-providers`,
+`ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+`libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+and `librdmacm1`.  For RHEL-based Linux distributions, the default
+values are `libibumad`, `libibverbs`, `libibverbs-utils`,
+`librdmacm`, `rdma-core`, and `rdma-core-devel`.
+
+- __version__: The version of DOCA OFED to download.  The default value
+is `2.10.0`.
+
+__Examples__
+
+
+```python
+doca_ofed(version='2.10.0')
+```
+
+
+## runtime
+```python
+doca_ofed.runtime(self, _from=u'0')
+```
+Generate the set of instructions to install the runtime specific
+components from a build in a previous stage.
+
+__Examples__
+
+
+```python
+d = doca_ofed(...)
+Stage0 += d
+Stage1 += d.runtime()
+```
+
 # fftw
 ```python
 fftw(self, **kwargs)

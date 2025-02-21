@@ -23,6 +23,7 @@ __all__ = ['amgx',
            'charm',
            'cmake',
            'conda',
+           'doca_ofed',
            'fftw',
            'gdrcopy',
            'generic_autotools',
@@ -78,6 +79,7 @@ from hpccm.building_blocks.cgns import cgns
 from hpccm.building_blocks.charm import charm
 from hpccm.building_blocks.cmake import cmake
 from hpccm.building_blocks.conda import conda
+from hpccm.building_blocks.doca_ofed import doca_ofed
 from hpccm.building_blocks.fftw import fftw
 from hpccm.building_blocks.gdrcopy import gdrcopy
 from hpccm.building_blocks.generic_autotools import generic_autotools

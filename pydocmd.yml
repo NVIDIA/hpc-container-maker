@@ -13,6 +13,7 @@ generate:
   - hpccm.building_blocks.charm+
   - hpccm.building_blocks.cmake+
   - hpccm.building_blocks.conda+
+  - hpccm.building_blocks.doca_ofed+
   - hpccm.building_blocks.fftw+
   - hpccm.building_blocks.gdrcopy+
   - hpccm.building_blocks.generic_autotools+
