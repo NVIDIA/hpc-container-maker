@@ -37,7 +37,7 @@ class Test_boost(unittest.TestCase):
         """Default boost building block"""
         b = boost()
         self.assertEqual(str(b),
-r'''# Boost version 1.76.0
+r'''# Boost version 1.87.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -46,11 +46,11 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_76_0.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/boost_1_76_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_87_0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/boost_1_87_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
-    rm -rf /var/tmp/boost_1_76_0.tar.bz2 /var/tmp/boost_1_76_0
+    rm -rf /var/tmp/boost_1_87_0.tar.bz2 /var/tmp/boost_1_87_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
     @centos
@@ -59,7 +59,7 @@ ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
         """Default boost building block"""
         b = boost()
         self.assertEqual(str(b),
-r'''# Boost version 1.76.0
+r'''# Boost version 1.87.0
 RUN yum install -y \
         bzip2 \
         bzip2-devel \
@@ -68,11 +68,11 @@ RUN yum install -y \
         which \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2 && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_76_0.tar.bz2 -C /var/tmp -j && \
-    cd /var/tmp/boost_1_76_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_87_0.tar.bz2 -C /var/tmp -j && \
+    cd /var/tmp/boost_1_87_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
-    rm -rf /var/tmp/boost_1_76_0.tar.bz2 /var/tmp/boost_1_76_0
+    rm -rf /var/tmp/boost_1_87_0.tar.bz2 /var/tmp/boost_1_87_0
 ENV LD_LIBRARY_PATH=/usr/local/boost/lib:$LD_LIBRARY_PATH''')
 
     @ubuntu
@@ -90,7 +90,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost  && \
     ./b2 -j$(nproc) -q install && \
@@ -134,7 +134,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
@@ -156,7 +156,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --with-libraries=atomic,chrono && \
     ./b2 -j$(nproc) -q install && \
@@ -177,7 +177,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://boostorg.jfrog.io/artifactory/main/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 cxxflags="-std=c++14" -j$(nproc) -q install && \
