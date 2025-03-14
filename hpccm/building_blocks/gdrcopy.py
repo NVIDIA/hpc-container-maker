@@ -59,12 +59,15 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     prefix: The top level install location.  The default value is
     `/usr/local/gdrcopy`.
 
+    targets: List of make targets to build.  The default values are
+    `lib` and `lib_install`.
+
     toolchain: The toolchain object.  This should be used if
     non-default compilers or other toolchain options are needed.  The
     default is empty.
 
     version: The version of gdrcopy source to download.  The default
-    value is `2.2`.
+    value is `2.4.4`.
 
     # Examples
 
@@ -83,8 +86,9 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/gdrcopy/archive')
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/gdrcopy')
+        self.__targets = kwargs.pop('targets', ['lib', 'lib_install'])
         self.__toolchain = kwargs.pop('toolchain', toolchain())
-        self.__version = kwargs.pop('version', '2.2')
+        self.__version = kwargs.pop('version', '2.4.4')
 
 
         # Since gdrcopy does not use autotools or CMake, the toolchain
@@ -122,7 +126,7 @@ class gdrcopy(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
             base_annotation=self.__class__.__name__,
             # Work around "install -D" issue on CentOS
             build=['mkdir -p {0}/include {0}/{1}'.format(self.__prefix, libdir),
-                   'make {} lib lib_install'.format(make_opts_str)],
+                   'make {0} {1}'.format(make_opts_str, ' '.join(self.__targets))],
             comment=False,
             devel_environment=self.environment_variables,
             directory='gdrcopy-{}'.format(self.__version),
