@@ -38,18 +38,18 @@ class Test_gdrcopy(unittest.TestCase):
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
-r'''# GDRCOPY version 2.2
+r'''# GDRCOPY version 2.4.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/gdrcopy-2.2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
     make prefix=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+    rm -rf /var/tmp/gdrcopy-2.4.4 /var/tmp/v2.4.4.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')
@@ -60,17 +60,17 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
         """Default gdrcopy building block"""
         g = gdrcopy()
         self.assertEqual(str(g),
-r'''# GDRCOPY version 2.2
+r'''# GDRCOPY version 2.4.4
 RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/gdrcopy-2.2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
     make prefix=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+    rm -rf /var/tmp/gdrcopy-2.4.4 /var/tmp/v2.4.4.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')        
@@ -170,18 +170,18 @@ ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
         tc = toolchain(CC='gcc', CFLAGS='-O2')
         g = gdrcopy(toolchain=tc)
         self.assertEqual(str(g),
-r'''# GDRCOPY version 2.2
+r'''# GDRCOPY version 2.4.4
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/gdrcopy-2.2 && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
     make CC=gcc COMMONCFLAGS=-O2 prefix=/usr/local/gdrcopy lib lib_install && \
-    rm -rf /var/tmp/gdrcopy-2.2 /var/tmp/v2.2.tar.gz
+    rm -rf /var/tmp/gdrcopy-2.4.4 /var/tmp/v2.4.4.tar.gz
 ENV CPATH=/usr/local/gdrcopy/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/gdrcopy/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/gdrcopy/lib:$LIBRARY_PATH''')    
