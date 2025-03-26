@@ -1577,15 +1577,16 @@ library directories. This value is ignored if `hpcxinit` is
 `True`. The default value is False.
 
 - __mlnx_ofed__: The version of Mellanox OFED that should be matched.
-This value is ignored if Inbox OFED is selected.  The default
-value is `5` for HPC-X version 2.10 and later, and `5.2-2.2.0.0`
-for earlier HPC-X versions.
+This value is ignored if Inbox OFED is selected, or for HPC-X 2.21
+and later.  The default value is `5` for HPC-X version 2.10 and
+later, and `5.2-2.2.0.0` for earlier HPC-X versions.
 
 - __multi_thread__: Boolean flag to specify whether the multi-threaded
 version of Mellanox HPC-X should be used.  The default is `False`.
 
 - __ofedlabel__: The Mellanox OFED label assigned by Mellanox to the
-tarball.  For version 2.16 and later, the default value is
+tarball.  For version 2.21 and later, the default value is
+`gcc-doca_ofed`.  For version 2.16 through 2.18, the default value is
 `gcc-mlnx_ofed`.  For earlier versions, the default value is
 `gcc-MLNX_OFED_LINUX-5`.  This value is ignored if `inbox` is `True`.
 
@@ -1609,7 +1610,7 @@ distributions the default values are `bzip2`, `numactl-libs`,
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.19`.
+value is `2.22.1`.
 
 __Examples__
 

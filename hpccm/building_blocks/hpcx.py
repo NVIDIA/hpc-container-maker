@@ -86,15 +86,16 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `True`. The default value is False.
 
     mlnx_ofed: The version of Mellanox OFED that should be matched.
-    This value is ignored if Inbox OFED is selected.  The default
-    value is `5` for HPC-X version 2.10 and later, and `5.2-2.2.0.0`
-    for earlier HPC-X versions.
+    This value is ignored if Inbox OFED is selected, or for HPC-X 2.21
+    and later.  The default value is `5` for HPC-X version 2.10 and
+    later, and `5.2-2.2.0.0` for earlier HPC-X versions.
 
     multi_thread: Boolean flag to specify whether the multi-threaded
     version of Mellanox HPC-X should be used.  The default is `False`.
 
     ofedlabel: The Mellanox OFED label assigned by Mellanox to the
-    tarball.  For version 2.16 and later, the default value is
+    tarball.  For version 2.21 and later, the default value is
+    `gcc-doca_ofed`.  For version 2.16 through 2.18, the default value is
     `gcc-mlnx_ofed`.  For earlier versions, the default value is
     `gcc-MLNX_OFED_LINUX-5`.  This value is ignored if `inbox` is `True`.
 
@@ -118,7 +119,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.19`.
+    value is `2.22.1`.
 
     # Examples
 
@@ -147,7 +148,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.19')
+        self.__version = kwargs.get('version', '2.22.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -173,7 +174,9 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                 self.__mlnx_ofed = '5.2-2.2.0.0'
 
         if not self.__ofedlabel:
-            if Version(self.__version) >= Version('2.16'):
+            if Version(self.__version) >= Version('2.21'):
+                self.__ofedlabel = 'gcc-doca_ofed'
+            elif Version(self.__version) >= Version('2.16'):
                 self.__ofedlabel = 'gcc-mlnx_ofed'
             else:
                 self.__ofedlabel = 'gcc-MLNX_OFED_LINUX-{}'.format(self.__mlnx_ofed)
@@ -205,7 +208,9 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= Version('22.0'):
+                if hpccm.config.g_linux_version >= Version('24.0'):
+                    self.__oslabel = 'ubuntu24.04'
+                elif hpccm.config.g_linux_version >= Version('22.0'):
                     self.__oslabel = 'ubuntu22.04'
                 elif hpccm.config.g_linux_version >= Version('20.0'):
                     self.__oslabel = 'ubuntu20.04'
