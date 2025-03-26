@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ppc64le, ubuntu, x86_64
+from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64
 
 from hpccm.building_blocks.conda import conda
 
@@ -44,15 +44,15 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh && \
-    bash /var/tmp/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     . /usr/local/anaconda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda install -y numpy && \
     /usr/local/anaconda/bin/conda clean -afy && \
-    rm -rf /var/tmp/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh''')
+    rm -rf /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh''')
 
     @x86_64
     @centos
@@ -66,15 +66,37 @@ RUN yum install -y \
         ca-certificates \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh && \
-    bash /var/tmp/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh -b -p /usr/local/anaconda && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
+    bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     . /usr/local/anaconda/etc/profile.d/conda.sh && \
     conda activate base && \
     conda install -y numpy && \
     /usr/local/anaconda/bin/conda clean -afy && \
-    rm -rf /var/tmp/Miniconda3-py310_23.1.0-1-Linux-x86_64.sh''')
+    rm -rf /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh''')
+
+    @aarch64
+    @centos
+    @docker
+    def test_aarch64(self):
+        """Default conda building block"""
+        c = conda(eula=True, packages=['numpy'], version='25.1.1-2')
+        self.assertEqual(str(c),
+r'''# Anaconda
+RUN yum install -y \
+        ca-certificates \
+        wget && \
+    rm -rf /var/cache/yum/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh && \
+    bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh -b -p /usr/local/anaconda && \
+    /usr/local/anaconda/bin/conda init && \
+    ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    . /usr/local/anaconda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    conda install -y numpy && \
+    /usr/local/anaconda/bin/conda clean -afy && \
+    rm -rf /var/tmp/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh''')
 
     @ppc64le
     @ubuntu
