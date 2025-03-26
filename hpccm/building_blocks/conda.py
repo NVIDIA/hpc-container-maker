@@ -66,10 +66,10 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
     python_subversion: The Python version to install.  This value is
     ignored if the Conda version is less than 4.8.  The default is
-    `py310` if using Python 3, and `py27` if using Python 2.
+    `py312` if using Python 3, and `py27` if using Python 2.
 
     version: The version of Anaconda to download.  The default value
-    is `23.1.0-1` if using Python 3, and `4.8.3` if using Python 2.
+    is `25.1.1-2` if using Python 3, and `4.8.3` if using Python 2.
 
     # Examples
 
@@ -109,8 +109,8 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         self.__python2 = kwargs.get('python2', False)
         self.__python_version = '2' if self.__python2 else '3'
         self.__python_subversion = kwargs.get(
-            'python_subversion', 'py27' if self.__python2 else 'py310')
-        self.__version = kwargs.get('version', '4.8.3' if self.__python2 else '23.1.0-1')
+            'python_subversion', 'py27' if self.__python2 else 'py312')
+        self.__version = kwargs.get('version', '4.8.3' if self.__python2 else '25.1.1-2')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -141,7 +141,9 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_pkg = 'aarch64'
+        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
             self.__arch_pkg = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_pkg = 'x86_64'
