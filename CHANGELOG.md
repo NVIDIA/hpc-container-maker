@@ -1,3 +1,16 @@
+# v25.3.0
+- Refreshes default component versions for the Boost (`boost`), Conda
+  (`conda`), gdrcopy (`gdrcopy`), HDF-5 (`hdf5`), HPC-X (`hpcx`), and
+  NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Adds the NVIDIA DOCA (`doca_ofed`) building block.
+- Fixes a missing package requirement in the NetCDF (`netcdf`) building block
+  and works around an issue when building NetCDF Fortran with the NVIDIA HPC
+  SDK.
+- Fixes the repository signature verification in the MKL (`mkl`) building
+  block.
+- Fixes a bug in the `release_stream` behavior in the Yum (`yum`) building
+  block.
+
 # v24.10.0
 - Refreshes default component versions for the LLVM (`llvm`) and NVIDIA
   HPC SDK (`nvhpc`) building blocks.
