@@ -194,7 +194,8 @@ class yum(bb_base):
             self.__commands.append('yum-config-manager --set-enabled powertools')
 
         if (self.__release_stream and
-            hpccm.config.g_linux_version >= Version('8.0')):
+            hpccm.config.g_linux_version >= Version('8.0') and
+            hpccm.config.g_linux_version < Version('9.0')):
             # This needs to be a discrete, preliminary step so that
             # packages from release stream are available to be installed.
             self.__commands.append('yum install -y centos-release-stream')
