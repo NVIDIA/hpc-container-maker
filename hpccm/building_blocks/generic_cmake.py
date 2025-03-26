@@ -140,6 +140,9 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
     url: The URL of the package to build.  One of this parameter or
     the `repository` or `package` parameters must be specified.
 
+    unpack_download: if the URL or package specified needs to be unpacked.
+    The default is True
+
     # Examples
 
     ```python
@@ -201,6 +204,7 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         self.__runtime = kwargs.get('runtime', [])
         self.runtime_environment_variables = kwargs.get('runtime_environment', {})
         self.__toolchain = kwargs.get('toolchain', toolchain())
+        self.__unpack_download = kwargs.get('unpack_download', True)
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
@@ -235,8 +239,13 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
            self.__commands"""
 
         # Get source
-        self.__commands.append(self.download_step(recursive=self.__recursive,
-                                                  wd=self.__wd))
+        self.__commands.append(
+            self.download_step(
+                recursive=self.__recursive,
+                wd=self.__wd,
+                unpack=self.__unpack_download
+            )
+        )
 
         # directory containing the unarchived package
         if self.__directory:
