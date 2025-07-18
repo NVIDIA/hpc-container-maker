@@ -133,6 +133,15 @@ def rockylinux9(function):
 
     return wrapper
 
+def rockylinux10(function):
+    """Decorator to set the Linux distribution to Rockylinux 9"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.CENTOS
+        hpccm.config.g_linux_version = Version('10.0')
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def singularity(function):
     """Decorator to set the global container type to singularity"""
     def wrapper(*args, **kwargs):
