@@ -1,3 +1,6 @@
+# v25.9.0
+- Adds support for Rockylinux 10.
+
 # v25.3.0
 - Refreshes default component versions for the Boost (`boost`), Conda
   (`conda`), gdrcopy (`gdrcopy`), HDF-5 (`hdf5`), HPC-X (`hpcx`), and
