@@ -36,9 +36,9 @@ class Test_hpcx(unittest.TestCase):
     @docker
     def test_defaults_ubuntu20(self):
         """Default hpcx building block"""
-        h = hpcx()
+        h = hpcx(version='2.21.3')
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.22.1
+r'''# Mellanox HPC-X version 2.21.3
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -47,12 +47,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.22.1/hpcx-v2.22.1-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.21.3/hpcx-v2.21.3-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.21.3-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.21.3-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.21.3-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64.tbz /var/tmp/hpcx-v2.21.3-gcc-doca_ofed-ubuntu20.04-cuda12-x86_64''')
 
     @x86_64
     @ubuntu24
@@ -61,7 +61,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Default hpcx building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.22.1
+r'''# Mellanox HPC-X version 2.24.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -70,12 +70,12 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.22.1/hpcx-v2.22.1-gcc-doca_ofed-ubuntu24.04-cuda12-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu24.04-cuda12-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu24.04-cuda12-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.24.1_cuda13/hpcx-v2.24.1-gcc-doca_ofed-ubuntu24.04-cuda13-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu24.04-cuda13-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu24.04-cuda13-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu24.04-cuda12-x86_64.tbz /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu24.04-cuda12-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu24.04-cuda13-x86_64.tbz /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu24.04-cuda13-x86_64''')
 
     @x86_64
     @centos
@@ -106,7 +106,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         """Default hpcx building block"""
         h = hpcx()
         self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.22.1
+r'''# Mellanox HPC-X version 2.24.1
 RUN yum install -y \
         bzip2 \
         numactl-libs \
@@ -114,12 +114,12 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.22.1/hpcx-v2.22.1-gcc-doca_ofed-redhat8-cuda12-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-redhat8-cuda12-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-redhat8-cuda12-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.24.1_cuda13/hpcx-v2.24.1-gcc-doca_ofed-redhat8-cuda13-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-redhat8-cuda13-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-redhat8-cuda13-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
     echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-redhat8-cuda12-x86_64.tbz /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-redhat8-cuda12-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-redhat8-cuda13-x86_64.tbz /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-redhat8-cuda13-x86_64''')
 
     @x86_64
     @ubuntu
@@ -314,7 +314,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
         h = hpcx()
         r = h.runtime()
         self.assertEqual(r,
-r'''# Mellanox HPC-X version 2.22.1
+r'''# Mellanox HPC-X version 2.24.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         bzip2 \
@@ -323,9 +323,9 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.22.1/hpcx-v2.22.1-gcc-doca_ofed-ubuntu22.04-cuda12-x86_64.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu22.04-cuda12-x86_64.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu22.04-cuda12-x86_64 /usr/local/hpcx && \
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.24.1_cuda13/hpcx-v2.24.1-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64.tbz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64.tbz -C /var/tmp -j && \
+    cp -a /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64 /usr/local/hpcx && \
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
-    rm -rf /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu22.04-cuda12-x86_64.tbz /var/tmp/hpcx-v2.22.1-gcc-doca_ofed-ubuntu22.04-cuda12-x86_64''')
+    rm -rf /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64.tbz /var/tmp/hpcx-v2.24.1-gcc-doca_ofed-ubuntu22.04-cuda13-x86_64''')

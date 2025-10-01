@@ -1540,13 +1540,19 @@ __Parameters__
 
 
 - __buildlabel__: The build label assigned by Mellanox to the tarball.
-For versions 2.17 and later, the default value is `cuda12`.
-For version 2.16 the default value is `cuda12-gdrcopy2-nccl2.18`.
-For version 2.15 the default value is `cuda12-gdrcopy2-nccl2.17`.
-For version 2.14 the default value is `cuda11-gdrcopy2-nccl2.16`.
-For versions 2.12 and 2.13 the default value is `cuda11-gdrcopy2-nccl2.12`.
-For versions 2.10 and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.
-This value is ignored for HPC-X version 2.9 and earlier.
+For version 2.24 and later, the default value is the value of
+`cuda` parameter.  For versions 2.17 through 2.23, the default
+value is `cuda12`.  For version 2.16 the default value is
+`cuda12-gdrcopy2-nccl2.18`.  For version 2.15 the default value is
+`cuda12-gdrcopy2-nccl2.17`.  For version 2.14 the default value is
+`cuda11-gdrcopy2-nccl2.16`.  For versions 2.12 and 2.13 the
+default value is `cuda11-gdrcopy2-nccl2.12`.  For versions 2.10
+and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.  This
+value is ignored for HPC-X version version 2.9 and earlier.
+
+- __cuda__: The CUDA label assigned by Mellanox to the tarball.  This
+parameter is only recognized for version 2.24 and later.  The
+default value is `cuda13.`
 
 - __environment__: Boolean flag to specify whether the environment
 should be modified to include HPC-X. This option is only
@@ -1593,12 +1599,13 @@ tarball.  For version 2.21 and later, the default value is
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 tarball.  For Ubuntu, the default value is `ubuntu16.04` for
 Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
-Ubuntu 20.04, and `ubuntu22.04` for Ubuntu 22.04.  For HPC-X
-version 2.10 and later and RHEL-based Linux distributions, the
-default value is `redhat7` for version 7 and `redhat8` for version
-8.  For HPC-X version 2.9 and earlier and RHEL-based Linux
-distributions, the default value is `redhat7.6` for version 7 and
-`redhat8.0` for version 8.
+Ubuntu 20.04, `ubuntu22.04` for Ubuntu 22.04, and `ubuntu24.04`
+for Ubuntu 24.04.  For HPC-X version 2.10 and later and RHEL-based
+Linux distributions, the default value is `redhat7` for version 7,
+`redhat8` for version 8, and `redhat9` for version 9.  For HPC-X
+version 2.9 and earlier and RHEL-based Linux distributions, the
+default value is `redhat7.6` for version 7 and `redhat8.0` for
+version 8.
 
 - __ospackages__: List of OS packages to install prior to installing
 Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
@@ -1610,7 +1617,7 @@ distributions the default values are `bzip2`, `numactl-libs`,
 `/usr/local/hpcx`.
 
 - __version__: The version of Mellanox HPC-X to install.  The default
-value is `2.22.1`.
+value is `2.24.1`.
 
 __Examples__
 
