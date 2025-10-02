@@ -49,13 +49,19 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     # Parameters
 
     buildlabel: The build label assigned by Mellanox to the tarball.
-    For versions 2.17 and later, the default value is `cuda12`.
-    For version 2.16 the default value is `cuda12-gdrcopy2-nccl2.18`.
-    For version 2.15 the default value is `cuda12-gdrcopy2-nccl2.17`.
-    For version 2.14 the default value is `cuda11-gdrcopy2-nccl2.16`.
-    For versions 2.12 and 2.13 the default value is `cuda11-gdrcopy2-nccl2.12`.
-    For versions 2.10 and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.
-    This value is ignored for HPC-X version 2.9 and earlier.
+    For version 2.24 and later, the default value is the value of
+    `cuda` parameter.  For versions 2.17 through 2.23, the default
+    value is `cuda12`.  For version 2.16 the default value is
+    `cuda12-gdrcopy2-nccl2.18`.  For version 2.15 the default value is
+    `cuda12-gdrcopy2-nccl2.17`.  For version 2.14 the default value is
+    `cuda11-gdrcopy2-nccl2.16`.  For versions 2.12 and 2.13 the
+    default value is `cuda11-gdrcopy2-nccl2.12`.  For versions 2.10
+    and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.  This
+    value is ignored for HPC-X version version 2.9 and earlier.
+
+    cuda: The CUDA label assigned by Mellanox to the tarball.  This
+    parameter is only recognized for version 2.24 and later.  The
+    default value is `cuda13.`
 
     environment: Boolean flag to specify whether the environment
     should be modified to include HPC-X. This option is only
@@ -102,12 +108,13 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     oslabel: The Linux distribution label assigned by Mellanox to the
     tarball.  For Ubuntu, the default value is `ubuntu16.04` for
     Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
-    Ubuntu 20.04, and `ubuntu22.04` for Ubuntu 22.04.  For HPC-X
-    version 2.10 and later and RHEL-based Linux distributions, the
-    default value is `redhat7` for version 7 and `redhat8` for version
-    8.  For HPC-X version 2.9 and earlier and RHEL-based Linux
-    distributions, the default value is `redhat7.6` for version 7 and
-    `redhat8.0` for version 8.
+    Ubuntu 20.04, `ubuntu22.04` for Ubuntu 22.04, and `ubuntu24.04`
+    for Ubuntu 24.04.  For HPC-X version 2.10 and later and RHEL-based
+    Linux distributions, the default value is `redhat7` for version 7,
+    `redhat8` for version 8, and `redhat9` for version 9.  For HPC-X
+    version 2.9 and earlier and RHEL-based Linux distributions, the
+    default value is `redhat7.6` for version 7 and `redhat8.0` for
+    version 8.
 
     ospackages: List of OS packages to install prior to installing
     Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
@@ -119,7 +126,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     `/usr/local/hpcx`.
 
     version: The version of Mellanox HPC-X to install.  The default
-    value is `2.22.1`.
+    value is `2.24.1`.
 
     # Examples
 
@@ -139,6 +146,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                                     'https://content.mellanox.com/hpc/hpc-x')
         self.__bashrc = '' # Filled in by __distro()
         self.__buildlabel = kwargs.get('buildlabel', None)
+        self.__cuda = kwargs.get('cuda', 'cuda13')
         self.__hpcxinit = kwargs.get('hpcxinit', True)
         self.__inbox = kwargs.get('inbox', False)
         self.__mlnx_ofed = kwargs.get('mlnx_ofed', None)
@@ -148,13 +156,15 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         self.__ospackages = kwargs.get('ospackages', []) # Filled in by _distro()
         self.__packages = kwargs.get('packages', [])
         self.__prefix = kwargs.get('prefix', '/usr/local/hpcx')
-        self.__version = kwargs.get('version', '2.22.1')
+        self.__version = kwargs.get('version', '2.24.1')
 
         self.__commands = [] # Filled in by __setup()
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__buildlabel:
-            if Version(self.__version) >= Version('2.17'):
+            if Version(self.__version) >= Version('2.24'):
+                self.__buildlabel = self.__cuda
+            elif Version(self.__version) >= Version('2.17'):
                 self.__buildlabel = 'cuda12'
             elif Version(self.__version) >= Version('2.16'):
                 self.__buildlabel = 'cuda12-gdrcopy2-nccl2.18'
@@ -251,16 +261,20 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Construct the series of shell commands, i.e., fill in
            self.__commands"""
 
-        # For version 2.8 and earlier, the download URL has the format
-        # MAJOR.MINOR in the path and the tarball contains
-        # MAJOR.MINOR.REVISION, so pull apart the full version to get
-        # the individual components.
-        version_string = self.__version
-        if Version(self.__version) <= Version('2.8'):
+        version_dirstring = self.__version
+        if Version(self.__version) >= Version('2.24'):
+            # For version 2.24 and later, the download URL has the CUDA
+            # version appended to the directory name.
+            version_dirstring += '_{0}'.format(self.__cuda)
+        elif Version(self.__version) <= Version('2.8'):
+            # For version 2.8 and earlier, the download URL has the format
+            # MAJOR.MINOR in the path and the tarball contains
+            # MAJOR.MINOR.REVISION, so pull apart the full version to get
+            # the individual components.
             match = re.match(r'(?P<major>\d+)\.(?P<minor>\d+)\.(?P<revision>\d+)',
                              self.__version)
-            version_string = '{0}.{1}'.format(match.groupdict()['major'],
-                                              match.groupdict()['minor'])
+            version_dirstring = '{0}.{1}'.format(match.groupdict()['major'],
+                                                 match.groupdict()['minor'])
 
         if self.__inbox:
             # Use inbox OFED
@@ -283,7 +297,7 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
                     self.__version, self.__ofedlabel, self.__oslabel, self.__arch)
 
         tarball = self.__label + '.tbz'
-        url = '{0}/v{1}/{2}'.format(self.__baseurl, version_string, tarball)
+        url = '{0}/v{1}/{2}'.format(self.__baseurl, version_dirstring, tarball)
 
         # Download source from web
         self.__commands.append(self.download_step(url=url, directory=self.__wd))
