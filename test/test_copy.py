@@ -255,3 +255,38 @@ r'''%files
         """Singularity files from previous stage in tmp"""
         c = copy(_from='base', src='foo', dest='/var/tmp/foo')
         self.assertEqual(str(c), '%files from base\n    foo /var/tmp/foo')
+
+    @singularity
+    def test_exclude_from_single_singularity(self):
+        """rsync-based copy with exclude_from (single source)"""
+        c = copy(src='.', dest='/opt/app', exclude_from='.apptainerignore')
+        recipe = str(c)
+        self.assertIn('%setup', recipe)
+        self.assertIn('rsync -av', recipe)
+        self.assertIn('--exclude-from=.apptainerignore', recipe)
+        # Allow trailing %files section but ensure rsync setup comes first
+        self.assertTrue(recipe.strip().startswith('%setup'),
+                        "Expected rsync setup section to appear first")
+
+    @singularity
+    def test_exclude_from_multiple_singularity(self):
+        """rsync-based copy with multiple exclude_from files"""
+        c = copy(src='data', dest='/opt/data',
+                 exclude_from=['.ignore1', '.ignore2'])
+        recipe = str(c)
+        self.assertIn('%setup', recipe)
+        self.assertIn('rsync -av', recipe)
+        self.assertIn('--exclude-from=.ignore1', recipe)
+        self.assertIn('--exclude-from=.ignore2', recipe)
+        # Ensure setup section appears before %files
+        self.assertTrue(recipe.strip().startswith('%setup'),
+                        "Expected rsync setup section to appear first")
+
+    @docker
+    def test_exclude_from_docker_ignored(self):
+        """exclude_from ignored in Docker context"""
+        c = copy(src='.', dest='/opt/app', exclude_from='.apptainerignore')
+        recipe = str(c)
+        self.assertIn('COPY', recipe)
+        self.assertNotIn('rsync', recipe)
+        self.assertNotIn('%setup', recipe)
