@@ -202,10 +202,6 @@ class copy(object):
                 else:
                     logging.warning(msg)
 
-            # If exclusion list is defined, switch to rsync copy method
-            if self.__exclude_from:
-                logging.info('copy: using rsync with exclude-from %s', self.__exclude_from)
-
             # Format:
             # %files
             #     src1 dest
