@@ -258,8 +258,8 @@ r'''%files
 
     @singularity
     def test_exclude_from_single_singularity(self):
-        """rsync-based copy with exclude_from (single source)"""
-        c = copy(src='.', dest='/opt/app', exclude_from='.apptainerignore')
+        """rsync-based copy with _exclude_from (single source)"""
+        c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
         recipe = str(c)
         self.assertIn('%setup', recipe)
         self.assertIn('rsync -av', recipe)
@@ -270,9 +270,9 @@ r'''%files
 
     @singularity
     def test_exclude_from_multiple_singularity(self):
-        """rsync-based copy with multiple exclude_from files"""
+        """rsync-based copy with multiple _exclude_from files"""
         c = copy(src='data', dest='/opt/data',
-                 exclude_from=['.ignore1', '.ignore2'])
+                 _exclude_from=['.ignore1', '.ignore2'])
         recipe = str(c)
         self.assertIn('%setup', recipe)
         self.assertIn('rsync -av', recipe)
@@ -284,8 +284,8 @@ r'''%files
 
     @docker
     def test_exclude_from_docker_ignored(self):
-        """exclude_from ignored in Docker context"""
-        c = copy(src='.', dest='/opt/app', exclude_from='.apptainerignore')
+        """_exclude_from ignored in Docker context"""
+        c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
         recipe = str(c)
         self.assertIn('COPY', recipe)
         self.assertNotIn('rsync', recipe)

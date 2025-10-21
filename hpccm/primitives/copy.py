@@ -44,6 +44,17 @@ class copy(object):
 
     dest: Path in the container image to copy the file(s)
 
+    _exclude_from: String or list of strings.  One or more filenames
+    containing rsync-style exclude patterns (e.g., `.apptainerignore`).
+    Only used when building for Singularity or Apptainer.  If specified,
+    the copy operation is emitted in the `%setup` section using
+    `rsync --exclude-from=<file>` rather than the standard `%files`
+    copy directive.  This enables selective exclusion of files and
+    directories during the image build, for example to omit large data
+    files, caches, or temporary artifacts.  Multiple exclusion files may
+    be provided as a list or tuple.  The default is an empty list
+    (Singularity specific).
+
     files: A dictionary of file pairs, source and destination, to copy
     into the container image.  If specified, has precedence over
     `dest` and `src`.
@@ -66,17 +77,6 @@ class copy(object):
 
     src: A file, or a list of files, to copy
 
-    exclude_from: String or list of strings.  One or more filenames
-    containing rsync-style exclude patterns (e.g., `.apptainerignore`).
-    Only used when building for Singularity or Apptainer.  If specified,
-    the copy operation is emitted in the `%setup` section using
-    `rsync --exclude-from=<file>` rather than the standard `%files`
-    copy directive.  This enables selective exclusion of files and
-    directories during the image build, for example to omit large data
-    files, caches, or temporary artifacts.  Multiple exclusion files may
-    be provided as a list or tuple.  The default is an empty list
-    (Singularity specific).
-
     # Examples
 
     ```python
@@ -92,7 +92,7 @@ class copy(object):
     ```
 
     ```python
-    copy(src='.', dest='/opt/app', exclude_from='.apptainerignore')
+    copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
     ```
 
     """
@@ -111,7 +111,7 @@ class copy(object):
         self._post = kwargs.get('_post', '')  # Singularity specific
         self.__src = kwargs.get('src', '')
 
-        ef = kwargs.get('exclude_from', None)
+        ef = kwargs.get('_exclude_from', None)
         if ef is None:
             self.__exclude_from = []
         elif isinstance(ef, (list, tuple)):
