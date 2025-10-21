@@ -260,33 +260,27 @@ r'''%files
     def test_exclude_from_single_singularity(self):
         """rsync-based copy with _exclude_from (single source)"""
         c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
-        recipe = str(c)
-        self.assertIn('%setup', recipe)
-        self.assertIn('rsync -av', recipe)
-        self.assertIn('--exclude-from=.apptainerignore', recipe)
-        # Allow trailing %files section but ensure rsync setup comes first
-        self.assertTrue(recipe.strip().startswith('%setup'),
-                        "Expected rsync setup section to appear first")
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/opt/app
+    rsync -av --exclude-from=.apptainerignore ./ ${SINGULARITY_ROOTFS}/opt/app/
+%files
+''')
 
     @singularity
     def test_exclude_from_multiple_singularity(self):
         """rsync-based copy with multiple _exclude_from files"""
         c = copy(src='data', dest='/opt/data',
                  _exclude_from=['.ignore1', '.ignore2'])
-        recipe = str(c)
-        self.assertIn('%setup', recipe)
-        self.assertIn('rsync -av', recipe)
-        self.assertIn('--exclude-from=.ignore1', recipe)
-        self.assertIn('--exclude-from=.ignore2', recipe)
-        # Ensure setup section appears before %files
-        self.assertTrue(recipe.strip().startswith('%setup'),
-                        "Expected rsync setup section to appear first")
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/opt/data
+    rsync -av --exclude-from=.ignore1 --exclude-from=.ignore2 data/ ${SINGULARITY_ROOTFS}/opt/data/
+%files
+''')
 
     @docker
     def test_exclude_from_docker_ignored(self):
         """_exclude_from ignored in Docker context"""
         c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
-        recipe = str(c)
-        self.assertIn('COPY', recipe)
-        self.assertNotIn('rsync', recipe)
-        self.assertNotIn('%setup', recipe)
+        self.assertEqual(str(c), 'COPY . /opt/app')
