@@ -255,3 +255,32 @@ r'''%files
         """Singularity files from previous stage in tmp"""
         c = copy(_from='base', src='foo', dest='/var/tmp/foo')
         self.assertEqual(str(c), '%files from base\n    foo /var/tmp/foo')
+
+    @singularity
+    def test_exclude_from_single_singularity(self):
+        """rsync-based copy with _exclude_from (single source)"""
+        c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/opt/app
+    rsync -av --exclude-from=.apptainerignore ./ ${SINGULARITY_ROOTFS}/opt/app/
+%files
+''')
+
+    @singularity
+    def test_exclude_from_multiple_singularity(self):
+        """rsync-based copy with multiple _exclude_from files"""
+        c = copy(src='data', dest='/opt/data',
+                 _exclude_from=['.ignore1', '.ignore2'])
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/opt/data
+    rsync -av --exclude-from=.ignore1 --exclude-from=.ignore2 data/ ${SINGULARITY_ROOTFS}/opt/data/
+%files
+''')
+
+    @docker
+    def test_exclude_from_docker_ignored(self):
+        """_exclude_from ignored in Docker context"""
+        c = copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
+        self.assertEqual(str(c), 'COPY . /opt/app')

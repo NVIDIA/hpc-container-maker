@@ -44,6 +44,17 @@ class copy(object):
 
     dest: Path in the container image to copy the file(s)
 
+    _exclude_from: String or list of strings.  One or more filenames
+    containing rsync-style exclude patterns (e.g., `.apptainerignore`).
+    Only used when building for Singularity or Apptainer.  If specified,
+    the copy operation is emitted in the `%setup` section using
+    `rsync --exclude-from=<file>` rather than the standard `%files`
+    copy directive.  This enables selective exclusion of files and
+    directories during the image build, for example to omit large data
+    files, caches, or temporary artifacts.  Multiple exclusion files may
+    be provided as a list or tuple.  The default is an empty list
+    (Singularity specific).
+
     files: A dictionary of file pairs, source and destination, to copy
     into the container image.  If specified, has precedence over
     `dest` and `src`.
@@ -80,6 +91,10 @@ class copy(object):
     copy(files={'a': '/tmp/a', 'b': '/opt/b'})
     ```
 
+    ```python
+    copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
+    ```
+
     """
 
     def __init__(self, **kwargs):
@@ -95,6 +110,12 @@ class copy(object):
         self._mkdir = kwargs.get('_mkdir', '')  # Singularity specific
         self._post = kwargs.get('_post', '')  # Singularity specific
         self.__src = kwargs.get('src', '')
+
+        ef = kwargs.get('_exclude_from', [])
+        if isinstance(ef, (list, tuple)):
+            self.__exclude_from = list(ef)
+        elif ef:
+            self.__exclude_from = [ef]
 
         if self._mkdir and self._post:
             logging.error('_mkdir and _post are mutually exclusive!')
@@ -210,6 +231,13 @@ class copy(object):
             for pair in files:
                 dest = pair['dest']
                 src = pair['src']
+
+                # Use rsync if exclusion file provided and not multi-stage copy
+                if self.__exclude_from and not self.__from:
+                    excl_opts = ' '.join('--exclude-from={}'.format(x) for x in self.__exclude_from)
+                    pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(dest))
+                    pre.append('    rsync -av {0} {1}/ ${{SINGULARITY_ROOTFS}}{2}/'.format(excl_opts, src, dest))
+                    continue
 
                 if self._post:
                     dest = '/'
