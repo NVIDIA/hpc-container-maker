@@ -111,12 +111,10 @@ class copy(object):
         self._post = kwargs.get('_post', '')  # Singularity specific
         self.__src = kwargs.get('src', '')
 
-        ef = kwargs.get('_exclude_from', None)
-        if ef is None:
-            self.__exclude_from = []
-        elif isinstance(ef, (list, tuple)):
+        ef = kwargs.get('_exclude_from', [])
+        if isinstance(ef, (list, tuple)):
             self.__exclude_from = list(ef)
-        else:
+        elif ef:
             self.__exclude_from = [ef]
 
         if self._mkdir and self._post:
