@@ -44,6 +44,7 @@ g_linux_distro = linux_distro.UBUNTU # Linux distribution
 g_linux_version = Version('16.04') # Linux distribution version
 g_singularity_version = Version('2.6') # Singularity version
 g_wd = '/var/tmp' # Working directory
+g_singularity_tmp_fallback = True    # Singularity / Apptainer behavior flags
 
 def get_cpu_architecture():
   """Return the architecture string for the currently configured CPU
@@ -256,6 +257,17 @@ def set_working_directory(wd):
   """
   this = sys.modules[__name__]
   this.g_wd = wd
+
+def set_singularity_tmp_fallback(enable=True):
+  """Enable or disable the automatic %setup fallback for /tmp and /var/tmp
+  destinations on Singularity >= 3.6.
+
+  # Arguments
+
+  enable (bool): True to enable the fallback (default), False to disable.
+  """
+  this = sys.modules[__name__]
+  this.g_singularity_tmp_fallback = enable
 
 def test_cpu_feature_flag(flag):
   """Return True or False depending on whether the CPU supports the
