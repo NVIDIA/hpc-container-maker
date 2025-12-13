@@ -77,6 +77,22 @@ class copy(object):
 
     src: A file, or a list of files, to copy
 
+    # Notes
+
+    On Singularity 3.6 and later, files cannot be staged directly to
+    `/tmp` or `/var/tmp` via the `%files` section. When such destinations
+    are detected, the `copy` primitive automatically emits a `%setup`
+    block to perform the copy safely (enabled by default).
+
+    This behavior can be disabled via
+    `hpccm.config.set_singularity_tmp_fallback(False)`, in which case a
+    runtime error will be raised.
+
+    Note that `--working-directory` (or
+    `hpccm.config.set_working_directory()`) only affects commands
+    executed during `%post` (e.g., downloads or builds) and does not
+    apply to `%files` staging.
+
     # Examples
 
     ```python
@@ -193,9 +209,24 @@ class copy(object):
             # version.
             # https://github.com/NVIDIA/hpc-container-maker/issues/345
             if (not self.__from and
+
                 any(f['dest'].startswith(('/var/tmp', '/tmp')) for f in files)):
-                msg = 'Singularity 3.6 and later no longer allow a temporary directory to be used to stage files into the container image.  Modify the recipe or, in many cases, use --working-directory or hpccm.config.set_working_directory() to specify another location.'
-                if hpccm.config.g_singularity_version >= Version('3.6'):
+
+                msg = (
+                    'Singularity 3.6 and later do not allow staging files to /tmp or /var/tmp '
+                    'via the %files section. This restriction applies before the container '
+                    'root filesystem exists.\n\n'
+                    'hpc-container-maker can automatically handle this case using a %setup '
+                    'fallback (enabled by default).\n\n'
+                    'Note: --working-directory (or hpccm.config.set_working_directory()) '
+                    'only affects commands executed during %post (e.g., downloads or builds) '
+                    'and does not apply to %files staging.\n\n'
+                    'To disable the automatic fallback, set:\n'
+                    '  hpccm.config.set_singularity_tmp_fallback(False)\n\n'
+                    'Alternatively, modify the recipe to avoid /tmp or /var/tmp destinations.'
+                )
+
+                if hpccm.config.g_singularity_version >= Version('3.6') and not hpccm.config.g_singularity_tmp_fallback:
                     raise RuntimeError(msg)
                 else:
                     logging.warning(msg)
@@ -228,17 +259,40 @@ class copy(object):
             flat_files = []
             post = [] # post actions if _post is enabled
             pre = [] # pre actions if _mkdir is enabled
+
+            created_dirs = set()
+
             for pair in files:
                 dest = pair['dest']
                 src = pair['src']
 
-                # Use rsync if exclusion file provided and not multi-stage copy
+                is_tmp_dest = dest.startswith(('/tmp', '/var/tmp'))
+                needs_tmp_fallback = (
+                    hpccm.config.g_singularity_tmp_fallback and
+                    not self.__from and
+                    is_tmp_dest and
+                    hpccm.config.g_singularity_version >= Version('3.6')
+                )
+
+
+                # 1) Use rsync if exclusion file provided and not multi-stage copy (_exclude_from --> always %setup + rsync)
                 if self.__exclude_from and not self.__from:
                     excl_opts = ' '.join('--exclude-from={}'.format(x) for x in self.__exclude_from)
                     pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(dest))
                     pre.append('    rsync -av {0} {1}/ ${{SINGULARITY_ROOTFS}}{2}/'.format(excl_opts, src, dest))
                     continue
 
+                # 2) /tmp or /var/tmp fallback
+                if needs_tmp_fallback:
+                    parent = posixpath.dirname(dest)
+                    if parent not in created_dirs:
+                        pre.append('    mkdir -p ${{SINGULARITY_ROOTFS}}{0}'.format(parent))
+                        created_dirs.add(parent)
+
+                    pre.append('    cp -a {0} ${{SINGULARITY_ROOTFS}}{1}'.format(src, dest))
+                    continue
+
+                # 3) Original behavior (unchanged)
                 if self._post:
                     dest = '/'
 
