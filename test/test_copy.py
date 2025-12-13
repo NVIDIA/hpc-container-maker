@@ -21,6 +21,7 @@ from __future__ import print_function
 
 import logging # pylint: disable=unused-import
 import unittest
+import hpccm.config
 
 from helpers import bash, docker, invalid_ctype, singularity, singularity26, singularity32, singularity37
 
@@ -246,15 +247,151 @@ r'''%files
     @singularity37
     def test_temp_staging(self):
         """Singularity staged files through tmp"""
+        # Disable fallback to force failure
+        hpccm.config.set_singularity_tmp_fallback(False)
         c = copy(src='foo', dest='/var/tmp/foo')
         with self.assertRaises(RuntimeError):
             str(c)
+        # Restore fallback for subsequent tests in the suite
+        hpccm.config.set_singularity_tmp_fallback(True)
+
+    @singularity37
+    def test_tmp_single_entry_fallback(self):
+        """Single /tmp destination uses %setup fallback"""
+        c = copy(src='foo', dest='/tmp/foo')
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo
+%files
+''')
+
+    @singularity37
+    def test_var_tmp_single_entry_fallback(self):
+        """Single /var/tmp destination uses %setup fallback"""
+        c = copy(src='foo', dest='/var/tmp/foo')
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/var/tmp
+    cp -a foo ${SINGULARITY_ROOTFS}/var/tmp/foo
+%files
+''')
+
+    @singularity37
+    def test_mixed_tmp_and_safe_paths(self):
+        """Only tmp entries move to %setup, others remain in %files"""
+        c = copy(files={'bar': '/opt/bar', 'foo': '/tmp/foo'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo
+%files
+    bar /opt/bar''')
+
+    @singularity37
+    def test_multiple_tmp_entries(self):
+        """Multiple /tmp entries are handled independently"""
+        c = copy(files={'a': '/tmp/a', 'b': '/var/tmp/b'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a a ${SINGULARITY_ROOTFS}/tmp/a
+    mkdir -p ${SINGULARITY_ROOTFS}/var/tmp
+    cp -a b ${SINGULARITY_ROOTFS}/var/tmp/b
+%files
+''')
+
+
+    @singularity37
+    def test_tmp_multiple_files_fallback(self):
+        """Multiple files copied to /tmp destination using %setup fallback"""
+        c = copy(files={'bar': '/tmp/bar', 'foo': '/tmp/foo'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a bar ${SINGULARITY_ROOTFS}/tmp/bar
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo
+%files
+''')
+
+    @singularity37
+    def test_tmp_multiple_nested_files_fallback(self):
+        """Multiple files copied to nested /tmp destinations using %setup fallback"""
+        c = copy(files={'bar': '/tmp/foo1/foo3', 'foo': '/tmp/foo1/foo2'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp/foo1
+    cp -a bar ${SINGULARITY_ROOTFS}/tmp/foo1/foo3
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo1/foo2
+%files
+''')
+
+    @singularity37
+    def test_var_tmp_multiple_nested_files_fallback(self):
+        """Multiple files copied to nested /var/tmp destinations using %setup fallback"""
+        c = copy(files={'bar': '/var/tmp/foo1/foo3', 'foo': '/var/tmp/foo1/foo2'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/var/tmp/foo1
+    cp -a bar ${SINGULARITY_ROOTFS}/var/tmp/foo1/foo3
+    cp -a foo ${SINGULARITY_ROOTFS}/var/tmp/foo1/foo2
+%files
+''')
+
+    @singularity37
+    def test_tmp_opt_mixed_files_fallback(self):
+        """Files copied to both /tmp and /opt destinations using %setup fallback"""
+        c = copy(files={'bar': '/opt/bar', 'foo': '/tmp/foo'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo
+%files
+    bar /opt/bar''')
+
+    @singularity37
+    def test_tmp_var_tmp_single_dict_fallback(self):
+        """Single copy call with /tmp and /var/tmp mixed in files dictionary"""
+        c = copy(files={'bar': '/var/tmp/bar', 'foo': '/tmp/foo'})
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/var/tmp
+    cp -a bar ${SINGULARITY_ROOTFS}/var/tmp/bar
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp
+    cp -a foo ${SINGULARITY_ROOTFS}/tmp/foo
+%files
+''')
+
+    @docker
+    def test_tmp_behavior_docker_unchanged(self):
+        """Docker COPY remains unchanged for /tmp destinations"""
+        c = copy(src='foo', dest='/tmp/foo')
+        self.assertEqual(str(c), 'COPY foo /tmp/foo')
+
+    @singularity37
+    def test_no_runtime_error_with_tmp_after_fallback(self):
+        """Regression test: no RuntimeError on Singularity >= 3.6"""
+        c = copy(src='foo', dest='/tmp/foo')
+        recipe = str(c)
+        self.assertIn('%setup', recipe)
+        self.assertNotIn('RuntimeError', recipe)
 
     @singularity37
     def test_from_temp_staging(self):
         """Singularity files from previous stage in tmp"""
         c = copy(_from='base', src='foo', dest='/var/tmp/foo')
         self.assertEqual(str(c), '%files from base\n    foo /var/tmp/foo')
+
+    @singularity
+    def test_tmp_with_exclude_from_uses_rsync(self):
+        """_exclude_from + tmp uses rsync in %setup"""
+        c = copy(src='.', dest='/tmp/app', _exclude_from='.apptainerignore')
+        self.assertEqual(str(c),
+r'''%setup
+    mkdir -p ${SINGULARITY_ROOTFS}/tmp/app
+    rsync -av --exclude-from=.apptainerignore ./ ${SINGULARITY_ROOTFS}/tmp/app/
+%files
+''')
 
     @singularity
     def test_exclude_from_single_singularity(self):
