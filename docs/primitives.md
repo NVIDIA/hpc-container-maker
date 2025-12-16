@@ -123,6 +123,17 @@ identifier.  This also causes the Singularity block to named
 
 - __dest__: Path in the container image to copy the file(s)
 
+- ___exclude_from__: String or list of strings.  One or more filenames
+containing rsync-style exclude patterns (e.g., `.apptainerignore`).
+Only used when building for Singularity or Apptainer.  If specified,
+the copy operation is emitted in the `%setup` section using
+`rsync --exclude-from=<file>` rather than the standard `%files`
+copy directive.  This enables selective exclusion of files and
+directories during the image build, for example to omit large data
+files, caches, or temporary artifacts.  Multiple exclusion files may
+be provided as a list or tuple.  The default is an empty list
+(Singularity specific).
+
 - __files__: A dictionary of file pairs, source and destination, to copy
 into the container image.  If specified, has precedence over
 `dest` and `src`.
@@ -145,6 +156,23 @@ specific).
 
 - __src__: A file, or a list of files, to copy
 
+__Notes__
+
+
+On Singularity 3.6 and later, files cannot be staged directly to
+`/tmp` or `/var/tmp` via the `%files` section. When such destinations
+are detected, the `copy` primitive automatically emits a `%setup`
+block to perform the copy safely (enabled by default).
+
+This behavior can be disabled via
+`hpccm.config.set_singularity_tmp_fallback(False)`, in which case a
+runtime error will be raised.
+
+Note that `--working-directory` (or
+`hpccm.config.set_working_directory()`) only affects commands
+executed during `%post` (e.g., downloads or builds) and does not
+apply to `%files` staging.
+
 __Examples__
 
 
@@ -160,6 +188,9 @@ copy(src=['a', 'b', 'c'], dest='/tmp')
 copy(files={'a': '/tmp/a', 'b': '/opt/b'})
 ```
 
+```python
+copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
+```
 
 # environment
 ```python

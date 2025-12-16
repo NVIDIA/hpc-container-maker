@@ -124,6 +124,17 @@ __Arguments__
 - __wd (string)__: working directory path
 
 
+## set_singularity_tmp_fallback
+```python
+set_singularity_tmp_fallback(enable=True)
+```
+Enable or disable the automatic %setup fallback for /tmp and /var/tmp destinations on Singularity 3.6 and later.
+
+__Arguments__
+
+
+- __enable (bool)__: True to enable the fallback (default), False to disable. The default is True.
+
 ## test_cpu_feature_flag
 ```python
 test_cpu_feature_flag(flag)
@@ -138,7 +149,7 @@ __Arguments__
 
 # recipe
 ```python
-recipe(recipe_file, cpu_target=None, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp')
+recipe(recipe_file, cpu_target=None, ctype=<container_type.DOCKER: 1>, raise_exceptions=False, single_stage=False, singularity_version=u'2.6', userarg=None, working_directory=u'/var/tmp', singularity_tmp_fallback=True)
 ```
 Recipe builder
 
@@ -168,6 +179,12 @@ as the `USERARG` dictionary.
 
 - __working_directory__: path to use as the working directory in the
 container specification
+
+- __singularity_tmp_fallback__: If True (default), automatically handle
+copy destinations under /tmp or /var/tmp using a %setup block when
+targeting Singularity >= 3.6. If False, such copy operations are
+rejected and will raise an error, requiring the user to modify the
+recipe.
 
 
 # Stage
