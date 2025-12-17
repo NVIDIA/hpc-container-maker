@@ -175,3 +175,13 @@ RUN pip --no-cache-dir install --upgrade "pip < 21.0" && \
         self.assertEqual(str(p),
 r"""# pip
 RUN pip --no-cache-dir install 'hpccm>=1.0'""")
+
+    @ubuntu
+    @docker
+    def test_install_args(self):
+        """install_args option"""
+        p = pip(ospackages=[], packages=['hpccm'],
+                install_args=['--index-url https://my-index.com'])
+        self.assertEqual(str(p),
+r'''# pip
+RUN pip --no-cache-dir install hpccm --index-url https://my-index.com''')

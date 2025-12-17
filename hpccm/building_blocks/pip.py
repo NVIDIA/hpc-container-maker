@@ -66,6 +66,9 @@ class pip(bb_base, hpccm.templates.rm):
     upgraded prior to installing any PyPi packages.  The default is
     False.
 
+    install_args: List of arguments to pass to `pip install`.  The
+    default is an empty list. Only applies to the `packages` parameter.
+
     # Examples
 
     ```python
@@ -96,6 +99,7 @@ class pip(bb_base, hpccm.templates.rm):
         self.__requirements = kwargs.get('requirements', None)
         self.__upgrade = kwargs.get('upgrade', False)
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
+        self.__install_args = kwargs.get('install_args', [])
 
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below
@@ -170,4 +174,7 @@ class pip(bb_base, hpccm.templates.rm):
                 quoted_packages = [shlex_quote(pkg) for pkg in self.__packages]
                 cmds.append('{0} install {1}'.format(self.__pip,
                                                      ' '.join(quoted_packages)))
+                if self.__install_args:
+                    cmds[-1] += ' {0}'.format(' '.join(self.__install_args))
+
             self += shell(commands=cmds)
