@@ -65,6 +65,10 @@ class pip(bb_base, hpccm.templates.rm):
     upgraded prior to installing any PyPi packages.  The default is
     False.
 
+    index_url: URL of the PyPi index to use. The default is None.
+
+    extra_index_url: URL of the extra PyPi index to use. The default is None.
+
     # Examples
 
     ```python
@@ -95,6 +99,8 @@ class pip(bb_base, hpccm.templates.rm):
         self.__requirements = kwargs.get('requirements', None)
         self.__upgrade = kwargs.get('upgrade', False)
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
+        self.__index_url = kwargs.get('index_url', None)
+        self.__extra_index_url = kwargs.get('extra_index_url', None)
 
         self.__debs = [] # Filled in below
         self.__rpms = [] # Filled in below
@@ -167,4 +173,9 @@ class pip(bb_base, hpccm.templates.rm):
             if self.__packages:
                 cmds.append('{0} install {1}'.format(self.__pip,
                                                      ' '.join(self.__packages)))
+                if self.__index_url:
+                    cmds[-1] += ' --index-url {0}'.format(self.__index_url)
+                if self.__extra_index_url:
+                    cmds[-1] += ' --extra-index-url {0}'.format(self.__extra_index_url)
+
             self += shell(commands=cmds)
