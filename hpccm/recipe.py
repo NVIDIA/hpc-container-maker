@@ -91,7 +91,8 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
 def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
            raise_exceptions=False, single_stage=False,
            singularity_version='2.6', userarg=None,
-           working_directory='/var/tmp'):
+           working_directory='/var/tmp',
+           singularity_tmp_fallback=True):
     """Recipe builder
 
     # Arguments
@@ -120,6 +121,12 @@ def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
     working_directory: path to use as the working directory in the
     container specification
 
+    singularity_tmp_fallback: If True (default), automatically handle
+    copy destinations under /tmp or /var/tmp using a %setup block when
+    targeting Singularity >= 3.6. If False, such copy operations are
+    rejected and will raise an error, requiring the user to modify the
+    recipe.
+
     """
 
     # Make user arguments available
@@ -143,6 +150,9 @@ def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
 
     # Set the global working directory
     hpccm.config.g_wd = working_directory
+
+    # Set Singularity /tmp fallback behavior
+    hpccm.config.g_singularity_tmp_fallback = singularity_tmp_fallback
 
     # Any included recipes that are specified using relative paths will
     # need to prepend the path to the main recipe in order to be found.

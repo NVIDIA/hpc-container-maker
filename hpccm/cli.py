@@ -65,6 +65,12 @@ def main(): # pragma: no cover
     parser.add_argument('--working-directory', '--wd', type=str,
                         default='/var/tmp',
                         help='set container working directory')
+    parser.add_argument('--no-singularity-tmp-fallback',
+                        dest='singularity_tmp_fallback',
+                        action='store_false',
+                        default=hpccm.config.g_singularity_tmp_fallback,
+                        help='Disable automatic %%setup fallback for /tmp and /var/tmp destinations on Singularity >= 3.6')
+
     args = parser.parse_args()
 
     # configure logger
@@ -77,7 +83,8 @@ def main(): # pragma: no cover
                           single_stage=args.single_stage,
                           singularity_version=args.singularity_version,
                           userarg=args.userarg,
-                          working_directory=args.working_directory)
+                          working_directory=args.working_directory,
+                          singularity_tmp_fallback=args.singularity_tmp_fallback)
     print(recipe)
 
 if __name__ == "__main__": # pragma: no cover
