@@ -165,6 +165,8 @@ class pip(bb_base, hpccm.templates.rm):
                                    posixpath.basename(self.__requirements))]))
 
             if self.__packages:
+                # Quote the packages to avoid shell expansion
+                quoted_packages = [f'"{pkg}"' for pkg in self.__packages]
                 cmds.append('{0} install {1}'.format(self.__pip,
-                                                     ' '.join(self.__packages)))
+                                                     ' '.join(quoted_packages)))
             self += shell(commands=cmds)
