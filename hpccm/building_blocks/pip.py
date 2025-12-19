@@ -24,6 +24,7 @@ from __future__ import print_function
 from packaging.version import Version
 import logging
 import posixpath
+from six.moves import shlex_quote
 
 import hpccm.config
 import hpccm.templates.rm
@@ -165,6 +166,8 @@ class pip(bb_base, hpccm.templates.rm):
                                    posixpath.basename(self.__requirements))]))
 
             if self.__packages:
+                # Quote the packages to avoid shell expansion
+                quoted_packages = [shlex_quote(pkg) for pkg in self.__packages]
                 cmds.append('{0} install {1}'.format(self.__pip,
-                                                     ' '.join(self.__packages)))
+                                                     ' '.join(quoted_packages)))
             self += shell(commands=cmds)

@@ -166,3 +166,12 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN pip --no-cache-dir install --upgrade "pip < 21.0" && \
     pip --no-cache-dir install hpccm''')
+
+    @ubuntu
+    @docker
+    def test_package_with_version(self):
+        """package with version specifier is quoted"""
+        p = pip(ospackages=[], packages=['hpccm>=1.0'])
+        self.assertEqual(str(p),
+r"""# pip
+RUN pip --no-cache-dir install 'hpccm>=1.0'""")
