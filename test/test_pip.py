@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         python-setuptools \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip --no-cache-dir install hpccm''')
+RUN pip --no-cache-dir install "hpccm"''')
 
     @centos
     @docker
@@ -57,7 +57,7 @@ RUN yum install -y epel-release && \
     yum install -y \
         python2-pip && \
     rm -rf /var/cache/yum/*
-RUN pip --no-cache-dir install hpccm''')
+RUN pip --no-cache-dir install "hpccm"''')
 
     @centos8
     @docker
@@ -71,7 +71,7 @@ RUN yum install -y \
     rm -rf /var/cache/yum/*
 RUN alternatives --set python /usr/bin/python2 && \
     alternatives --install /usr/bin/pip pip /usr/bin/pip2 30
-RUN pip --no-cache-dir install hpccm''')
+RUN pip --no-cache-dir install "hpccm"''')
 
     @ubuntu
     @docker
@@ -86,7 +86,7 @@ RUN apt-get update -y && \
         python3-setuptools \
         python3-wheel && \
     rm -rf /var/lib/apt/lists/*
-RUN pip3 --no-cache-dir install hpccm''')
+RUN pip3 --no-cache-dir install "hpccm"''')
 
     @centos
     @docker
@@ -98,7 +98,7 @@ r'''# pip
 RUN yum install -y \
         python3-pip && \
     rm -rf /var/cache/yum/*
-RUN pip3 --no-cache-dir install hpccm''')
+RUN pip3 --no-cache-dir install "hpccm"''')
 
     @centos
     @docker
@@ -110,7 +110,7 @@ r'''# pip
 RUN yum install -y \
         python3-pip && \
     rm -rf /var/cache/yum/*
-RUN pip3 install hpccm''')
+RUN pip3 install "hpccm"''')
 
     @ubuntu
     @docker
@@ -119,7 +119,7 @@ RUN pip3 install hpccm''')
         p = pip(ospackages=[], packages=['hpccm'])
         self.assertEqual(str(p),
 r'''# pip
-RUN pip --no-cache-dir install hpccm''')
+RUN pip --no-cache-dir install "hpccm"''')
 
     @ubuntu
     @docker
@@ -132,7 +132,7 @@ RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         foo && \
     rm -rf /var/lib/apt/lists/*
-RUN pip --no-cache-dir install hpccm''')
+RUN pip --no-cache-dir install "hpccm"''')
 
     @ubuntu
     @docker
@@ -165,4 +165,4 @@ RUN apt-get update -y && \
         python-wheel && \
     rm -rf /var/lib/apt/lists/*
 RUN pip --no-cache-dir install --upgrade "pip < 21.0" && \
-    pip --no-cache-dir install hpccm''')
+    pip --no-cache-dir install "hpccm"''')
