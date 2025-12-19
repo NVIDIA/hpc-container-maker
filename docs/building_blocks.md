@@ -3911,6 +3911,9 @@ empty.
 upgraded prior to installing any PyPi packages.  The default is
 False.
 
+- __install_args__: List of arguments to pass to `pip install`.  The
+default is an empty list. Only applies to the `packages` parameter.
+
 __Examples__
 
 
