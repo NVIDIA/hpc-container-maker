@@ -14,4 +14,4 @@
 
 from __future__ import absolute_import
 
-__version__ = '25.9.0'
+__version__ = '26.1.0'

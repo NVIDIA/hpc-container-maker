@@ -1,3 +1,13 @@
+# v26.1.0
+- Refreshes default component versions for the DOCA OFED (`doca_ofed`),
+  HPC-X (`hpcx`), and NVIDIA HPC SDK (`nvhpc`) building blocks.
+- Enhance the pip (`pip`) building block to accept additional install
+  arguments and quote package names.
+- Provide better support for Singularity recipes that stage files in
+  system temporary directories.
+- Enhance the `copy` primitive to support the Singularity specific
+  rsync based copies.
+
 # v25.9.0
 - Adds support for Rockylinux 10.
 
