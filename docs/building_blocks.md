@@ -655,14 +655,13 @@ processors and `arm64-sbsa` for aarch64 processors.
 - __oslabel__: The Linux distribution label assigned by Mellanox to the
 package repository.  For Ubuntu, the default value is
 `ubuntuXX.04` where `XX` is derived from the base image.  For
-RHEL-base Linux distributions, the default value is `rhelX.Y`
-where `X.Y` is `9.2` for RHEL 9.x and `8.6` for RHEL 8.x.
+RHEL-base Linux distributions, the default value is `rhelX`.
 
 - __ospackages__: List of OS packages to install prior to installing
 DOCA OFED.  The default values are `ca-certificates`, `gnupg`, and
 `wget`.
 
-- __packages__: List of packages to install from Mellanox OFED.  For
+- __packages__: List of packages to install from DOCA.  For
 Ubuntu, the default values are `ibverbs-providers`,
 `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
 `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
@@ -671,13 +670,13 @@ values are `libibumad`, `libibverbs`, `libibverbs-utils`,
 `librdmacm`, `rdma-core`, and `rdma-core-devel`.
 
 - __version__: The version of DOCA OFED to download.  The default value
-is `2.10.0`.
+is `3.2.0`.
 
 __Examples__
 
 
 ```python
-doca_ofed(version='2.10.0')
+doca_ofed(version='3.2.0')
 ```
 
 
