@@ -192,6 +192,7 @@ copy(files={'a': '/tmp/a', 'b': '/opt/b'})
 copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
 ```
 
+
 # environment
 ```python
 environment(self, **kwargs)

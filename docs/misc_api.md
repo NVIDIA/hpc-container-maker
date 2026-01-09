@@ -128,12 +128,13 @@ __Arguments__
 ```python
 set_singularity_tmp_fallback(enable=True)
 ```
-Enable or disable the automatic %setup fallback for /tmp and /var/tmp destinations on Singularity 3.6 and later.
+Enable or disable the automatic %setup fallback for /tmp and /var/tmp
+destinations on Singularity >= 3.6.
 
 __Arguments__
 
 
-- __enable (bool)__: True to enable the fallback (default), False to disable. The default is True.
+- __enable (bool)__: True to enable the fallback (default), False to disable.
 
 ## test_cpu_feature_flag
 ```python
