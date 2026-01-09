@@ -49,14 +49,13 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     oslabel: The Linux distribution label assigned by Mellanox to the
     package repository.  For Ubuntu, the default value is
     `ubuntuXX.04` where `XX` is derived from the base image.  For
-    RHEL-base Linux distributions, the default value is `rhelX.Y`
-    where `X.Y` is `9.2` for RHEL 9.x and `8.6` for RHEL 8.x.
+    RHEL-base Linux distributions, the default value is `rhelX`.
 
     ospackages: List of OS packages to install prior to installing
     DOCA OFED.  The default values are `ca-certificates`, `gnupg`, and
     `wget`.
 
-    packages: List of packages to install from Mellanox OFED.  For
+    packages: List of packages to install from DOCA.  For
     Ubuntu, the default values are `ibverbs-providers`,
     `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
     `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
@@ -65,12 +64,12 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     `librdmacm`, `rdma-core`, and `rdma-core-devel`.
 
     version: The version of DOCA OFED to download.  The default value
-    is `2.10.0`.
+    is `3.2.0`.
 
     # Examples
 
     ```python
-    doca_ofed(version='2.10.0')
+    doca_ofed(version='3.2.0')
     ```
 
     """
@@ -81,12 +80,13 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         super(doca_ofed, self).__init__(**kwargs)
 
         self.__archlabel = kwargs.get('archlabel', '') # Filled in by __cpu_arch
+        self.__extra_opts = []
         self.__key = 'https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub'
         self.__oslabel = kwargs.get('oslabel', '') # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages',
                                        ['ca-certificates', 'gnupg', 'wget'])
         self.__packages = kwargs.get('packages', []) # Filled in by __distro
-        self.__version = kwargs.get('version', '2.10.0')
+        self.__version = kwargs.get('version', '3.2.0')
 
         # Add annotation
         self.add_annotation('version', self.__version)
@@ -109,9 +109,10 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
 
         self += packages(
             apt_keys=[self.__key],
-            apt_repositories=['deb [signed-by=/usr/share/keyrings/{3}] https://linux.mellanox.com/public/repo/doca/{0}/{1}/{2}/ ./'.format(self.__version, self.__oslabel, self.__archlabel, posixpath.basename(self.__key).replace('.pub', '.gpg'))],
+            apt_repositories=['deb [signed-by=/usr/share/keyrings/{3}] https://linux.mellanox.com/public/repo/doca/{0}/{1}/{2}/ ./'.format(self.__version, self.__oslabel, self.__archlabel, posixpath.basename(self.__key).replace('.pub', '.gpg')) if self.__key else None],
+            extra_opts=self.__extra_opts,
             ospackages=self.__packages,
-            yum_keys=[self.__key],
+            yum_keys=[self.__key] if self.__key else None,
             yum_repositories=['https://linux.mellanox.com/public/repo/doca/{0}/{1}/{2}'.format(self.__version, self.__oslabel, self.__archlabel)])
 
         self += label(metadata=self.annotate_step())
@@ -150,10 +151,17 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
             if not self.__oslabel:
-                if hpccm.config.g_linux_version >= Version('9.0'):
-                    self.__oslabel = 'rhel9.2'
+                if hpccm.config.g_linux_version >= Version('10.0'):
+                    self.__oslabel = 'rhel10'
+                    # The DOCA OFED GPG key is rejected by the Rockylinux 10
+                    # security policy as insecure.  Do not check the
+                    # package signatures.
+                    self.__key = None
+                    self.__extra_opts = ['--nogpgcheck']
+                elif hpccm.config.g_linux_version >= Version('9.0'):
+                    self.__oslabel = 'rhel9'
                 else:
-                    self.__oslabel = 'rhel8.6'
+                    self.__oslabel = 'rhel8'
 
             if not self.__packages:
                     self.__packages = ['libibverbs', 'libibverbs-utils',
