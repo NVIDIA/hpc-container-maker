@@ -51,7 +51,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.5.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.5.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.5.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-4.0.5 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
@@ -78,7 +78,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.5.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.5.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.5.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-4.0.5 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
@@ -106,7 +106,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v3.1/downloads/openmpi-3.1.2.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v3.1/downloads/openmpi-3.1.2.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-3.1.2.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-3.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
@@ -136,7 +136,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.4.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.4.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.4.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-4.0.4 &&  CC=nvc CFLAGS=-O1 CXX=nvc++ F77=nvfortran F90=nvfortran FC=nvfortran FCFLAGS='-fpic -DPIC' ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-verbs && \
     make -j$(nproc) && \
@@ -165,7 +165,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.1.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-4.0.1 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --with-pmi=/usr/local/slurm-pmi2 --with-pmix=internal --with-verbs && \
     make -j$(nproc) && \

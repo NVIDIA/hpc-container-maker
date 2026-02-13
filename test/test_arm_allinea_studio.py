@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         tcl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/22-0/ACfL/arm-compiler-for-linux_22.0_Ubuntu-20.04_aarch64.tar && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/22-0/ACfL/arm-compiler-for-linux_22.0_Ubuntu-20.04_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_22.0_Ubuntu-20.04_aarch64.tar -C /var/tmp && \
     cd /var/tmp/arm-compiler-for-linux_22.0_Ubuntu-20.04 && ./arm-compiler-for-linux_22.0_Ubuntu-20.04.sh --install-to /opt/arm --accept && \
     rm -rf /var/tmp/arm-compiler-for-linux_22.0_Ubuntu-20.04_aarch64.tar /var/tmp/arm-compiler-for-linux_22.0_Ubuntu-20.04
@@ -69,7 +69,7 @@ RUN yum install -y epel-release && \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/22-0/ACfL/arm-compiler-for-linux_22.0_RHEL-7_aarch64.tar && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/22-0/ACfL/arm-compiler-for-linux_22.0_RHEL-7_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_22.0_RHEL-7_aarch64.tar -C /var/tmp && \
     cd /var/tmp/arm-compiler-for-linux_22.0_RHEL-7 && ./arm-compiler-for-linux_22.0_RHEL-7.sh --install-to /opt/arm --accept && \
     rm -rf /var/tmp/arm-compiler-for-linux_22.0_RHEL-7_aarch64.tar /var/tmp/arm-compiler-for-linux_22.0_RHEL-7
@@ -91,7 +91,7 @@ RUN yum install -y epel-release && \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/RHEL8/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.arm.com/-/media/Files/downloads/hpc/arm-allinea-studio/20-3/RHEL8/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar -C /var/tmp && \
     cd /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64 && ./arm-compiler-for-linux_20.3_RHEL-8.sh --install-to /opt/arm --accept --only-install-microarchitectures=generic,thunderx2t99 && \
     rm -rf /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64.tar /var/tmp/arm-compiler-for-linux_20.3_RHEL-8_aarch64

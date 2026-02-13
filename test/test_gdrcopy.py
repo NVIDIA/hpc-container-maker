@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
@@ -65,7 +65,7 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \
@@ -87,7 +87,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.1 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
@@ -108,7 +108,7 @@ RUN yum install -y \
         make \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.1 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
@@ -130,7 +130,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v1.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v1.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-1.3 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
@@ -153,7 +153,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.1 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib64 && \
@@ -176,7 +176,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/gdrcopy/archive/v2.4.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.4.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/gdrcopy-2.4.4 && \
     mkdir -p /usr/local/gdrcopy/include /usr/local/gdrcopy/lib && \

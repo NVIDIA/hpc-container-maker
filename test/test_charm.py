@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.10.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.10.2.tar.gz && \
     mkdir -p /usr/local && tar -x -f /var/tmp/v6.10.2.tar.gz -C /usr/local -z && \
     cd /usr/local/charm-6.10.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
     rm -rf /var/tmp/v6.10.2.tar.gz
@@ -73,7 +73,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
     mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
     cd /usr/local/charm-6.9.0 && ./build charm++ multicore-arm8 --build-shared --with-production -j$(nproc) && \
     rm -rf /var/tmp/v6.9.0.tar.gz
@@ -98,7 +98,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
     mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
     cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-ppc64le --build-shared --with-production -j$(nproc) && \
     rm -rf /var/tmp/v6.9.0.tar.gz
@@ -123,7 +123,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.8.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.8.2.tar.gz && \
     mkdir -p /usr/local && tar -x -f /var/tmp/v6.8.2.tar.gz -C /usr/local -z && \
     cd /usr/local/charm-v6.8.2 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production -j$(nproc) && \
     echo "/usr/local/charm-v6.8.2/lib_so" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
@@ -148,7 +148,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/UIUC-PPL/charm/archive/v6.9.0.tar.gz && \
     mkdir -p /usr/local && tar -x -f /var/tmp/v6.9.0.tar.gz -C /usr/local -z && \
     cd /usr/local/charm-6.9.0 && ./build charm++ multicore-linux-x86_64 --build-shared --with-production --basedir=/usr/local/openmpi -j$(nproc) && \
     rm -rf /var/tmp/v6.9.0.tar.gz

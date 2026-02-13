@@ -42,7 +42,7 @@ class Test_generic_autotools(unittest.TestCase):
             url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
         self.assertEqual(str(g),
 r'''# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/tcl8.6.9-src.tar.gz -C /var/tmp -z && \
     cd /var/tmp/tcl8.6.9/unix &&   ./configure --prefix=/usr/local/tcl && \
     make -j$(nproc) && \
@@ -89,9 +89,10 @@ RUN mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.1.tar.bz2 -C /var/tmp -j
     @ubuntu
     @docker
     def test_pre_and_post(self):
-        """Preconfigure and postinstall options"""
+        """Preconfigure and postinstall and no_check_certificate options"""
         g = generic_autotools(
             directory='tcl8.6.9/unix',
+            no_check_certificate=True,
             postinstall=['echo "post"'],
             preconfigure=['echo "pre"'],
             prefix='/usr/local/tcl',
@@ -121,7 +122,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
             url='https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2')
         self.assertEqual(str(g),
 r'''# https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v4.0/downloads/openmpi-4.0.1.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-4.0.1.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-4.0.1 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default && \
     make -j$(nproc) && \
@@ -143,7 +144,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
             url='https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz')
         self.assertEqual(str(g),
 r'''# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/tcl8.6.9-src.tar.gz -C /var/tmp -z && \
     mkdir -p /tmp/build && cd /tmp/build &&  FOO=BAR CC=gcc CXX=g++ FC=gfortran /var/tmp/tcl8.6.9/unix/configure --prefix=/usr/local/tcl && \
     make -j$(nproc) && \

@@ -198,7 +198,7 @@ RUN apt-get update -y && \
         perl \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp/nsight_compute && wget -q -nc --no-check-certificate -P /var/tmp/nsight_compute https://foo/bar/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run && \
+RUN mkdir -p /var/tmp/nsight_compute && wget -q -nc -P /var/tmp/nsight_compute https://foo/bar/nsight_compute-linux-x86_64-2020.2.0.18_28964561.run && \
     cd /var/tmp/nsight_compute && \
     sh ./nsight_compute-linux-x86_64-2020.2.0.18_28964561.run --nox11 -- -noprompt -targetpath=/usr/local/NVIDIA-Nsight-Compute && \
     mkdir -p /tmp/var/target && \

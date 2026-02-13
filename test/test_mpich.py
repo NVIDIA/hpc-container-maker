@@ -49,7 +49,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
@@ -74,7 +74,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mpich-3.3.2 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \
@@ -100,7 +100,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.mpich.org/static/downloads/3.3/mpich-3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mpich-3.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mpich-3.3 &&   ./configure --prefix=/usr/local/mpich && \
     make -j$(nproc) && \

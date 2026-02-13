@@ -111,7 +111,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.10.tar.gz -C /var/tmp -z && \
     cd /var/tmp/fftw-3.3.10 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads && \
     make -j$(nproc) && \
@@ -151,7 +151,7 @@ From: nvcr.io/nvidia/cuda:9.0-devel-ubuntu16.04
     rm -rf /var/lib/apt/lists/*
 %post
     cd /
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz
+    mkdir -p /var/tmp && wget -q -nc -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.10.tar.gz -C /var/tmp -z
     cd /var/tmp/fftw-3.3.10 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads
     make -j$(nproc)
@@ -198,7 +198,7 @@ Stage: devel
     rm -rf /var/lib/apt/lists/*
 %post
     cd /
-    mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz
+    mkdir -p /var/tmp && wget -q -nc -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.10.tar.gz
     mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.10.tar.gz -C /var/tmp -z
     cd /var/tmp/fftw-3.3.10 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-sse2 --enable-threads
     make -j$(nproc)
@@ -251,7 +251,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.2.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/openmpi-2.1.2.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/openmpi-2.1.2 &&   ./configure --prefix=/usr/local/openmpi --disable-getpwuid --enable-orterun-prefix-by-default --with-cuda --without-verbs && \
     make -j$(nproc) && \

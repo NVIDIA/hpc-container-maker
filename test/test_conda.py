@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -66,7 +66,7 @@ RUN yum install -y \
         ca-certificates \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -88,7 +88,7 @@ RUN yum install -y \
         ca-certificates \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh && \
     bash /var/tmp/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -111,7 +111,7 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-ppc64le.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-ppc64le.sh && \
     bash /var/tmp/Miniconda3-4.7.12-Linux-ppc64le.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -132,7 +132,7 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -157,7 +157,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 COPY foo/environment.yml /var/tmp/environment.yml
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda3-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -181,7 +181,7 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda2-4.7.12-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda2-4.7.12-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda2-4.7.12-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -201,7 +201,7 @@ RUN apt-get update -y && \
         ca-certificates \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-py37_4.8.3-Linux-x86_64.sh && \
     bash /var/tmp/Miniconda3-py37_4.8.3-Linux-x86_64.sh -b -p /usr/local/anaconda && \
     /usr/local/anaconda/bin/conda init && \
     ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \

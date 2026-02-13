@@ -99,7 +99,7 @@ RUN mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --recursive https://
                           url='https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
     cd /var/tmp/OpenBLAS-0.3.6 && \
     make USE_OPENMP=1 && \

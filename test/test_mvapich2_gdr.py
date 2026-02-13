@@ -50,7 +50,7 @@ RUN apt-get update -y && \
         rpm2cpio \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.3/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.3/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm | cpio -id && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -74,7 +74,7 @@ RUN yum install -y \
         openssh-clients \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.4/mofed4.7/mvapich2-gdr-mcast.cuda10.2.mofed4.7.gnu4.8.5-2.3.4-1.el7.x86_64.rpm && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.4/mofed4.7/mvapich2-gdr-mcast.cuda10.2.mofed4.7.gnu4.8.5-2.3.4-1.el7.x86_64.rpm && \
     rpm --install --nodeps /var/tmp/mvapich2-gdr-mcast.cuda10.2.mofed4.7.gnu4.8.5-2.3.4-1.el7.x86_64.rpm && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -103,7 +103,7 @@ RUN apt-get update -y && \
         rpm2cpio \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.3/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3.3/mofed4.5/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed4.5.gnu4.8.5-2.3.3-2.el7.x86_64.rpm | cpio -id && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -131,7 +131,7 @@ RUN apt-get update -y && \
         rpm2cpio \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3/mofed3.4/mvapich2-gdr-mcast.cuda9.2.mofed3.4.pgi17.10-2.3-1.el7.x86_64.rpm && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3/mofed3.4/mvapich2-gdr-mcast.cuda9.2.mofed3.4.pgi17.10-2.3-1.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda9.2.mofed3.4.pgi17.10-2.3-1.el7.x86_64.rpm | cpio -id && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \
@@ -158,7 +158,7 @@ RUN apt-get update -y && \
         rpm2cpio \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3/mofed4.3/mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/gdr/2.3/mofed4.3/mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm && \
     cd / && rpm2cpio /var/tmp/mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm | cpio -id && \
     (test -f /usr/bin/bash || ln -s /bin/bash /usr/bin/bash) && \
     ln -s /usr/local/cuda/lib64/stubs/nvidia-ml.so /usr/local/cuda/lib64/stubs/nvidia-ml.so.1 && \

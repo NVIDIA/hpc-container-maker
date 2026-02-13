@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.21.tar.gz -C /var/tmp -z && \
     cd /var/tmp/OpenBLAS-0.3.21 && \
     make CC=gcc FC=gfortran USE_OPENMP=1 && \
@@ -74,7 +74,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/OpenBLAS-0.3.3 && \
     make CC=gcc FC=gfortran USE_OPENMP=1 && \
@@ -99,7 +99,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
     cd /var/tmp/OpenBLAS-0.3.6 && \
     make TARGET=ARMV8 USE_OPENMP=1 && \
@@ -124,7 +124,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/xianyi/OpenBLAS/archive/v0.3.6.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v0.3.6.tar.gz -C /var/tmp -z && \
     cd /var/tmp/OpenBLAS-0.3.6 && \
     make TARGET=POWER8 USE_OPENMP=1 && \

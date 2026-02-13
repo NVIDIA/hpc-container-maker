@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/magma-2.5.3.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/magma-2.5.3/build && cd /var/tmp/magma-2.5.3/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/magma -DGPU_TARGET="Pascal Volta Turing" /var/tmp/magma-2.5.3 && \
     cmake --build /var/tmp/magma-2.5.3/build --target all -- -j$(nproc) && \
@@ -65,7 +65,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/magma-2.5.3.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/magma-2.5.3/build && cd /var/tmp/magma-2.5.3/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/magma -DGPU_TARGET="Pascal Volta Turing" /var/tmp/magma-2.5.3 && \
     cmake --build /var/tmp/magma-2.5.3/build --target all -- -j$(nproc) && \

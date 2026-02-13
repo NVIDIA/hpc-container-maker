@@ -41,6 +41,8 @@ class downloader(hpccm.base_object):
         self.repository = kwargs.get('repository', None)
         self.src_directory = None
         self.url = kwargs.get('url', None)
+        self.wget_no_check_certificate = kwargs.get('no_check_certificate',
+                                                    False)
 
         super(downloader, self).__init__(**kwargs)
 
@@ -63,7 +65,8 @@ class downloader(hpccm.base_object):
         if self.url:
             # Download package
             commands.append(hpccm.templates.wget().download_step(
-                url=self.url, directory=wd))
+                url=self.url, directory=wd,
+                no_check_certificate=self.wget_no_check_certificate))
 
             if unpack:
                 commands.append(self.__unpack(

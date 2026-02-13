@@ -46,7 +46,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
     cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \
@@ -68,7 +68,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
     cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \
@@ -92,7 +92,7 @@ RUN yum install -y dnf-utils && \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/3.2.00.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/kokkos-3.2.00/build && cd /var/tmp/kokkos-3.2.00/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/kokkos -DCMAKE_BUILD_TYPE=RELEASE -DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA=ON -DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper -DKokkos_ENABLE_HWLOC=ON /var/tmp/kokkos-3.2.00 && \
     cmake --build /var/tmp/kokkos-3.2.00/build --target all -- -j$(nproc) && \

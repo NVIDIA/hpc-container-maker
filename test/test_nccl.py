@@ -119,7 +119,7 @@ RUN apt-get update -y && \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.12.10-1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.12.10-1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.12.10-1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nccl-2.12.10-1 && \
     PREFIX=/usr/local/nccl make -j$(nproc) install && \
@@ -197,7 +197,7 @@ RUN yum install -y \
         wget \
         which && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.7.6-1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.7.6-1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2.7.6-1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nccl-2.7.6-1 && \
     PREFIX=/usr/local/nccl make -j$(nproc) install && \

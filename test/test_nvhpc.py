@@ -164,7 +164,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/21.2/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/21.2/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2 && NVHPC_ACCEPT_EULA=accept NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2 /var/tmp/nvhpc_2021_212_Linux_aarch64_cuda_11.2.tar.gz
@@ -194,7 +194,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/20.7/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.download.nvidia.com/hpc-sdk/20.7/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0 && NVHPC_ACCEPT_EULA=accept NVHPC_DEFAULT_CUDA=11.0 NVHPC_INSTALL_DIR=/opt/nvidia/hpc_sdk NVHPC_SILENT=true ./install && \
     rm -rf /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0 /var/tmp/nvhpc_2020_207_Linux_ppc64le_cuda_11.0.tar.gz
