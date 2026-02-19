@@ -142,7 +142,7 @@ RUN apt-get update -y && \
         wget \
         xz-utils && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/gcc-9.1.0.tar.xz -C /var/tmp -J && \
     cd /var/tmp/gcc-9.1.0 && ./contrib/download_prerequisites && \
     mkdir -p /var/tmp/objdir && cd /var/tmp/objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --disable-multilib --enable-languages=c,c++,fortran && \
@@ -171,7 +171,7 @@ RUN yum install -y \
         wget \
         xz && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/gcc-9.1.0.tar.xz -C /var/tmp -J && \
     cd /var/tmp/gcc-9.1.0 && ./contrib/download_prerequisites && \
     mkdir -p /var/tmp/objdir && cd /var/tmp/objdir &&   /var/tmp/gcc-9.1.0/configure --prefix=/usr/local/gnu --disable-multilib --enable-languages=c,c++,fortran && \
@@ -200,7 +200,7 @@ RUN yum install -y \
         wget \
         xz && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://ftpmirror.gnu.org/gcc/gcc-9.1.0/gcc-9.1.0.tar.xz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/gcc-9.1.0.tar.xz -C /var/tmp -J && \
     cd /var/tmp/gcc-9.1.0 && ./contrib/download_prerequisites && \
     mkdir -p /var/tmp && cd /var/tmp && git clone --depth=1 --branch master https://github.com/MentorEmbedded/nvptx-tools.git nvptx-tools && cd - && \

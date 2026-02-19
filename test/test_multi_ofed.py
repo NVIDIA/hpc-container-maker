@@ -50,7 +50,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
-    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.5-1.0.1.0/ubuntu18.04/mellanox_mlnx_ofed.list && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.5-1.0.1.0/ubuntu18.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     mkdir -m 777 -p /var/tmp/packages_download && cd /var/tmp/packages_download && \
     DEBIAN_FRONTEND=noninteractive apt-get download -y --no-install-recommends \
@@ -84,7 +84,7 @@ RUN apt-get update -y && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 RUN wget -qO - https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | apt-key add - && \
-    mkdir -p /etc/apt/sources.list.d && wget -q -nc --no-check-certificate -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.6-1.0.1.1/ubuntu18.04/mellanox_mlnx_ofed.list && \
+    mkdir -p /etc/apt/sources.list.d && wget -q -nc -P /etc/apt/sources.list.d https://linux.mellanox.com/public/repo/mlnx_ofed/4.6-1.0.1.1/ubuntu18.04/mellanox_mlnx_ofed.list && \
     apt-get update -y && \
     mkdir -m 777 -p /var/tmp/packages_download && cd /var/tmp/packages_download && \
     DEBIAN_FRONTEND=noninteractive apt-get download -y --no-install-recommends \

@@ -47,7 +47,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://parallel-netcdf.github.io/Release/pnetcdf-1.12.1.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://parallel-netcdf.github.io/Release/pnetcdf-1.12.1.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/pnetcdf-1.12.1.tar.gz -C /var/tmp -z && \
     cd /var/tmp/pnetcdf-1.12.1 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
     cd /var/tmp/pnetcdf-1.12.1 && \
@@ -76,7 +76,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://parallel-netcdf.github.io/Release/parallel-netcdf-1.10.0.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://parallel-netcdf.github.io/Release/parallel-netcdf-1.10.0.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/parallel-netcdf-1.10.0.tar.gz -C /var/tmp -z && \
     cd /var/tmp/parallel-netcdf-1.10.0 &&  CC=mpicc CXX=mpicxx F77=mpif77 F90=mpif90 FC=mpifort ./configure --prefix=/usr/local/pnetcdf --enable-shared && \
     cd /var/tmp/parallel-netcdf-1.10.0 && \

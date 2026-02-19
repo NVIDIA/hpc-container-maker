@@ -54,7 +54,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -O /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && cd /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/cmake.sh -DCMAKE_INSTALL_PREFIX=/usr/local/catalyst /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base && \
     cmake --build /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build --target all -- -j$(nproc) && \
@@ -86,7 +86,7 @@ RUN yum install -y \
         wget \
         which && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -O /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && cd /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/cmake.sh -DCMAKE_INSTALL_PREFIX=/usr/local/catalyst /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base && \
     cmake --build /var/tmp/Catalyst-v5.6.1-Base-Enable-Python-Essentials-Extras-Rendering-Base/build --target all -- -j$(nproc) && \
@@ -110,7 +110,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.1-Base-Essentials.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Essentials.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -O /var/tmp/Catalyst-v5.6.1-Base-Essentials.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.1-Base-Essentials.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.1-Base-Essentials.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/Catalyst-v5.6.1-Base-Essentials/build && cd /var/tmp/Catalyst-v5.6.1-Base-Essentials/build && /var/tmp/Catalyst-v5.6.1-Base-Essentials/cmake.sh -DCMAKE_INSTALL_PREFIX=/usr/local/catalyst /var/tmp/Catalyst-v5.6.1-Base-Essentials && \
     cmake --build /var/tmp/Catalyst-v5.6.1-Base-Essentials/build --target all -- -j$(nproc) && \
@@ -141,7 +141,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -O /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -O /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -P /var/tmp https://www.paraview.org/paraview-downloads/download.php?submit=Download\&version=v5.6\&type=catalyst\&os=Sources\&downloadFile=Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && cd /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base/build && /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base/cmake.sh -DCMAKE_INSTALL_PREFIX=/usr/local/catalyst /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base && \
     cmake --build /var/tmp/Catalyst-v5.6.0-Base-Enable-Python-Essentials-Extras-Rendering-Base/build --target all -- -j$(nproc) && \

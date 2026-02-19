@@ -50,7 +50,7 @@ class Test_generic_cmake(unittest.TestCase):
             url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2018.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root /var/tmp/gromacs-2018.2 && \
     cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
@@ -114,7 +114,7 @@ RUN mkdir -p /var/tmp && tar -x -f /var/tmp/v2018.2.tar.gz -C /var/tmp -z && \
             url='https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v1.4.2.tar.gz -C /var/tmp -z && \
     mkdir -p /tmp/build && cd /tmp/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local /var/tmp/spdlog-1.4.2 && \
     cmake --build /tmp/build --target all -- -j$(nproc) && \
@@ -133,7 +133,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
             url='https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v1.4.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/spdlog-1.4.2 && \
     echo "pre" && \
@@ -167,7 +167,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
             url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v2018.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/gromacs-2018.2/build && cd /var/tmp/gromacs-2018.2/build && FOO=BAR CC=gcc CXX=g++ FC=gfortran cmake -DCMAKE_INSTALL_PREFIX=/usr/local/gromacs -D CMAKE_BUILD_TYPE=Release -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=ON -D GMX_MPI=OFF -D GMX_OPENMP=ON -D GMX_PREFER_STATIC_LIBS=ON -D MPIEXEC_PREFLAGS=--allow-run-as-root -D REGRESSIONTEST_DOWNLOAD=ON /var/tmp/gromacs-2018.2 && \
     cmake --build /var/tmp/gromacs-2018.2/build --target all -- -j$(nproc) && \
@@ -188,7 +188,7 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
             url='https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz')
         self.assertEqual(str(g),
 r'''# https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/gabime/spdlog/archive/v1.4.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v1.4.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/spdlog-1.4.2/build && cd /var/tmp/spdlog-1.4.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/spdlog /var/tmp/spdlog-1.4.2 && \
     cmake --build /var/tmp/spdlog-1.4.2/build --target all -- -j$(nproc) && \

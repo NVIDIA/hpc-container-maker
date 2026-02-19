@@ -38,20 +38,28 @@ class Test_wget(unittest.TestCase):
         """Basic wget"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz'),
-                         'mkdir -p /tmp && wget -q -nc --no-check-certificate -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc -P /tmp http://mysite.com/foo.tgz')
 
     def test_referer(self):
         """wget with referer"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          referer='http://mysite.com/foo.html'),
-                         'mkdir -p /tmp && wget -q -nc --no-check-certificate --referer http://mysite.com/foo.html -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc --referer http://mysite.com/foo.html -P /tmp http://mysite.com/foo.tgz')
 
     def test_directory(self):
         """wget with non-default output directory"""
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          directory='/scratch'),
+                         'mkdir -p /scratch && wget -q -nc -P /scratch http://mysite.com/foo.tgz')
+
+    def test_no_check_certificate(self):
+        """wget with non-default no_check_certification option"""
+        w = wget()
+        self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
+                                         directory='/scratch',
+                                         no_check_certificate=True),
                          'mkdir -p /scratch && wget -q -nc --no-check-certificate -P /scratch http://mysite.com/foo.tgz')
 
     def test_outfile(self):
@@ -59,7 +67,7 @@ class Test_wget(unittest.TestCase):
         w = wget()
         self.assertEqual(w.download_step(url='http://mysite.com/foo.tgz',
                                          outfile='bar.tgz'),
-                         'mkdir -p /tmp && wget -q -nc --no-check-certificate -O bar.tgz -P /tmp http://mysite.com/foo.tgz')
+                         'mkdir -p /tmp && wget -q -nc -O bar.tgz -P /tmp http://mysite.com/foo.tgz')
 
     def test_opts(self):
         """wget with non-default command line options"""

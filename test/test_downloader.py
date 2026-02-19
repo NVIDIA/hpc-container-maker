@@ -49,6 +49,16 @@ class Test_downloader(unittest.TestCase):
         """Basic wget"""
         d = downloader(url='http://mysite.com/foo.tgz')
         self.assertEqual(d.download_step(),
+r'''mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mysite.com/foo.tgz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
+        self.assertEqual(d.src_directory, '/var/tmp/foo')
+
+    @docker
+    def test_wget_no_check_certificate(self):
+        """Basic wget"""
+        d = downloader(url='http://mysite.com/foo.tgz',
+                       no_check_certificate=True)
+        self.assertEqual(d.download_step(),
 r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mysite.com/foo.tgz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
         self.assertEqual(d.src_directory, '/var/tmp/foo')
@@ -58,7 +68,7 @@ r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://m
         """Basic wget"""
         d = downloader(url='http://mysite.com/foo.tgz')
         self.assertEqual(d.download_step(),
-r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mysite.com/foo.tgz
+r'''mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mysite.com/foo.tgz
     mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
         self.assertEqual(d.src_directory, '/var/tmp/foo')
 
@@ -67,7 +77,7 @@ r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://m
         """Basic wget"""
         d = downloader(url='http://mysite.com/foo.tgz')
         self.assertEqual(d.download_step(),
-r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mysite.com/foo.tgz
+r'''mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mysite.com/foo.tgz
 mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
         self.assertEqual(d.src_directory, '/var/tmp/foo')
 
@@ -76,7 +86,7 @@ mkdir -p /var/tmp && tar -x -f /var/tmp/foo.tgz -C /var/tmp -z''')
         """Unrecognized package format, assumes tar can figure it out"""
         d = downloader(url='http://mysite.com/foo.Z')
         self.assertEqual(d.download_step(),
-r'''mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mysite.com/foo.Z && \
+r'''mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mysite.com/foo.Z && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/foo.Z -C /var/tmp''')
         self.assertEqual(d.src_directory, None)
 

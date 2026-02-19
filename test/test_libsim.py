@@ -51,7 +51,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
+RUN mkdir -p /var/tmp/visit && wget -q -nc -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
     cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     rm -rf /var/tmp/visit
@@ -79,7 +79,7 @@ RUN yum install -y \
         which \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
+RUN mkdir -p /var/tmp/visit && wget -q -nc -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
     cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     rm -rf /var/tmp/visit
@@ -106,7 +106,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
+RUN mkdir -p /var/tmp/visit && wget -q -nc -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     mkdir -p /usr/local/visit/third-party && \
     cd /var/tmp/visit && PAR_COMPILER=mpicc bash build_visit2_13_3 --xdb --server-components-only --parallel --no-icet --makeflags -j$(nproc) --prefix /usr/local/visit --system-cmake --system-python --thirdparty-path /usr/local/visit/third-party && \
     echo "/usr/local/visit/2.13.3/linux-x86_64/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig && \
@@ -135,7 +135,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp/visit && wget -q -nc --no-check-certificate -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
+RUN mkdir -p /var/tmp/visit && wget -q -nc -P /var/tmp/visit http://portal.nersc.gov/project/visit/releases/2.13.3/build_visit2_13_3 && \
     cd /var/tmp/visit &&  bash build_visit2_13_3 --xdb --server-components-only --makeflags -j$(nproc) --prefix /usr/local/visit && \
     rm -rf /var/tmp/visit
 ENV LD_LIBRARY_PATH=/usr/local/visit/2.13.3/linux-x86_64/lib:/usr/local/visit/2.13.3/linux-x86_64/libsim/V2/lib:$LD_LIBRARY_PATH \

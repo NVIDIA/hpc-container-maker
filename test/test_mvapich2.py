@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3.4 && \
     ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
@@ -82,7 +82,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3.3 && \
     ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
@@ -116,7 +116,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3.3 &&  CC=nvc CFLAGS='-fpic -DPIC' CXX=nvc++ F77=nvfortran FC=nvfortran FCFLAGS='-fpic -DPIC' FFLAGS='-fpic -DPIC' ./configure --prefix=/usr/local/mvapich2 --disable-cuda --disable-mcast ac_cv_c_compiler_gnu=no && \
     make -j$(nproc) && \
@@ -141,7 +141,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3b.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3b.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3b && \
     ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
@@ -171,7 +171,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3.3 &&   ./configure --prefix=/usr/local/mvapich2 --disable-cuda --disable-mcast && \
     make -j$(nproc) && \
@@ -195,7 +195,7 @@ RUN yum install -y \
         openssh-clients \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3.4 && \
     ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \
@@ -224,7 +224,7 @@ RUN apt-get update -y && \
         openssh-client \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich2-2.3.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/mvapich2-2.3.tar.gz -C /var/tmp -z && \
     cd /var/tmp/mvapich2-2.3 && \
     ln -s /usr/local/cuda/lib64/stubs/libnvidia-ml.so /usr/local/cuda/lib64/stubs/libnvidia-ml.so.1 && \

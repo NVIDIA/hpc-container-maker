@@ -46,7 +46,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_87_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_87_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
@@ -68,7 +68,7 @@ RUN yum install -y \
         which \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_87_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_87_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
@@ -90,7 +90,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost  && \
     ./b2 -j$(nproc) -q install && \
@@ -112,7 +112,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://sourceforge.net/projects/boost/files/boost/1.57.0/boost_1_57_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_57_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_57_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
@@ -134,7 +134,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.68.0/source/boost_1_68_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_68_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_68_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 -j$(nproc) -q install && \
@@ -156,7 +156,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --with-libraries=atomic,chrono && \
     ./b2 -j$(nproc) -q install && \
@@ -177,7 +177,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://archives.boost.io/release/1.72.0/source/boost_1_72_0.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/boost_1_72_0.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/boost_1_72_0 && ./bootstrap.sh --prefix=/usr/local/boost --without-libraries=python && \
     ./b2 cxxflags="-std=c++14" -j$(nproc) -q install && \

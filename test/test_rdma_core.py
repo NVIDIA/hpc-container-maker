@@ -50,7 +50,7 @@ RUN apt-get update -y && \
         python3-docutils \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v31.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/rdma-core-31.2/build && cd /var/tmp/rdma-core-31.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rdma-core /var/tmp/rdma-core-31.2 && \
     cmake --build /var/tmp/rdma-core-31.2/build --target all -- -j$(nproc) && \
@@ -79,7 +79,7 @@ RUN yum install -y epel-release && \
         python-docutils \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v31.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/rdma-core-31.2/build && cd /var/tmp/rdma-core-31.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rdma-core /var/tmp/rdma-core-31.2 && \
     cmake --build /var/tmp/rdma-core-31.2/build --target all -- -j$(nproc) && \
@@ -109,7 +109,7 @@ RUN apt-get update -y && \
         python3-docutils \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/linux-rdma/rdma-core/archive/v31.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/v31.2.tar.gz -C /var/tmp -z && \
     mkdir -p /var/tmp/rdma-core-31.2/build && cd /var/tmp/rdma-core-31.2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/rdma-core /var/tmp/rdma-core-31.2 && \
     cmake --build /var/tmp/rdma-core-31.2/build --target all -- -j$(nproc) && \

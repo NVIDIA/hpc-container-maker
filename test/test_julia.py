@@ -44,7 +44,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.1-linux-x86_64.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.5/julia-1.5.1-linux-x86_64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.5.1-linux-x86_64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.5.1 /usr/local/julia && \
     rm -rf /var/tmp/julia-1.5.1-linux-x86_64.tar.gz /var/tmp/julia-1.5.1
@@ -64,7 +64,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.5/julia-1.5.1-linux-aarch64.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://julialang-s3.julialang.org/bin/linux/aarch64/1.5/julia-1.5.1-linux-aarch64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.5.1-linux-aarch64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.5.1 /usr/local/julia && \
     rm -rf /var/tmp/julia-1.5.1-linux-aarch64.tar.gz /var/tmp/julia-1.5.1
@@ -86,7 +86,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-x86_64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
     JULIA_DEPOT_PATH=/usr/local/julia/share/julia /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \
@@ -109,7 +109,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://julialang-s3.julialang.org/bin/linux/x64/1.2/julia-1.2.0-linux-x86_64.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/julia-1.2.0-linux-x86_64.tar.gz -C /var/tmp -z && \
     cp -a /var/tmp/julia-1.2.0 /usr/local/julia && \
     JULIA_DEPOT_PATH=/usr/local/julia/share/julia /usr/local/julia/bin/julia -e 'using Pkg; Pkg.add([PackageSpec(name="CUDAapi"), PackageSpec(name="CUDAdrv"), PackageSpec(name="CUDAnative"), PackageSpec(name="CuArrays")])' && \

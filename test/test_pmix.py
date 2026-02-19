@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         tar \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v4.1.2/pmix-4.1.2.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v4.1.2/pmix-4.1.2.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/pmix-4.1.2.tar.gz -C /var/tmp -z && \
     cd /var/tmp/pmix-4.1.2 &&   ./configure --prefix=/usr/local/pmix && \
     make -j$(nproc) && \
@@ -74,7 +74,7 @@ RUN yum install -y \
         tar \
         wget && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v3.1.4/pmix-3.1.4.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/openpmix/openpmix/releases/download/v3.1.4/pmix-3.1.4.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/pmix-3.1.4.tar.gz -C /var/tmp -z && \
     cd /var/tmp/pmix-3.1.4 &&   ./configure --prefix=/usr/local/pmix && \
     make -j$(nproc) && \

@@ -46,7 +46,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.14.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/hdf5-1.14.5 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
@@ -72,7 +72,7 @@ RUN yum install -y \
         wget \
         zlib-devel && \
     rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.14.5.tar.gz -C /var/tmp -z && \
     cd /var/tmp/hdf5-1.14.5 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
@@ -99,7 +99,7 @@ RUN apt-get update -y && \
         wget \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.4/src/hdf5-1.10.4.tar.bz2 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.4/src/hdf5-1.10.4.tar.bz2 && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/hdf5-1.10.4.tar.bz2 -C /var/tmp -j && \
     cd /var/tmp/hdf5-1.10.4 &&   ./configure --prefix=/usr/local/hdf5 --enable-cxx --enable-fortran && \
     make -j$(nproc) && \
