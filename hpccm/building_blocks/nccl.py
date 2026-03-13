@@ -31,8 +31,7 @@ import hpccm.templates.ldconfig
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.generic_build import generic_build
 from hpccm.building_blocks.packages import packages
-from hpccm.common import linux_distro
-from hpccm.config import get_cpu_architecture
+from hpccm.common import cpu_arch, linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
@@ -56,7 +55,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     use the latest commit on the default branch for the repository.
 
     cuda: Flag to specify the CUDA version of the package to download.
-    The default is `11.6`.  This option is ignored if build is True.
+    The default is `13.2`.  This option is ignored if build is True.
 
     environment: Boolean flag to specify whether the environment
     (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
@@ -78,7 +77,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     specified by `version`.
 
     version: The version of NCCL to install.  The default value is
-    `2.12.10-1`.
+    `2.29.7-1`.
 
     # Examples
 
@@ -97,24 +96,32 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         super(nccl, self).__init__(**kwargs)
 
+        self.__arch_label = ''       # Filled in by __cpu_arch
         self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/nccl/archive')
         self.__build = kwargs.pop('build', False)
         self.__build_environment = '' # Filled in by __configure
         self.__default_repository = 'https://github.com/NVIDIA/nccl.git'
         self.__distro_label = ''     # Filled in by __distro
-        self.__cuda = kwargs.pop('cuda', '11.6')
+        self.__cuda = kwargs.pop('cuda', '13.2')
         self.__make_variables = kwargs.pop('make_variables', {})
         self.__ospackages = kwargs.pop('ospackages', [])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nccl')
+        self.__repo_key = ''         # Filled in by __repo_key
         self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '2.12.10-1')
+        self.__version = kwargs.pop('version', '2.29.7-1')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         if not self.__build:
             # Install prebuild package
 
+            # Set the CPU architecture specific parameters
+            self.__cpu_arch()
+
             # Set the Linux distribution specific parameters
             self.__distro()
+
+            # Set the repo key
+            self.__repo()
 
             self += comment('NCCL {}'.format(self.__version))
             self += packages(ospackages=self.__ospackages)
@@ -123,13 +130,13 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                                                    self.__cuda),
                      'libnccl-dev={0}+cuda{1}'.format(self.__version,
                                                       self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
-                apt_repositories=['deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
+                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
+                apt_repositories=['deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, self.__arch_label, self.__repo_key.replace('.pub', '.gpg'))],
                 yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda),
                      'libnccl-devel-{0}+cuda{1}'.format(self.__version,
                                                         self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
-                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
+                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
+                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
 
         else:
             # Build from source
@@ -166,6 +173,17 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self += packages(ospackages=self.__ospackages)
             self += self.__bb
 
+    def __cpu_arch(self):
+        """Based on the CPU architecture, set values accordingly.  A user
+        specified value overrides any defaults."""
+
+        if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
+            self.__arch_label = 'sbsa'
+        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+            self.__arch_label = 'x86_64'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown CPU architecture')
+
     def __configure(self):
         """Setup build options based on user parameters"""
 
@@ -192,16 +210,20 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
                                      'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= Version('18.0'):
-                self.__distro_label = 'ubuntu1804'
+            if hpccm.config.g_linux_version >= Version('24.0'):
+                self.__distro_label = 'ubuntu2404'
+            elif hpccm.config.g_linux_version >= Version('22.0'):
+                self.__distro_label = 'ubuntu2204'
             else:
-                self.__distro_label = 'ubuntu1604'
+                self.__distro_label = 'ubuntu2004'
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= Version('8.0'):
-                self.__distro_label = 'rhel8'
+            if hpccm.config.g_linux_version >= Version('10.0'):
+                self.__distro_label = 'rhel10'
+            elif hpccm.config.g_linux_version >= Version('9.0'):
+                self.__distro_label = 'rhel9'
             else:
-                self.__distro_label = 'rhel7'
+                self.__distro_label = 'rhel8'
 
         else: # pragma: no cover
             raise RuntimeError('Unknown Linux distribution')
@@ -225,6 +247,21 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         if not self.repository and not self.url:
             self.url = '{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version)
 
+    def __repo(self):
+        """Based on the Linux distribution and CPU architecture, set values
+        accordingly.  A user specified value overrides any defaults.
+        """
+
+        if self.__distro_label.startswith('ubuntu'):
+            self.__repo_key = '3bf863cc.pub'
+        elif self.__distro_label.startswith('rhel'):
+            if hpccm.config.g_linux_version >= Version('10.0'):
+                self.__repo_key = 'CDF6BA43.pub'
+            else:
+                self.__repo_key = 'D42D0685.pub'
+        else: # pragma: no cover
+            raise RuntimeError('Unknown repository')
+
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
@@ -246,10 +283,10 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.rt += packages(
                 apt=['libnccl2={0}+cuda{1}'.format(self.__version,
                                                    self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
-                apt_repositories=['deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, get_cpu_architecture())],
+                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
+                apt_repositories=['deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, self.__arch_label, self.__repo_key.replace('.pub', '.gpg'))],
                 yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/3bf863cc.pub'.format(self.__distro_label, get_cpu_architecture())],
-                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, get_cpu_architecture())])
+                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
+                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
 
         return str(self.rt)
