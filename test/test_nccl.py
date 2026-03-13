@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, centos8, docker, ppc64le, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos8, rockylinux9, rockylinux10, docker, ubuntu20, ubuntu22, ubuntu24, x86_64
 
 from hpccm.building_blocks.nccl import nccl
 
@@ -32,13 +32,13 @@ class Test_nccl(unittest.TestCase):
         logging.disable(logging.ERROR)
 
     @x86_64
-    @ubuntu
+    @ubuntu24
     @docker
     def test_defaults_ubuntu(self):
         """nccl defaults"""
         n = nccl()
-        self.assertEqual(str(n),
-r'''# NCCL 2.12.10-1
+        self.assertMultiLineEqual(str(n),
+r'''# NCCL 2.29.7-1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -48,22 +48,22 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/3bf863cc.gpg && \
-    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl-dev=2.12.10-1+cuda11.6 \
-        libnccl2=2.12.10-1+cuda11.6 && \
+        libnccl-dev=2.29.7-1+cuda13.2 \
+        libnccl2=2.29.7-1+cuda13.2 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
-    @ubuntu18
+    @ubuntu22
     @docker
-    def test_defaults_ubuntu18(self):
+    def test_defaults_ubuntu22(self):
         """nccl defaults"""
         n = nccl()
-        self.assertEqual(str(n),
-r'''# NCCL 2.12.10-1
+        self.assertMultiLineEqual(str(n),
+r'''# NCCL 2.29.7-1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -73,22 +73,22 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/3bf863cc.gpg && \
-    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl-dev=2.12.10-1+cuda11.6 \
-        libnccl2=2.12.10-1+cuda11.6 && \
+        libnccl-dev=2.29.7-1+cuda13.2 \
+        libnccl2=2.29.7-1+cuda13.2 && \
     rm -rf /var/lib/apt/lists/*''')
 
-    @ppc64le
-    @ubuntu
+    @aarch64
+    @ubuntu24
     @docker
-    def test_ubuntu_ppc64le(self):
-        """nccl ppc64le"""
-        n = nccl(cuda=9.2, version='2.4.8-1')
-        self.assertEqual(str(n),
-r'''# NCCL 2.4.8-1
+    def test_ubuntu_aarch64(self):
+        """nccl aarch64"""
+        n = nccl(cuda=13.2, version='2.29.7-1')
+        self.assertMultiLineEqual(str(n),
+r'''# NCCL 2.29.7-1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -98,51 +98,51 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/3bf863cc.gpg && \
-    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/ppc64el /" >> /etc/apt/sources.list.d/hpccm.list && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/sbsa /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl-dev=2.4.8-1+cuda9.2 \
-        libnccl2=2.4.8-1+cuda9.2 && \
+        libnccl-dev=2.29.7-1+cuda13.2 \
+        libnccl2=2.29.7-1+cuda13.2 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
-    @ubuntu
+    @ubuntu24
     @docker
     def test_build_ubuntu(self):
         """nccl build"""
-        n = nccl(build=True)
-        self.assertEqual(str(n),
+        n = nccl(build=True, version='2.29.7-1')
+        self.assertMultiLineEqual(str(n),
 r'''# NCCL
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         make \
         wget && \
     rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.12.10-1.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.12.10-1.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/nccl-2.12.10-1 && \
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/nccl/archive/v2.29.7-1.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v2.29.7-1.tar.gz -C /var/tmp -z && \
+    cd /var/tmp/nccl-2.29.7-1 && \
     PREFIX=/usr/local/nccl make -j$(nproc) install && \
-    rm -rf /var/tmp/nccl-2.12.10-1 /var/tmp/v2.12.10-1.tar.gz
+    rm -rf /var/tmp/nccl-2.29.7-1 /var/tmp/v2.29.7-1.tar.gz
 ENV CPATH=/usr/local/nccl/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nccl/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nccl/lib:$LIBRARY_PATH \
     PATH=/usr/local/nccl/bin:$PATH''')
 
     @x86_64
-    @centos
+    @rockylinux10
     @docker
-    def test_defaults_centos(self):
+    def test_defaults_rockylinux10(self):
         """nccl defaults"""
         n = nccl()
-        self.assertEqual(str(n),
-r'''# NCCL 2.12.10-1
-RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/3bf863cc.pub && \
-    yum install -y yum-utils && \
-    yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64 && \
+        self.assertMultiLineEqual(str(n),
+r'''# NCCL 2.29.7-1
+RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64/CDF6BA43.pub && \
+    yum install -y dnf-utils && \
+    yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel10/x86_64 && \
     yum install -y \
-        libnccl-2.12.10-1+cuda11.6 \
-        libnccl-devel-2.12.10-1+cuda11.6 && \
+        libnccl-2.29.7-1+cuda13.2 \
+        libnccl-devel-2.29.7-1+cuda13.2 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
@@ -150,10 +150,10 @@ RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel7/
     @docker
     def test_defaults_centos8(self):
         """nccl defaults"""
-        n = nccl()
-        self.assertEqual(str(n),
+        n = nccl(version='2.12.10-1', cuda='11.6')
+        self.assertMultiLineEqual(str(n),
 r'''# NCCL 2.12.10-1
-RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/3bf863cc.pub && \
+RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/D42D0685.pub && \
     yum install -y dnf-utils && \
     yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64 && \
     yum install -y \
@@ -162,13 +162,13 @@ RUN rpm --import https://developer.download.nvidia.com/compute/cuda/repos/rhel8/
     rm -rf /var/cache/yum/*''')
 
     @x86_64
-    @ubuntu
+    @ubuntu24
     @docker
     def test_build_repo_ubuntu(self):
         """nccl build from git"""
         n = nccl(build=True, make_variables={'CUDA_HOME': '/usr/local/cuda'},
                  repository=True)
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NCCL
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -185,12 +185,12 @@ ENV CPATH=/usr/local/nccl/include:$CPATH \
     LIBRARY_PATH=/usr/local/nccl/lib:$LIBRARY_PATH \
     PATH=/usr/local/nccl/bin:$PATH''')
 
-    @centos
+    @rockylinux9
     @docker
-    def test_build_centos(self):
+    def test_build_rocky9(self):
         """nccl build"""
         n = nccl(build=True, version='2.7.6-1')
-        self.assertEqual(str(n),
+        self.assertMultiLineEqual(str(n),
 r'''# NCCL
 RUN yum install -y \
         make \
@@ -208,13 +208,13 @@ ENV CPATH=/usr/local/nccl/include:$CPATH \
     PATH=/usr/local/nccl/bin:$PATH''')
 
     @x86_64
-    @ubuntu
+    @ubuntu24
     @docker
     def test_runtime(self):
         """Runtime"""
         n = nccl()
         r = n.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# NCCL
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -225,21 +225,21 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/3bf863cc.gpg && \
-    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
+    wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/3bf863cc.pub | gpg --dearmor -o /usr/share/keyrings/3bf863cc.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/3bf863cc.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64 /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        libnccl2=2.12.10-1+cuda11.6 && \
+        libnccl2=2.29.7-1+cuda13.2 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
-    @ubuntu
+    @ubuntu24
     @docker
     def test_build_runtime(self):
         """Runtime"""
         n = nccl(build=True)
         r = n.runtime()
-        self.assertEqual(r,
+        self.assertMultiLineEqual(r,
 r'''# NCCL
 COPY --from=0 /usr/local/nccl /usr/local/nccl
 ENV CPATH=/usr/local/nccl/include:$CPATH \
