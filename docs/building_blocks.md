@@ -670,7 +670,7 @@ values are `libibumad`, `libibverbs`, `libibverbs-utils`,
 `librdmacm`, `rdma-core`, and `rdma-core-devel`.
 
 - __version__: The version of DOCA OFED to download.  The default value
-is `3.2.0`.
+is `3.3.0`.
 
 __Examples__
 
