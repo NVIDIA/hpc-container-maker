@@ -64,7 +64,7 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     `librdmacm`, `rdma-core`, and `rdma-core-devel`.
 
     version: The version of DOCA OFED to download.  The default value
-    is `3.2.0`.
+    is `3.3.0`.
 
     # Examples
 
@@ -82,11 +82,12 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         self.__archlabel = kwargs.get('archlabel', '') # Filled in by __cpu_arch
         self.__extra_opts = []
         self.__key = 'https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub'
+        self.__nogpgcheck = kwargs.get('_nogpgcheck', False)
         self.__oslabel = kwargs.get('oslabel', '') # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages',
                                        ['ca-certificates', 'gnupg', 'wget'])
         self.__packages = kwargs.get('packages', []) # Filled in by __distro
-        self.__version = kwargs.get('version', '3.2.0')
+        self.__version = kwargs.get('version', '3.3.0')
 
         # Add annotation
         self.add_annotation('version', self.__version)
@@ -153,14 +154,25 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
             if not self.__oslabel:
                 if hpccm.config.g_linux_version >= Version('10.0'):
                     self.__oslabel = 'rhel10'
-                    # The DOCA OFED GPG key is rejected by the Rockylinux 10
-                    # security policy as insecure.  Do not check the
-                    # package signatures.
-                    self.__key = None
-                    self.__extra_opts = ['--nogpgcheck']
+                    if self.__nogpgcheck:
+                        # The DOCA OFED GPG key is rejected by the Rockylinux 10
+                        # security policy as insecure.  Do not check the
+                        # package signatures.
+                        self.__key = None
+                        self.__extra_opts = ['--nogpgcheck']
                 elif hpccm.config.g_linux_version >= Version('9.0'):
                     self.__oslabel = 'rhel9'
+                    if self.__nogpgcheck and Version(self.__version) >= Version('3.2.2'):
+                        # The DOCA OFED GPG key is not recognized by
+                        # Rockylinux 9.  Do not check the package signatures.
+                        self.__key = None
+                        self.__extra_opts = ['--nogpgcheck']
                 else:
+                    if self.__nogpgcheck and Version(self.__version) >= Version('3.2.2'):
+                        # The DOCA OFED GPG key is not recognized by
+                        # Rockylinux 8.  Do not check the package signatures.
+                        self.__key = None
+                        self.__extra_opts = ['--nogpgcheck']
                     self.__oslabel = 'rhel8'
 
             if not self.__packages:

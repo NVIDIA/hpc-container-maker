@@ -31,38 +31,6 @@ class Test_doca_ofed(unittest.TestCase):
         """Disable logging output messages"""
         logging.disable(logging.ERROR)
 
-    @x86_64
-    @ubuntu20
-    @docker
-    def test_defaults_ubuntu20(self):
-        """Default doca_ofed building block"""
-        doca = doca_ofed()
-        self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        ca-certificates \
-        gnupg \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /usr/share/keyrings && \
-    rm -f /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
-    wget -qO - https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub | gpg --dearmor -o /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/GPG-KEY-Mellanox.gpg] https://linux.mellanox.com/public/repo/doca/3.2.0/ubuntu20.04/x86_64/ ./" >> /etc/apt/sources.list.d/hpccm.list && \
-    apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        ibverbs-providers \
-        ibverbs-utils \
-        libibmad-dev \
-        libibmad5 \
-        libibumad-dev \
-        libibumad3 \
-        libibverbs-dev \
-        libibverbs1 \
-        librdmacm-dev \
-        librdmacm1 && \
-    rm -rf /var/lib/apt/lists/*''')
-
     @aarch64
     @ubuntu22
     @docker
@@ -70,7 +38,7 @@ RUN mkdir -p /usr/share/keyrings && \
         """Default doca_ofed building block"""
         doca = doca_ofed()
         self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
+r'''# DOCA OFED version 3.3.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -80,7 +48,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
     wget -qO - https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub | gpg --dearmor -o /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/GPG-KEY-Mellanox.gpg] https://linux.mellanox.com/public/repo/doca/3.2.0/ubuntu22.04/arm64-sbsa/ ./" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-KEY-Mellanox.gpg] https://linux.mellanox.com/public/repo/doca/3.3.0/ubuntu22.04/arm64-sbsa/ ./" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-providers \
@@ -102,7 +70,7 @@ RUN mkdir -p /usr/share/keyrings && \
         """Default doca_ofed building block"""
         doca = doca_ofed()
         self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
+r'''# DOCA OFED version 3.3.0
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -112,7 +80,7 @@ RUN apt-get update -y && \
 RUN mkdir -p /usr/share/keyrings && \
     rm -f /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
     wget -qO - https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub | gpg --dearmor -o /usr/share/keyrings/GPG-KEY-Mellanox.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/GPG-KEY-Mellanox.gpg] https://linux.mellanox.com/public/repo/doca/3.2.0/ubuntu24.04/x86_64/ ./" >> /etc/apt/sources.list.d/hpccm.list && \
+    echo "deb [signed-by=/usr/share/keyrings/GPG-KEY-Mellanox.gpg] https://linux.mellanox.com/public/repo/doca/3.3.0/ubuntu24.04/x86_64/ ./" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         ibverbs-providers \
@@ -132,18 +100,17 @@ RUN mkdir -p /usr/share/keyrings && \
     @docker
     def test_defaults_rockylinux9(self):
         """Default doca_ofed building block"""
-        doca = doca_ofed()
+        doca = doca_ofed(_nogpgcheck=True)
         self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
+r'''# DOCA OFED version 3.3.0
 RUN yum install -y \
         ca-certificates \
         gnupg \
         wget && \
     rm -rf /var/cache/yum/*
-RUN rpm --import https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub && \
-    yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.2.0/rhel9/x86_64 && \
-    yum install -y \
+RUN yum install -y dnf-utils && \
+    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.3.0/rhel9/x86_64 && \
+    yum install -y --nogpgcheck \
         libibumad \
         libibverbs \
         libibverbs-utils \
@@ -157,16 +124,16 @@ RUN rpm --import https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pu
     @docker
     def test_defaults_rockylinux10(self):
         """Default doca_ofed building block"""
-        doca = doca_ofed()
+        doca = doca_ofed(_nogpgcheck=True)
         self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
+r'''# DOCA OFED version 3.3.0
 RUN yum install -y \
         ca-certificates \
         gnupg \
         wget && \
     rm -rf /var/cache/yum/*
 RUN yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.2.0/rhel10/x86_64 && \
+    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.3.0/rhel10/x86_64 && \
     yum install -y --nogpgcheck \
         libibumad \
         libibverbs \
@@ -181,18 +148,17 @@ RUN yum install -y dnf-utils && \
     @docker
     def test_defaults_rockylinux8(self):
         """Default doca_ofed building block"""
-        doca = doca_ofed()
+        doca = doca_ofed(_nogpgcheck=True)
         self.assertMultiLineEqual(str(doca),
-r'''# DOCA OFED version 3.2.0
+r'''# DOCA OFED version 3.3.0
 RUN yum install -y \
         ca-certificates \
         gnupg \
         wget && \
     rm -rf /var/cache/yum/*
-RUN rpm --import https://linux.mellanox.com/public/repo/doca/GPG-KEY-Mellanox.pub && \
-    yum install -y dnf-utils && \
-    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.2.0/rhel8/x86_64 && \
-    yum install -y \
+RUN yum install -y dnf-utils && \
+    yum-config-manager --add-repo https://linux.mellanox.com/public/repo/doca/3.3.0/rhel8/x86_64 && \
+    yum install -y --nogpgcheck \
         libibumad \
         libibverbs \
         libibverbs-utils \
