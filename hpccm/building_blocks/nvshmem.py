@@ -24,6 +24,8 @@ from __future__ import print_function
 import os
 import posixpath
 
+from packaging.version import Version
+
 import hpccm.templates.downloader
 import hpccm.templates.envvars
 import hpccm.templates.ldconfig
@@ -71,8 +73,10 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
     directory. The default value is False.
 
-    mpi: Flag to specify the path to the MPI installation.  The
-    default is empty, i.e., do not build NVSHMEM with MPI support.
+    mpi: Flag to enable MPI support.  If True, enables MPI and relies
+    on CMake's FindMPI to locate the installation.  If a string, uses
+    the value as the MPI installation path (MPI_HOME).  The default is
+    empty, i.e., do not build NVSHMEM with MPI support.
 
     ospackages: List of OS packages to install prior to building.  The
     default values are `make` and `wget`.
@@ -115,6 +119,12 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__download()
         kwargs['url'] = self.url
 
+        # GitHub release tarballs use paths like .../v3.6.5-0.tar.gz; tar strips the
+        # extension but the top-level directory is nvshmem-3.6.5-0, not v3.6.5-0.
+        if (kwargs.get('directory') is None and self.url
+                and 'github.com/NVIDIA/nvshmem' in self.url):
+            kwargs['directory'] = 'nvshmem-{0}'.format(self.__version)
+
         # Setup the environment variables
         self.environment_variables['CPATH'] = '{}:$CPATH'.format(
             posixpath.join(self.__prefix, 'include'))
@@ -133,6 +143,15 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # Set the build options
         self.__configure()
+
+        # Ensure cuda/lib64 can be found, build environment needs LD_LIBRARY_PATH
+        if self.__mpi and self.__cuda:
+            be = kwargs.get('build_environment', {})
+            cuda_lib = posixpath.join(self.__cuda, 'lib64')
+            existing = be.get('LD_LIBRARY_PATH', '')
+            if cuda_lib not in existing:
+                be['LD_LIBRARY_PATH'] = '{}:{}'.format(cuda_lib, existing).rstrip(':')
+            kwargs['build_environment'] = be
 
         self.__bb = generic_cmake(
             cmake_opts=self.__cmake_opts,
@@ -161,20 +180,27 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.__cmake_opts.append('-DGDRCOPY_HOME={}'.format(self.__gdrcopy))
 
         if self.__mpi:
-            self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=1')
-            self.__cmake_opts.append('-DMPI_HOME={}'.format(self.__mpi))
-        #else:
-        #    self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=0')
+            self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=ON')
+            if isinstance(self.__mpi, str):
+                self.__cmake_opts.append('-DMPI_HOME={}'.format(self.__mpi))
 
         if self.__shmem:
             self.__cmake_opts.append('-DNVSHMEM_SHMEM_SUPPORT=1')
             self.__cmake_opts.append('-DSHMEM_HOME={}'.format(self.__shmem))
 
+    # First NVSHMEM version published as a GitHub release tarball
+    __github_min_version = Version('3.4.5')
+
     def __download(self):
         """Set download source based on user parameters"""
 
         if not self.package and not self.repository and not self.url:
-            self.url = 'https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_{1}.txz'.format(self.__version.split('-')[0], self.__version)
+            v = Version(self.__version.split('-')[0])
+            if v >= self.__github_min_version:
+                tag = self.__version if self.__version.startswith('v') else 'v{}'.format(self.__version)
+                self.url = 'https://github.com/NVIDIA/nvshmem/archive/refs/tags/{}.tar.gz'.format(tag)
+            else:
+                self.url = 'https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_{1}.txz'.format(self.__version.split('-')[0], self.__version)
 
     def runtime(self, _from='0'):
         """Generate the set of instructions to install the runtime specific
