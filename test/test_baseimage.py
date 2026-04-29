@@ -317,6 +317,13 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_linux_version, Version('24.04'))
 
     @docker
+    def test_distro_ubuntu26(self):
+        """Base image Linux distribution specification"""
+        b = baseimage(image='foo', _distro='ubuntu26')
+        self.assertEqual(hpccm.config.g_linux_distro, linux_distro.UBUNTU)
+        self.assertEqual(hpccm.config.g_linux_version, Version('26.04'))
+
+    @docker
     def test_distro_centos(self):
         """Base image Linux distribution specification"""
         b = baseimage(image='foo', _distro='centos')

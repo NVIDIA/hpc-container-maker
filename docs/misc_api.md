@@ -91,9 +91,9 @@ __Arguments__
 
 - __distro (string)__: Valid values are `centos7`, `centos8`, `rhel7`,
 `rhel8`, `rockylinux8`, `rockylinux9`, `rockylinux10`, `ubuntu16`,
-`ubuntu18`, `ubuntu20`, `ubuntu22`, and `ubuntu24`.  `ubuntu` is an
-alias for `ubuntu16`, `centos` is an alias for `centos7`, and `rhel`
-is an alias for `rhel7`.
+`ubuntu18`, `ubuntu20`, `ubuntu22`, `ubuntu24`, and `ubuntu26`.
+`ubuntu` is an alias for `ubuntu16`, `centos` is an alias for `centos7`,
+and `rhel` is an alias for `rhel7`.
 
 
 ## set_singularity_version

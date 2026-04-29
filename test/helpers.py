@@ -230,6 +230,15 @@ def ubuntu24(function):
 
     return wrapper
 
+def ubuntu26(function):
+    """Decorator to set the Linux distribution to Ubuntu 26.04"""
+    def wrapper(*args, **kwargs):
+        hpccm.config.g_linux_distro = linux_distro.UBUNTU
+        hpccm.config.g_linux_version = Version('26.04')
+        return function(*args, **kwargs)
+
+    return wrapper
+
 def x86_64(function):
     """Decorator to set the CPU architecture to x86_64"""
     def wrapper(*args, **kwargs):
