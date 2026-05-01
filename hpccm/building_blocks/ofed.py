@@ -113,7 +113,9 @@ class ofed(bb_base):
             if hpccm.config.g_linux_version >= Version('18.0'):
                 # Give priority to packages from the Ubuntu repositories over
                 # vendor repositories
-                if hpccm.config.g_linux_version >= Version('24.0'):
+                if hpccm.config.g_linux_version >= Version('26.0'):
+                    self.__extra_opts = ['-t resolute']
+                elif hpccm.config.g_linux_version >= Version('24.0'):
                     self.__extra_opts = ['-t noble']
                 elif hpccm.config.g_linux_version >= Version('22.0'):
                     self.__extra_opts = ['-t jammy']
