@@ -45,7 +45,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.download.nvidia.com/compute/redist/nvshmem/2.9.0/source/nvshmem_src_2.9.0-2.txz && \
     mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.txz -C /var/tmp -J && \
-    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda /var/tmp/nvshmem_src_2.9.0-2 && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && LD_LIBRARY_PATH=/usr/local/cuda/lib64 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DNVSHMEM_MPI_SUPPORT=ON /var/tmp/nvshmem_src_2.9.0-2 && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.txz
@@ -57,8 +57,8 @@ ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     @ubuntu
     @docker
     def test_package_ubuntu(self):
-        """nvshmem source package"""
-        n = nvshmem(package='nvshmem_src_2.9.0-2.tar.xz')
+        """nvshmem source package, MPI support explicitly disabled"""
+        n = nvshmem(package='nvshmem_src_2.9.0-2.tar.xz', mpi=False)
         self.assertEqual(str(n),
 r'''# NVSHMEM
 RUN apt-get update -y && \
@@ -68,7 +68,7 @@ RUN apt-get update -y && \
     rm -rf /var/lib/apt/lists/*
 COPY nvshmem_src_2.9.0-2.tar.xz /var/tmp/nvshmem_src_2.9.0-2.tar.xz
 RUN mkdir -p /var/tmp && tar -x -f /var/tmp/nvshmem_src_2.9.0-2.tar.xz -C /var/tmp -J && \
-    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda /var/tmp/nvshmem_src_2.9.0-2 && \
+    mkdir -p /var/tmp/nvshmem_src_2.9.0-2/build && cd /var/tmp/nvshmem_src_2.9.0-2/build && LD_LIBRARY_PATH=/usr/local/cuda/lib64 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DNVSHMEM_MPI_SUPPORT=OFF /var/tmp/nvshmem_src_2.9.0-2 && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.tar.xz
@@ -99,6 +99,29 @@ RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://developer.download.nvid
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target all -- -j$(nproc) && \
     cmake --build /var/tmp/nvshmem_src_2.9.0-2/build --target install -- -j$(nproc) && \
     rm -rf /var/tmp/nvshmem_src_2.9.0-2 /var/tmp/nvshmem_src_2.9.0-2.txz
+ENV CPATH=/usr/local/nvshmem/include:$CPATH \
+    LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
+    LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \
+    PATH=/usr/local/nvshmem/bin:$PATH''')
+
+    @ubuntu
+    @docker
+    def test_github_release_345_mpi(self):
+        """nvshmem 3.4.5 fetched from a GitHub release tarball with an explicit MPI path"""
+        n = nvshmem(mpi='/usr/local/openmpi', version='3.4.5-0')
+        self.assertEqual(str(n),
+r'''# NVSHMEM 3.4.5-0
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/NVIDIA/nvshmem/archive/refs/tags/v3.4.5-0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/v3.4.5-0.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/nvshmem-3.4.5-0/build && cd /var/tmp/nvshmem-3.4.5-0/build && LD_LIBRARY_PATH=/usr/local/cuda/lib64 cmake -DCMAKE_INSTALL_PREFIX=/usr/local/nvshmem -DNVSHMEM_BUILD_EXAMPLES=OFF -DNVSHMEM_BUILD_PACKAGES=OFF -DNVSHMEM_BUILD_DEB_PACKAGES=OFF -DNVSHMEM_BUILD_RPM_PACKAGES=OFF -DCUDA_HOME=/usr/local/cuda -DNVSHMEM_MPI_SUPPORT=ON -DMPI_HOME=/usr/local/openmpi /var/tmp/nvshmem-3.4.5-0 && \
+    cmake --build /var/tmp/nvshmem-3.4.5-0/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/nvshmem-3.4.5-0/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/nvshmem-3.4.5-0 /var/tmp/v3.4.5-0.tar.gz
 ENV CPATH=/usr/local/nvshmem/include:$CPATH \
     LD_LIBRARY_PATH=/usr/local/nvshmem/lib:$LD_LIBRARY_PATH \
     LIBRARY_PATH=/usr/local/nvshmem/lib:$LIBRARY_PATH \

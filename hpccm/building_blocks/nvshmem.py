@@ -75,8 +75,9 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
     mpi: Flag to enable MPI support.  If True, enables MPI and relies
     on CMake's FindMPI to locate the installation.  If a string, uses
-    the value as the MPI installation path (MPI_HOME).  The default is
-    empty, i.e., do not build NVSHMEM with MPI support.
+    the value as the MPI installation path (MPI_HOME).  If False,
+    MPI support is explicitly disabled.  The default is True, matching
+    the upstream NVSHMEM CMake default.
 
     ospackages: List of OS packages to install prior to building.  The
     default values are `make` and `wget`.
@@ -108,7 +109,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__cmake_opts = kwargs.pop('cmake_opts', [])
         self.__cuda = kwargs.pop('cuda', '/usr/local/cuda')
         self.__gdrcopy = kwargs.pop('gdrcopy', None)
-        self.__mpi = kwargs.pop('mpi', None)
+        self.__mpi = kwargs.pop('mpi', True)
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
         self.__shmem = kwargs.pop('shmem', None)
@@ -144,8 +145,11 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         # Set the build options
         self.__configure()
 
-        # Ensure cuda/lib64 can be found, build environment needs LD_LIBRARY_PATH
-        if self.__mpi and self.__cuda:
+        # NVSHMEM's CMake configure step (find_package(CUDAToolkit) and
+        # several find_library calls) needs to be able to dlopen CUDA
+        # runtime libraries, so prepend cuda/lib64 to LD_LIBRARY_PATH for
+        # the build environment whenever a CUDA installation is known.
+        if self.__cuda:
             be = kwargs.get('build_environment', {})
             cuda_lib = posixpath.join(self.__cuda, 'lib64')
             existing = be.get('LD_LIBRARY_PATH', '')
@@ -183,6 +187,10 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=ON')
             if isinstance(self.__mpi, str):
                 self.__cmake_opts.append('-DMPI_HOME={}'.format(self.__mpi))
+        else:
+            # NVSHMEM 3.4.5+ defaults NVSHMEM_MPI_SUPPORT to ON, so an
+            # explicit OFF is required when the user did not request MPI.
+            self.__cmake_opts.append('-DNVSHMEM_MPI_SUPPORT=OFF')
 
         if self.__shmem:
             self.__cmake_opts.append('-DNVSHMEM_SHMEM_SUPPORT=1')
