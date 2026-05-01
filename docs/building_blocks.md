@@ -3349,8 +3349,11 @@ directory should be added dynamic linker cache.  If False, then
 `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
 directory. The default value is False.
 
-- __mpi__: Flag to specify the path to the MPI installation.  The
-default is empty, i.e., do not build NVSHMEM with MPI support.
+- __mpi__: Flag to enable MPI support.  If True, enables MPI and relies
+on CMake's FindMPI to locate the installation.  If a string, uses
+the value as the MPI installation path (MPI_HOME).  If False,
+MPI support is explicitly disabled.  The default is True, matching
+the upstream NVSHMEM CMake default.
 
 - __ospackages__: List of OS packages to install prior to building.  The
 default values are `make` and `wget`.
