@@ -103,6 +103,8 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Initialize building block"""
 
         super(nvshmem, self).__init__(**kwargs)
+        # First NVSHMEM version published as a GitHub release tarball
+        self.__github_min_version = Version('3.4.5')
 
         self.__build_examples = kwargs.pop('build_examples', False)
         self.__build_packages = kwargs.pop('build_packages', False)
@@ -195,9 +197,6 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         if self.__shmem:
             self.__cmake_opts.append('-DNVSHMEM_SHMEM_SUPPORT=1')
             self.__cmake_opts.append('-DSHMEM_HOME={}'.format(self.__shmem))
-
-    # First NVSHMEM version published as a GitHub release tarball
-    __github_min_version = Version('3.4.5')
 
     def __download(self):
         """Set download source based on user parameters"""
