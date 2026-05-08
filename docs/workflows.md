@@ -43,18 +43,17 @@ HPC software components present can be used as the starting point for
 building an application container image.
 
 HPCCM includes [base recipes](/recipes) for all combinations of the
-Ubuntu and CentOS Linux distributions, the GNU and PGI compilers, and
-the OpenMPI and MVAPICH2 MPI libraries, plus commonly used software
-components such as the Mellanox OpenFabrics Enterprise Distribution,
-Python, FFTW, and HDF5.  The provided base recipe can be easily
-customized to change component versions or add or subtract building
-blocks.
+Ubuntu and RHEL-based Linux distributions, the GNU and NVHPC compilers,
+plus commonly used software components such as the OpenFabrics Enterprise
+Distribution, HPC-X, FFTW, HDF5, and NetCDF.  The provided base recipe
+can be easily customized to change component versions or add or subtract
+building blocks.
 
 For example:
 
 ```
-$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/hpcbase-gnu-openmpi.py
-$ hpccm --recipe hpcbase-gnu-openmpi.py > Dockerfile
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/hpcbase-gnu-hpcx.py
+$ hpccm --recipe hpcbase-gnu-hpcx.py > Dockerfile
 $ sudo docker build -t hpcbase -f Dockerfile .
 ```
 
