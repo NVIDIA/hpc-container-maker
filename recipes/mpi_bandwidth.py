@@ -33,23 +33,16 @@ Running with Singularity:
 Stage0 += comment(__doc__, reformat=False)
 
 # CentOS base image
-Stage0 += baseimage(image='centos:7', _as='build')
+Stage0 += baseimage(image='rockylinux:9', _as='build')
 
 # GNU compilers
 Stage0 += gnu(fortran=False)
 
-# Mellanox OFED
-Stage0 += mlnx_ofed()
+# OFED
+Stage0 += ofed()
 
-# UCX
-Stage0 += ucx(cuda=False)
-
-# PMI2
-Stage0 += slurm_pmi2()
-
-# OpenMPI (use UCX instead of IB directly)
-Stage0 += openmpi(cuda=False, infiniband=False, pmi='/usr/local/slurm-pmi2',
-                  ucx='/usr/local/ucx')
+# HPC-X (MPI)
+Stage0 += hpcx(hpcxinit=False, inbox=True)
 
 # MPI Bandwidth
 Stage0 += shell(commands=[
@@ -57,7 +50,7 @@ Stage0 += shell(commands=[
     'mpicc -o /usr/local/bin/mpi_bandwidth /var/tmp/mpi_bandwidth.c'])
 
 ### Runtime distributable stage
-Stage1 += baseimage(image='centos:7')
+Stage1 += baseimage(image='rockylinux:9')
 Stage1 += Stage0.runtime()
 Stage1 += copy(_from='build', src='/usr/local/bin/mpi_bandwidth',
                dest='/usr/local/bin/mpi_bandwidth')
