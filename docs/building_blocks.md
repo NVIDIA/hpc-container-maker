@@ -2980,7 +2980,7 @@ repository.  The default is empty, i.e., use the release package
 specified by `version`.
 
 - __version__: The version of NCCL to install.  The default value is
-`2.29.7-1`.
+`2.30.4-1`.
 
 __Examples__
 

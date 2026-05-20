@@ -36,8 +36,13 @@ from hpccm.primitives.comment import comment
 from hpccm.primitives.copy import copy
 from hpccm.primitives.environment import environment
 
-class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
-           hpccm.templates.ldconfig):
+
+class nccl(
+    bb_base,
+    hpccm.templates.downloader,
+    hpccm.templates.envvars,
+    hpccm.templates.ldconfig,
+):
     """The `nccl` building block installs the
     [NCCL](https://developer.nvidia.com/nccl) component.
 
@@ -77,7 +82,7 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     specified by `version`.
 
     version: The version of NCCL to install.  The default value is
-    `2.29.7-1`.
+    `2.30.4-1`.
 
     # Examples
 
@@ -96,20 +101,20 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         super(nccl, self).__init__(**kwargs)
 
-        self.__arch_label = ''       # Filled in by __cpu_arch
-        self.__baseurl = kwargs.pop('baseurl', 'https://github.com/NVIDIA/nccl/archive')
-        self.__build = kwargs.pop('build', False)
-        self.__build_environment = '' # Filled in by __configure
-        self.__default_repository = 'https://github.com/NVIDIA/nccl.git'
-        self.__distro_label = ''     # Filled in by __distro
-        self.__cuda = kwargs.pop('cuda', '13.2')
-        self.__make_variables = kwargs.pop('make_variables', {})
-        self.__ospackages = kwargs.pop('ospackages', [])
-        self.__prefix = kwargs.pop('prefix', '/usr/local/nccl')
-        self.__repo_key = ''         # Filled in by __repo_key
-        self.__src_directory = kwargs.pop('src_directory', None)
-        self.__version = kwargs.pop('version', '2.29.7-1')
-        self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
+        self.__arch_label = ""  # Filled in by __cpu_arch
+        self.__baseurl = kwargs.pop("baseurl", "https://github.com/NVIDIA/nccl/archive")
+        self.__build = kwargs.pop("build", False)
+        self.__build_environment = ""  # Filled in by __configure
+        self.__default_repository = "https://github.com/NVIDIA/nccl.git"
+        self.__distro_label = ""  # Filled in by __distro
+        self.__cuda = kwargs.pop("cuda", "13.2")
+        self.__make_variables = kwargs.pop("make_variables", {})
+        self.__ospackages = kwargs.pop("ospackages", [])
+        self.__prefix = kwargs.pop("prefix", "/usr/local/nccl")
+        self.__repo_key = ""  # Filled in by __repo_key
+        self.__src_directory = kwargs.pop("src_directory", None)
+        self.__version = kwargs.pop("version", "2.30.4-1")
+        self.__wd = kwargs.get("wd", hpccm.config.g_wd)  # working directory
 
         if not self.__build:
             # Install prebuild package
@@ -123,20 +128,40 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             # Set the repo key
             self.__repo()
 
-            self += comment('NCCL {}'.format(self.__version))
+            self += comment("NCCL {}".format(self.__version))
             self += packages(ospackages=self.__ospackages)
             self += packages(
-                apt=['libnccl2={0}+cuda{1}'.format(self.__version,
-                                                   self.__cuda),
-                     'libnccl-dev={0}+cuda{1}'.format(self.__version,
-                                                      self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
-                apt_repositories=['deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, self.__arch_label, self.__repo_key.replace('.pub', '.gpg'))],
-                yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda),
-                     'libnccl-devel-{0}+cuda{1}'.format(self.__version,
-                                                        self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
-                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
+                apt=[
+                    "libnccl2={0}+cuda{1}".format(self.__version, self.__cuda),
+                    "libnccl-dev={0}+cuda{1}".format(self.__version, self.__cuda),
+                ],
+                apt_keys=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}".format(
+                        self.__distro_label, self.__arch_label, self.__repo_key
+                    )
+                ],
+                apt_repositories=[
+                    "deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /".format(
+                        self.__distro_label,
+                        self.__arch_label,
+                        self.__repo_key.replace(".pub", ".gpg"),
+                    )
+                ],
+                yum=[
+                    "libnccl-{0}+cuda{1}".format(self.__version, self.__cuda),
+                    "libnccl-devel-{0}+cuda{1}".format(self.__version, self.__cuda),
+                ],
+                yum_keys=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}".format(
+                        self.__distro_label, self.__arch_label, self.__repo_key
+                    )
+                ],
+                yum_repositories=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}".format(
+                        self.__distro_label, self.__arch_label
+                    )
+                ],
+            )
 
         else:
             # Build from source
@@ -145,31 +170,38 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
             self.__configure()
 
             self.__download()
-            kwargs['repository'] = self.repository
-            kwargs['url'] = self.url
+            kwargs["repository"] = self.repository
+            kwargs["url"] = self.url
 
             # Setup the environment variables
-            self.environment_variables['CPATH'] = '{}:$CPATH'.format(
-                posixpath.join(self.__prefix, 'include'))
-            self.environment_variables['LIBRARY_PATH'] = '{}:$LIBRARY_PATH'.format(
-                posixpath.join(self.__prefix, 'lib'))
-            self.environment_variables['PATH'] = '{}:$PATH'.format(
-                posixpath.join(self.__prefix, 'bin'))
+            self.environment_variables["CPATH"] = "{}:$CPATH".format(
+                posixpath.join(self.__prefix, "include")
+            )
+            self.environment_variables["LIBRARY_PATH"] = "{}:$LIBRARY_PATH".format(
+                posixpath.join(self.__prefix, "lib")
+            )
+            self.environment_variables["PATH"] = "{}:$PATH".format(
+                posixpath.join(self.__prefix, "bin")
+            )
             if not self.ldconfig:
-                self.environment_variables['LD_LIBRARY_PATH'] = '{}:$LD_LIBRARY_PATH'.format(posixpath.join(self.__prefix, 'lib'))
+                self.environment_variables["LD_LIBRARY_PATH"] = (
+                    "{}:$LD_LIBRARY_PATH".format(posixpath.join(self.__prefix, "lib"))
+                )
 
             self.__bb = generic_build(
                 base_annotation=self.__class__.__name__,
-                build = ['{} make -j$(nproc) install'.format(
-                    self.__build_environment)],
+                build=["{} make -j$(nproc) install".format(self.__build_environment)],
                 comment=False,
                 devel_environment=self.environment_variables,
-                directory='nccl-{}'.format(self.__version) if not self.repository else None,
+                directory=(
+                    "nccl-{}".format(self.__version) if not self.repository else None
+                ),
                 prefix=self.__prefix,
                 runtime_environment=self.environment_variables,
-                **kwargs)
+                **kwargs
+            )
 
-            self += comment('NCCL')
+            self += comment("NCCL")
             self += packages(ospackages=self.__ospackages)
             self += self.__bb
 
@@ -178,28 +210,28 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         specified value overrides any defaults."""
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
-            self.__arch_label = 'sbsa'
+            self.__arch_label = "sbsa"
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
-            self.__arch_label = 'x86_64'
-        else: # pragma: no cover
-            raise RuntimeError('Unknown CPU architecture')
+            self.__arch_label = "x86_64"
+        else:  # pragma: no cover
+            raise RuntimeError("Unknown CPU architecture")
 
     def __configure(self):
         """Setup build options based on user parameters"""
 
         e = {}
 
-        e['PREFIX'] = self.__prefix
+        e["PREFIX"] = self.__prefix
 
         if self.__make_variables:
-          e.update(self.__make_variables)
+            e.update(self.__make_variables)
 
         l = []
         if e:
             for key, val in sorted(e.items()):
-                l.append('{0}={1}'.format(key, val))
+                l.append("{0}={1}".format(key, val))
 
-        self.__build_environment = ' '.join(l)
+        self.__build_environment = " ".join(l)
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
@@ -207,62 +239,68 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
             if not self.__ospackages:
-                self.__ospackages = ['apt-transport-https', 'ca-certificates',
-                                     'gnupg', 'wget']
+                self.__ospackages = [
+                    "apt-transport-https",
+                    "ca-certificates",
+                    "gnupg",
+                    "wget",
+                ]
 
-            if hpccm.config.g_linux_version >= Version('24.0'):
-                self.__distro_label = 'ubuntu2404'
-            elif hpccm.config.g_linux_version >= Version('22.0'):
-                self.__distro_label = 'ubuntu2204'
+            if hpccm.config.g_linux_version >= Version("26.0"):
+                self.__distro_label = "ubuntu2604"
+            elif hpccm.config.g_linux_version >= Version("24.0"):
+                self.__distro_label = "ubuntu2404"
+            elif hpccm.config.g_linux_version >= Version("22.0"):
+                self.__distro_label = "ubuntu2204"
             else:
-                self.__distro_label = 'ubuntu2004'
+                self.__distro_label = "ubuntu2004"
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= Version('10.0'):
-                self.__distro_label = 'rhel10'
-            elif hpccm.config.g_linux_version >= Version('9.0'):
-                self.__distro_label = 'rhel9'
+            if hpccm.config.g_linux_version >= Version("10.0"):
+                self.__distro_label = "rhel10"
+            elif hpccm.config.g_linux_version >= Version("9.0"):
+                self.__distro_label = "rhel9"
             else:
-                self.__distro_label = 'rhel8'
+                self.__distro_label = "rhel8"
 
-        else: # pragma: no cover
-            raise RuntimeError('Unknown Linux distribution')
+        else:  # pragma: no cover
+            raise RuntimeError("Unknown Linux distribution")
 
     def __download(self):
         """Set download source based on user parameters"""
 
         if not self.__ospackages:
-            self.__ospackages = ['make', 'wget']
+            self.__ospackages = ["make", "wget"]
 
             if hpccm.config.g_linux_distro == linux_distro.CENTOS:
-                self.__ospackages.append('which')
+                self.__ospackages.append("which")
 
             if self.repository:
-                self.__ospackages.append('git')
+                self.__ospackages.append("git")
 
         # Use the default repository if set to True
         if self.repository is True:
             self.repository = self.__default_repository
 
         if not self.repository and not self.url:
-            self.url = '{0}/v{1}.tar.gz'.format(self.__baseurl, self.__version)
+            self.url = "{0}/v{1}.tar.gz".format(self.__baseurl, self.__version)
 
     def __repo(self):
         """Based on the Linux distribution and CPU architecture, set values
         accordingly.  A user specified value overrides any defaults.
         """
 
-        if self.__distro_label.startswith('ubuntu'):
-            self.__repo_key = '3bf863cc.pub'
-        elif self.__distro_label.startswith('rhel'):
-            if hpccm.config.g_linux_version >= Version('10.0'):
-                self.__repo_key = 'CDF6BA43.pub'
+        if self.__distro_label.startswith("ubuntu"):
+            self.__repo_key = "3bf863cc.pub"
+        elif self.__distro_label.startswith("rhel"):
+            if hpccm.config.g_linux_version >= Version("10.0"):
+                self.__repo_key = "CDF6BA43.pub"
             else:
-                self.__repo_key = 'D42D0685.pub'
-        else: # pragma: no cover
-            raise RuntimeError('Unknown repository')
+                self.__repo_key = "D42D0685.pub"
+        else:  # pragma: no cover
+            raise RuntimeError("Unknown repository")
 
-    def runtime(self, _from='0'):
+    def runtime(self, _from="0"):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
@@ -274,19 +312,37 @@ class nccl(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         Stage1 += n.runtime()
         ```
         """
-        self.rt += comment('NCCL')
+        self.rt += comment("NCCL")
         if self.__build:
             self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)
             self.rt += environment(variables=self.environment_step())
         else:
             self.rt += packages(ospackages=self.__ospackages)
             self.rt += packages(
-                apt=['libnccl2={0}+cuda{1}'.format(self.__version,
-                                                   self.__cuda)],
-                apt_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
-                apt_repositories=['deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /'.format(self.__distro_label, self.__arch_label, self.__repo_key.replace('.pub', '.gpg'))],
-                yum=['libnccl-{0}+cuda{1}'.format(self.__version, self.__cuda)],
-                yum_keys=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}'.format(self.__distro_label, self.__arch_label, self.__repo_key)],
-                yum_repositories=['https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}'.format(self.__distro_label, self.__arch_label)])
+                apt=["libnccl2={0}+cuda{1}".format(self.__version, self.__cuda)],
+                apt_keys=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}".format(
+                        self.__distro_label, self.__arch_label, self.__repo_key
+                    )
+                ],
+                apt_repositories=[
+                    "deb [signed-by=/usr/share/keyrings/{2}] https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1} /".format(
+                        self.__distro_label,
+                        self.__arch_label,
+                        self.__repo_key.replace(".pub", ".gpg"),
+                    )
+                ],
+                yum=["libnccl-{0}+cuda{1}".format(self.__version, self.__cuda)],
+                yum_keys=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}/{2}".format(
+                        self.__distro_label, self.__arch_label, self.__repo_key
+                    )
+                ],
+                yum_repositories=[
+                    "https://developer.download.nvidia.com/compute/cuda/repos/{0}/{1}".format(
+                        self.__distro_label, self.__arch_label
+                    )
+                ],
+            )
 
         return str(self.rt)
