@@ -1,6 +1,6 @@
 # v26.5.0
 - Refreshes default component versions for the DOCA OFED (`doca_ofed`),
-  NCCL (`nccl`), NVSHMEM (`nvshmem`) building blocks.
+  NCCL (`nccl`), and NVSHMEM (`nvshmem`) building blocks.
 - Update example recipes and documentation.
 - Enabled site certificate checks for downloads by default.
 - Adds support for Ubuntu 26.04.
