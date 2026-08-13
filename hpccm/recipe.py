@@ -16,11 +16,6 @@
 
 """Container recipe"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-from six import raise_from
-
 from packaging.version import Version
 import logging
 import os
@@ -83,7 +78,7 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
             exec(compile(f.read(), recipe_file, 'exec'), _globals, _locals)
     except Exception as e:
         if raise_exceptions:
-            raise_from(e, e)
+            raise e
         else:
             traceback.print_exc()
             exit(1)

@@ -20,7 +20,6 @@
 # And access variables as
 # hpccm.config.var
 
-from __future__ import absolute_import
 
 from packaging.version import Version
 import archspec.cpu

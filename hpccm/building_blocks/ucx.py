@@ -17,11 +17,6 @@
 
 """UCX building block"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-
-from six import string_types
 
 from packaging.version import Version
 import posixpath
@@ -265,7 +260,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # CUDA
         if self.__cuda:
-            if isinstance(self.__cuda, string_types):
+            if isinstance(self.__cuda, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-cuda={}'.format(self.__cuda))
@@ -280,7 +275,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # GDRCOPY
         if self.__gdrcopy:
-            if isinstance(self.__gdrcopy, string_types):
+            if isinstance(self.__gdrcopy, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-gdrcopy={}'.format(self.__gdrcopy))
@@ -292,7 +287,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # KNEM
         if self.__knem:
-            if isinstance(self.__knem, string_types):
+            if isinstance(self.__knem, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-knem={}'.format(self.__knem))
@@ -304,7 +299,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # OFED
         if self.__ofed:
-            if isinstance(self.__ofed, string_types):
+            if isinstance(self.__ofed, str):
                 # Use specified path
                 self.__configure_opts.extend(
                     ['--with-verbs={}'.format(self.__ofed),
@@ -318,7 +313,7 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # XPMEM
         if self.__xpmem:
-            if isinstance(self.__xpmem, string_types):
+            if isinstance(self.__xpmem, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-xpmem={}'.format(self.__xpmem))

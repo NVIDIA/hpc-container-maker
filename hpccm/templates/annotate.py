@@ -16,11 +16,7 @@
 
 """annotate template"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-from six import string_types
-from six.moves import shlex_quote
+from shlex import quote as shlex_quote
 
 import hpccm.base_object
 
@@ -37,7 +33,7 @@ class annotate(hpccm.base_object):
         self.__labels = {}
 
     def add_annotation(self, key, value):
-        if isinstance(self.base_annotation, string_types):
+        if isinstance(self.base_annotation, str):
             key = 'hpccm.' + self.base_annotation + '.' + key
         elif self.base_annotation:
             key = 'hpccm.' + self.__class__.__name__ + '.' + key
