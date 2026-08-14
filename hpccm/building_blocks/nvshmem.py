@@ -86,12 +86,12 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
     version: The version of NVSHMEM source to download.  The default
-    value is `2.9.0-2`.
+    value is `3.7.2-0`.
 
     # Examples
 
     ```python
-    nvshmem(mpi='/usr/local/nvshmem', version='2.9.0-2')
+    nvshmem(mpi='/usr/local/nvshmem', version='3.7.2-0')
     ```
 
     """
@@ -112,7 +112,7 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         self.__ospackages = kwargs.pop('ospackages', ['make', 'wget'])
         self.__prefix = kwargs.pop('prefix', '/usr/local/nvshmem')
         self.__shmem = kwargs.pop('shmem', None)
-        self.__version = kwargs.pop('version', '2.9.0-2')
+        self.__version = kwargs.pop('version', '3.7.2-0')
         self.__wd = kwargs.get('wd', hpccm.config.g_wd) # working directory
 
         # Set the download specific parameters
@@ -173,8 +173,8 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         if self.__build_packages is False:
             self.__cmake_opts.append('-DNVSHMEM_BUILD_PACKAGES=OFF')
-            self.__cmake_opts.append('-DNVSHMEM_BUILD_DEB_PACKAGES=OFF')
-            self.__cmake_opts.append('-DNVSHMEM_BUILD_RPM_PACKAGES=OFF')
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_DEB_PACKAGE=OFF')
+            self.__cmake_opts.append('-DNVSHMEM_BUILD_RPM_PACKAGE=OFF')
 
         if self.__cuda:
             self.__cmake_opts.append('-DCUDA_HOME={}'.format(self.__cuda))

@@ -3365,13 +3365,13 @@ default values are `make` and `wget`.
 default is empty, i.e., do not build NVSHMEM with SHMEM support.
 
 - __version__: The version of NVSHMEM source to download.  The default
-value is `2.9.0-2`.
+value is `3.7.2-0`.
 
 __Examples__
 
 
 ```python
-nvshmem(mpi='/usr/local/nvshmem', version='2.9.0-2')
+nvshmem(mpi='/usr/local/nvshmem', version='3.7.2-0')
 ```
 
 
