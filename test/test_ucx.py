@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ppc64le, ubuntu, x86_64
+from helpers import centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.ucx import ucx
 
@@ -217,32 +217,6 @@ RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/openucx/ucx/
     make -j$(nproc) && \
     make -j$(nproc) install && \
     rm -rf /var/tmp/ucx-1.4.0 /var/tmp/ucx-1.4.0.tar.gz''')
-
-    @ppc64le
-    @centos
-    @docker
-    def test_ppc64le(self):
-        """ppc64le"""
-        u = ucx(cuda=False, knem='/usr/local/knem', version='1.5.2')
-        self.assertEqual(str(u),
-r'''# UCX version 1.5.2
-RUN yum install -y \
-        binutils-devel \
-        file \
-        make \
-        numactl-devel \
-        wget && \
-    rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://github.com/openucx/ucx/releases/download/v1.5.2/ucx-1.5.2.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/ucx-1.5.2.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/ucx-1.5.2 &&  CFLAGS=-Wno-error=format ./configure --prefix=/usr/local/ucx --disable-assertions --disable-debug --disable-doxygen-doc --disable-logging --disable-params-check --enable-optimizations --with-knem=/usr/local/knem --without-cuda && \
-    make -j$(nproc) && \
-    make -j$(nproc) install && \
-    rm -rf /var/tmp/ucx-1.5.2 /var/tmp/ucx-1.5.2.tar.gz
-ENV CPATH=/usr/local/ucx/include:$CPATH \
-    LD_LIBRARY_PATH=/usr/local/ucx/lib:$LD_LIBRARY_PATH \
-    LIBRARY_PATH=/usr/local/ucx/lib:$LIBRARY_PATH \
-    PATH=/usr/local/ucx/bin:$PATH''')
 
     @x86_64
     @ubuntu

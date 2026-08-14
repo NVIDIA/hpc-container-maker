@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, rockylinux9, ubuntu, ubuntu18, ubuntu20, ubuntu22, ubuntu24, ubuntu26, ppc64le, x86_64
+from helpers import aarch64, centos, centos8, docker, rockylinux9, ubuntu, ubuntu18, ubuntu20, ubuntu22, ubuntu24, ubuntu26, x86_64
 
 from hpccm.building_blocks.ofed import ofed
 
@@ -312,35 +312,6 @@ RUN apt-get update -y && \
         ibutils \
         ibverbs-utils \
         infiniband-diags \
-        libibmad-dev \
-        libibmad5 \
-        libibverbs-dev \
-        libibverbs1 \
-        libmlx4-1 \
-        libmlx4-dev \
-        libmlx5-1 \
-        libmlx5-dev \
-        librdmacm-dev \
-        librdmacm1 \
-        rdmacm-utils && \
-    rm -rf /var/lib/apt/lists/*''')
-
-    @ppc64le
-    @ubuntu
-    @docker
-    def test_ppc64le_ubuntu16(self):
-        """ppc64le"""
-        o = ofed()
-        self.assertEqual(str(o),
-r'''# OFED
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -t xenial \
-        dapl2-utils \
-        ibutils \
-        ibverbs-utils \
-        infiniband-diags \
-        libdapl-dev \
-        libdapl2 \
         libibmad-dev \
         libibmad5 \
         libibverbs-dev \

@@ -116,14 +116,6 @@ def invalid_distro(function):
 
     return wrapper
 
-def ppc64le(function):
-    """Decorator to set the CPU architecture to ppc64le"""
-    def wrapper(*args, **kwargs):
-        hpccm.config.g_cpu_arch = cpu_arch.PPC64LE
-        return function(*args, **kwargs)
-
-    return wrapper
-
 def rockylinux9(function):
     """Decorator to set the Linux distribution to Rockylinux 9"""
     def wrapper(*args, **kwargs):

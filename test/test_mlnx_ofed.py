@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, x86_64
+from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20, x86_64
 
 from hpccm.building_blocks.mlnx_ofed import mlnx_ofed
 

@@ -23,7 +23,7 @@ from packaging.version import Version
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import bash, broadwell, centos, docker, icelake, singularity, thunderx2, ubuntu, zen2
+from helpers import bash, broadwell, docker, icelake, singularity, thunderx2, zen2
 
 import hpccm.config
 
@@ -164,28 +164,6 @@ class Test_config(unittest.TestCase):
         """Set CPU architecture to ARM"""
         hpccm.config.set_cpu_architecture('arm64v8')
         self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.AARCH64)
-
-    @ubuntu
-    @docker
-    def test_set_cpu_architecture_ppc64le_ubuntu(self):
-        """Set CPU architecture to POWER"""
-        hpccm.config.set_cpu_architecture('ppc64le')
-        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
-        self.assertEqual(hpccm.config.get_cpu_architecture(), 'ppc64el')
-
-    @centos
-    @docker
-    def test_set_cpu_architecture_ppc64le_centos(self):
-        """Set CPU architecture to POWER"""
-        hpccm.config.set_cpu_architecture('ppc64le')
-        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
-        self.assertEqual(hpccm.config.get_cpu_architecture(), 'ppc64le')
-
-    @docker
-    def test_set_cpu_architecture_power(self):
-        """Set CPU architecture to POWER"""
-        hpccm.config.set_cpu_architecture('power')
-        self.assertEqual(hpccm.config.g_cpu_arch, hpccm.cpu_arch.PPC64LE)
 
     @docker
     def test_set_cpu_architecture_x86_64(self):

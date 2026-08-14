@@ -486,8 +486,7 @@ is `charm++`.
 - __target_architecture__: The target machine architecture to build.
 For x86_64 processors, the default value is
 `multicore-linux-x86_64`.  For aarch64 processors, the default
-value is `multicore-arm8`.  For ppc64le processors, the default is
-`multicore-linux-ppc64le`.
+value is `multicore-arm8`.
 
 - __version__: The version of Charm++ to download.  The default value is
 `6.10.2`.
@@ -3406,9 +3405,7 @@ For Ubuntu 16.04, the following packages are installed:
 `librdmacm-dev`, and `rdmacm-utils`.  For Ubuntu 16.04 and aarch64
 processors, the `dapl2-utils`, `libdapl2`, `libdapl-dev`,
 `libibcm1` and `libibcm-dev` packages are not installed because
-they are not available.  For Ubuntu 16.04 and ppc64le processors,
-the `libibcm1` and `libibcm-dev` packages are not installed
-because they are not available.
+they are not available.
 
 For Ubuntu 18.04 and later, the following packages are installed:
 `dapl2-utils`, `ibutils`, `ibverbs-providers`, `ibverbs-utils`,
@@ -3486,8 +3483,7 @@ directory. The default value is False.
 
 - __make_opts__: List of options to pass to `make`.  For aarch64
 processors, the default values are `TARGET=ARMV8` and
-`USE_OPENMP=1`.  For ppc64le processors, the default values are
-`TARGET=POWER8` and `USE_OPENMP=1`.  For x86_64 processors, the
+`USE_OPENMP=1`.  For x86_64 processors, the
 default value is `USE_OPENMP=1`.
 
 - __ospackages__: List of OS packages to install prior to building.  The

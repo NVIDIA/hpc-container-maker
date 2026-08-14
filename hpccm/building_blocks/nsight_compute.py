@@ -121,11 +121,6 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             self.__arch_label = 'arm64'
-        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_label = 'ppc64el'
-            else:
-                self.__arch_label = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
                 self.__arch_label = 'amd64'

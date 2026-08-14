@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, docker, ppc64le, ubuntu, x86_64
+from helpers import aarch64, centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.conda import conda
 
@@ -97,26 +97,6 @@ RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/minico
     conda install -y numpy && \
     /usr/local/anaconda/bin/conda clean -afy && \
     rm -rf /var/tmp/Miniconda3-py312_25.1.1-2-Linux-aarch64.sh''')
-
-    @ppc64le
-    @ubuntu
-    @docker
-    def test_ppc64le(self):
-        """ppc64le"""
-        c = conda(eula=True, version='4.7.12')
-        self.assertEqual(str(c),
-r'''# Anaconda
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        ca-certificates \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp http://repo.anaconda.com/miniconda/Miniconda3-4.7.12-Linux-ppc64le.sh && \
-    bash /var/tmp/Miniconda3-4.7.12-Linux-ppc64le.sh -b -p /usr/local/anaconda && \
-    /usr/local/anaconda/bin/conda init && \
-    ln -s /usr/local/anaconda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    /usr/local/anaconda/bin/conda clean -afy && \
-    rm -rf /var/tmp/Miniconda3-4.7.12-Linux-ppc64le.sh''')
 
     @x86_64
     @ubuntu

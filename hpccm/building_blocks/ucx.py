@@ -29,7 +29,6 @@ import hpccm.templates.ldconfig
 from hpccm.building_blocks.base import bb_base
 from hpccm.building_blocks.generic_autotools import generic_autotools
 from hpccm.building_blocks.packages import packages
-from hpccm.common import cpu_arch
 from hpccm.common import linux_distro
 from hpccm.primitives.comment import comment
 from hpccm.toolchain import toolchain
@@ -322,11 +321,6 @@ class ucx(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 self.__configure_opts.append('--with-xpmem')
         elif self.__xpmem == False:
             self.__configure_opts.append('--without-xpmem')
-
-        # Workaround for format warning considered an error on Power
-        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            if not self.__toolchain.CFLAGS:
-                self.__toolchain.CFLAGS = '-Wno-error=format'
 
     def __distro(self):
         """Based on the Linux distribution, set values accordingly.  A user
