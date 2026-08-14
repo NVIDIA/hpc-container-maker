@@ -17,15 +17,10 @@
 
 """OpenMPI building block"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
 
 import posixpath
 import re
 from copy import copy as _copy
-from six import string_types
-
 import hpccm.config
 import hpccm.templates.downloader
 import hpccm.templates.envvars
@@ -262,7 +257,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # CUDA
         if self.__cuda:
-            if isinstance(self.__cuda, string_types):
+            if isinstance(self.__cuda, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-cuda={}'.format(self.__cuda))
@@ -277,7 +272,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # PMI
         if self.__pmi:
-            if isinstance(self.__pmi, string_types):
+            if isinstance(self.__pmi, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-pmi={}'.format(self.__pmi))
@@ -286,7 +281,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # PMIX
         if self.__pmix:
-            if isinstance(self.__pmix, string_types):
+            if isinstance(self.__pmix, str):
                 # Use specified path
                 self.__configure_opts.append('--with-pmix={}'.format(
                     self.__pmix))
@@ -301,7 +296,7 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
 
         # UCX
         if self.__ucx:
-            if isinstance(self.__ucx, string_types):
+            if isinstance(self.__ucx, str):
                 # Use specified path
                 self.__configure_opts.append(
                     '--with-ucx={}'.format(self.__ucx))

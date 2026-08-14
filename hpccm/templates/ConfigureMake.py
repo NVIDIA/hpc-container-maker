@@ -16,11 +16,7 @@
 
 """ConfigureMake template"""
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from __future__ import print_function
-from six import string_types
-from six.moves import shlex_quote
+from shlex import quote as shlex_quote
 
 import copy
 
@@ -54,7 +50,7 @@ class ConfigureMake(hpccm.base_object):
                 k.startswith('with')) and kwargs.get(k):
                 opt = '--{}'.format(k.replace('_', '-'))
 
-                if isinstance(kwargs.get(k), string_types):
+                if isinstance(kwargs.get(k), str):
                     self.__opts.append('{0}={1}'.format(opt, kwargs.get(k)))
                 else:
                     self.__opts.append(opt)
