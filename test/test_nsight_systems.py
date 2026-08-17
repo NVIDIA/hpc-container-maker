@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, x86_64
+from helpers import aarch64, centos, centos8, docker, rockylinux9, \
+    rockylinux10, ubuntu, ubuntu24, ubuntu26, x86_64
 
 from hpccm.building_blocks.nsight_systems import nsight_systems
 
