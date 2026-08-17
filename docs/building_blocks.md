@@ -3148,7 +3148,7 @@ local build context. The default value is empty.
 
 - __version__: the version of Nsight Compute to install.  Note when
 `runfile` is set this parameter is ignored.  The default value is
-`2022.4.0`.
+`2026.2.1`.
 
 __Examples__
 
@@ -3177,7 +3177,7 @@ __Parameters__
 package should be installed.  The default is True.
 
 - __version__: The version of Nsight Systems to install.  The default
-value is `2022.5.1`.
+value is `2026.4.1`.
 
 __Examples__
 

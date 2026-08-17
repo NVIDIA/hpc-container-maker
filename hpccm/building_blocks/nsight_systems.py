@@ -38,7 +38,7 @@ class nsight_systems(bb_base):
     package should be installed.  The default is True.
 
     version: The version of Nsight Systems to install.  The default
-    value is `2022.5.1`.
+    value is `2026.4.1`.
 
     # Examples
 
@@ -57,7 +57,7 @@ class nsight_systems(bb_base):
         self.__cli = kwargs.get('cli', True)
         self.__distro_label = ''     # Filled in by __distro
         self.__ospackages = kwargs.get('ospackages', [])
-        self.__version = kwargs.get('version', '2022.5.1')
+        self.__version = kwargs.get('version', '2026.4.1')
 
         # Set the CPU architecture specific parameters
         self.__cpu_arch()
@@ -119,7 +119,11 @@ class nsight_systems(bb_base):
                 self.__ospackages = ['apt-transport-https', 'ca-certificates',
                                      'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= Version('22.04'):
+            if hpccm.config.g_linux_version >= Version('26.04'):
+                self.__distro_label = 'ubuntu2604'
+            elif hpccm.config.g_linux_version >= Version('24.04'):
+                self.__distro_label = 'ubuntu2404'
+            elif hpccm.config.g_linux_version >= Version('22.04'):
                 self.__distro_label = 'ubuntu2204'
             elif hpccm.config.g_linux_version >= Version('20.04'):
                 self.__distro_label = 'ubuntu2004'
@@ -129,7 +133,11 @@ class nsight_systems(bb_base):
                 self.__distro_label = 'ubuntu1604'
 
         elif hpccm.config.g_linux_distro == linux_distro.CENTOS:
-            if hpccm.config.g_linux_version >= Version('8.0'):
+            if hpccm.config.g_linux_version >= Version('10.0'):
+                self.__distro_label = 'rhel10'
+            elif hpccm.config.g_linux_version >= Version('9.0'):
+                self.__distro_label = 'rhel9'
+            elif hpccm.config.g_linux_version >= Version('8.0'):
                 self.__distro_label = 'rhel8'
             else:
                 self.__distro_label = 'rhel7'

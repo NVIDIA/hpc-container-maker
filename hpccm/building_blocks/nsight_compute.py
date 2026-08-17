@@ -60,7 +60,7 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
 
     version: the version of Nsight Compute to install.  Note when
     `runfile` is set this parameter is ignored.  The default value is
-    `2022.4.0`.
+    `2026.2.1`.
 
     # Examples
 
@@ -86,7 +86,7 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
         self.__prefix = kwargs.get('prefix',
                                    '/usr/local/NVIDIA-Nsight-Compute')
         self.__runfile = kwargs.get('runfile', None)
-        self.__version = kwargs.get('version', '2022.4.0')
+        self.__version = kwargs.get('version', '2026.2.1')
         self.__wd = kwargs.get('wd', posixpath.join(
             hpccm.config.g_wd, 'nsight_compute')) # working directory
 
@@ -146,7 +146,11 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
                     self.__ospackages = ['apt-transport-https',
                                          'ca-certificates', 'gnupg', 'wget']
 
-            if hpccm.config.g_linux_version >= Version('22.04'):
+            if hpccm.config.g_linux_version >= Version('26.04'):
+                self.__distro_label = 'ubuntu2604'
+            elif hpccm.config.g_linux_version >= Version('24.04'):
+                self.__distro_label = 'ubuntu2404'
+            elif hpccm.config.g_linux_version >= Version('22.04'):
                 self.__distro_label = 'ubuntu2204'
             elif hpccm.config.g_linux_version >= Version('20.04'):
                 self.__distro_label = 'ubuntu2004'
@@ -160,7 +164,11 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
                 if self.__runfile:
                     self.__ospackages = ['perl', 'perl-Env', 'wget']
 
-            if hpccm.config.g_linux_version >= Version('8.0'):
+            if hpccm.config.g_linux_version >= Version('10.0'):
+                self.__distro_label = 'rhel10'
+            elif hpccm.config.g_linux_version >= Version('9.0'):
+                self.__distro_label = 'rhel9'
+            elif hpccm.config.g_linux_version >= Version('8.0'):
                 self.__distro_label = 'rhel8'
             else:
                 self.__distro_label = 'rhel7'
