@@ -38,7 +38,7 @@ class Test_nsight_compute(unittest.TestCase):
         """Default nsight_compute building block"""
         n = nsight_compute()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2022.4.0
+r'''# NVIDIA Nsight Compute 2026.2.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -52,10 +52,10 @@ RUN mkdir -p /usr/share/keyrings && \
     echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-compute-2022.4.0 && \
+        nsight-compute-2026.2.1 && \
     rm -rf /var/lib/apt/lists/*
 ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2022.4.0:$PATH''')
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
 
     @x86_64
     @centos8
@@ -64,15 +64,101 @@ ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
         """Default nsight_compute building block"""
         n = nsight_compute()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2022.4.0
+r'''# NVIDIA Nsight Compute 2026.2.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
-        nsight-compute-2022.4.0 && \
+        nsight-compute-2026.2.1 && \
     rm -rf /var/cache/yum/*
 ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2022.4.0:$PATH''')
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
+
+    @x86_64
+    @ubuntu24
+    @docker
+    def test_basic_ubuntu24(self):
+        """Default nsight_compute building block"""
+        n = nsight_compute()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Compute 2026.2.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu2404/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu2404/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nsight-compute-2026.2.1 && \
+    rm -rf /var/lib/apt/lists/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
+
+    @x86_64
+    @ubuntu26
+    @docker
+    def test_basic_ubuntu26(self):
+        """Default nsight_compute building block"""
+        n = nsight_compute()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Compute 2026.2.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu2604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu2604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nsight-compute-2026.2.1 && \
+    rm -rf /var/lib/apt/lists/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
+
+    @x86_64
+    @rockylinux9
+    @docker
+    def test_basic_rockylinux9(self):
+        """Default nsight_compute building block"""
+        n = nsight_compute()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Compute 2026.2.1
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel9/x86_64/nvidia.pub && \
+    yum install -y dnf-utils && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel9/x86_64 || true) && \
+    yum install -y \
+        nsight-compute-2026.2.1 && \
+    rm -rf /var/cache/yum/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
+
+    @x86_64
+    @rockylinux10
+    @docker
+    def test_basic_rockylinux10(self):
+        """Default nsight_compute building block"""
+        n = nsight_compute()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Compute 2026.2.1
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel10/x86_64/nvidia.pub && \
+    yum install -y dnf-utils && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel10/x86_64 || true) && \
+    yum install -y \
+        nsight-compute-2026.2.1 && \
+    rm -rf /var/cache/yum/*
+ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
+    PATH=/opt/nvidia/nsight-compute/2026.2.1:$PATH''')
 
     @x86_64
     @ubuntu

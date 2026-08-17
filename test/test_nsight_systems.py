@@ -38,7 +38,7 @@ class Test_nsight_systems(unittest.TestCase):
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2022.5.1
+r'''# NVIDIA Nsight Systems 2026.4.1
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         apt-transport-https \
@@ -52,7 +52,7 @@ RUN mkdir -p /usr/share/keyrings && \
     echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
     apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-systems-cli-2022.5.1 && \
+        nsight-systems-cli-2026.4.1 && \
     rm -rf /var/lib/apt/lists/*''')
 
     @x86_64
@@ -62,12 +62,90 @@ RUN mkdir -p /usr/share/keyrings && \
         """Default nsight_systems building block"""
         n = nsight_systems()
         self.assertEqual(str(n),
-r'''# NVIDIA Nsight Systems 2022.5.1
+r'''# NVIDIA Nsight Systems 2026.4.1
 RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64/nvidia.pub && \
     yum install -y dnf-utils && \
     (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel8/x86_64 || true) && \
     yum install -y \
-        nsight-systems-cli-2022.5.1 && \
+        nsight-systems-cli-2026.4.1 && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @ubuntu24
+    @docker
+    def test_basic_ubuntu24(self):
+        """Default nsight_systems building block"""
+        n = nsight_systems()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Systems 2026.4.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu2404/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu2404/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nsight-systems-cli-2026.4.1 && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @ubuntu26
+    @docker
+    def test_basic_ubuntu26(self):
+        """Default nsight_systems building block"""
+        n = nsight_systems()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Systems 2026.4.1
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        gnupg \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /usr/share/keyrings && \
+    rm -f /usr/share/keyrings/nvidia.gpg && \
+    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu2604/amd64/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu2604/amd64/ /" >> /etc/apt/sources.list.d/hpccm.list && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        nsight-systems-cli-2026.4.1 && \
+    rm -rf /var/lib/apt/lists/*''')
+
+    @x86_64
+    @rockylinux9
+    @docker
+    def test_basic_rockylinux9(self):
+        """Default nsight_systems building block"""
+        n = nsight_systems()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Systems 2026.4.1
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel9/x86_64/nvidia.pub && \
+    yum install -y dnf-utils && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel9/x86_64 || true) && \
+    yum install -y \
+        nsight-systems-cli-2026.4.1 && \
+    rm -rf /var/cache/yum/*''')
+
+    @x86_64
+    @rockylinux10
+    @docker
+    def test_basic_rockylinux10(self):
+        """Default nsight_systems building block"""
+        n = nsight_systems()
+        self.assertEqual(str(n),
+r'''# NVIDIA Nsight Systems 2026.4.1
+RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel10/x86_64/nvidia.pub && \
+    yum install -y dnf-utils && \
+    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel10/x86_64 || true) && \
+    yum install -y \
+        nsight-systems-cli-2026.4.1 && \
     rm -rf /var/cache/yum/*''')
 
     @x86_64
