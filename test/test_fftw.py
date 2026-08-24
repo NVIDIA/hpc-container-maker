@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, cpu_target_none, docker, icelake, ppc64le, ubuntu, x86_64
+from helpers import aarch64, centos, cpu_target_none, docker, icelake, ubuntu, x86_64
 
 from hpccm.building_blocks.fftw import fftw
 
@@ -126,28 +126,6 @@ RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fft
     @ubuntu
     @docker
     def test_aarch64(self):
-        """Default fftw building block"""
-        f = fftw(version='3.3.8')
-        self.assertEqual(str(f),
-r'''# FFTW version 3.3.8
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        file \
-        make \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/fftw-3.3.8.tar.gz -C /var/tmp -z && \
-    cd /var/tmp/fftw-3.3.8 &&   ./configure --prefix=/usr/local/fftw --enable-openmp --enable-shared --enable-threads && \
-    make -j$(nproc) && \
-    make -j$(nproc) install && \
-    rm -rf /var/tmp/fftw-3.3.8 /var/tmp/fftw-3.3.8.tar.gz
-ENV LD_LIBRARY_PATH=/usr/local/fftw/lib:$LD_LIBRARY_PATH''')
-
-    @ppc64le
-    @ubuntu
-    @docker
-    def test_ppc64le(self):
         """Default fftw building block"""
         f = fftw(version='3.3.8')
         self.assertEqual(str(f),

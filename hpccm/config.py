@@ -35,8 +35,6 @@ from hpccm.common import linux_distro
 g_cpu_arch = cpu_arch.X86_64         # CPU architecture
 if platform.machine() == 'aarch64':
   g_cpu_arch = cpu_arch.AARCH64
-elif platform.machine() == 'ppc64le':
-  g_cpu_arch = cpu_arch.PPC64LE
 g_cpu_target = None                  # CPU optimization target
 g_ctype = container_type.DOCKER      # Container type
 g_linux_distro = linux_distro.UBUNTU # Linux distribution
@@ -47,18 +45,13 @@ g_singularity_tmp_fallback = True    # Singularity / Apptainer behavior flags
 
 def get_cpu_architecture():
   """Return the architecture string for the currently configured CPU
-  architecture, e.g., `aarch64`, `ppc64le`, or `x86_64`.
+  architecture, e.g., `aarch64` or `x86_64`.
 
   """
 
   this = sys.modules[__name__]
   if this.g_cpu_arch == cpu_arch.AARCH64:
     return 'aarch64'
-  elif this.g_cpu_arch == cpu_arch.PPC64LE:
-    if this.g_linux_distro == linux_distro.UBUNTU:
-      return 'ppc64el'
-    else:
-      return 'ppc64le'
   elif this.g_cpu_arch == cpu_arch.X86_64:
     return 'x86_64'
   else: # pragma: no cover
@@ -137,15 +130,13 @@ def set_cpu_architecture(arch):
 
   # Arguments
 
-  arch (string): Value values are `aarch64`, `ppc64le`, and `x86_64`.
-  `arm` and `arm64v8` are aliases for `aarch64`, `power` is an alias
-  for `ppc64le`, and `amd64` and `x86` are aliases for `x86_64`.
+  arch (string): Value values are `aarch64` and `x86_64`.
+  `arm` and `arm64v8` are aliases for `aarch64`, and `amd64` and
+  `x86` are aliases for `x86_64`.
   """
   this = sys.modules[__name__]
   if arch == 'aarch64' or arch == 'arm' or arch == 'arm64v8':
     this.g_cpu_arch = cpu_arch.AARCH64
-  elif arch == 'ppc64le' or arch == 'power':
-    this.g_cpu_arch = cpu_arch.PPC64LE
   elif arch == 'x86_64' or arch == 'amd64' or arch == 'x86':
     this.g_cpu_arch = cpu_arch.X86_64
   else:

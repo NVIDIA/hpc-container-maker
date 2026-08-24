@@ -176,10 +176,7 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Based on the CPU architecture, set values accordingly.  A user
         specified value overrides any defaults."""
 
-        if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_directory = 'linuxpower'
-            self.__arch_pkg = 'openpower'
-        elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
+        if hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_directory = 'linux86-64'
             self.__arch_pkg = 'x64'
         else: # pragma: no cover

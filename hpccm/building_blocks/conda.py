@@ -140,8 +140,6 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
         if hpccm.config.g_cpu_arch == cpu_arch.AARCH64:
             self.__arch_pkg = 'aarch64'
-        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_pkg = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_pkg = 'x86_64'
         else: # pragma: no cover

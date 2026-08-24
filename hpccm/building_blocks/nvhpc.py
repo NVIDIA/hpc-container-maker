@@ -309,12 +309,6 @@ class nvhpc(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
                 self.__arch_label = 'aarch64'
             if Version(self.__version) < Version('20.11'):
                 self.__cuda_multi = False # CUDA multi packages not available
-        elif hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-            self.__arch_directory = 'Linux_ppc64le'
-            if hpccm.config.g_linux_distro == linux_distro.UBUNTU:
-                self.__arch_label = 'ppc64el'
-            else:
-                self.__arch_label = 'ppc64le'
         elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
             self.__arch_directory = 'Linux_x86_64'
             if hpccm.config.g_linux_distro == linux_distro.UBUNTU:

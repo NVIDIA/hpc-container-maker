@@ -264,8 +264,6 @@ From: foo.sif
         arch = hpccm.config.get_cpu_architecture()
         if arch == 'aarch64':
             gold = cpu_arch.AARCH64
-        elif arch == 'ppc64le':
-            gold = cpu_arch.PPC64LE
         elif arch == 'x86_64':
             gold = cpu_arch.X86_64
 
@@ -372,22 +370,10 @@ From: foo.sif
         self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.AARCH64)
 
     @docker
-    def test_detect_ppc64le(self):
-        """Base image CPU architecture detection"""
-        b = baseimage(image='ppc64le/centos:7')
-        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.PPC64LE)
-
-    @docker
     def test_arch_aarch64(self):
         """Base image CPU architecture specification"""
         b = baseimage(image='foo', _arch='aarch64')
         self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.AARCH64)
-
-    @docker
-    def test_arch_ppc64le(self):
-        """Base image CPU architecture specification"""
-        b = baseimage(image='foo', _arch='ppc64le')
-        self.assertEqual(hpccm.config.g_cpu_arch, cpu_arch.PPC64LE)
 
     @docker
     def test_arch_x86_64(self):
@@ -401,8 +387,6 @@ From: foo.sif
         arch = hpccm.config.get_cpu_architecture()
         if arch == 'aarch64':
             gold = cpu_arch.AARCH64
-        elif arch == 'ppc64le':
-            gold = cpu_arch.PPC64LE
         elif arch == 'x86_64':
             gold = cpu_arch.X86_64
 

@@ -33,7 +33,7 @@ class baseimage(object):
     # Parameters
 
     _arch: The underlying CPU architecture of the base image.  Valid
-    values are `aarch64`, `ppc64le`, and `x86_64`.  By default, the
+    values are `aarch64` and `x86_64`.  By default, the
     primitive attemps to figure out the CPU architecture by inspecting
     the image identifier, and falls back to system architecture if
     unable to determine the CPU architecture automatically.
@@ -90,14 +90,10 @@ class baseimage(object):
         self.__arch = self.__arch.lower()
         if self.__arch == 'aarch64':
             hpccm.config.set_cpu_architecture('aarch64')
-        elif self.__arch == 'ppc64le':
-            hpccm.config.set_cpu_architecture('ppc64le')
         elif self.__arch == 'x86_64':
             hpccm.config.set_cpu_architecture('x86_64')
         elif re.search(r'aarch64|arm64', self.image):
             hpccm.config.set_cpu_architecture('aarch64')
-        elif re.search(r'ppc64le', self.image):
-            hpccm.config.set_cpu_architecture('ppc64le')
         else:
             # Unable to figure out the architecture, so use the
             # default, which should be the architecture of the machine

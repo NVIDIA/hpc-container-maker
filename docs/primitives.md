@@ -8,7 +8,7 @@ __Parameters__
 
 
 - ___arch__: The underlying CPU architecture of the base image.  Valid
-values are `aarch64`, `ppc64le`, and `x86_64`.  By default, the
+values are `aarch64` and `x86_64`.  By default, the
 primitive attemps to figure out the CPU architecture by inspecting
 the image identifier, and falls back to system architecture if
 unable to determine the CPU architecture automatically.

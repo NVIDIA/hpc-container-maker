@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import centos, docker, ppc64le, ubuntu, x86_64
+from helpers import centos, docker, ubuntu, x86_64
 
 from hpccm.building_blocks.pgi import pgi
 

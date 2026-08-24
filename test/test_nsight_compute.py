@@ -22,7 +22,8 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, rockylinux9, rockylinux10, ubuntu, ubuntu18, ubuntu24, ubuntu26, x86_64
+from helpers import aarch64, centos, centos8, docker, rockylinux9, \
+    rockylinux10, ubuntu, ubuntu24, ubuntu26, x86_64
 
 from hpccm.building_blocks.nsight_compute import nsight_compute
 
@@ -183,49 +184,6 @@ RUN mkdir -p /usr/share/keyrings && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         nsight-compute-2020.2.1 && \
     rm -rf /var/lib/apt/lists/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
-
-    @ppc64le
-    @ubuntu18
-    @docker
-    def test_ppc64le_ubuntu18(self):
-        """Power"""
-        n = nsight_compute(version='2020.2.1')
-        self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2020.2.1
-RUN apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        apt-transport-https \
-        ca-certificates \
-        gnupg \
-        wget && \
-    rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /usr/share/keyrings && \
-    rm -f /usr/share/keyrings/nvidia.gpg && \
-    wget -qO - https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/nvidia.pub | gpg --dearmor -o /usr/share/keyrings/nvidia.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/nvidia.gpg] https://developer.download.nvidia.com/devtools/repos/ubuntu1804/ppc64el/ /" >> /etc/apt/sources.list.d/hpccm.list && \
-    apt-get update -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        nsight-compute-2020.2.1 && \
-    rm -rf /var/lib/apt/lists/*
-ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
-    PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
-
-    @ppc64le
-    @centos
-    @docker
-    def test_ppc64le_centos(self):
-        """Power"""
-        n = nsight_compute(version='2020.2.1')
-        self.assertEqual(str(n),
-r'''# NVIDIA Nsight Compute 2020.2.1
-RUN rpm --import https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le/nvidia.pub && \
-    yum install -y yum-utils && \
-    (yum-config-manager --add-repo https://developer.download.nvidia.com/devtools/repos/rhel7/ppc64le || true) && \
-    yum install -y \
-        nsight-compute-2020.2.1 && \
-    rm -rf /var/cache/yum/*
 ENV NV_COMPUTE_PROFILER_DISABLE_STOCK_FILE_DEPLOYMENT=1 \
     PATH=/opt/nvidia/nsight-compute/2020.2.1:$PATH''')
 

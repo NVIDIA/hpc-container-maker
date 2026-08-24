@@ -154,9 +154,6 @@ class llvm(bb_base, hpccm.templates.envvars):
 
                 if self.__upstream:
                     # Upstream packages from apt.llvm.org
-                    if hpccm.config.g_cpu_arch == cpu_arch.PPC64LE:
-                        raise RuntimeError('LLVM upstream builds are not available for ppc64le')
-
                     self.__apt_keys = ['https://apt.llvm.org/llvm-snapshot.gpg.key']
                     self.__apt_repositories = self.__upstream_package_repos()
 
@@ -308,8 +305,7 @@ class llvm(bb_base, hpccm.templates.envvars):
                 self.environment_variables['LIBRARY_PATH'] = '/usr/lib/gcc/aarch64-redhat-linux/{}'.format(compiler_version)
             elif hpccm.config.g_cpu_arch == cpu_arch.X86_64:
                 self.environment_variables['CPATH'] = '/usr/lib/gcc/x86_64-redhat-linux/{}/include:$CPATH'.format(compiler_version)
-            else:
-                # Packages for CentOS + PPC64LE are not available
+            else: # pragma: no cover
                 raise RuntimeError('Unsupported processor architecture')
 
         else: # pragma: no cover

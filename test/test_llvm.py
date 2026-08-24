@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, ubuntu24, x86_64, zen2
+from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20, ubuntu24, x86_64, zen2
 
 from hpccm.building_blocks.llvm import llvm
 
@@ -160,14 +160,6 @@ RUN yum install -y \
 ENV COMPILER_PATH=/usr/lib/gcc/aarch64-redhat-linux/8:$COMPILER_PATH \
     CPATH=/usr/include/c++/8:/usr/include/c++/8/aarch64-redhat-linux:/usr/lib/gcc/aarch64-redhat-linux/8/include:$CPATH \
     LIBRARY_PATH=/usr/lib/gcc/aarch64-redhat-linux/8''')
-
-    @ppc64le
-    @centos
-    @docker
-    def test_ppc64le_centos(self):
-        """ppc64le"""
-        with self.assertRaises(RuntimeError):
-            llvm()
 
     @x86_64
     @ubuntu

@@ -22,7 +22,7 @@ from __future__ import print_function
 import logging # pylint: disable=unused-import
 import unittest
 
-from helpers import aarch64, centos, centos8, docker, ppc64le, ubuntu, ubuntu18, ubuntu20, ubuntu22, ubuntu24, x86_64
+from helpers import aarch64, centos, centos8, docker, ubuntu, ubuntu18, ubuntu20, ubuntu22, ubuntu24, x86_64
 
 from hpccm.building_blocks.hpcx import hpcx
 
@@ -167,28 +167,6 @@ RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://content.mellanox.com/hp
     echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bash.bashrc && \
     echo "hpcx_load" >> /etc/bash.bashrc && \
     rm -rf /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64.tbz /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.5-1.0.1.0-ubuntu16.04-aarch64''')
-
-    @ppc64le
-    @centos
-    @docker
-    def test_ppc64le_centos(self):
-        """ppc64le"""
-        h = hpcx(mlnx_ofed='4.7-1.0.0.1', version='2.5.0')
-        self.assertEqual(str(h),
-r'''# Mellanox HPC-X version 2.5.0
-RUN yum install -y \
-        bzip2 \
-        numactl-libs \
-        openssh-clients \
-        tar \
-        wget && \
-    rm -rf /var/cache/yum/*
-RUN mkdir -p /var/tmp && wget -q -nc -P /var/tmp https://content.mellanox.com/hpc/hpc-x/v2.5/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz -C /var/tmp -j && \
-    cp -a /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le /usr/local/hpcx && \
-    echo "source /usr/local/hpcx/hpcx-init-ompi.sh" >> /etc/bashrc && \
-    echo "hpcx_load" >> /etc/bashrc && \
-    rm -rf /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le.tbz /var/tmp/hpcx-v2.5.0-gcc-MLNX_OFED_LINUX-4.7-1.0.0.1-redhat7.6-ppc64le''')
 
     @x86_64
     @ubuntu18
