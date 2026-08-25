@@ -1,0 +1,55 @@
+loaders:
+  - type: python
+    search_path: [./hpccm/]
+processors:
+  - type: filter
+    expression: not name.startswith('_') and default()
+  - type: pydocmd
+renderer:
+  type: mkdocs
+  markdown:
+    add_module_prefix: false
+    insert_header_anchors: false
+    classdef_code_block: false
+    render_module_header: false
+    descriptive_class_title: false
+    render_page_title: true
+  site_name: "HPC Container Maker"
+  output_directory: .
+  content_directory_name: site
+  pages:
+    - title: Home
+      name: index
+      source: "docs/index.md"
+    - title: Getting Started
+      name: getting_started
+      source: "docs/getting_started.md"
+    - title: Tutorial
+      name: tutorial
+      source: "docs/tutorial.md"
+    - title: Recipes
+      name: recipes
+      source: "docs/recipes.md"
+    - title: Workflows
+      name: workflows
+      source: "docs/workflows.md"
+    - title: Building Blocks
+      name: building_blocks
+      contents:
+        - "building_blocks.*"
+    - title: Primitives
+      name: primitives
+      contents:
+        - "primitives.*"
+    - title: Miscellaneous APIs
+      name: misc_api
+      contents:
+        - "config.*"
+        - "recipe.*"
+        - "Stage.*"
+    - title: Citation
+      name: citation
+      source: "docs/citation.md"
+  mkdocs_config:
+    theme:
+      name: readthedocs
