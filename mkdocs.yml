@@ -1,5 +1,7 @@
 site_name: HPC Container Maker
 docs_dir: docs
+hooks:
+  - mkdocs_hooks.py
 plugins:
   - search
   - mkapi:
@@ -23,3 +25,6 @@ theme:
   name: readthedocs
 extra_css:
   - stylesheets/extra.css
+validation:
+  links:
+    anchors: ignore
