@@ -422,7 +422,7 @@ from the first stage only is 5.93 GB, whereas the container image is
 only 429 MB when employing the multi-stage build process.  
 
 ```
-$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/main/recipes/milc/milc.py
 $ hpccm --recipe milc.py --single-stage > Dockerfile.single-stage
 $ sudo docker build -t milc:single-stage -f Dockerfile.single-stage .
 
@@ -452,7 +452,7 @@ necessary for Docker since Docker implicitly names the first stage
 `0`, but is still a good practice.
 
 ```
-$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/milc/milc.py
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/main/recipes/milc/milc.py
 $ hpccm --recipe milc.py --format singularity --single-stage > Singularity.single-stage
 $ sudo singularity build milc-single-stage.sif Singularity.single-stage
 

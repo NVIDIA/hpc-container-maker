@@ -1,7 +1,7 @@
 [![Python 3](https://github.com/NVIDIA/hpc-container-maker/workflows/Python%203/badge.svg)](https://github.com/NVIDIA/hpc-container-maker/actions?query=workflow%3A%22Python+3%22)
 [![Conda](https://img.shields.io/conda/dn/conda-forge/hpccm?label=Conda%20downloads)](https://anaconda.org/conda-forge/hpccm)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/hpccm?label=PyPI%20downloads)](https://pypi.org/project/hpccm/)
-[![License](https://img.shields.io/github/license/NVIDIA/hpc-container-maker)](https://github.com/NVIDIA/hpc-container-maker/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/NVIDIA/hpc-container-maker)](https://github.com/NVIDIA/hpc-container-maker/blob/main/LICENSE)
 
 # HPC Container Maker
 

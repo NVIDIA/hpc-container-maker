@@ -52,7 +52,7 @@ building blocks.
 For example:
 
 ```
-$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/master/recipes/hpcbase-gnu-hpcx.py
+$ wget https://raw.githubusercontent.com/NVIDIA/hpc-container-maker/main/recipes/hpcbase-gnu-hpcx.py
 $ hpccm --recipe hpcbase-gnu-hpcx.py > Dockerfile
 $ sudo docker build -t hpcbase -f Dockerfile .
 ```
