@@ -27,7 +27,6 @@ class toolchain(object):
                  'FLIBS', 'LDFLAGS', 'LD_LIBRARY_PATH', 'LIBS']
 
     def __init__(self, **kwargs):
-        """Initialize toolchain"""
 
         self.CC = kwargs.get('CC')
         self.CFLAGS = kwargs.get('CFLAGS')

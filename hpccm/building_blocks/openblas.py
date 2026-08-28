@@ -35,48 +35,38 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     """The `openblas` building block builds and installs the
     [OpenBLAS](https://www.openblas.net) component.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            OpenBLAS. The default is True.
+        ldconfig: Boolean flag to specify whether the OpenBLAS library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the OpenBLAS library
+            directory. The default value is False.
+        make_opts: List of options to pass to `make`.  For aarch64
+            processors, the default values are `TARGET=ARMV8` and
+            `USE_OPENMP=1`. For x86_64 processors, the
+            default value is `USE_OPENMP=1`.
+        ospackages: List of OS packages to install prior to building.  The
+            default values are `make`, `perl`, `tar`, and `wget`.
+        prefix: The top level installation location.  The default value is
+            `/usr/local/openblas`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of OpenBLAS source to download.  The default
+            value is `0.3.21`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    OpenBLAS. The default is True.
-
-    ldconfig: Boolean flag to specify whether the OpenBLAS library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the OpenBLAS library
-    directory. The default value is False.
-
-    make_opts: List of options to pass to `make`.  For aarch64
-    processors, the default values are `TARGET=ARMV8` and
-    `USE_OPENMP=1`.  For x86_64 processors, the
-    default value is `USE_OPENMP=1`.
-
-    ospackages: List of OS packages to install prior to building.  The
-    default values are `make`, `perl`, `tar`, and `wget`.
-
-    prefix: The top level installation location.  The default value is
-    `/usr/local/openblas`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of OpenBLAS source to download.  The default
-    value is `0.3.21`.
-
-    # Examples
-
-    ```python
-    openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
-    ```
+    Examples:
+        ```python
+        openblas(prefix='/opt/openblas/0.3.1', version='0.3.1')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(openblas, self).__init__(**kwargs)
 
@@ -136,15 +126,13 @@ class openblas(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        o = openblas(...)
-        Stage0 += o
-        Stage1 += o.runtime()
-        ```
+        Examples:
+            ```python
+            o = openblas(...)
+            Stage0 += o
+            Stage1 += o.runtime()
+            ```
         """
-
         self.rt += comment('OpenBLAS')
         self.rt += self.__bb.runtime(_from=_from)
         return str(self.rt)

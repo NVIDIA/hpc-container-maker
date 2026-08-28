@@ -30,88 +30,76 @@ class copy(object):
     """The `copy` primitive copies files from the host to the container
     image.
 
-    # Parameters
+    Args:
+        _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+            identifier.  This also causes the Singularity block to named
+            `%appfiles` rather than `%files` (Singularity specific).
+        _chown: Set the ownership of the file(s) in the container image
+            (Docker specific).
+        dest: Path in the container image to copy the file(s)
+        _exclude_from: String or list of strings.  One or more filenames
+            containing rsync-style exclude patterns (e.g., `.apptainerignore`).
+            Only used when building for Singularity or Apptainer.  If specified,
+            the copy operation is emitted in the `%setup` section using
+            `rsync --exclude-from=<file>` rather than the standard `%files`
+            copy directive.  This enables selective exclusion of files and
+            directories during the image build, for example to omit large data
+            files, caches, or temporary artifacts.  Multiple exclusion files may
+            be provided as a list or tuple.  The default is an empty list
+            (Singularity specific).
+        files: A dictionary of file pairs, source and destination, to copy
+            into the container image.  If specified, has precedence over
+            `dest` and `src`.
+        _from: Set the source location to a previous build stage rather
+            than the host filesystem (Docker specific).
+        _mkdir: Boolean flag specifying that the destination directory
+            should be created in a separate `%setup` step.  This can be used
+            to work around the Singularity limitation that the destination
+            directory must exist in the container image prior to copying files
+            into the image.  The default is False (Singularity specific).
+        _post: Boolean flag specifying that file(s) should be first copied
+            to `/` and then moved to the final destination by a `%post` step.
+            This can be used to work around the Singularity limitation that
+            the destination must exist in the container image prior to copying
+            files into the image.  The default is False (Singularity
+            specific).
+        src: A file, or a list of files, to copy
 
-    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
-    identifier.  This also causes the Singularity block to named
-    `%appfiles` rather than `%files` (Singularity specific).
+    Notes:
+        On Singularity 3.6 and later, files cannot be staged directly to
+        `/tmp` or `/var/tmp` via the `%files` section. When such destinations
+        are detected, the `copy` primitive automatically emits a `%setup`
+        block to perform the copy safely (enabled by default).
 
-    _chown: Set the ownership of the file(s) in the container image
-    (Docker specific).
+        This behavior can be disabled via
+        `hpccm.config.set_singularity_tmp_fallback(False)`, in which case a
+        runtime error will be raised.
 
-    dest: Path in the container image to copy the file(s)
+        Note that `--working-directory` (or
+        `hpccm.config.set_working_directory()`) only affects commands
+        executed during `%post` (e.g., downloads or builds) and does not
+        apply to `%files` staging.
 
-    _exclude_from: String or list of strings.  One or more filenames
-    containing rsync-style exclude patterns (e.g., `.apptainerignore`).
-    Only used when building for Singularity or Apptainer.  If specified,
-    the copy operation is emitted in the `%setup` section using
-    `rsync --exclude-from=<file>` rather than the standard `%files`
-    copy directive.  This enables selective exclusion of files and
-    directories during the image build, for example to omit large data
-    files, caches, or temporary artifacts.  Multiple exclusion files may
-    be provided as a list or tuple.  The default is an empty list
-    (Singularity specific).
+    Examples:
+        ```python
+        copy(src='component', dest='/opt/component')
+        ```
 
-    files: A dictionary of file pairs, source and destination, to copy
-    into the container image.  If specified, has precedence over
-    `dest` and `src`.
+        ```python
+        copy(src=['a', 'b', 'c'], dest='/tmp')
+        ```
 
-    _from: Set the source location to a previous build stage rather
-    than the host filesystem (Docker specific).
+        ```python
+        copy(files={'a': '/tmp/a', 'b': '/opt/b'})
+        ```
 
-    _mkdir: Boolean flag specifying that the destination directory
-    should be created in a separate `%setup` step.  This can be used
-    to work around the Singularity limitation that the destination
-    directory must exist in the container image prior to copying files
-    into the image.  The default is False (Singularity specific).
-
-    _post: Boolean flag specifying that file(s) should be first copied
-    to `/` and then moved to the final destination by a `%post` step.
-    This can be used to work around the Singularity limitation that
-    the destination must exist in the container image prior to copying
-    files into the image.  The default is False (Singularity
-    specific).
-
-    src: A file, or a list of files, to copy
-
-    # Notes
-
-    On Singularity 3.6 and later, files cannot be staged directly to
-    `/tmp` or `/var/tmp` via the `%files` section. When such destinations
-    are detected, the `copy` primitive automatically emits a `%setup`
-    block to perform the copy safely (enabled by default).
-
-    This behavior can be disabled via
-    `hpccm.config.set_singularity_tmp_fallback(False)`, in which case a
-    runtime error will be raised.
-
-    Note that `--working-directory` (or
-    `hpccm.config.set_working_directory()`) only affects commands
-    executed during `%post` (e.g., downloads or builds) and does not
-    apply to `%files` staging.
-
-    # Examples
-
-    ```python
-    copy(src='component', dest='/opt/component')
-    ```
-
-    ```python
-    copy(src=['a', 'b', 'c'], dest='/tmp')
-    ```
-
-    ```python
-    copy(files={'a': '/tmp/a', 'b': '/opt/b'})
-    ```
-
-    ```python
-    copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
-    ```
+        ```python
+        copy(src='.', dest='/opt/app', _exclude_from='.apptainerignore')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(copy, self).__init__()
 

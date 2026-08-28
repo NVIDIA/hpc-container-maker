@@ -35,23 +35,19 @@ class blob(object):
     Wherever possible, the blob primitive should be avoided and other,
     more portable, operations should be used instead.
 
-    # Parameters
+    Args:
+        docker: Path to the file containing the Dockerfile blob (Docker
+            specific).
+        singularity: Path to the file containing the Singularity blob
+            (Singularity specific).
 
-    docker: Path to the file containing the Dockerfile blob (Docker
-    specific).
-
-    singularity: Path to the file containing the Singularity blob
-    (Singularity specific).
-
-    # Example
-
-    ```python
-    blob(docker='path/to/foo.docker', singularity='path/to/foo.singularity')
-    ```
+    Examples:
+        ```python
+        blob(docker='path/to/foo.docker', singularity='path/to/foo.singularity')
+        ```
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(blob, self).__init__()
 

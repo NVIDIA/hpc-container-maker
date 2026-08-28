@@ -32,5 +32,4 @@ class base_object(object):
     """
 
     def __init__(self, **kwargs):
-        """Initialize base class"""
         super(base_object, self).__init__()

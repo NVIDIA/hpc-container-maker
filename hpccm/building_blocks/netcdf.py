@@ -42,86 +42,67 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     The [HDF5](#hdf5) building block should be installed prior to this
     building block.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default value is an empty list.
+        cxx: Boolean flag to specify whether the NetCDF C++ library should
+            be installed.  The default is True.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
+            modified to include NetCDF. The default is True.
+        fortran: Boolean flag to specify whether the NetCDF Fortran
+            library should be installed.  The default is True.
+        ldconfig: Boolean flag to specify whether the NetCDF library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the NetCDF library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are
+            `ca-certificates`, `file`, `libcurl4-openssl-dev`, `libxml2-dev`, `m4`,
+            `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+            default values are `ca-certificates`, `file`, `libcurl-devel`,
+            `libxml2-devel`, `m4`, `make`, `wget`, and `zlib-devel`.
+        prefix: The top level install location.  The default location is
+            `/usr/local/netcdf`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of NetCDF to download.  The default value is
+            `4.7.4`.
+        version_cxx: The version of NetCDF C++ to download.  The default
+            value is `4.3.1`.
+        version_fortran: The version of NetCDF Fortran to download.  The
+            default value is `4.5.3`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default value is an empty list.
-
-    cxx: Boolean flag to specify whether the NetCDF C++ library should
-    be installed.  The default is True.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH` and `PATH`) should be
-    modified to include NetCDF. The default is True.
-
-    fortran: Boolean flag to specify whether the NetCDF Fortran
-    library should be installed.  The default is True.
-
-    ldconfig: Boolean flag to specify whether the NetCDF library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the NetCDF library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are
-    `ca-certificates`, `file`, `libcurl4-openssl-dev`, `libxml2-dev`, `m4`,
-    `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-    default values are `ca-certificates`, `file`, `libcurl-devel`,
-    `libxml2-devel`, `m4`, `make`, `wget`, and `zlib-devel`.
-
-    prefix: The top level install location.  The default location is
-    `/usr/local/netcdf`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of NetCDF to download.  The default value is
-    `4.7.4`.
-
-    version_cxx: The version of NetCDF C++ to download.  The default
-    value is `4.3.1`.
-
-    version_fortran: The version of NetCDF Fortran to download.  The
-    default value is `4.5.3`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
-    ```
+    Examples:
+        ```python
+        netcdf(prefix='/opt/netcdf/4.6.1', version='4.6.1')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(netcdf, self).__init__(**kwargs)
 
@@ -256,13 +237,12 @@ class netcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        n = netcdf(...)
-        Stage0 += n
-        Stage1 += n.runtime()
-        ```
+        Examples:
+            ```python
+            n = netcdf(...)
+            Stage0 += n
+            Stage1 += n.runtime()
+            ```
         """
         self.rt += comment('NetCDF')
         self.rt += packages(ospackages=self.__runtime_ospackages)

@@ -26,7 +26,6 @@ class ldconfig(hpccm.base_object):
     """Template for manipulating the dynamic linker"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         super(ldconfig, self).__init__(**kwargs)
 

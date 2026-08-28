@@ -32,24 +32,20 @@ class nsight_systems(bb_base):
     [NVIDIA Nsight Systems
     profiler]](https://developer.nvidia.com/nsight-systems).
 
-    # Parameters
+    Args:
+        cli: Boolean flag to specify whether the command line only (CLI)
+            package should be installed.  The default is True.
+        version: The version of Nsight Systems to install.  The default
+            value is `2026.4.1`.
 
-    cli: Boolean flag to specify whether the command line only (CLI)
-    package should be installed.  The default is True.
-
-    version: The version of Nsight Systems to install.  The default
-    value is `2026.4.1`.
-
-    # Examples
-
-    ```python
-    nsight_systems(version='2020.5.1')
-    ```
+    Examples:
+        ```python
+        nsight_systems(version='2020.5.1')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(nsight_systems, self).__init__(**kwargs)
 

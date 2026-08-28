@@ -37,95 +37,78 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     (default) or copied from a source directory in the local build
     context.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        configure_opts: List of options to pass to `configure`.  For
+            x86_64 processors, the default values are `--enable-shared`,
+            `--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
+            other processors, the default values are `--enable-shared`,
+            `--enable-openmp`, and `--enable-threads`.
+        directory: Path to the unpackaged source directory relative to the
+            local build context.  The default value is empty.  If this is
+            defined, the source in the local build context will be used rather
+            than downloading the source from the web.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`) should be modified to include FFTW. The
+            default is True.
+        ldconfig: Boolean flag to specify whether the FFTW library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the FFTW library
+            directory. The default value is False.
+        mpi: Boolean flag to specify whether to build with MPI support
+            enabled.  The default is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `file`, `make`, and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/fftw`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of FFTW source to download.  This value is
+            ignored if `directory` is set.  The default value is `3.3.10`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        fftw(prefix='/opt/fftw/3.3.7', version='3.3.7')
+        ```
 
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
+        ```python
+        fftw(directory='sources/fftw-3.3.7')
+        ```
 
-    configure_opts: List of options to pass to `configure`.  For
-    x86_64 processors, the default values are `--enable-shared`,
-    `--enable-openmp`, `--enable-threads`, and `--enable-sse2`.  For
-    other processors, the default values are `--enable-shared`,
-    `--enable-openmp`, and `--enable-threads`.
+        ```python
+        n = nvhpc(eula=True)
+        fftw(toolchain=n.toolchain)
+        ```
 
-    directory: Path to the unpackaged source directory relative to the
-    local build context.  The default value is empty.  If this is
-    defined, the source in the local build context will be used rather
-    than downloading the source from the web.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`) should be modified to include FFTW. The
-    default is True.
-
-    ldconfig: Boolean flag to specify whether the FFTW library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the FFTW library
-    directory. The default value is False.
-
-    mpi: Boolean flag to specify whether to build with MPI support
-    enabled.  The default is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `file`, `make`, and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/fftw`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of FFTW source to download.  This value is
-    ignored if `directory` is set.  The default value is `3.3.10`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    fftw(prefix='/opt/fftw/3.3.7', version='3.3.7')
-    ```
-
-    ```python
-    fftw(directory='sources/fftw-3.3.7')
-    ```
-
-    ```python
-    n = nvhpc(eula=True)
-    fftw(toolchain=n.toolchain)
-    ```
-
-    ```python
-    fftw(check=True, configure_opts=['--enable-shared', '--enable-threads',
-                                     '--enable-sse2', '--enable-avx'])
-    ```
+        ```python
+        fftw(check=True, configure_opts=['--enable-shared', '--enable-threads',
+                                         '--enable-sse2', '--enable-avx'])
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(fftw, self).__init__(**kwargs)
 
@@ -194,13 +177,12 @@ class fftw(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        f = fftw(...)
-        Stage0 += f
-        Stage1 += f.runtime()
-        ```
+        Examples:
+            ```python
+            f = fftw(...)
+            Stage0 += f
+            Stage1 += f.runtime()
+            ```
         """
         self.rt += comment('FFTW')
         self.rt += self.__bb.runtime(_from=_from)

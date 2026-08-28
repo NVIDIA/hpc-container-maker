@@ -43,140 +43,112 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
     """The `generic_cmake` building block downloads, configures,
     builds, and installs a specified CMake enabled package.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        annotations: Dictionary of additional annotations to include.  The
+            default is an empty dictionary.
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        build_directory: The location to build the package.  The default
+            value is a `build` subdirectory in the source code location.
+        build_environment: Dictionary of environment variables and values
+            to set when building the package.  The default is an empty
+            dictionary.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        cmake_opts: List of options to pass to `cmake`.  The default value
+            is an empty list.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        devel_environment: Dictionary of environment variables and values,
+            e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+            stage after the package is built and installed.  The default is an
+            empty dictionary.
+        directory: The source code location.  The default value is the
+            basename of the downloaded package.  If the value is not an
+            absolute path, then the temporary working directory is prepended.
+        environment: Boolean flag to specify whether the environment
+            should be modified (see `devel_environment` and
+            `runtime_environment`).  The default is True.
+        install: Boolean flag to specify whether the `make install` step
+            should be performed.  The default is True.
+        ldconfig: Boolean flag to specify whether the library directory
+            should be added dynamic linker cache.  The default value is False.
+        libdir: The path relative to the install prefix to use when
+            configuring the dynamic linker cache.  The default value is `lib`.
+        make: Boolean flag to specify whether the `make` step should be
+            performed.  The default is True.
+        package: Path to the local source package relative to the local
+            build context.  One of this parameter or the `repository` or `url`
+            parameters must be specified.
+        postinstall: List of shell commands to run after running 'make
+            install'.  The working directory is the install prefix.  The
+            default is an empty list.
+        preconfigure: List of shell commands to run prior to running
+            `cmake`.  The working directory is the source code location.  The
+            default is an empty list.
+        prefix: The top level install location.  The default value is
+            `/usr/local`. It is highly recommended not to use this default and
+            instead set the prefix to a package specific directory.
+        recursive: Initialize and checkout git submodules. `repository` parameter
+            must be specified. The default is False.
+        repository: The git repository of the package to build.  One of
+            this parameter or the `package` or `url` parameters must be
+            specified.
+        _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+        runtime: The list of files / directories to copy into the runtime
+            stage.  The default is an empty list, i.e., copy the entire
+            prefix.
+        runtime_environment: Dictionary of environment variables and
+            values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+            stage.  The default is an empty dictionary.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        url: The URL of the package to build.  One of this parameter or
+            the `repository` or `package` parameters must be specified.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
+                                  '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
+                                  '-D GMX_BUILD_OWN_FFTW=ON',
+                                  '-D GMX_GPU=ON',
+                                  '-D GMX_MPI=OFF',
+                                  '-D GMX_OPENMP=ON',
+                                  '-D GMX_PREFER_STATIC_LIBS=ON',
+                                  '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
+                      directory='gromacs-2018.2',
+                      prefix='/usr/local/gromacs',
+                      url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
+        ```
 
-    annotations: Dictionary of additional annotations to include.  The
-    default is an empty dictionary.
-
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
-
-    build_directory: The location to build the package.  The default
-    value is a `build` subdirectory in the source code location.
-
-    build_environment: Dictionary of environment variables and values
-    to set when building the package.  The default is an empty
-    dictionary.
-
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
-
-    cmake_opts: List of options to pass to `cmake`.  The default value
-    is an empty list.
-
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
-
-    devel_environment: Dictionary of environment variables and values,
-    e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
-    stage after the package is built and installed.  The default is an
-    empty dictionary.
-
-    directory: The source code location.  The default value is the
-    basename of the downloaded package.  If the value is not an
-    absolute path, then the temporary working directory is prepended.
-
-    environment: Boolean flag to specify whether the environment
-    should be modified (see `devel_environment` and
-    `runtime_environment`).  The default is True.
-
-    install: Boolean flag to specify whether the `make install` step
-    should be performed.  The default is True.
-
-    ldconfig: Boolean flag to specify whether the library directory
-    should be added dynamic linker cache.  The default value is False.
-
-    libdir: The path relative to the install prefix to use when
-    configuring the dynamic linker cache.  The default value is `lib`.
-
-    make: Boolean flag to specify whether the `make` step should be
-    performed.  The default is True.
-
-    package: Path to the local source package relative to the local
-    build context.  One of this parameter or the `repository` or `url`
-    parameters must be specified.
-
-    postinstall: List of shell commands to run after running 'make
-    install'.  The working directory is the install prefix.  The
-    default is an empty list.
-
-    preconfigure: List of shell commands to run prior to running
-    `cmake`.  The working directory is the source code location.  The
-    default is an empty list.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local`. It is highly recommended not to use this default and
-    instead set the prefix to a package specific directory.
-
-    recursive: Initialize and checkout git submodules. `repository` parameter
-    must be specified. The default is False.
-
-    repository: The git repository of the package to build.  One of
-    this parameter or the `package` or `url` parameters must be
-    specified.
-
-    _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
-
-    runtime: The list of files / directories to copy into the runtime
-    stage.  The default is an empty list, i.e., copy the entire
-    prefix.
-
-    runtime_environment: Dictionary of environment variables and
-    values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
-    stage.  The default is an empty dictionary.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    url: The URL of the package to build.  One of this parameter or
-    the `repository` or `package` parameters must be specified.
-
-    # Examples
-
-    ```python
-    generic_cmake(cmake_opts=['-D CMAKE_BUILD_TYPE=Release',
-                              '-D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda',
-                              '-D GMX_BUILD_OWN_FFTW=ON',
-                              '-D GMX_GPU=ON',
-                              '-D GMX_MPI=OFF',
-                              '-D GMX_OPENMP=ON',
-                              '-D GMX_PREFER_STATIC_LIBS=ON',
-                              '-D MPIEXEC_PREFLAGS=--allow-run-as-root'],
-                  directory='gromacs-2018.2',
-                  prefix='/usr/local/gromacs',
-                  url='https://github.com/gromacs/gromacs/archive/v2018.2.tar.gz')
-    ```
-
-    ```python
-    generic_cmake(branch='v0.8.0',
-                  cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
-                              '-D QUDA_DIRAC_CLOVER=ON',
-                              '-D QUDA_DIRAC_DOMAIN_WALL=ON',
-                              '-D QUDA_DIRAC_STAGGERED=ON',
-                              '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
-                              '-D QUDA_DIRAC_TWISTED_MASS=ON',
-                              '-D QUDA_DIRAC_WILSON=ON',
-                              '-D QUDA_FORCE_GAUGE=ON',
-                              '-D QUDA_FORCE_HISQ=ON',
-                              '-D QUDA_GPU_ARCH=sm_70',
-                              '-D QUDA_INTERFACE_MILC=ON',
-                              '-D QUDA_INTERFACE_QDP=ON',
-                              '-D QUDA_LINK_HISQ=ON',
-                              '-D QUDA_MPI=ON'],
-                  prefix='/usr/local/quda',
-                  repository='https://github.com/lattice/quda.git')
-    ```
+        ```python
+        generic_cmake(branch='v0.8.0',
+                      cmake_opts=['-D CMAKE_BUILD_TYPE=RELEASE',
+                                  '-D QUDA_DIRAC_CLOVER=ON',
+                                  '-D QUDA_DIRAC_DOMAIN_WALL=ON',
+                                  '-D QUDA_DIRAC_STAGGERED=ON',
+                                  '-D QUDA_DIRAC_TWISTED_CLOVER=ON',
+                                  '-D QUDA_DIRAC_TWISTED_MASS=ON',
+                                  '-D QUDA_DIRAC_WILSON=ON',
+                                  '-D QUDA_FORCE_GAUGE=ON',
+                                  '-D QUDA_FORCE_HISQ=ON',
+                                  '-D QUDA_GPU_ARCH=sm_70',
+                                  '-D QUDA_INTERFACE_MILC=ON',
+                                  '-D QUDA_INTERFACE_QDP=ON',
+                                  '-D QUDA_LINK_HISQ=ON',
+                                  '-D QUDA_MPI=ON'],
+                      prefix='/usr/local/quda',
+                      repository='https://github.com/lattice/quda.git')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(generic_cmake, self).__init__(**kwargs)
 
@@ -308,13 +280,12 @@ class generic_cmake(bb_base, hpccm.templates.CMakeBuild,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        g = generic_cmake(...)
-        Stage0 += g
-        Stage1 += g.runtime()
-        ```
+        Examples:
+            ```python
+            g = generic_cmake(...)
+            Stage0 += g
+            Stage1 += g.runtime()
+            ```
         """
         if self.prefix:
             if self.__comment:

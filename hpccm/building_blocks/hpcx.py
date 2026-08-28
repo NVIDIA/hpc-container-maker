@@ -43,98 +43,83 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     HPC-X](https://developer.nvidia.com/networking/hpc-x)
     component.
 
-    # Parameters
+    Args:
+        buildlabel: The build label assigned by Mellanox to the tarball.
+            For version 2.24 and later, the default value is the value of
+            `cuda` parameter.  For versions 2.17 through 2.23, the default
+            value is `cuda12`.  For version 2.16 the default value is
+            `cuda12-gdrcopy2-nccl2.18`.  For version 2.15 the default value is
+            `cuda12-gdrcopy2-nccl2.17`.  For version 2.14 the default value is
+            `cuda11-gdrcopy2-nccl2.16`.  For versions 2.12 and 2.13 the
+            default value is `cuda11-gdrcopy2-nccl2.12`.  For versions 2.10
+            and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.  This
+            value is ignored for HPC-X version version 2.9 and earlier.
+        cuda: The CUDA label assigned by Mellanox to the tarball.  This
+            parameter is only recognized for version 2.24 and later.  The
+            default value is `cuda13.`
+        environment: Boolean flag to specify whether the environment
+            should be modified to include HPC-X. This option is only
+            recognized if `hpcxinit` is False. The default is True.
+        hpcxinit: Mellanox HPC-X provides an environment script
+            (`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
+            `True`, the bashrc is modified to automatically source this
+            environment script.  However, HPC-X is not automatically available
+            to subsequent container image build steps; the environment is
+            available when the container image is run.  To set the HPC-X
+            environment in subsequent build steps you can explicitly call
+            `source /usr/local/hpcx/hpcx-init.sh && hpcx_load` in each build
+            step.  If this value is set to `False`, then the environment is
+            set such that the environment is visible to both subsequent
+            container image build steps and when the container image is run.
+            However, the environment may differ slightly from that set by
+            `hpcx-init.sh`.  The default value is `True`.
+        inbox: Boolean flag to specify whether to use Mellanox HPC-X built
+            for Inbox OFED.  If the value is `True`, use Inbox OFED.  If the
+            value is `False`, use Mellanox OFED.  The default is `False`.
+        ldconfig: Boolean flag to specify whether the Mellanox HPC-X
+            library directories should be added dynamic linker cache.  If
+            False, then `LD_LIBRARY_PATH` is modified to include the HPC-X
+            library directories. This value is ignored if `hpcxinit` is
+            `True`. The default value is False.
+        mlnx_ofed: The version of Mellanox OFED that should be matched.
+            This value is ignored if Inbox OFED is selected, or for HPC-X 2.21
+            and later.  The default value is `5` for HPC-X version 2.10 and
+            later, and `5.2-2.2.0.0` for earlier HPC-X versions.
+        multi_thread: Boolean flag to specify whether the multi-threaded
+            version of Mellanox HPC-X should be used.  The default is `False`.
+        ofedlabel: The Mellanox OFED label assigned by Mellanox to the
+            tarball.  For version 2.21 and later, the default value is
+            `gcc-doca_ofed`.  For version 2.16 through 2.18, the default value is
+            `gcc-mlnx_ofed`.  For earlier versions, the default value is
+            `gcc-MLNX_OFED_LINUX-5`.  This value is ignored if `inbox` is `True`.
+        oslabel: The Linux distribution label assigned by Mellanox to the
+            tarball.  For Ubuntu, the default value is `ubuntu16.04` for
+            Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
+            Ubuntu 20.04, `ubuntu22.04` for Ubuntu 22.04, and `ubuntu24.04`
+            for Ubuntu 24.04.  For HPC-X version 2.10 and later and RHEL-based
+            Linux distributions, the default value is `redhat7` for version 7,
+            `redhat8` for version 8, and `redhat9` for version 9.  For HPC-X
+            version 2.9 and earlier and RHEL-based Linux distributions, the
+            default value is `redhat7.6` for version 7 and `redhat8.0` for
+            version 8.
+        ospackages: List of OS packages to install prior to installing
+            Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
+            `libnuma1`, `openssh-client`, `tar`, and `wget`.  For RHEL-based
+            distributions the default values are `bzip2`, `numactl-libs`,
+            `openssh-clients`, `tar`, and `wget`.
+        prefix: The top level installation location.  The default value is
+            `/usr/local/hpcx`.
+        version: The version of Mellanox HPC-X to install.  The default
+            value is `2.24.1`.
 
-    buildlabel: The build label assigned by Mellanox to the tarball.
-    For version 2.24 and later, the default value is the value of
-    `cuda` parameter.  For versions 2.17 through 2.23, the default
-    value is `cuda12`.  For version 2.16 the default value is
-    `cuda12-gdrcopy2-nccl2.18`.  For version 2.15 the default value is
-    `cuda12-gdrcopy2-nccl2.17`.  For version 2.14 the default value is
-    `cuda11-gdrcopy2-nccl2.16`.  For versions 2.12 and 2.13 the
-    default value is `cuda11-gdrcopy2-nccl2.12`.  For versions 2.10
-    and 2.11 the default value is `cuda11-gdrcopy2-nccl2.11`.  This
-    value is ignored for HPC-X version version 2.9 and earlier.
-
-    cuda: The CUDA label assigned by Mellanox to the tarball.  This
-    parameter is only recognized for version 2.24 and later.  The
-    default value is `cuda13.`
-
-    environment: Boolean flag to specify whether the environment
-    should be modified to include HPC-X. This option is only
-    recognized if `hpcxinit` is False. The default is True.
-
-    hpcxinit: Mellanox HPC-X provides an environment script
-    (`hpcx-init.sh`) to setup the HPC-X environment.  If this value is
-    `True`, the bashrc is modified to automatically source this
-    environment script.  However, HPC-X is not automatically available
-    to subsequent container image build steps; the environment is
-    available when the container image is run.  To set the HPC-X
-    environment in subsequent build steps you can explicitly call
-    `source /usr/local/hpcx/hpcx-init.sh && hpcx_load` in each build
-    step.  If this value is set to `False`, then the environment is
-    set such that the environment is visible to both subsequent
-    container image build steps and when the container image is run.
-    However, the environment may differ slightly from that set by
-    `hpcx-init.sh`.  The default value is `True`.
-
-    inbox: Boolean flag to specify whether to use Mellanox HPC-X built
-    for Inbox OFED.  If the value is `True`, use Inbox OFED.  If the
-    value is `False`, use Mellanox OFED.  The default is `False`.
-
-    ldconfig: Boolean flag to specify whether the Mellanox HPC-X
-    library directories should be added dynamic linker cache.  If
-    False, then `LD_LIBRARY_PATH` is modified to include the HPC-X
-    library directories. This value is ignored if `hpcxinit` is
-    `True`. The default value is False.
-
-    mlnx_ofed: The version of Mellanox OFED that should be matched.
-    This value is ignored if Inbox OFED is selected, or for HPC-X 2.21
-    and later.  The default value is `5` for HPC-X version 2.10 and
-    later, and `5.2-2.2.0.0` for earlier HPC-X versions.
-
-    multi_thread: Boolean flag to specify whether the multi-threaded
-    version of Mellanox HPC-X should be used.  The default is `False`.
-
-    ofedlabel: The Mellanox OFED label assigned by Mellanox to the
-    tarball.  For version 2.21 and later, the default value is
-    `gcc-doca_ofed`.  For version 2.16 through 2.18, the default value is
-    `gcc-mlnx_ofed`.  For earlier versions, the default value is
-    `gcc-MLNX_OFED_LINUX-5`.  This value is ignored if `inbox` is `True`.
-
-    oslabel: The Linux distribution label assigned by Mellanox to the
-    tarball.  For Ubuntu, the default value is `ubuntu16.04` for
-    Ubuntu 16.04, `ubuntu18.04` for Ubuntu 18.04, `ubuntu20.04` for
-    Ubuntu 20.04, `ubuntu22.04` for Ubuntu 22.04, and `ubuntu24.04`
-    for Ubuntu 24.04.  For HPC-X version 2.10 and later and RHEL-based
-    Linux distributions, the default value is `redhat7` for version 7,
-    `redhat8` for version 8, and `redhat9` for version 9.  For HPC-X
-    version 2.9 and earlier and RHEL-based Linux distributions, the
-    default value is `redhat7.6` for version 7 and `redhat8.0` for
-    version 8.
-
-    ospackages: List of OS packages to install prior to installing
-    Mellanox HPC-X.  For Ubuntu, the default values are `bzip2`,
-    `libnuma1`, `openssh-client`, `tar`, and `wget`.  For RHEL-based
-    distributions the default values are `bzip2`, `numactl-libs`,
-    `openssh-clients`, `tar`, and `wget`.
-
-    prefix: The top level installation location.  The default value is
-    `/usr/local/hpcx`.
-
-    version: The version of Mellanox HPC-X to install.  The default
-    value is `2.24.1`.
-
-    # Examples
-
-    ```python
-    hpcx(prefix='/usr/local/hpcx', version='2.16')
-    ```
+    Examples:
+        ```python
+        hpcx(prefix='/usr/local/hpcx', version='2.16')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(hpcx, self).__init__(**kwargs)
 
@@ -425,12 +410,11 @@ class hpcx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        h = hpcx(...)
-        Stage0 += h
-        Stage1 += h.runtime()
-        ```
+        Examples:
+            ```python
+            h = hpcx(...)
+            Stage0 += h
+            Stage1 += h.runtime()
+            ```
         """
         return str(self)

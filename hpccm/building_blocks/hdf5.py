@@ -42,92 +42,76 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     (default) or copied from a source directory in the local build
     context.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default values are `--enable-cxx` and `--enable-fortran`.
+        directory: Path to the unpackaged source directory relative to the
+            local build context.  The default value is empty.  If this is
+            defined, the source in the local build context will be used rather
+            than downloading the source from the web.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
+            should be modified to include HDF5. The default is True.
+        ldconfig: Boolean flag to specify whether the HDF5 library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the HDF5 library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `bzip2`, `file`,
+            `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux
+            distributions the default values are `bzip2`, `file`, `make`,
+            `wget` and `zlib-devel`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/hdf5`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of HDF5 source to download.  This value is
+            ignored if `directory` is set.  The default value is `1.14.5`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        hdf5(prefix='/opt/hdf5/1.10.1', version='1.10.1')
+        ```
 
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
+        ```python
+        hdf5(directory='sources/hdf5-1.10.1')
+        ```
 
-    configure_opts: List of options to pass to `configure`.  The
-    default values are `--enable-cxx` and `--enable-fortran`.
+        ```python
+        n = nvhpc(eula=True)
+        hdf5(toolchain=n.toolchain)
+        ```
 
-    directory: Path to the unpackaged source directory relative to the
-    local build context.  The default value is empty.  If this is
-    defined, the source in the local build context will be used rather
-    than downloading the source from the web.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, `PATH`, and others)
-    should be modified to include HDF5. The default is True.
-
-    ldconfig: Boolean flag to specify whether the HDF5 library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the HDF5 library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `bzip2`, `file`,
-    `make`, `wget`, and `zlib1g-dev`.  For RHEL-based Linux
-    distributions the default values are `bzip2`, `file`, `make`,
-    `wget` and `zlib-devel`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/hdf5`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of HDF5 source to download.  This value is
-    ignored if `directory` is set.  The default value is `1.14.5`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    hdf5(prefix='/opt/hdf5/1.10.1', version='1.10.1')
-    ```
-
-    ```python
-    hdf5(directory='sources/hdf5-1.10.1')
-    ```
-
-    ```python
-    n = nvhpc(eula=True)
-    hdf5(toolchain=n.toolchain)
-    ```
-
-    ```python
-    hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
-                                     '--enable-profiling=yes'])
-    ```
+        ```python
+        hdf5(check=True, configure_opts=['--enable-cxx', '--enable-fortran',
+                                         '--enable-profiling=yes'])
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(hdf5, self).__init__(**kwargs)
 
@@ -238,13 +222,12 @@ class hdf5(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        h = hdf5(...)
-        Stage0 += h
-        Stage1 += h.runtime()
-        ```
+        Examples:
+            ```python
+            h = hdf5(...)
+            Stage0 += h
+            Stage1 += h.runtime()
+            ```
         """
         self.rt += comment('HDF5')
         self.rt += packages(ospackages=self.__runtime_ospackages)

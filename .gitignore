@@ -6,3 +6,5 @@ Dockerfile*
 Singularity*
 build/
 dist/
+site/
+.generated-files.txt

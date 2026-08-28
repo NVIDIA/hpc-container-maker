@@ -38,76 +38,61 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     [PnetCDF](http://cucis.ece.northwestern.edu/projects/PnetCDF/index.html)
     component.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default values are `--enable-shared`.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+            modified to include PnetCDF. The default is True.
+        ldconfig: Boolean flag to specify whether the PnetCDF library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the PnetCDF library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `file`, `m4`, `make`,
+            `perl`, `tar`, and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/pnetcdf`.
+        toolchain: The toolchain object.  A MPI compiler toolchain must be
+            used.  The default is to use the standard MPI compiler wrappers,
+            e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
+        version: The version of PnetCDF source to download.  The default
+            value is `1.12.1`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        pnetcdf(prefix='/opt/pnetcdf/1.10.0', version='1.10.0')
+        ```
 
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default values are `--enable-shared`.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
-    modified to include PnetCDF. The default is True.
-
-    ldconfig: Boolean flag to specify whether the PnetCDF library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the PnetCDF library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `file`, `m4`, `make`,
-    `perl`, `tar`, and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/pnetcdf`.
-
-    toolchain: The toolchain object.  A MPI compiler toolchain must be
-    used.  The default is to use the standard MPI compiler wrappers,
-    e.g., `CC=mpicc`, `CXX=mpicxx`, etc.
-
-    version: The version of PnetCDF source to download.  The default
-    value is `1.12.1`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    pnetcdf(prefix='/opt/pnetcdf/1.10.0', version='1.10.0')
-    ```
-
-    ```python
-    ompi = openmpi(...)
-    pnetcdf(toolchain=ompi.toolchain, ...)
-    ```
+        ```python
+        ompi = openmpi(...)
+        pnetcdf(toolchain=ompi.toolchain, ...)
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(pnetcdf, self).__init__(**kwargs)
 
@@ -191,13 +176,12 @@ class pnetcdf(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        p = pnetcdf(...)
-        Stage0 += p
-        Stage1 += p.runtime()
-        ```
+        Examples:
+            ```python
+            p = pnetcdf(...)
+            Stage0 += p
+            Stage1 += p.runtime()
+            ```
         """
         self.rt += comment('PnetCDF')
         if self.__runtime_ospackages:

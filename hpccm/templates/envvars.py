@@ -23,7 +23,6 @@ class envvars(hpccm.base_object):
     """Template for setting environment variables"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         super(envvars, self).__init__(**kwargs)
 

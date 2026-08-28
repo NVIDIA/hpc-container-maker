@@ -38,47 +38,40 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
 
-    # Parameters
+    Args:
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+            modified to include MKL. The default is True.
+        eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+            The default value is `False`.
+        mklvars: MKL provides an environment script (`mklvars.sh`) to
+            setup the MKL environment.  If this value is `True`, the bashrc is
+            modified to automatically source this environment script.
+            However, the MKL environment is not automatically available to
+            subsequent container image build steps; the environment is
+            available when the container image is run.  To set the MKL
+            environment in subsequent build steps you can explicitly call
+            `source /opt/intel/mkl/bin/mklvars.sh intel64` in each build step.
+            If this value is to set `False`, then the environment is set such
+            that the environment is visible to both subsequent container image
+            build steps and when the container image is run.  However, the
+            environment may differ slightly from that set by `mklvars.sh`.
+            The default value is `True`.
+        ospackages: List of OS packages to install prior to installing
+            MKL.  For Ubuntu, the default values are `apt-transport-https`,
+            `ca-certificates`, `gnupg`, and `wget`.  For RHEL-based Linux
+            distributions, the default is an empty list.
+        version: The version of MKL to install.  The default value is
+            `2020.0-088`.
 
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
-    modified to include MKL. The default is True.
-
-    eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
-    The default value is `False`.
-
-    mklvars: MKL provides an environment script (`mklvars.sh`) to
-    setup the MKL environment.  If this value is `True`, the bashrc is
-    modified to automatically source this environment script.
-    However, the MKL environment is not automatically available to
-    subsequent container image build steps; the environment is
-    available when the container image is run.  To set the MKL
-    environment in subsequent build steps you can explicitly call
-    `source /opt/intel/mkl/bin/mklvars.sh intel64` in each build step.
-    If this value is to set `False`, then the environment is set such
-    that the environment is visible to both subsequent container image
-    build steps and when the container image is run.  However, the
-    environment may differ slightly from that set by `mklvars.sh`.
-    The default value is `True`.
-
-    ospackages: List of OS packages to install prior to installing
-    MKL.  For Ubuntu, the default values are `apt-transport-https`,
-    `ca-certificates`, `gnupg`, and `wget`.  For RHEL-based Linux
-    distributions, the default is an empty list.
-
-    version: The version of MKL to install.  The default value is
-    `2020.0-088`.
-
-    # Examples
-
-    ```python
-    mkl(eula=True, version='2018.3-051')
-    ```
+    Examples:
+        ```python
+        mkl(eula=True, version='2018.3-051')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(mkl, self).__init__(**kwargs)
 
@@ -164,12 +157,11 @@ class mkl(bb_base, hpccm.templates.envvars, hpccm.templates.wget):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        m = mkl(...)
-        Stage0 += m
-        Stage1 += m.runtime()
-        ```
+        Examples:
+            ```python
+            m = mkl(...)
+            Stage0 += m
+            Stage1 += m.runtime()
+            ```
         """
         return str(self)

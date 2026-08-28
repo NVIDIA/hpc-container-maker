@@ -38,54 +38,43 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
 
     You must agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/) to use this building block.
 
-    # Parameters
+    Args:
+        channels: List of additional Conda channels to enable.  The
+            default is an empty list.
+        environment: Path to the Conda environment file to clone.  The
+            default value is empty.
+        eula: By setting this value to `True`, you agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/).
+            The default value is `False`.
+        ospackages: List of OS packages to install prior to installing
+            Conda.  The default values are `ca-certificates` and `wget`.
+        packages: List of Conda packages to install.  The default is an
+            empty list.
+        prefix: The top level install location.  The default value is
+            `/usr/local/anaconda`.
+        python2: Boolean flag to specify that the Python 2 version of
+            Anaconda should be installed.  The default is False.
+        python_subversion: The Python version to install.  This value is
+            ignored if the Conda version is less than 4.8.  The default is
+            `py312` if using Python 3, and `py27` if using Python 2.
+        version: The version of Anaconda to download.  The default value
+            is `25.1.1-2` if using Python 3, and `4.8.3` if using Python 2.
 
-    channels: List of additional Conda channels to enable.  The
-    default is an empty list.
+    Examples:
+        ```python
+        conda(packages=['numpy'])
+        ```
 
-    environment: Path to the Conda environment file to clone.  The
-    default value is empty.
+        ```python
+        conda(channels=['conda-forge', 'nvidia'], prefix='/opt/conda')
+        ```
 
-    eula: By setting this value to `True`, you agree to the [Anaconda End User License Agreement](https://docs.anaconda.com/anaconda/eula/).
-    The default value is `False`.
-
-    ospackages: List of OS packages to install prior to installing
-    Conda.  The default values are `ca-certificates` and `wget`.
-
-    packages: List of Conda packages to install.  The default is an
-    empty list.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/anaconda`.
-
-    python2: Boolean flag to specify that the Python 2 version of
-    Anaconda should be installed.  The default is False.
-
-    python_subversion: The Python version to install.  This value is
-    ignored if the Conda version is less than 4.8.  The default is
-    `py312` if using Python 3, and `py27` if using Python 2.
-
-    version: The version of Anaconda to download.  The default value
-    is `25.1.1-2` if using Python 3, and `4.8.3` if using Python 2.
-
-    # Examples
-
-    ```python
-    conda(packages=['numpy'])
-    ```
-
-    ```python
-    conda(channels=['conda-forge', 'nvidia'], prefix='/opt/conda')
-    ```
-
-    ```python
-    conda(environment='environment.yml')
-    ```
+        ```python
+        conda(environment='environment.yml')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(conda, self).__init__(**kwargs)
 
@@ -213,13 +202,12 @@ class conda(bb_base, hpccm.templates.rm, hpccm.templates.wget):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        c = conda(...)
-        Stage0 += c
-        Stage1 += c.runtime()
-        ```
+        Examples:
+            ```python
+            c = conda(...)
+            Stage0 += c
+            Stage1 += c.runtime()
+            ```
         """
         self.rt += comment('Anaconda')
         self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)

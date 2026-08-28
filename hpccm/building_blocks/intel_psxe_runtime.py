@@ -44,78 +44,64 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
     [intel_psxe](#intel_psxe), [intel_mpi](#intel_mpi), or [mkl](#mkl)
     building blocks for development environments.
 
-    # Parameters
+    Args:
+        daal: Boolean flag to specify whether the Intel Data Analytics
+            Acceleration Library runtime should be installed.  The default is
+            True.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+            include Intel Parallel Studio XE runtime. `psxevars` has
+            precedence. The default is True.
+        eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+            The default value is `False`.
+        icc: Boolean flag to specify whether the Intel C++ Compiler
+            runtime should be installed.  The default is True.
+        ifort: Boolean flag to specify whether the Intel Fortran Compiler
+            runtime should be installed.  The default is True.
+        ipp: Boolean flag to specify whether the Intel Integrated
+            Performance Primitives runtime should be installed.  The default
+            is True.
+        mkl: Boolean flag to specify whether the Intel Math Kernel Library
+            runtime should be installed.  The default is True.
+        mpi: Boolean flag to specify whether the Intel MPI Library runtime
+            should be installed.  The default is True.
+        psxevars: Intel Parallel Studio XE provides an environment script
+            (`psxevars.sh`) to setup the environment.  If this value is
+            `True`, the bashrc is modified to automatically source this
+            environment script.  However, the Intel runtime environment is not
+            automatically available to subsequent container image build steps;
+            the environment is available when the container image is run.  To
+            set the Intel Parallel Studio XE runtime environment in subsequent
+            build steps you can explicitly call `source
+            /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64` in each
+            build step.  If this value is to set `False`, then the environment
+            is set such that the environment is visible to both subsequent
+            container image build steps and when the container image is run.
+            However, the environment may differ slightly from that set by
+            `psxevars.sh`.  The default value is `True`.
+        ospackages: List of OS packages to install prior to installing
+            Intel MPI.  For Ubuntu, the default values are
+            `apt-transport-https`, `ca-certificates`, `gcc`, `gnupg`,
+            `man-db`, `openssh-client`, and `wget`.  For RHEL-based Linux
+            distributions, the default values are `man-db`, `openssh-clients`,
+            and `which`.
+        tbb: Boolean flag to specify whether the Intel Threading Building
+            Blocks runtime should be installed.  The default is True.
+        version: The version of the Intel Parallel Studio XE runtime to
+            install.  The default value is `2020.2-14`.
 
-    daal: Boolean flag to specify whether the Intel Data Analytics
-    Acceleration Library runtime should be installed.  The default is
-    True.
+    Examples:
+        ```python
+        intel_psxe_runtime(eula=True, version='2018.5-281')
+        ```
 
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-    include Intel Parallel Studio XE runtime. `psxevars` has
-    precedence. The default is True.
-
-    eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
-    The default value is `False`.
-
-    icc: Boolean flag to specify whether the Intel C++ Compiler
-    runtime should be installed.  The default is True.
-
-    ifort: Boolean flag to specify whether the Intel Fortran Compiler
-    runtime should be installed.  The default is True.
-
-    ipp: Boolean flag to specify whether the Intel Integrated
-    Performance Primitives runtime should be installed.  The default
-    is True.
-
-    mkl: Boolean flag to specify whether the Intel Math Kernel Library
-    runtime should be installed.  The default is True.
-
-    mpi: Boolean flag to specify whether the Intel MPI Library runtime
-    should be installed.  The default is True.
-
-    psxevars: Intel Parallel Studio XE provides an environment script
-    (`psxevars.sh`) to setup the environment.  If this value is
-    `True`, the bashrc is modified to automatically source this
-    environment script.  However, the Intel runtime environment is not
-    automatically available to subsequent container image build steps;
-    the environment is available when the container image is run.  To
-    set the Intel Parallel Studio XE runtime environment in subsequent
-    build steps you can explicitly call `source
-    /opt/intel/psxe_runtime/linux/bin/psxevars.sh intel64` in each
-    build step.  If this value is to set `False`, then the environment
-    is set such that the environment is visible to both subsequent
-    container image build steps and when the container image is run.
-    However, the environment may differ slightly from that set by
-    `psxevars.sh`.  The default value is `True`.
-
-    ospackages: List of OS packages to install prior to installing
-    Intel MPI.  For Ubuntu, the default values are
-    `apt-transport-https`, `ca-certificates`, `gcc`, `gnupg`,
-    `man-db`, `openssh-client`, and `wget`.  For RHEL-based Linux
-    distributions, the default values are `man-db`, `openssh-clients`,
-    and `which`.
-
-    tbb: Boolean flag to specify whether the Intel Threading Building
-    Blocks runtime should be installed.  The default is True.
-
-    version: The version of the Intel Parallel Studio XE runtime to
-    install.  The default value is `2020.2-14`.
-
-    # Examples
-
-    ```python
-    intel_psxe_runtime(eula=True, version='2018.5-281')
-    ```
-
-    ```python
-    intel_psxe_runtime(daal=False, eula=True, ipp=False, psxevars=False)
-    ```
+        ```python
+        intel_psxe_runtime(daal=False, eula=True, ipp=False, psxevars=False)
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(intel_psxe_runtime, self).__init__(**kwargs)
 
@@ -337,12 +323,11 @@ class intel_psxe_runtime(bb_base, hpccm.templates.envvars):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        i = intel_psxe_runtime(...)
-        Stage0 += i
-        Stage1 += i.runtime()
-        ```
+        Examples:
+            ```python
+            i = intel_psxe_runtime(...)
+            Stage0 += i
+            Stage1 += i.runtime()
+            ```
         """
         return str(self)

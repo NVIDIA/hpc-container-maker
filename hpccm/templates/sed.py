@@ -26,7 +26,6 @@ class sed(hpccm.base_object):
     """sed template"""
 
     def __init__(self, **kwargs):
-        """Initialize sed template"""
 
         super(sed, self).__init__(**kwargs)
 

@@ -1,0 +1,31 @@
+site_name: HPC Container Maker
+site_url: https://nvidia.github.io/hpc-container-maker/ # for rendering proper 404
+docs_dir: docs
+hooks:
+  - docs/mkdocs_hooks.py # for docstring links to work properly
+plugins:
+  - search # necessary for mkapi to work
+  - mkapi:
+      exclude:
+        - hpccm.building_blocks.base
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Tutorial: tutorial.md
+  - Recipes: recipes.md
+  - Workflows: workflows.md
+  - Citation: citation.md
+  - Documentation:
+      - Building Blocks: $api/hpccm.building_blocks
+      - Primitives: $api/hpccm.primitives
+      - Miscellaneous:
+          - $api/hpccm.config
+          - $api/hpccm.recipe
+          - $api/hpccm.Stage
+theme:
+  name: readthedocs
+extra_css:
+  - stylesheets/extra.css # for removing unwanted elements from generated API documentation
+validation:
+  links:
+    anchors: ignore

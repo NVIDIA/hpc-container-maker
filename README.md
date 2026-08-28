@@ -8,14 +8,7 @@
 HPC Container Maker (HPCCM - pronounced H-P-see-M) is an open source
 tool to make it easier to generate container specification files.
 
-- [Documentation](/docs)
-    - [Getting Started](/docs/getting_started.md)
-    - [Tutorial](/docs/tutorial.md)
-    - [Recipes](/docs/recipes.md)
-    - [Workflows](/docs/workflows.md)
-    - [API: Building Blocks](/docs/building_blocks.md)
-    - [API: Primitives](/docs/primitives.md)
-    - [API: Miscellaneous](/docs/misc_api.md)
+- [Documentation](https://nvidia.github.io/hpc-container-maker/)
 - [Examples](/recipes/)
 - [Citation](/docs/citation.md)
 - [License](/LICENSE)
@@ -26,7 +19,7 @@ HPC Container Maker generates Dockerfiles or Singularity definition
 files from a high level Python recipe.  HPCCM recipes have some
 distinct advantages over "native" container specification formats.
 
-1. A library of HPC [building blocks](/docs/building_blocks.md) that
+1. A library of HPC [building blocks](https://nvidia.github.io/hpc-container-maker/api/hpccm/building_blocks/) that
    separate the choice of what to include in a container image from
    the details of how it's done.  The building blocks transparently
    provide the latest component and container best practices.
@@ -38,6 +31,23 @@ distinct advantages over "native" container specification formats.
 
 3. Generate either Dockerfiles or Singularity definition files from
    the same recipe.
+
+## Development
+
+### Generating the Documentation
+
+Prerequisites:
+- Python3
+- `mkdocs`, available via `pip install`
+
+Build the site by running:
+
+```sh
+mkdocs serve
+```
+
+See the generated site at `http://localhost:8080/`.
+
 
 ## Additional Resources
 

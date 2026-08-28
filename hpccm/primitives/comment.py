@@ -29,27 +29,23 @@ class comment(object):
     """The `comment` primitive inserts a comment into the corresponding
     place in the container specification file.
 
-    # Parameters
+    Args:
+        _app: String containing the
+            [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+            identifier.  This also causes the comment to be enclosed in a
+            Singularity block to named `%apphelp` (Singularity specific).
+        reformat: Boolean flag to specify whether the comment string
+            should be wrapped to fit into lines not exceeding 80 characters.
+            The default is True.
 
-    _app: String containing the
-    [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
-    identifier.  This also causes the comment to be enclosed in a
-    Singularity block to named `%apphelp` (Singularity specific).
-
-    reformat: Boolean flag to specify whether the comment string
-    should be wrapped to fit into lines not exceeding 80 characters.
-    The default is True.
-
-    # Examples
-
-    ```python
-    comment('libfoo version X.Y')
-    ```
+    Examples:
+        ```python
+        comment('libfoo version X.Y')
+        ```
 
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize primitive"""
 
         #super(comment, self).__init__()
 

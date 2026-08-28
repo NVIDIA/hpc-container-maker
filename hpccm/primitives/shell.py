@@ -27,48 +27,40 @@ class shell(object):
     """The `shell` primitive specifies a series of shell commands to
     execute.
 
-    # Parameters
+    Args:
+        _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+            identifier.  This also causes the Singularity block to named
+            `%appinstall` rather than `%post` (Singularity specific).
+        _appenv: Boolean flag to specify whether the general container
+            environment should be also be loaded when executing a SCI-F
+            `%appinstall` block.  The default is False.
+        _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+        chdir: Boolean flag to specify whether to change the working
+            directory to `/` before executing any commands.  Docker
+            automatically resets the working directory for each `RUN`
+            instruction.  Setting this option to True makes Singularity behave
+            the same.  This option is ignored for Docker.  The default is
+            True.
+        commands: A list of commands to execute.  The default is an empty
+            list.
+        _test: Boolean flag to specify whether to use `%test` instead of
+            `%post` and `%apptest` instead of `%appinstall` as the Singularity
+            section headings (Singularity specific).
 
-    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
-    identifier.  This also causes the Singularity block to named
-    `%appinstall` rather than `%post` (Singularity specific).
+    Examples:
+        ```python
+        shell(commands=['cd /path/to/src', './configure', 'make install'])
+        ```
 
-    _appenv: Boolean flag to specify whether the general container
-    environment should be also be loaded when executing a SCI-F
-    `%appinstall` block.  The default is False.
-
-    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
-
-    chdir: Boolean flag to specify whether to change the working
-    directory to `/` before executing any commands.  Docker
-    automatically resets the working directory for each `RUN`
-    instruction.  Setting this option to True makes Singularity behave
-    the same.  This option is ignored for Docker.  The default is
-    True.
-
-    commands: A list of commands to execute.  The default is an empty
-    list.
-
-    _test: Boolean flag to specify whether to use `%test` instead of
-    `%post` and `%apptest` instead of `%appinstall` as the Singularity
-    section headings (Singularity specific).
-
-    # Examples
-
-    ```python
-    shell(commands=['cd /path/to/src', './configure', 'make install'])
-    ```
-
-    ```python
-    # Cache Go packages
-    shell(_arguments='--mount=type=cache,target=/root/.cache/go-build',
-          commands=['cd /path/to/go-src', 'go build'])
-    ```
+        ```python
+        # Cache Go packages
+        shell(_arguments='--mount=type=cache,target=/root/.cache/go-build',
+              commands=['cd /path/to/go-src', 'go build'])
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(wget, self).__init__()
 

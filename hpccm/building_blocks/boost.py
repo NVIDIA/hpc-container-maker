@@ -41,60 +41,49 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     """The `boost` building block downloads and installs the
     [Boost](https://www.boost.org) component.
 
-    # Parameters
+    Args:
+        b2_opts: List of options to pass to `b2`.  The default is an empty
+            list.
+        bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
+            default is an empty list.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`) should be modified to include Boost. The
+            default is True.
+        ldconfig: Boolean flag to specify whether the Boost library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the Boost library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to building.  For
+            Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
+            `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+            default values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`,
+            and `zlib-devel`.
+        prefix: The top level installation location.  The default value
+            is `/usr/local/boost`.
+        python: Boolean flag to specify whether Boost should be built with
+            Python support.  If enabled, the Python C headers need to be
+            installed (typically this can be done by adding `python-dev` or
+            `python-devel` to the list of OS packages).  This flag is ignored
+            if `bootstrap_opts` is set.  The default is False.
+        sourceforge: Boolean flag to specify whether Boost should be
+            downloaded from SourceForge rather than the current Boost
+            repository.  For versions of Boost older than 1.63.0, the
+            SourceForge repository should be used.  The default is False.
+        version: The version of Boost source to download.  The default
+            value is `1.87.0`.
 
-    b2_opts: List of options to pass to `b2`.  The default is an empty
-    list.
+    Examples:
+        ```python
+        boost(prefix='/opt/boost/1.67.0', version='1.67.0')
+        ```
 
-    bootstrap_opts: List of options to pass to `bootstrap.sh`.  The
-    default is an empty list.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`) should be modified to include Boost. The
-    default is True.
-
-    ldconfig: Boolean flag to specify whether the Boost library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the Boost library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to building.  For
-    Ubuntu, the default values are `bzip2`, `libbz2-dev`, `tar`,
-    `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-    default values are `bzip2`, `bzip2-devel`, `tar`, `wget`, `which`,
-    and `zlib-devel`.
-
-    prefix: The top level installation location.  The default value
-    is `/usr/local/boost`.
-
-    python: Boolean flag to specify whether Boost should be built with
-    Python support.  If enabled, the Python C headers need to be
-    installed (typically this can be done by adding `python-dev` or
-    `python-devel` to the list of OS packages).  This flag is ignored
-    if `bootstrap_opts` is set.  The default is False.
-
-    sourceforge: Boolean flag to specify whether Boost should be
-    downloaded from SourceForge rather than the current Boost
-    repository.  For versions of Boost older than 1.63.0, the
-    SourceForge repository should be used.  The default is False.
-
-    version: The version of Boost source to download.  The default
-    value is `1.87.0`.
-
-    # Examples
-
-    ```python
-    boost(prefix='/opt/boost/1.67.0', version='1.67.0')
-    ```
-
-    ```python
-    boost(sourceforge=True, version='1.57.0')
-    ```
+        ```python
+        boost(sourceforge=True, version='1.57.0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(boost, self).__init__(**kwargs)
 
@@ -205,13 +194,12 @@ class boost(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        b = boost(...)
-        Stage0 += b
-        Stage1 += b.runtime()
-        ```
+        Examples:
+            ```python
+            b = boost(...)
+            Stage0 += b
+            Stage1 += b.runtime()
+            ```
         """
         self.rt += comment('Boost')
         self.rt += copy(_from=_from, src=self.__prefix, dest=self.__prefix)

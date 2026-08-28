@@ -42,47 +42,36 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     MKL libraries and are only available if the paths to these
     libraries is specified as shown below in the cmake_opts.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations (labels).
+            The default is False.
+        branch: The git branch to clone.  AMGX releases are tagged, that
+            is, specifying `branch='v2.1.0'` downloads a particular AMGX
+            version.  The default is `master`.
+        cmake_opts: List of options to pass to `cmake`.  The default value is an empty list.  See the ["Building"](https://github.com/NVIDIA/AMGX#-building) section of the AMGX documentation of the specified library version for more details.  Some options are `CMAKE_NO_MPI:Boolean` (default=`False`) - build without MPI support even if the `FindMPI` script finds an MPI library.  `AMGX_NO_RPATH:Boolean` (default=`False`) - by default CMake adds `-rpath` flags to binaries, this option disables that.  `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String` - MAGMA/MKL are used to accelerate some of the Eigensolvers.  These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
+        commit: The git commit to clone.  The default is empty and uses
+            the latest commit on the selected branch of the repository.
+        directory: Build from an unpackaged source directory relative to
+            the local build context instead of fetching AMGX sources from a
+            git repository.  This option is incompatible with
+            `repository`/`branch`/ `commit`.  The default is `None`.
+        ospackages: List of OS packages to install prior to downloading,
+            configuring, and building.  The default value is `[git]`.
+        prefix: The top level install location.  The default is
+            `/usr/local/amgx`.
+        repository: The git repository to clone.  The default is `https://github.com/NVIDIA/AMGX`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
 
-    annotate: Boolean flag to specify whether to include annotations (labels).
-    The default is False.
-
-    branch: The git branch to clone.  AMGX releases are tagged, that
-    is, specifying `branch='v2.1.0'` downloads a particular AMGX
-    version.  The default is `master`.
-
-    cmake_opts: List of options to pass to `cmake`.  The default value is an empty list.  See the ["Building"](https://github.com/NVIDIA/AMGX#-building) section of the AMGX documentation of the specified library version for more details.  Some options are `CMAKE_NO_MPI:Boolean` (default=`False`) - build without MPI support even if the `FindMPI` script finds an MPI library.  `AMGX_NO_RPATH:Boolean` (default=`False`) - by default CMake adds `-rpath` flags to binaries, this option disables that.  `MKL_ROOT_DIR:String`, `MAGMA_ROOT_DIR:String` - MAGMA/MKL are used to accelerate some of the Eigensolvers.  These solvers will return "error 'not supported'" if AMGX was not build with MKL/MAGMA support.
-
-    commit: The git commit to clone.  The default is empty and uses
-    the latest commit on the selected branch of the repository.
-
-    directory: Build from an unpackaged source directory relative to
-    the local build context instead of fetching AMGX sources from a
-    git repository.  This option is incompatible with
-    `repository`/`branch`/ `commit`.  The default is `None`.
-
-    ospackages: List of OS packages to install prior to downloading,
-    configuring, and building.  The default value is `[git]`.
-
-    prefix: The top level install location.  The default is
-    `/usr/local/amgx`.
-
-    repository: The git repository to clone.  The default is `https://github.com/NVIDIA/AMGX`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    # Examples
-
-    ```python
-    amgx(branch='v2.1.0')
-    ```
+    Examples:
+        ```python
+        amgx(branch='v2.1.0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
         super(amgx, self).__init__(**kwargs)
 
         self.__branch = kwargs.pop('branch', 'master')
@@ -122,13 +111,12 @@ class amgx(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        a = amgx(...)
-        Stage0 += a
-        Stage1 += a.runtime()
-        ```
+        Examples:
+            ```python
+            a = amgx(...)
+            Stage0 += a
+            Stage1 += a.runtime()
+            ```
         """
         self.rt += comment('AMGX')
         self.rt += self.__bb.runtime(_from=_from)

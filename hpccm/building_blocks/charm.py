@@ -43,58 +43,46 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     """The `charm` building block downloads and install the
     [Charm++](http://charm.cs.illinois.edu/research/charm) component.
 
-    # Parameters
+    Args:
+        basedir: List of additional include and library paths for building
+            Charm++.  The default is an empty list.
+        check: Boolean flag to specify whether the test cases should be
+            run.  The default is False.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
+            modified to include Charm++. The default is True.
+        ldconfig: Boolean flag to specify whether the Charm++ library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the Charm++ library
+            directory. The default value is False.
+        options: List of additional options to use when building Charm++.
+            The default values are `--build-shared`, and `--with-production`.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `autoconf`, `automake`,
+            `git`, `libtool`, `make`, and `wget`.
+        prefix: The top level install prefix.  The default value is
+            `/usr/local`.
+        target: The target Charm++ framework to build.  The default value
+            is `charm++`.
+        target_architecture: The target machine architecture to build.
+            For x86_64 processors, the default value is
+            `multicore-linux-x86_64`.  For aarch64 processors, the default
+            value is `multicore-arm8`.
+        version: The version of Charm++ to download.  The default value is
+            `6.10.2`.
 
-    basedir: List of additional include and library paths for building
-    Charm++.  The default is an empty list.
+    Examples:
+        ```python
+        charm(prefix='/opt', version='6.8.2')
+        ```
 
-    check: Boolean flag to specify whether the test cases should be
-    run.  The default is False.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and other variables) should be
-    modified to include Charm++. The default is True.
-
-    ldconfig: Boolean flag to specify whether the Charm++ library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the Charm++ library
-    directory. The default value is False.
-
-    options: List of additional options to use when building Charm++.
-    The default values are `--build-shared`, and `--with-production`.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `autoconf`, `automake`,
-    `git`, `libtool`, `make`, and `wget`.
-
-    prefix: The top level install prefix.  The default value is
-    `/usr/local`.
-
-    target: The target Charm++ framework to build.  The default value
-    is `charm++`.
-
-    target_architecture: The target machine architecture to build.
-    For x86_64 processors, the default value is
-    `multicore-linux-x86_64`.  For aarch64 processors, the default
-    value is `multicore-arm8`.
-
-    version: The version of Charm++ to download.  The default value is
-    `6.10.2`.
-
-    # Examples
-
-    ```python
-    charm(prefix='/opt', version='6.8.2')
-    ```
-
-    ```python
-    charm(target_architecture='mpi-linux-x86_64')
-    ```
+        ```python
+        charm(target_architecture='mpi-linux-x86_64')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(charm, self).__init__(**kwargs)
 
@@ -220,13 +208,12 @@ class charm(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Example
-
-        ```python
-        c = charm(...)
-        Stage0 += c
-        Stage1 += c.runtime()
-        ```
+        Examples:
+            ```python
+            c = charm(...)
+            Stage0 += c
+            Stage1 += c.runtime()
+            ```
         """
         self.rt += comment('Charm++')
         self.rt += copy(_from=_from, src=self.__installdir,

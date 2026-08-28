@@ -53,61 +53,51 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     compilers.  The tool can be passed to other operations that want
     to build using the PGI compilers.
 
-    # Parameters
+    Args:
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
+            should be modified to include the PGI compiler. The default is
+            True.
+        eula: By setting this value to `True`, you agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
+            The default value is `False`.
+        extended_environment: Boolean flag to specify whether an extended
+            set of environment variables should be defined.  If True, the
+            following environment variables will be defined: `CC`, `CPP`,
+            `CXX`, `F77`, `F90`, `FC`, and `MODULEPATH`.  In addition, if the
+            PGI MPI component is selected then `PGI_OPTL_INCLUDE_DIRS` and
+            `PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
+            `LD_LIBRARY_PATH` will include the PGI MPI component.  If False,
+            then only `PATH` and `LD_LIBRARY_PATH` will be extended to include
+            the PGI compiler.  The default value is `False`.
+        mpi: Boolean flag to specify whether the MPI component should be
+            installed.  If True, MPI will be installed.  The default value is
+            False.
+        ospackages: List of OS packages to install prior to installing the
+            PGI compiler.  For Ubuntu, the default values are `gcc`, `g++`,
+            `libnuma1` and `perl`, and also `wget` (if downloading the PGI
+            compiler rather than using a tarball in the local build context).
+            For RHEL-based Linux distributions, the default values are `gcc`,
+            `gcc-c++`, `numactl-libs` and `perl`, and also `wget` (if
+            downloading the PGI compiler rather than using a tarball in the
+            local build context).
+        prefix: The top level install prefix.  The default value is
+            `/opt/pgi`.
+        system_cuda: Boolean flag to specify whether the PGI compiler
+            should use the system CUDA.  If False, the version(s) of CUDA
+            bundled with the PGI compiler will be installed.  The default
+            value is False.
+        tarball: Path to the PGI compiler tarball relative to the local
+            build context.  The default value is empty.  This parameter is
+            required.
 
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and potentially other variables)
-    should be modified to include the PGI compiler. The default is
-    True.
-
-    eula: By setting this value to `True`, you agree to the [PGI End-User License Agreement](https://www.pgroup.com/doc/LICENSE.txt).
-    The default value is `False`.
-
-    extended_environment: Boolean flag to specify whether an extended
-    set of environment variables should be defined.  If True, the
-    following environment variables will be defined: `CC`, `CPP`,
-    `CXX`, `F77`, `F90`, `FC`, and `MODULEPATH`.  In addition, if the
-    PGI MPI component is selected then `PGI_OPTL_INCLUDE_DIRS` and
-    `PGI_OPTL_LIB_DIRS` will also be defined and `PATH` and
-    `LD_LIBRARY_PATH` will include the PGI MPI component.  If False,
-    then only `PATH` and `LD_LIBRARY_PATH` will be extended to include
-    the PGI compiler.  The default value is `False`.
-
-    mpi: Boolean flag to specify whether the MPI component should be
-    installed.  If True, MPI will be installed.  The default value is
-    False.
-
-    ospackages: List of OS packages to install prior to installing the
-    PGI compiler.  For Ubuntu, the default values are `gcc`, `g++`,
-    `libnuma1` and `perl`, and also `wget` (if downloading the PGI
-    compiler rather than using a tarball in the local build context).
-    For RHEL-based Linux distributions, the default values are `gcc`,
-    `gcc-c++`, `numactl-libs` and `perl`, and also `wget` (if
-    downloading the PGI compiler rather than using a tarball in the
-    local build context).
-
-    prefix: The top level install prefix.  The default value is
-    `/opt/pgi`.
-
-    system_cuda: Boolean flag to specify whether the PGI compiler
-    should use the system CUDA.  If False, the version(s) of CUDA
-    bundled with the PGI compiler will be installed.  The default
-    value is False.
-
-    tarball: Path to the PGI compiler tarball relative to the local
-    build context.  The default value is empty.  This parameter is
-    required.
-
-    # Examples
-
-    ```python
-    pgi(eula=True, tarball='pgilinux-2019-1910-x86_64.tar.gz')
-    ```
+    Examples:
+        ```python
+        pgi(eula=True, tarball='pgilinux-2019-1910-x86_64.tar.gz')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(pgi, self).__init__(**kwargs)
 
@@ -375,13 +365,12 @@ class pgi(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        p = pgi(...)
-        Stage0 += p
-        Stage1 += p.runtime()
-        ```
+        Examples:
+            ```python
+            p = pgi(...)
+            Stage0 += p
+            Stage1 += p.runtime()
+            ```
         """
         self.rt += comment('PGI compiler')
 

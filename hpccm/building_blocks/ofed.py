@@ -60,26 +60,23 @@ class ofed(bb_base):
     `libibverbs`, `libibverbs-utils`, `librdmacm`, `rdma-core`, and
     `rdma-core-devel`.
 
-    # Parameters
+    Args:
+        prefix: The top level install location. Install of installing the
+            packages via the package manager, they will be extracted to this
+            location. This option is useful if multiple versions of OFED need
+            to be installed. The environment must be manually configured to
+            recognize the OFED location, e.g., in the container entry
+            point. The default value is empty, i.e., install via the package
+            manager to the standard system locations.
 
-    prefix: The top level install location. Install of installing the
-    packages via the package manager, they will be extracted to this
-    location. This option is useful if multiple versions of OFED need
-    to be installed. The environment must be manually configured to
-    recognize the OFED location, e.g., in the container entry
-    point. The default value is empty, i.e., install via the package
-    manager to the standard system locations.
-
-    # Examples
-
-    ```python
-    ofed()
-    ```
+    Examples:
+        ```python
+        ofed()
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(ofed, self).__init__(**kwargs)
 
@@ -210,13 +207,12 @@ class ofed(bb_base):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        o = ofed(...)
-        Stage0 += o
-        Stage1 += o.runtime()
-        ```
+        Examples:
+            ```python
+            o = ofed(...)
+            Stage0 += o
+            Stage1 += o.runtime()
+            ```
         """
         if self.__prefix:
             self.rt += comment('OFED')

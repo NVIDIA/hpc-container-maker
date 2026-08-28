@@ -29,19 +29,16 @@ class workdir(object):
     subsequent operations.  As a side effect, if the directory does
     not exist, it is created.
 
-    # Parameters
+    Args:
+        directory: The directory path.
 
-    directory: The directory path.
-
-    # Examples
-
-    ```python
-    workdir(directory='/path/to/directory')
-    ```
+    Examples:
+        ```python
+        workdir(directory='/path/to/directory')
+        ```
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(workdir, self).__init__()
 

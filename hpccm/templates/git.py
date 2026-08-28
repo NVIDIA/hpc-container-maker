@@ -28,7 +28,6 @@ class git(hpccm.base_object):
     """Template for working with git repositories"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         super(git, self).__init__(**kwargs)
 

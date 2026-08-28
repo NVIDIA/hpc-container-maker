@@ -34,45 +34,37 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     """The `doca_ofed` building block downloads and installs the [NVIDIA
     DOCA Software Framework](https://developer.nvidia.com/networking/doca).
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        archlabel: The CPU architecture label assigned by Mellanox to the
+            package repository.  The default value is `x86_64` for x86_64
+            processors and `arm64-sbsa` for aarch64 processors.
+        oslabel: The Linux distribution label assigned by Mellanox to the
+            package repository.  For Ubuntu, the default value is
+            `ubuntuXX.04` where `XX` is derived from the base image.  For
+            RHEL-base Linux distributions, the default value is `rhelX`.
+        ospackages: List of OS packages to install prior to installing
+            DOCA OFED.  The default values are `ca-certificates`, `gnupg`, and
+            `wget`.
+        packages: List of packages to install from DOCA.  For
+            Ubuntu, the default values are `ibverbs-providers`,
+            `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+            `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+            and `librdmacm1`.  For RHEL-based Linux distributions, the default
+            values are `libibumad`, `libibverbs`, `libibverbs-utils`,
+            `librdmacm`, `rdma-core`, and `rdma-core-devel`.
+        version: The version of DOCA OFED to download.  The default value
+            is `3.3.0`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    archlabel: The CPU architecture label assigned by Mellanox to the
-    package repository.  The default value is `x86_64` for x86_64
-    processors and `arm64-sbsa` for aarch64 processors.
-
-    oslabel: The Linux distribution label assigned by Mellanox to the
-    package repository.  For Ubuntu, the default value is
-    `ubuntuXX.04` where `XX` is derived from the base image.  For
-    RHEL-base Linux distributions, the default value is `rhelX`.
-
-    ospackages: List of OS packages to install prior to installing
-    DOCA OFED.  The default values are `ca-certificates`, `gnupg`, and
-    `wget`.
-
-    packages: List of packages to install from DOCA.  For
-    Ubuntu, the default values are `ibverbs-providers`,
-    `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
-    `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
-    and `librdmacm1`.  For RHEL-based Linux distributions, the default
-    values are `libibumad`, `libibverbs`, `libibverbs-utils`,
-    `librdmacm`, `rdma-core`, and `rdma-core-devel`.
-
-    version: The version of DOCA OFED to download.  The default value
-    is `3.3.0`.
-
-    # Examples
-
-    ```python
-    doca_ofed(version='3.2.0')
-    ```
+    Examples:
+        ```python
+        doca_ofed(version='3.2.0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(doca_ofed, self).__init__(**kwargs)
 
@@ -184,13 +176,12 @@ class doca_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        d = doca_ofed(...)
-        Stage0 += d
-        Stage1 += d.runtime()
-        ```
+        Examples:
+            ```python
+            d = doca_ofed(...)
+            Stage0 += d
+            Stage1 += d.runtime()
+            ```
         """
 
         return str(self)

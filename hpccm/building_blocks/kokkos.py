@@ -37,73 +37,57 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
     The [CMake](#cmake) building block should be installed prior to
     this building block.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        arch: List of target architectures to build. If set adds
+            `-DKokkos_ARCH_<value>=ON` to the list of CMake options. The
+            default value is `VOLTA70`, i.e., sm_70.  If a CUDA aware build is
+            not selected, then a non-default value should be used.
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        check: Boolean flag to specify whether the build should be
+            checked.  If True, adds `-DKokkos_ENABLE_TESTS=ON` to the list of
+            CMake options. The default is False.
+        cmake_opts: List of options to pass to `cmake`.  The default is
+            `-DCMAKE_BUILD_TYPE=RELEASE`.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        cuda: Flag to control whether a CUDA aware build is performed.  If
+            True, adds `-DKokkos_ENABLE_CUDA=ON` and
+            `-DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper` to the list of
+            CMake options.  The default value is True.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            Kokkos. The default is True.
+        hwloc: Flag to control whether a hwloc aware build is performed.
+            If True, adds `-DKokkos_ENABLE_HWLOC=ON` to the list of CMake
+            options. The default value is True.
+        ospackages: List of OS packages to install prior to building.  For
+            Ubuntu, the default values are `gzip`, `libhwloc-dev`, `make`,
+            `tar`, and `wget`.  For RHEL-based Linux distributions the default
+            values are `gzip`, `hwloc-devel`, `make`, `tar`, and `wget`.
+        prefix: The top level installation location.  The default value
+            is `/usr/local/kokkos`.
+        repository: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/kokkos/kokkos.git`
+            repository.  The default is empty, i.e., use the release package
+            specified by `version`.
+        url: The location of the tarball that should be used to build
+            Kokkos.  The default is empty, i.e., use the release package
+            specified by `version`.
+        version: The version of Kokkos source to download.  The default
+            value is `3.2.00`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    arch: List of target architectures to build. If set adds
-    `-DKokkos_ARCH_<value>=ON` to the list of CMake options. The
-    default value is `VOLTA70`, i.e., sm_70.  If a CUDA aware build is
-    not selected, then a non-default value should be used.
-
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
-
-    check: Boolean flag to specify whether the build should be
-    checked.  If True, adds `-DKokkos_ENABLE_TESTS=ON` to the list of
-    CMake options. The default is False.
-
-    cmake_opts: List of options to pass to `cmake`.  The default is
-    `-DCMAKE_BUILD_TYPE=RELEASE`.
-
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
-
-    cuda: Flag to control whether a CUDA aware build is performed.  If
-    True, adds `-DKokkos_ENABLE_CUDA=ON` and
-    `-DCMAKE_CXX_COMPILER=$(pwd)/../bin/nvcc_wrapper` to the list of
-    CMake options.  The default value is True.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    Kokkos. The default is True.
-
-    hwloc: Flag to control whether a hwloc aware build is performed.
-    If True, adds `-DKokkos_ENABLE_HWLOC=ON` to the list of CMake
-    options. The default value is True.
-
-    ospackages: List of OS packages to install prior to building.  For
-    Ubuntu, the default values are `gzip`, `libhwloc-dev`, `make`,
-    `tar`, and `wget`.  For RHEL-based Linux distributions the default
-    values are `gzip`, `hwloc-devel`, `make`, `tar`, and `wget`.
-
-    prefix: The top level installation location.  The default value
-    is `/usr/local/kokkos`.
-
-    repository: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/kokkos/kokkos.git`
-    repository.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    url: The location of the tarball that should be used to build
-    Kokkos.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    version: The version of Kokkos source to download.  The default
-    value is `3.2.00`.
-
-    # Examples
-
-    ```python
-    kokkos(prefix='/opt/kokkos/3.1.01', version='3.1.01')
-    ```
+    Examples:
+        ```python
+        kokkos(prefix='/opt/kokkos/3.1.01', version='3.1.01')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(kokkos, self).__init__(**kwargs)
 
@@ -216,13 +200,12 @@ class kokkos(bb_base, hpccm.templates.downloader, hpccm.templates.envvars):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        k = kokkos(...)
-        Stage0 += k
-        Stage1 += k.runtime()
-        ```
+        Examples:
+            ```python
+            k = kokkos(...)
+            Stage0 += k
+            Stage1 += k.runtime()
+            ```
         """
         self.rt += comment('Kokkos')
         self.rt += self.__bb.runtime(_from=_from)

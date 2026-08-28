@@ -44,39 +44,32 @@ class scif(hpccm.base_object):
     creates SCI-F recipe files in the current directory (see also the
     `file` parameter).
 
-    # Parameters
+    Args:
+        _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+        _env: Boolean flag to specify whether the general container
+            environment should be also be loaded when executing a SCI-F
+            `%appinstall` block.  The default is False (Singularity specific).
+        file: The SCI-F recipe file name.  The default value is the name
+            parameter with the `.scif` suffix.
+        name: The name to use to label the SCI-F application.  This
+            parameter is required.
+        _native: Boolean flag to specify whether to use the native
+            Singularity support for SCI-F when generating Singularity
+            definition files.  The default is True (Singularity specific).
 
-    _arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
-
-    _env: Boolean flag to specify whether the general container
-    environment should be also be loaded when executing a SCI-F
-    `%appinstall` block.  The default is False (Singularity specific).
-
-    file: The SCI-F recipe file name.  The default value is the name
-    parameter with the `.scif` suffix.
-
-    name: The name to use to label the SCI-F application.  This
-    parameter is required.
-
-    _native: Boolean flag to specify whether to use the native
-    Singularity support for SCI-F when generating Singularity
-    definition files.  The default is True (Singularity specific).
-
-    # Examples
-
-    ```python
-    pip(packages=['scif'])
-    s = scif(name='example')
-    s += openmpi(prefix='/scif/apps/example')
-    s += shell(commands=[...])
-    ```
+    Examples:
+        ```python
+        pip(packages=['scif'])
+        s = scif(name='example')
+        s += openmpi(prefix='/scif/apps/example')
+        s += shell(commands=[...])
+        ```
 
     """
 
     __runtime_called = False
 
     def __init__(self, **kwargs):
-        """Initialize scif building block"""
 
         super(scif, self).__init__(**kwargs)
 
@@ -240,12 +233,12 @@ class scif(hpccm.base_object):
         The entire `/scif` directory is copied into the runtime stage
         on the first call.  Subsequent calls do nothing.
 
-        # Examples
-        ```python
-        s = scif(...)
-        Stage0 += s
-        Stage1 += s.runtime()
-        ```
+        Examples:
+            ```python
+            s = scif(...)
+            Stage0 += s
+            Stage1 += s.runtime()
+            ```
 
         """
 

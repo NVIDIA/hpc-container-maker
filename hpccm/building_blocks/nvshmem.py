@@ -44,60 +44,46 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     [NVSHMEM](https://developer.nvidia.com/nvshmem) component.  CMake
     version 3.19 or later is required and must be installed separately.
 
-    # Parameters
+    Args:
+        build_examples: Boolean flag to specify whether the NVSHMEM
+            examples should be built.  The default is False.
+        build_packages: Boolean flag to specify whether the RPM and deb
+            packages should be built.  The default is False.
+        cmake_opts: List of additional options to pass to `cmake`.  The
+            default value is an empty list.
+        cuda: Flag to specify the path to the CUDA installation.  The
+            default is `/usr/local/cuda`.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
+            include NVSHMEM. The default is True.
+        gdrcopy: Flag to specify the path to the GDRCOPY installation.
+            The default is empty.
+        ldconfig: Boolean flag to specify whether the NVSHMEM library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
+            directory. The default value is False.
+        mpi: Flag to enable MPI support.  If True, enables MPI and relies
+            on CMake's FindMPI to locate the installation.  If a string, uses
+            the value as the MPI installation path (MPI_HOME).  If False,
+            MPI support is explicitly disabled.  The default is True, matching
+            the upstream NVSHMEM CMake default.
+        ospackages: List of OS packages to install prior to building.  The
+            default values are `make` and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/nvshmem`.
+        shmem: Flag to specify the path to the SHMEM installation.  The
+            default is empty, i.e., do not build NVSHMEM with SHMEM support.
+        version: The version of NVSHMEM source to download.  The default
+            value is `3.7.2-0`.
 
-    build_examples: Boolean flag to specify whether the NVSHMEM
-    examples should be built.  The default is False.
-
-    build_packages: Boolean flag to specify whether the RPM and deb
-    packages should be built.  The default is False.
-
-    cmake_opts: List of additional options to pass to `cmake`.  The
-    default value is an empty list.
-
-    cuda: Flag to specify the path to the CUDA installation.  The
-    default is `/usr/local/cuda`.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LIBRARY_PATH`, and `PATH`) should be modified to
-    include NVSHMEM. The default is True.
-
-    gdrcopy: Flag to specify the path to the GDRCOPY installation.
-    The default is empty.
-
-    ldconfig: Boolean flag to specify whether the NVSHMEM library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the NVSHMEM library
-    directory. The default value is False.
-
-    mpi: Flag to enable MPI support.  If True, enables MPI and relies
-    on CMake's FindMPI to locate the installation.  If a string, uses
-    the value as the MPI installation path (MPI_HOME).  If False,
-    MPI support is explicitly disabled.  The default is True, matching
-    the upstream NVSHMEM CMake default.
-
-    ospackages: List of OS packages to install prior to building.  The
-    default values are `make` and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/nvshmem`.
-
-    shmem: Flag to specify the path to the SHMEM installation.  The
-    default is empty, i.e., do not build NVSHMEM with SHMEM support.
-
-    version: The version of NVSHMEM source to download.  The default
-    value is `3.7.2-0`.
-
-    # Examples
-
-    ```python
-    nvshmem(mpi='/usr/local/nvshmem', version='3.7.2-0')
-    ```
+    Examples:
+        ```python
+        nvshmem(mpi='/usr/local/nvshmem', version='3.7.2-0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(nvshmem, self).__init__(**kwargs)
         # First NVSHMEM version published as a GitHub release tarball
@@ -210,13 +196,12 @@ class nvshmem(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        n = nvshmem(...)
-        Stage0 += n
-        Stage1 += n.runtime()
-        ```
+        Examples:
+            ```python
+            n = nvshmem(...)
+            Stage0 += n
+            Stage1 += n.runtime()
+            ```
         """
         self.rt += comment('NVSHMEM')
         self.rt += self.__bb.runtime(_from=_from)

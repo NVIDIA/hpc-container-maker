@@ -45,132 +45,114 @@ class intel_psxe(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     You must agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement)
     to use this building block.
 
-    # Parameters
+    Args:
+        components: List of Intel Parallel Studio XE components to
+            install.  The default values is `DEFAULTS`.  If only the Intel C++
+            and Fortran compilers are desired, then use `intel-icc__x86_64`
+            and `intel-ifort__x86_64`.  Please note that the values are not
+            consistent between versions; for a list of components, extract
+            `pset/mediaconfig.xml` from the tarball and grep for `Abbr`.
+        daal: Boolean flag to specify whether the Intel Data Analytics
+            Acceleration Library environment should be configured when
+            `psxevars` is False.  This flag also controls whether to install
+            the corresponding runtime in the `runtime` method.  Note: this
+            flag does not control whether the developer environment is
+            installed; see `components`.  The default is True.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
+            include Intel Parallel Studio XE. `psxevars` has precedence. The
+            default is True.
+        eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
+            The default value is `False`.
+        icc: Boolean flag to specify whether the Intel C++ Compiler
+            environment should be configured when `psxevars` is False.  This
+            flag also controls whether to install the corresponding runtime in
+            the `runtime` method.  Note: this flag does not control whether
+            the developer environment is installed; see `components`.  The
+            default is True.
+        ifort: Boolean flag to specify whether the Intel Fortran Compiler
+            environment should be configured when `psxevars` is False.  This
+            flag also controls whether to install the corresponding runtime in
+            the `runtime` method.  Note: this flag does not control whether
+            the developer environment is installed; see `components`.  The
+            default is True.
+        ipp: Boolean flag to specify whether the Intel Integrated
+            Performance Primitives environment should be configured when
+            `psxevars` is False.  This flag also controls whether to install
+            the corresponding runtime in the `runtime` method.  Note: this
+            flag does not control whether the developer environment is
+            installed; see `components`.  The default is True.
+        license: The license to use to activate Intel Parallel Studio XE.
+            If the string contains a `@` the license is interpreted as a
+            network license, e.g., `12345@lic-server`.  Otherwise, the string
+            is interpreted as the path to the license file relative to the
+            local build context.  The default value is empty.  While this
+            value is not required, the installation is unlikely to be
+            successful without a valid license.
+        mkl: Boolean flag to specify whether the Intel Math Kernel Library
+            environment should be configured when `psxevars` is False.  This
+            flag also controls whether to install the corresponding runtime in
+            the `runtime` method.  Note: this flag does not control whether
+            the developer environment is installed; see `components`.  The
+            default is True.
+        mpi: Boolean flag to specify whether the Intel MPI Library
+            environment should be configured when `psxevars` is False.  This
+            flag also controls whether to install the corresponding runtime in
+            the `runtime` method.  Note: this flag does not control whether
+            the developer environment is installed; see `components`.  The
+            default is True.
+        ospackages: List of OS packages to install prior to installing
+            Intel MPI.  For Ubuntu, the default values are `build-essential`
+            and `cpio`.  For RHEL-based Linux distributions, the default
+            values are `gcc`, `gcc-c++`, `make`, and `which`.
+        prefix: The top level install location.  The default value is
+            `/opt/intel`.
+        psxevars: Intel Parallel Studio XE provides an environment script
+            (`compilervars.sh`) to setup the environment.  If this value is
+            `True`, the bashrc is modified to automatically source this
+            environment script.  However, the Intel runtime environment is not
+            automatically available to subsequent container image build steps;
+            the environment is available when the container image is run.  To
+            set the Intel Parallel Studio XE environment in subsequent build
+            steps you can explicitly call `source
+            /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh
+            intel64` in each build step.  If this value is to set `False`,
+            then the environment is set such that the environment is visible
+            to both subsequent container image build steps and when the
+            container image is run.  However, the environment may differ
+            slightly from that set by `compilervars.sh`. This option will be
+            used with the `runtime` method. The default value is
+            `True`.
+        runtime_version: The version of Intel Parallel Studio XE runtime
+            to install via the `runtime` method.  The runtime is installed
+            using the [intel_psxe_runtime](#intel_psxe_runtime) building
+            block.  This value is passed as its `version` parameter.  In
+            general, the major version of the runtime should correspond to the
+            tarball version.  The default value is `2020.2-14`.
+        tarball: Path to the Intel Parallel Studio XE tarball relative to
+            the local build context.  The default value is empty.  This
+            parameter is required.
+        tbb: Boolean flag to specify whether the Intel Threading Building
+            Blocks environment should be configured when `psxevars` is False.
+            This flag also controls whether to install the corresponding
+            runtime in the `runtime` method.  Note: this flag does not control
+            whether the developer environment is installed; see `components`.
+            The default is True.
 
-    components: List of Intel Parallel Studio XE components to
-    install.  The default values is `DEFAULTS`.  If only the Intel C++
-    and Fortran compilers are desired, then use `intel-icc__x86_64`
-    and `intel-ifort__x86_64`.  Please note that the values are not
-    consistent between versions; for a list of components, extract
-    `pset/mediaconfig.xml` from the tarball and grep for `Abbr`.
+    Examples:
+        ```python
+        intel_psxe(eula=True, license='XXXXXXXX.lic',
+                   tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
+        ```
 
-    daal: Boolean flag to specify whether the Intel Data Analytics
-    Acceleration Library environment should be configured when
-    `psxevars` is False.  This flag also controls whether to install
-    the corresponding runtime in the `runtime` method.  Note: this
-    flag does not control whether the developer environment is
-    installed; see `components`.  The default is True.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH`, `PATH`, and others) should be modified to
-    include Intel Parallel Studio XE. `psxevars` has precedence. The
-    default is True.
-
-    eula: By setting this value to `True`, you agree to the [Intel End User License Agreement](https://software.intel.com/en-us/articles/end-user-license-agreement).
-    The default value is `False`.
-
-    icc: Boolean flag to specify whether the Intel C++ Compiler
-    environment should be configured when `psxevars` is False.  This
-    flag also controls whether to install the corresponding runtime in
-    the `runtime` method.  Note: this flag does not control whether
-    the developer environment is installed; see `components`.  The
-    default is True.
-
-    ifort: Boolean flag to specify whether the Intel Fortran Compiler
-    environment should be configured when `psxevars` is False.  This
-    flag also controls whether to install the corresponding runtime in
-    the `runtime` method.  Note: this flag does not control whether
-    the developer environment is installed; see `components`.  The
-    default is True.
-
-    ipp: Boolean flag to specify whether the Intel Integrated
-    Performance Primitives environment should be configured when
-    `psxevars` is False.  This flag also controls whether to install
-    the corresponding runtime in the `runtime` method.  Note: this
-    flag does not control whether the developer environment is
-    installed; see `components`.  The default is True.
-
-    license: The license to use to activate Intel Parallel Studio XE.
-    If the string contains a `@` the license is interpreted as a
-    network license, e.g., `12345@lic-server`.  Otherwise, the string
-    is interpreted as the path to the license file relative to the
-    local build context.  The default value is empty.  While this
-    value is not required, the installation is unlikely to be
-    successful without a valid license.
-
-    mkl: Boolean flag to specify whether the Intel Math Kernel Library
-    environment should be configured when `psxevars` is False.  This
-    flag also controls whether to install the corresponding runtime in
-    the `runtime` method.  Note: this flag does not control whether
-    the developer environment is installed; see `components`.  The
-    default is True.
-
-    mpi: Boolean flag to specify whether the Intel MPI Library
-    environment should be configured when `psxevars` is False.  This
-    flag also controls whether to install the corresponding runtime in
-    the `runtime` method.  Note: this flag does not control whether
-    the developer environment is installed; see `components`.  The
-    default is True.
-
-    ospackages: List of OS packages to install prior to installing
-    Intel MPI.  For Ubuntu, the default values are `build-essential`
-    and `cpio`.  For RHEL-based Linux distributions, the default
-    values are `gcc`, `gcc-c++`, `make`, and `which`.
-
-    prefix: The top level install location.  The default value is
-    `/opt/intel`.
-
-    psxevars: Intel Parallel Studio XE provides an environment script
-    (`compilervars.sh`) to setup the environment.  If this value is
-    `True`, the bashrc is modified to automatically source this
-    environment script.  However, the Intel runtime environment is not
-    automatically available to subsequent container image build steps;
-    the environment is available when the container image is run.  To
-    set the Intel Parallel Studio XE environment in subsequent build
-    steps you can explicitly call `source
-    /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh
-    intel64` in each build step.  If this value is to set `False`,
-    then the environment is set such that the environment is visible
-    to both subsequent container image build steps and when the
-    container image is run.  However, the environment may differ
-    slightly from that set by `compilervars.sh`. This option will be
-    used with the `runtime` method. The default value is
-    `True`.
-
-    runtime_version: The version of Intel Parallel Studio XE runtime
-    to install via the `runtime` method.  The runtime is installed
-    using the [intel_psxe_runtime](#intel_psxe_runtime) building
-    block.  This value is passed as its `version` parameter.  In
-    general, the major version of the runtime should correspond to the
-    tarball version.  The default value is `2020.2-14`.
-
-    tarball: Path to the Intel Parallel Studio XE tarball relative to
-    the local build context.  The default value is empty.  This
-    parameter is required.
-
-    tbb: Boolean flag to specify whether the Intel Threading Building
-    Blocks environment should be configured when `psxevars` is False.
-    This flag also controls whether to install the corresponding
-    runtime in the `runtime` method.  Note: this flag does not control
-    whether the developer environment is installed; see `components`.
-    The default is True.
-
-    # Examples
-
-    ```python
-    intel_psxe(eula=True, license='XXXXXXXX.lic',
-               tarball='parallel_studio_xe_2018_update1_professional_edition.tgz')
-    ```
-
-    ```python
-    i = intel_psxe(...)
-    openmpi(..., toolchain=i.toolchain, ...)
-    ```
+        ```python
+        i = intel_psxe(...)
+        openmpi(..., toolchain=i.toolchain, ...)
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(intel_psxe, self).__init__(**kwargs)
 

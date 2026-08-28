@@ -39,52 +39,43 @@ class multi_ofed(bb_base, hpccm.templates.annotate):
     refer to the [`mlnx_ofed`](#mlnx_ofed) and [`ofed`](#ofed)
     building blocks for more information.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        inbox: Boolean flag to specify whether to install the 'inbox' OFED
+            distributed by the Linux distribution.  The default is True.
+        mlnx_oslabel: The Linux distribution label assigned by Mellanox to
+            the tarball. Please see the corresponding
+            [`mlnx_ofed`](#mlnx_ofed) parameter for more information.
+        mlnx_packages: List of packages to install from Mellanox
+            OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
+            parameter for more information.
+        mlnx_versions: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
+            versions to install.  The default values are `3.4-2.0.0.0`,
+            `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
+            `4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`,
+            `5.0-2.1.8.0`, and `5.1-2.3.7.1`.
+        ospackages: List of OS packages to install prior to installing
+            OFED.  For Ubuntu, the default values are `libnl-3-200`,
+            `libnl-route-3-200`, and `libnuma1`.  For RHEL-based Linux
+            distributions, the default values are `libnl`, `libnl3`, and
+            `numactl-libs`.
+        prefix: The top level install location.  The OFED packages will be
+            extracted to this location as subdirectories named for the
+            respective Mellanox OFED version, or `inbox` for the 'inbox'
+            OFED. The environment must be manually configured to recognize the
+            desired OFED location, e.g., in the container entry point. The
+            default value is `/usr/local/ofed`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    inbox: Boolean flag to specify whether to install the 'inbox' OFED
-    distributed by the Linux distribution.  The default is True.
-
-    mlnx_oslabel: The Linux distribution label assigned by Mellanox to
-    the tarball. Please see the corresponding
-    [`mlnx_ofed`](#mlnx_ofed) parameter for more information.
-
-    mlnx_packages: List of packages to install from Mellanox
-    OFED. Please see the corresponding [`mlnx_ofed`](#mlnx_ofed)
-    parameter for more information.
-
-    mlnx_versions: A list of [Mellanox OpenFabrics Enterprise Distribution for Linux](http://www.mellanox.com/page/products_dyn?product_family=26)
-    versions to install.  The default values are `3.4-2.0.0.0`,
-    `4.0-2.0.0.1`, `4.1-1.0.2.0`, `4.2-1.2.0.0`, `4.3-1.0.1.0`,
-    `4.4-1.0.0.0`, `4.5-1.0.1.0`, `4.6-1.0.1.1`, `4.7-3.2.9.0`, 
-    `5.0-2.1.8.0`, and `5.1-2.3.7.1`.
-
-    ospackages: List of OS packages to install prior to installing
-    OFED.  For Ubuntu, the default values are `libnl-3-200`,
-    `libnl-route-3-200`, and `libnuma1`.  For RHEL-based Linux
-    distributions, the default values are `libnl`, `libnl3`, and
-    `numactl-libs`.
-
-    prefix: The top level install location.  The OFED packages will be
-    extracted to this location as subdirectories named for the
-    respective Mellanox OFED version, or `inbox` for the 'inbox'
-    OFED. The environment must be manually configured to recognize the
-    desired OFED location, e.g., in the container entry point. The
-    default value is `/usr/local/ofed`.
-
-    # Examples
-
-    ```python
-    multi_ofed(inbox=True, mlnx_versions=['4.5-1.0.1.0', '4.6-1.0.1.1'],
-               prefix='/usr/local/ofed')
-    ```
+    Examples:
+        ```python
+        multi_ofed(inbox=True, mlnx_versions=['4.5-1.0.1.0', '4.6-1.0.1.1'],
+                   prefix='/usr/local/ofed')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(multi_ofed, self).__init__(**kwargs)
 

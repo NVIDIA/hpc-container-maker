@@ -30,18 +30,14 @@ class Stage(object):
     Docker may have one or more stages,
        Singularity will always have a single stage.
 
-    # Parameters
-
-    name: Name to use when refering to the stage (Docker specific).
-    The default is an empty string.
-
-    separator: Separator to insert between stages.  The default is
-    '\\n\\n'.
-
+    Args:
+        name: Name to use when refering to the stage (Docker specific).
+            The default is an empty string.
+        separator: Separator to insert between stages.  The default is
+            '\\n\\n'.
     """
 
     def __init__(self, **kwargs):
-        """Initialize stage"""
 
         self.__layers = []
         self.name = kwargs.get('name', '')
@@ -73,13 +69,11 @@ class Stage(object):
     def baseimage(self, image, _distro=''):
         """Insert the baseimage as the first layer
 
-        # Arguments
-
-        image (string): The image identifier to use as the base image.
-        The value is passed to the `baseimage` primitive.
-
-        _distro: The underlying Linux distribution of the base image.
-        The value is passed to the `baseimage` primitive.
+        Args:
+            image (string): The image identifier to use as the base image.
+                The value is passed to the `baseimage` primitive.
+            _distro: The underlying Linux distribution of the base image.
+                The value is passed to the `baseimage` primitive.
         """
         if image:
             self.__layers.insert(0, baseimage(image=image, _as=self.name,
@@ -93,25 +87,23 @@ class Stage(object):
         the stage.  If a layer does not have a runtime() method, then
         it is skipped.
 
-        # Arguments
+        Args:
+            _from: The name of the stage from which to copy the runtime.
+                The default is `0`.
+            exclude: List of building blocks to exclude when generating
+                the runtime. The default is an empty list.
 
-        _from: The name of the stage from which to copy the runtime.
-        The default is `0`.
-
-        exclude: List of building blocks to exclude when generating
-        the runtime. The default is an empty list.
-
-        # Examples
-        ```python
-        Stage0 += baseimage(image='nvidia/cuda:9.0-devel')
-        Stage0 += gnu()
-        Stage0 += boost()
-        Stage0 += ofed()
-        Stage0 += openmpi()
-        ...
-        Stage1 += baseimage(image='nvidia/cuda:9.0-base')
-        Stage1 += Stage0.runtime(exclude=['boost'])
-        ```
+        Examples:
+            ```python
+            Stage0 += baseimage(image='nvidia/cuda:9.0-devel')
+            Stage0 += gnu()
+            Stage0 += boost()
+            Stage0 += ofed()
+            Stage0 += openmpi()
+            ...
+            Stage1 += baseimage(image='nvidia/cuda:9.0-base')
+            Stage1 += Stage0.runtime(exclude=['boost'])
+            ```
 
         """
 

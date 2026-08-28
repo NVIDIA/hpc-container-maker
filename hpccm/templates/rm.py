@@ -25,7 +25,6 @@ class rm(hpccm.base_object):
     """Template for cleaning up files and directories"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         super(rm, self).__init__(**kwargs)
 

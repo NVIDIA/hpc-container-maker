@@ -32,20 +32,17 @@ class raw(object):
     Wherever possible, the raw primitive should be avoided and other,
     more portable, primitives should be used instead.
 
-    # Parameters
+    Args:
+        docker: String containing the Dockerfile instruction (Docker
+            specific).
+        singularity: String containing the Singularity instruction
+            (Singularity specific).
 
-    docker: String containing the Dockerfile instruction (Docker
-    specific).
-
-    singularity: String containing the Singularity instruction
-    (Singularity specific).
-
-    # Examples
-
-    ```python
-    raw(docker='COPY --from=0 /usr/local/openmpi /usr/local/openmpi',
-        singularity='# no equivalent to --from')
-    ```
+    Examples:
+        ```python
+        raw(docker='COPY --from=0 /usr/local/openmpi /usr/local/openmpi',
+            singularity='# no equivalent to --from')
+        ```
 
     """
 

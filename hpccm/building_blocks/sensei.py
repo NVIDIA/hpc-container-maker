@@ -39,67 +39,55 @@ class sensei(bb_base, hpccm.templates.git):
     [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
     recommended.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        branch: The branch of SENSEI to use.  The default value is
+            `v2.1.1`.
+        catalyst: Flag to specify the location of the ParaView/Catalyst
+            installation, e.g., `/usr/local/catalyst`.  If set, then the
+            [Catalyst](#catalyst) building block should be installed prior to
+            this building block.  The default value is empty.
+        cmake_opts: List of options to pass to `cmake`.  The default value
+            is `-DENABLE_SENSEI=ON`.
+        libsim: Flag to specify the location of the VisIt/Libsim
+            installation, e.g., `/usr/local/visit`.  If set, then the
+            [Libsim](#libsim) building block should be installed prior to this
+            building block.  The `vtk` option should also be set.  The default
+            value is empty.
+        miniapps: Boolean flag to specify whether the SENSEI mini-apps
+            should be built and installed.  The default is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `ca-certificates`, `git`,
+            and `make`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/sensei`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        vtk: Flag to specify the location of the VTK installation.  If
+            `libsim` is defined, this option must be set to the Libsim VTK
+            location, e.g.,
+            `/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. Note
+            that the compiler version is embedded in the Libsim VTK path.  The
+            compiler version may differ depending on which base image is used;
+            version 5.4 corresponds to Ubuntu 16.04. The default value is
+            empty.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        sensei(branch='v2.1.1', catalyst='/usr/local/catalyst',
+               prefix='/opt/sensei')
+        ```
 
-    branch: The branch of SENSEI to use.  The default value is
-    `v2.1.1`.
-
-    catalyst: Flag to specify the location of the ParaView/Catalyst
-    installation, e.g., `/usr/local/catalyst`.  If set, then the
-    [Catalyst](#catalyst) building block should be installed prior to
-    this building block.  The default value is empty.
-
-    cmake_opts: List of options to pass to `cmake`.  The default value
-    is `-DENABLE_SENSEI=ON`.
-
-    libsim: Flag to specify the location of the VisIt/Libsim
-    installation, e.g., `/usr/local/visit`.  If set, then the
-    [Libsim](#libsim) building block should be installed prior to this
-    building block.  The `vtk` option should also be set.  The default
-    value is empty.
-
-    miniapps: Boolean flag to specify whether the SENSEI mini-apps
-    should be built and installed.  The default is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `ca-certificates`, `git`,
-    and `make`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/sensei`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    vtk: Flag to specify the location of the VTK installation.  If
-    `libsim` is defined, this option must be set to the Libsim VTK
-    location, e.g.,
-    `/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1`. Note
-    that the compiler version is embedded in the Libsim VTK path.  The
-    compiler version may differ depending on which base image is used;
-    version 5.4 corresponds to Ubuntu 16.04. The default value is
-    empty.
-
-    # Examples
-
-    ```python
-    sensei(branch='v2.1.1', catalyst='/usr/local/catalyst',
-           prefix='/opt/sensei')
-    ```
-
-    ```python
-    sensei(libsim='/usr/local/visit',
-           vtk='/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1')
-    ```
+        ```python
+        sensei(libsim='/usr/local/visit',
+               vtk='/usr/local/visit/third-party/vtk/6.1.0/linux-x86_64_gcc-5.4/lib/cmake/vtk-6.1')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(sensei, self).__init__(**kwargs)
 
@@ -158,12 +146,12 @@ class sensei(bb_base, hpccm.templates.git):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-        ```python
-        s = sensei(...)
-        Stage0 += s
-        Stage1 += s.runtime()
-        ```
+        Examples:
+            ```python
+            s = sensei(...)
+            Stage0 += s
+            Stage1 += s.runtime()
+            ```
         """
         self.rt += comment('SENSEI')
         self.rt += self.__bb.runtime(_from=_from)

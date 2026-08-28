@@ -37,21 +37,15 @@ def include(recipe_file, _globals=None, _locals=None, prepend_path=True,
             raise_exceptions=False):
     """Include a recipe file
 
-    # Arguments
-
-    recipe_file: path to a recipe file (required)
-
-    _globals: a dictionary representing the global symbol table
-
-    _locals: a dictionary representing the local symbol table
-
-    prepend_path: If True, prepend the path of the main recipe to the
-    recipe_file. If the recipe_file is an absolute path, then the path
-    is not prepended regardless of the value of this parameter.
-
-    raise_exceptions: If False, do not print stack traces when an
-    exception is raised.  The default value is False.
-
+    Args:
+        recipe_file: path to a recipe file (required)
+        _globals: a dictionary representing the global symbol table
+        _locals: a dictionary representing the local symbol table
+        prepend_path: If True, prepend the path of the main recipe to the
+            recipe_file. If the recipe_file is an absolute path, then the path
+            is not prepended regardless of the value of this parameter.
+        raise_exceptions: If False, do not print stack traces when an
+            exception is raised.  The default value is False.
     """
 
     if _locals is None:
@@ -90,38 +84,28 @@ def recipe(recipe_file, cpu_target=None, ctype=container_type.DOCKER,
            singularity_tmp_fallback=True):
     """Recipe builder
 
-    # Arguments
-
-    recipe_file: path to a recipe file (required).
-
-    cpu_target: A CPU microarchitecture string recognized by archspec.
-
-    ctype: Enum representing the container specification format.  The
-    default is `container_type.DOCKER`.
-
-    raise_exceptions: If False, do not print stack traces when an
-    exception is raised.  The default value is False.
-
-    single_stage: If True, only print the first stage of a multi-stage
-    recipe.  The default is False.
-
-    singularity_version: Version of the Singularity definition file
-    format to use.  Multi-stage support was added in version 3.2, but
-    the changes are incompatible with earlier versions of Singularity.
-    The default is '2.6'.
-
-    userarg: A dictionary of key / value pairs provided to the recipe
-    as the `USERARG` dictionary.
-
-    working_directory: path to use as the working directory in the
-    container specification
-
-    singularity_tmp_fallback: If True (default), automatically handle
-    copy destinations under /tmp or /var/tmp using a %setup block when
-    targeting Singularity >= 3.6. If False, such copy operations are
-    rejected and will raise an error, requiring the user to modify the
-    recipe.
-
+    Args:
+        recipe_file: path to a recipe file (required).
+        cpu_target: A CPU microarchitecture string recognized by archspec.
+        ctype: Enum representing the container specification format.  The
+            default is `container_type.DOCKER`.
+        raise_exceptions: If False, do not print stack traces when an
+            exception is raised.  The default value is False.
+        single_stage: If True, only print the first stage of a multi-stage
+            recipe.  The default is False.
+        singularity_version: Version of the Singularity definition file
+            format to use.  Multi-stage support was added in version 3.2, but
+            the changes are incompatible with earlier versions of Singularity.
+            The default is '2.6'.
+        userarg: A dictionary of key / value pairs provided to the recipe
+            as the `USERARG` dictionary.
+        working_directory: path to use as the working directory in the
+            container specification
+        singularity_tmp_fallback: If True (default), automatically handle
+            copy destinations under /tmp or /var/tmp using a %setup block when
+            targeting Singularity >= 3.6. If False, such copy operations are
+            rejected and will raise an error, requiring the user to modify the
+            recipe.
     """
 
     # Make user arguments available
