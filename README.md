@@ -32,6 +32,23 @@ distinct advantages over "native" container specification formats.
 3. Generate either Dockerfiles or Singularity definition files from
    the same recipe.
 
+## Development
+
+### Generating the Documentation
+
+Prerequisites:
+- Python3
+- `mkdocs`, available via `pip install`
+
+Build the site by running:
+
+```sh
+mkdocs serve
+```
+
+See the generated site at `http://localhost:8080/`.
+
+
 ## Additional Resources
 
 - [Making Containers Easier With HPC Container Maker (paper)](https://github.com/HPCSYSPROS/Workshop18/blob/master/Making_Containers_Easier_with_HPC_Container_Maker/ws_hpcsysp103.pdf), presented at the [HPC Systems Professionals Workshop at SC18](/docs/citation.md)
