@@ -26,7 +26,7 @@ HPC Container Maker generates Dockerfiles or Singularity definition
 files from a high level Python recipe.  HPCCM recipes have some
 distinct advantages over "native" container specification formats.
 
-1. A library of HPC [building blocks](/docs/building_blocks.md) that
+1. A library of HPC [building blocks](https://nvidia.github.io/hpc-container-maker/api/hpccm/building_blocks/) that
    separate the choice of what to include in a container image from
    the details of how it's done.  The building blocks transparently
    provide the latest component and container best practices.
