@@ -33,68 +33,54 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     library from the [XPMEM](https://github.com/hjelmn/xpmem)
     component.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        branch: The branch of XPMEM to use.  The default value is
+            `master`.
+        configure_opts: List of options to pass to `configure`.  The
+            default values are `--disable-kernel-module`.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
+            to include XPMEM. The default is True.
+        ldconfig: Boolean flag to specify whether the XPMEM library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the XPMEM library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default value are `autoconf`, `automake`,
+            `ca-certificates`, `file, `git`, `libtool`, and `make`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/xpmem`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    branch: The branch of XPMEM to use.  The default value is
-    `master`.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default values are `--disable-kernel-module`.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH` and `LIBRARY_PATH`) should be modified
-    to include XPMEM. The default is True.
-
-    ldconfig: Boolean flag to specify whether the XPMEM library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the XPMEM library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default value are `autoconf`, `automake`,
-    `ca-certificates`, `file, `git`, `libtool`, and `make`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/xpmem`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    xpmem(prefix='/opt/xpmem', branch='master')
-    ```
+    Examples:
+        ```python
+        xpmem(prefix='/opt/xpmem', branch='master')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(xpmem, self).__init__(**kwargs)
 
@@ -140,13 +126,12 @@ class xpmem(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        x = xpmem(...)
-        Stage0 += x
-        Stage1 += x.runtime()
-        ```
+        Examples:
+            ```python
+            x = xpmem(...)
+            Stage0 += x
+            Stage1 += x.runtime()
+            ```
         """
         self.rt += comment('XPMEM')
         self.rt += self.__bb.runtime(_from=_from)

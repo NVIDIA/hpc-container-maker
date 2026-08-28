@@ -66,75 +66,62 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     several issues, including compiler version mismatches and libnuma
     incompatibilities.
 
-    # Parameters
+    Args:
+        arch: The processor architecture of the MVAPICH2-GDR package.  The
+            default value is set automatically based on the processor
+            architecture of the base image.
+        cuda_version: The version of CUDA the MVAPICH2-GDR package was
+            built against.  The version string format is X.Y.  The version
+            should match the version of CUDA provided by the base image.  This
+            value is ignored if `package` is set.  The default value is `10.2`.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            MVAPICH2-GDR. The default is True.
+        gnu: Boolean flag to specify whether a GNU build should be used.
+            The default value is True.
+        ldconfig: Boolean flag to specify whether the MVAPICH2-GDR library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the MVAPICH2-GDR library
+            directory. The default value is False.
+        mlnx_ofed_version: The version of Mellanox OFED the
+            MVAPICH2-GDR package was built against.  The version string format
+            is X.Y.  The version should match the version of Mellanox OFED
+            installed by the `mlnx_ofed` building block.  This value is
+            ignored if `package` is set.  The default value is `4.7`.
+        ospackages: List of OS packages to install prior to installation.
+            For Ubuntu, the default values are `cpio`, `libnuma1`,
+            `openssh-client`, `rpm2cpio` and `wget`, plus `libgfortran3` if a
+            GNU compiled package is selected.  For RHEL-based Linux
+            distributions, the default values are `libpciaccess`,
+            `numactl-libs`, `openssh-clients`, and `wget`, plus `libgfortran`
+            if a GNU compiled package is selected.
+        package: Specify the package name to download.  The package should
+            correspond to the other recipe components (e.g., compiler version,
+            CUDA version, Mellanox OFED version).  If specified, this option
+            overrides all other building block options (e.g., compiler family,
+            compiler version, CUDA version, Mellanox OFED version,
+            MVAPICH2-GDR version).
+        pgi: Boolean flag to specify whether a PGI build should be used.
+            The default value is False.
+        release: The release of MVAPICH2-GDR to download.  The value is
+            ignored is `package` is set.  The default value is `1`.
+        version: The version of MVAPICH2-GDR to download.  The value is
+            ignored if `package` is set.  The default value is `2.3.4`.  Due
+            to differences in the packaging scheme, versions prior to 2.3 are
+            not supported.
 
-    arch: The processor architecture of the MVAPICH2-GDR package.  The
-    default value is set automatically based on the processor
-    architecture of the base image.
+    Examples:
+        ```python
+        mvapich2_gdr(version='2.3.1')
+        ```
 
-    cuda_version: The version of CUDA the MVAPICH2-GDR package was
-    built against.  The version string format is X.Y.  The version
-    should match the version of CUDA provided by the base image.  This
-    value is ignored if `package` is set.  The default value is `10.2`.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    MVAPICH2-GDR. The default is True.
-
-    gnu: Boolean flag to specify whether a GNU build should be used.
-    The default value is True.
-
-    ldconfig: Boolean flag to specify whether the MVAPICH2-GDR library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the MVAPICH2-GDR library
-    directory. The default value is False.
-
-    mlnx_ofed_version: The version of Mellanox OFED the
-    MVAPICH2-GDR package was built against.  The version string format
-    is X.Y.  The version should match the version of Mellanox OFED
-    installed by the `mlnx_ofed` building block.  This value is
-    ignored if `package` is set.  The default value is `4.7`.
-
-    ospackages: List of OS packages to install prior to installation.
-    For Ubuntu, the default values are `cpio`, `libnuma1`,
-    `openssh-client`, `rpm2cpio` and `wget`, plus `libgfortran3` if a
-    GNU compiled package is selected.  For RHEL-based Linux
-    distributions, the default values are `libpciaccess`,
-    `numactl-libs`, `openssh-clients`, and `wget`, plus `libgfortran`
-    if a GNU compiled package is selected.
-
-    package: Specify the package name to download.  The package should
-    correspond to the other recipe components (e.g., compiler version,
-    CUDA version, Mellanox OFED version).  If specified, this option
-    overrides all other building block options (e.g., compiler family,
-    compiler version, CUDA version, Mellanox OFED version,
-    MVAPICH2-GDR version).
-
-    pgi: Boolean flag to specify whether a PGI build should be used.
-    The default value is False.
-
-    release: The release of MVAPICH2-GDR to download.  The value is
-    ignored is `package` is set.  The default value is `1`.
-
-    version: The version of MVAPICH2-GDR to download.  The value is
-    ignored if `package` is set.  The default value is `2.3.4`.  Due
-    to differences in the packaging scheme, versions prior to 2.3 are
-    not supported.
-
-    # Examples
-
-    ```python
-    mvapich2_gdr(version='2.3.1')
-    ```
-
-    ```python
-    mvapich2_gdr(package='mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm')
-    ```
+        ```python
+        mvapich2_gdr(package='mvapich2-gdr-mcast.cuda10.0.mofed4.3.gnu4.8.5-2.3-1.el7.x86_64.rpm')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(mvapich2_gdr, self).__init__(**kwargs)
 
@@ -298,13 +285,12 @@ class mvapich2_gdr(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        m = mvapich2_gdr(...)
-        Stage0 += m
-        Stage1 += m.runtime()
-        ```
+        Examples:
+            ```python
+            m = mvapich2_gdr(...)
+            Stage0 += m
+            Stage1 += m.runtime()
+            ```
         """
         self.rt += comment('MVAPICH2-GDR')
         self.rt += packages(ospackages=self.__runtime_ospackages)

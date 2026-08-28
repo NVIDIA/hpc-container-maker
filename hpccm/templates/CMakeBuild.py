@@ -28,7 +28,6 @@ class CMakeBuild(hpccm.base_object):
     """Template for cmake workflows"""
 
     def __init__(self, **kwargs):
-        """Initialize CMakeBuild template"""
 
         super(CMakeBuild, self).__init__(**kwargs)
 

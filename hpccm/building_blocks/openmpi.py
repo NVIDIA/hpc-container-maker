@@ -42,142 +42,118 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     compiler wrappers.  The tool can be passed to other operations
     that want to build using the MPI compiler wrappers.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        check: Boolean flag to specify whether the `make check` step
+            should be performed.  The default is False.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        configure_opts: List of options to pass to `configure`.  The
+            default values are `--disable-getpwuid` and
+            `--enable-orterun-prefix-by-default`.
+        cuda: Boolean flag to control whether a CUDA aware build is
+            performed.  If True, adds `--with-cuda` to the list of `configure`
+            options, otherwise adds `--without-cuda`.  If the toolchain
+            specifies `CUDA_HOME`, then that path is used.  The default value
+            is True.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            OpenMPI. The default is True.
+        infiniband: Boolean flag to control whether InfiniBand
+            capabilities are included.  If True, adds `--with-verbs` to the
+            list of `configure` options, otherwise adds `--without-verbs`.
+            The default value is True.
+        ldconfig: Boolean flag to specify whether the OpenMPI library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the OpenMPI library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `bzip2`, `file`,
+            `hwloc`, `libnuma-dev`, `make`, `openssh-client`, `perl`, `tar`,
+            and `wget`.  For RHEL-based Linux distributions, the default
+            values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
+            `openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
+            parameter is set, then `autoconf`, `automake`, `ca-certificates`,
+            `git`, and `libtool` are also included.
+        pmi: Flag to control whether PMI is used by the build.  If True,
+            adds `--with-pmi` to the list of `configure` options.  If a
+            string, uses the value of the string as the PMI path, e.g.,
+            `--with-pmi=/usr/local/slurm-pmi2`.  If False, does nothing.  The
+            default is False.
+        pmix: Flag to control whether PMIX is used by the build.  If True,
+            adds `--with-pmix` to the list of `configure` options.  If a
+            string, uses the value of the string as the PMIX path, e.g.,
+            `--with-pmix=/usr/local/pmix`.  If False, does nothing.  The
+            default is False.
+        prefix: The top level install location.  The default value is
+            `/usr/local/openmpi`.
+        repository: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
+            repository.  The default is empty, i.e., use the release package
+            specified by `version`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        ucx: Flag to control whether UCX is used by the build.  If True,
+            adds `--with-ucx` to the list of `configure` options.  If a
+            string, uses the value of the string as the UCX path, e.g.,
+            `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
+            list of `configure` options.  The default is False.
+        url: The location of the tarball that should be used to build
+            OpenMPI.  The default is empty, i.e., use the release package
+            specified by `version`.
+        version: The version of OpenMPI source to download.  This
+            value is ignored if `directory` is set.  The default value is
+            `4.0.5`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        openmpi(cuda=False, infiniband=False, prefix='/opt/openmpi/2.1.2',
+            version='2.1.2')
+        ```
 
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
+        ```python
+        openmpi(repository='https://github.com/open-mpi/ompi.git')
+        ```
 
-    check: Boolean flag to specify whether the `make check` step
-    should be performed.  The default is False.
+        ```python
+        n = nvhpc(eula=True)
+        openmpi(toolchain=n.toolchain)
+        ```
 
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
+        ```python
+        openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
+                ospackages=['file', 'hwloc', 'libslurm-dev'])
+        ```
 
-    configure_opts: List of options to pass to `configure`.  The
-    default values are `--disable-getpwuid` and
-    `--enable-orterun-prefix-by-default`.
-
-    cuda: Boolean flag to control whether a CUDA aware build is
-    performed.  If True, adds `--with-cuda` to the list of `configure`
-    options, otherwise adds `--without-cuda`.  If the toolchain
-    specifies `CUDA_HOME`, then that path is used.  The default value
-    is True.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    OpenMPI. The default is True.
-
-    infiniband: Boolean flag to control whether InfiniBand
-    capabilities are included.  If True, adds `--with-verbs` to the
-    list of `configure` options, otherwise adds `--without-verbs`.
-    The default value is True.
-
-    ldconfig: Boolean flag to specify whether the OpenMPI library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the OpenMPI library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `bzip2`, `file`,
-    `hwloc`, `libnuma-dev`, `make`, `openssh-client`, `perl`, `tar`,
-    and `wget`.  For RHEL-based Linux distributions, the default
-    values are `bzip2`, `file`, `hwloc`, `make`, `numactl-devl`,
-    `openssh-clients`, `perl`, `tar`, and `wget`.  If the `repository`
-    parameter is set, then `autoconf`, `automake`, `ca-certificates`,
-    `git`, and `libtool` are also included.
-
-    pmi: Flag to control whether PMI is used by the build.  If True,
-    adds `--with-pmi` to the list of `configure` options.  If a
-    string, uses the value of the string as the PMI path, e.g.,
-    `--with-pmi=/usr/local/slurm-pmi2`.  If False, does nothing.  The
-    default is False.
-
-    pmix: Flag to control whether PMIX is used by the build.  If True,
-    adds `--with-pmix` to the list of `configure` options.  If a
-    string, uses the value of the string as the PMIX path, e.g.,
-    `--with-pmix=/usr/local/pmix`.  If False, does nothing.  The
-    default is False.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/openmpi`.
-
-    repository: The location of the git repository that should be used to build OpenMPI.  If True, then use the default `https://github.com/open-mpi/ompi.git`
-    repository.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    ucx: Flag to control whether UCX is used by the build.  If True,
-    adds `--with-ucx` to the list of `configure` options.  If a
-    string, uses the value of the string as the UCX path, e.g.,
-    `--with-ucx=/path/to/ucx`.  If False, adds `--without-ucx` to the
-    list of `configure` options.  The default is False.
-
-    url: The location of the tarball that should be used to build
-    OpenMPI.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    version: The version of OpenMPI source to download.  This
-    value is ignored if `directory` is set.  The default value is
-    `4.0.5`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    openmpi(cuda=False, infiniband=False, prefix='/opt/openmpi/2.1.2',
-        version='2.1.2')
-    ```
-
-    ```python
-    openmpi(repository='https://github.com/open-mpi/ompi.git')
-    ```
-
-    ```python
-    n = nvhpc(eula=True)
-    openmpi(toolchain=n.toolchain)
-    ```
-
-    ```python
-    openmpi(configure_opts=['--disable-getpwuid', '--with-slurm'],
-            ospackages=['file', 'hwloc', 'libslurm-dev'])
-    ```
-
-    ```python
-    openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal')
-    ```
+        ```python
+        openmpi(pmi='/usr/local/slurm-pmi2', pmix='internal')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(openmpi, self).__init__(**kwargs)
 
@@ -365,12 +341,12 @@ class openmpi(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-        ```python
-        o = openmpi(...)
-        Stage0 += o
-        Stage1 += o.runtime()
-        ```
+        Examples:
+            ```python
+            o = openmpi(...)
+            Stage0 += o
+            Stage1 += o.runtime()
+            ```
         """
         self.rt += comment('OpenMPI')
         self.rt += packages(ospackages=self.__runtime_ospackages)

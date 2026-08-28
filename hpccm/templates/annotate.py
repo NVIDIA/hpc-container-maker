@@ -24,7 +24,6 @@ class annotate(hpccm.base_object):
     """Template for setting annotations"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         super(annotate, self).__init__(**kwargs)
 

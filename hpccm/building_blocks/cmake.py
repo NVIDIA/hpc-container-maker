@@ -40,44 +40,36 @@ class cmake(bb_base, hpccm.templates.rm, hpccm.templates.tar,
     """The `cmake` building block downloads and installs the
     [CMake](https://cmake.org) component.
 
-    # Parameters
+    Args:
+        bootstrap_opts: List of options to pass to `bootstrap` when
+            building from source.  The default is an empty list.
+        eula: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
+            The default value is `False`.
+        ospackages: List of OS packages to install prior to installing.
+            The default values are `make` and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local`.
+        source: Boolean flag to specify whether to build CMake from
+            source.  If True, includes the `libssl-dev` package in the list of
+            OS packages for Ubuntu, and `openssl-devel` for RHEL-based
+            distributions.  For x86_64 and aarch64 processors, the default is
+            False, i.e., use the available pre-compiled package.  For all
+            other processors, the default is True.
+        version: The version of CMake to download.  The default value is
+            `3.25.1`.
 
-    bootstrap_opts: List of options to pass to `bootstrap` when
-    building from source.  The default is an empty list.
+    Examples:
+        ```python
+        cmake(eula=True)
+        ```
 
-    eula: By setting this value to `True`, you agree to the [CMake End-User License Agreement](https://gitlab.kitware.com/cmake/cmake/raw/master/Copyright.txt).
-    The default value is `False`.
-
-    ospackages: List of OS packages to install prior to installing.
-    The default values are `make` and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local`.
-
-    source: Boolean flag to specify whether to build CMake from
-    source.  If True, includes the `libssl-dev` package in the list of
-    OS packages for Ubuntu, and `openssl-devel` for RHEL-based
-    distributions.  For x86_64 and aarch64 processors, the default is
-    False, i.e., use the available pre-compiled package.  For all
-    other processors, the default is True.
-
-    version: The version of CMake to download.  The default value is
-    `3.25.1`.
-
-    # Examples
-
-    ```python
-    cmake(eula=True)
-    ```
-
-    ```python
-    cmake(eula=True, version='3.10.3')
-    ```
+        ```python
+        cmake(eula=True, version='3.10.3')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(cmake, self).__init__(**kwargs)
 

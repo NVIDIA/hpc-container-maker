@@ -40,92 +40,70 @@ class generic_build(bb_base, hpccm.templates.annotate,
     """The `generic_build` building block downloads and builds
     a specified package.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        annotations: Dictionary of additional annotations to include.  The
+            default is an empty dictionary.
+        build: List of shell commands to run in order to build the
+            package.  The working directory is the source directory.  The
+            default is an empty list.
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        devel_environment: Dictionary of environment variables and values,
+            e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
+            stage after the package is built and installed.  The default is an
+            empty dictionary.
+        directory: The source code location.  The default value is the
+            basename of the downloaded package.  If the value is not an
+            absolute path, then the temporary working directory is prepended.
+        environment: Boolean flag to specify whether the environment
+            should be modified (see `devel_environment` and
+            `runtime_environment`).  The default is True.
+        install: List of shell commands to run in order to install the
+            package.  The working directory is the source directory.  If
+            `prefix` is defined, it will be automatically created if the list
+            is non-empty.  The default is an empty list.
+        ldconfig: Boolean flag to specify whether the library directory
+            should be added dynamic linker cache.  The default value is False.
+        libdir: The path relative to the install prefix to use when
+            configuring the dynamic linker cache.  The default value is `lib`.
+        package: Path to the local source package relative to the local
+            build context.  One of this parameter or the `repository` or `url`
+            parameters must be specified.
+        prefix: The top level install location.  The default value is
+            empty. If defined then the location is copied as part of the
+            runtime method.
+        recursive: Initialize and checkout git submodules. `repository` parameter
+            must be specified. The default is False.
+        repository: The git repository of the package to build.  One of
+            this parameter or the `package` or `url` parameters must be
+            specified.
+        _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
+        runtime: The list of files / directories to copy into the runtime
+            stage.  The default is an empty list, i.e., copy the entire
+            prefix.
+        runtime_environment: Dictionary of environment variables and
+            values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
+            stage.  The default is an empty dictionary.
+        unpack: Unpack the sources after downloading. Default is `True`.
+        url: The URL of the package to build.  One of this parameter or
+            the `package` or `repository` or parameters must be specified.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    annotations: Dictionary of additional annotations to include.  The
-    default is an empty dictionary.
-
-    build: List of shell commands to run in order to build the
-    package.  The working directory is the source directory.  The
-    default is an empty list.
-
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
-
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
-
-    devel_environment: Dictionary of environment variables and values,
-    e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the development
-    stage after the package is built and installed.  The default is an
-    empty dictionary.
-
-    directory: The source code location.  The default value is the
-    basename of the downloaded package.  If the value is not an
-    absolute path, then the temporary working directory is prepended.
-
-    environment: Boolean flag to specify whether the environment
-    should be modified (see `devel_environment` and
-    `runtime_environment`).  The default is True.
-
-    install: List of shell commands to run in order to install the
-    package.  The working directory is the source directory.  If
-    `prefix` is defined, it will be automatically created if the list
-    is non-empty.  The default is an empty list.
-
-    ldconfig: Boolean flag to specify whether the library directory
-    should be added dynamic linker cache.  The default value is False.
-
-    libdir: The path relative to the install prefix to use when
-    configuring the dynamic linker cache.  The default value is `lib`.
-
-    package: Path to the local source package relative to the local
-    build context.  One of this parameter or the `repository` or `url`
-    parameters must be specified.
-
-    prefix: The top level install location.  The default value is
-    empty. If defined then the location is copied as part of the
-    runtime method.
-
-    recursive: Initialize and checkout git submodules. `repository` parameter
-    must be specified. The default is False.
-
-    repository: The git repository of the package to build.  One of
-    this parameter or the `package` or `url` parameters must be
-    specified.
-
-    _run_arguments: Specify additional [Dockerfile RUN arguments](https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md) (Docker specific).
-
-    runtime: The list of files / directories to copy into the runtime
-    stage.  The default is an empty list, i.e., copy the entire
-    prefix.
-
-    runtime_environment: Dictionary of environment variables and
-    values, e.g., `LD_LIBRARY_PATH` and `PATH`, to set in the runtime
-    stage.  The default is an empty dictionary.
-
-    unpack: Unpack the sources after downloading. Default is `True`.
-
-    url: The URL of the package to build.  One of this parameter or
-    the `package` or `repository` or parameters must be specified.
-
-    # Examples
-
-    ```python
-    generic_build(build=['make ARCH=sm_70'],
-                  install=['cp stream /usr/local/bin/cuda-stream'],
-                  repository='https://github.com/bcumming/cuda-stream')
-    ```
+    Examples:
+        ```python
+        generic_build(build=['make ARCH=sm_70'],
+                      install=['cp stream /usr/local/bin/cuda-stream'],
+                      repository='https://github.com/bcumming/cuda-stream')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(generic_build, self).__init__(**kwargs)
 
@@ -226,13 +204,12 @@ class generic_build(bb_base, hpccm.templates.annotate,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        g = generic_build(...)
-        Stage0 += g
-        Stage1 += g.runtime()
-        ```
+        Examples:
+            ```python
+            g = generic_build(...)
+            Stage0 += g
+            Stage1 += g.runtime()
+            ```
         """
         if self.__prefix:
             if self.__comment:

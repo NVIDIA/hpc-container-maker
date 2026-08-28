@@ -23,7 +23,6 @@ class bb_instructions(hpccm.base_object):
     """Base class for building block instructions."""
 
     def __init__(self, **kwargs):
-        """Initialize building block instruction class"""
 
         super(bb_instructions, self).__init__(**kwargs)
 

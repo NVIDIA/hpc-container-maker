@@ -32,33 +32,27 @@ class python(bb_base):
     """The `python` building block installs Python from the upstream Linux
     distribution.
 
-    # Parameters
+    Args:
+        alternatives: Boolean flag to specify whether to configure alternatives for `python` and `python-config` (if `devel` is enabled).  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+        devel: Boolean flag to specify whether to also install the Python
+            development headers and libraries.  The default is False.
+        python2: Boolean flag to specify whether to install Python version
+            2.  The default is True.
+        python3: Boolean flag to specify whether to install Python version
+            3.  The default is True.
 
-    alternatives: Boolean flag to specify whether to configure alternatives for `python` and `python-config` (if `devel` is enabled).  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+    Examples:
+        ```python
+        python()
+        ```
 
-    devel: Boolean flag to specify whether to also install the Python
-    development headers and libraries.  The default is False.
-
-    python2: Boolean flag to specify whether to install Python version
-    2.  The default is True.
-
-    python3: Boolean flag to specify whether to install Python version
-    3.  The default is True.
-
-    # Examples
-
-    ```python
-    python()
-    ```
-
-    ```python
-    python(python3=False)
-    ```
+        ```python
+        python(python3=False)
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(python, self).__init__(**kwargs)
 
@@ -113,12 +107,11 @@ class python(bb_base):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        p = python(...)
-        Stage0 += p
-        Stage1 += p.runtime()
-        ```
+        Examples:
+            ```python
+            p = python(...)
+            Stage0 += p
+            Stage1 += p.runtime()
+            ```
         """
         return str(self)

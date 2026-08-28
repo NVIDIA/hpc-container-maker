@@ -30,7 +30,6 @@ class downloader(hpccm.base_object):
     """Template for downloading source code"""
 
     def __init__(self, **kwargs):
-        """Initialize template"""
 
         self.branch = kwargs.get('branch', None)
         self.commit = kwargs.get('commit', None)

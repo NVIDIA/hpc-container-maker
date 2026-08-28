@@ -30,49 +30,40 @@ from hpccm.primitives.shell import shell
 class baseimage(object):
     """The `baseimage` primitive defines the base image to be used.
 
-    # Parameters
+    Args:
+        _arch: The underlying CPU architecture of the base image.  Valid
+            values are `aarch64` and `x86_64`.  By default, the
+            primitive attemps to figure out the CPU architecture by inspecting
+            the image identifier, and falls back to system architecture if
+            unable to determine the CPU architecture automatically.
+        _as: Name for the stage.  When using Singularity multi-stage
+            recipes, this value must be specified.  The default value is
+            empty.
+        _bootstrap: The Singularity bootstrap agent.  This default value
+            is `docker` (Singularity specific).
+        _distro: The underlying Linux distribution of the base image.
+            Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
+            `rhel7`, `rhel8`, `rockylinux8`, `rockylinux9`, `rockylinux10`,
+            `ubuntu`, `ubuntu16`, `ubuntu18`, `ubuntu20`, `ubuntu22`, `ubuntu24`,
+            and `ubuntu26`.  By default, the primitive attempts to figure out the
+            Linux distribution by inspecting the image identifier, and falls back
+            to `ubuntu` if unable to determine the Linux distribution automatically.
+        _docker_env: Boolean specifying whether to load the Docker base
+            image environment, i.e., source
+            `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
+            default value is True.
+        image: The image identifier to use as the base image.  The default value is `ubuntu:18.04`.
+        AS: Name for the build stage (Docker specific).  The default value
+            is empty.  This parameter is deprecated; use `_as` instead.
 
-    _arch: The underlying CPU architecture of the base image.  Valid
-    values are `aarch64` and `x86_64`.  By default, the
-    primitive attemps to figure out the CPU architecture by inspecting
-    the image identifier, and falls back to system architecture if
-    unable to determine the CPU architecture automatically.
-
-    _as: Name for the stage.  When using Singularity multi-stage
-    recipes, this value must be specified.  The default value is
-    empty.
-
-    _bootstrap: The Singularity bootstrap agent.  This default value
-    is `docker` (Singularity specific).
-
-    _distro: The underlying Linux distribution of the base image.
-    Valid values are `centos`, `centos7`, `centos8`, `redhat`, `rhel`,
-    `rhel7`, `rhel8`, `rockylinux8`, `rockylinux9`, `rockylinux10`,
-    `ubuntu`, `ubuntu16`, `ubuntu18`, `ubuntu20`, `ubuntu22`, `ubuntu24`,
-    and `ubuntu26`.  By default, the primitive attempts to figure out the
-    Linux distribution by inspecting the image identifier, and falls back
-    to `ubuntu` if unable to determine the Linux distribution automatically.
-
-    _docker_env: Boolean specifying whether to load the Docker base
-     image environment, i.e., source
-     `/.singularity.d/env/10-docker*.sh` (Singularity specific).  The
-     default value is True.
-
-    image: The image identifier to use as the base image.  The default value is `ubuntu:18.04`.
-
-    AS: Name for the build stage (Docker specific).  The default value
-    is empty.  This parameter is deprecated; use `_as` instead.
-
-    # Examples
-
-    ```python
-    baseimage(image='nvidia/cuda:9.1-devel')
-    ```
+    Examples:
+        ```python
+        baseimage(image='nvidia/cuda:9.1-devel')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize the primitive"""
 
         #super(baseimage, self).__init__()
 

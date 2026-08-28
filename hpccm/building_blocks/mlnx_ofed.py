@@ -40,63 +40,55 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
     OpenFabrics Enterprise Distribution for
     Linux](http://www.mellanox.com/page/products_dyn?product_family=26).
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        oslabel: The Linux distribution label assigned by Mellanox to the
+            tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
+            RHEL-based Linux distributions, the default value is `rhel7.2` for
+            x86_64 processors and `rhel7.6alternate` for aarch64 processors.
+        ospackages: List of OS packages to install prior to installing
+            OFED.  For Ubuntu, the default values are `findutils`,
+            `libnl-3-200`, `libnl-route-3-200`, `libnuma1`, and `wget`.  For
+            RHEL-based 7.x distributions, the default values are `findutils`,
+            `libnl`, `libnl3`, `numactl-libs`, and `wget`.  For RHEL-based 8.x
+            distributions, the default values are `findutils`, `libnl3`,
+            `numactl-libs`, and `wget`.
+        packages: List of packages to install from Mellanox OFED.  For
+            version 5.0 and later on Ubuntu, `ibverbs-providers`,
+            `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
+            `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
+            and `librdmacm1`. For earlier versions on Ubuntu, the default
+            values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
+            `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4-1`,
+            `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
+            `librdmacm-dev`, and `ibverbs-utils`.  For version 5.0 and later
+            on RHEL-based Linux distributions, the default values are
+            `libibumad`, `libibverbs`, `libibverbs-utils`, `librdmacm`,
+            `rdma-core`, and `rdma-core-devel`. For earlier versions on
+            RHEL-based Linux distributions, the default values are
+            `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
+            `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
+            `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
+            `librdmacm-devel`.
+        prefix: The top level install location.  Instead of installing the
+            packages via the package manager, they will be extracted to this
+            location.  This option is useful if multiple versions of Mellanox
+            OFED need to be installed.  The environment must be manually
+            configured to recognize the Mellanox OFED location, e.g., in the
+            container entry point.  The default value is empty, i.e., install
+            via the package manager to the standard system locations.
+        version: The version of Mellanox OFED to download.  The default
+            value is `5.6-2.0.9.0`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    oslabel: The Linux distribution label assigned by Mellanox to the
-    tarball.  For Ubuntu, the default value is `ubuntu16.04`.  For
-    RHEL-based Linux distributions, the default value is `rhel7.2` for
-    x86_64 processors and `rhel7.6alternate` for aarch64 processors.
-
-    ospackages: List of OS packages to install prior to installing
-    OFED.  For Ubuntu, the default values are `findutils`,
-    `libnl-3-200`, `libnl-route-3-200`, `libnuma1`, and `wget`.  For
-    RHEL-based 7.x distributions, the default values are `findutils`,
-    `libnl`, `libnl3`, `numactl-libs`, and `wget`.  For RHEL-based 8.x
-    distributions, the default values are `findutils`, `libnl3`,
-    `numactl-libs`, and `wget`.
-
-    packages: List of packages to install from Mellanox OFED.  For
-    version 5.0 and later on Ubuntu, `ibverbs-providers`,
-    `ibverbs-utils` `libibmad-dev`, `libibmad5`, `libibumad3`,
-    `libibumad-dev`, `libibverbs-dev` `libibverbs1`, `librdmacm-dev`,
-    and `librdmacm1`. For earlier versions on Ubuntu, the default
-    values are `libibverbs1`, `libibverbs-dev`, `libibmad`,
-    `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4-1`,
-    `libmlx4-dev`, `libmlx5-1`, `libmlx5-dev`, `librdmacm1`,
-    `librdmacm-dev`, and `ibverbs-utils`.  For version 5.0 and later
-    on RHEL-based Linux distributions, the default values are
-    `libibumad`, `libibverbs`, `libibverbs-utils`, `librdmacm`,
-    `rdma-core`, and `rdma-core-devel`. For earlier versions on
-    RHEL-based Linux distributions, the default values are
-    `libibverbs`, `libibverbs-devel`, `libibverbs-utils`, `libibmad`,
-    `libibmad-devel`, `libibumad`, `libibumad-devel`, `libmlx4`,
-    `libmlx4-devel`, `libmlx5`, `libmlx5-devel`, `librdmacm`, and
-    `librdmacm-devel`.
-
-    prefix: The top level install location.  Instead of installing the
-    packages via the package manager, they will be extracted to this
-    location.  This option is useful if multiple versions of Mellanox
-    OFED need to be installed.  The environment must be manually
-    configured to recognize the Mellanox OFED location, e.g., in the
-    container entry point.  The default value is empty, i.e., install
-    via the package manager to the standard system locations.
-
-    version: The version of Mellanox OFED to download.  The default
-    value is `5.6-2.0.9.0`.
-
-    # Examples
-
-    ```python
-    mlnx_ofed(version='4.2-1.0.0.0')
-    ```
+    Examples:
+        ```python
+        mlnx_ofed(version='4.2-1.0.0.0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(mlnx_ofed, self).__init__(**kwargs)
 
@@ -238,13 +230,12 @@ class mlnx_ofed(bb_base, hpccm.templates.annotate, hpccm.templates.rm,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        m = mlnx_ofed(...)
-        Stage0 += m
-        Stage1 += m.runtime()
-        ```
+        Examples:
+            ```python
+            m = mlnx_ofed(...)
+            Stage0 += m
+            Stage1 += m.runtime()
+            ```
         """
         if self.__prefix:
             self.rt += comment('Mellanox OFED version {}'.format(

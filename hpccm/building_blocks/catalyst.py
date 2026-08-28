@@ -55,62 +55,52 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
     [cudagl](https://hub.docker.com/r/nvidia/cudagl) base image is
     recommended.
 
-    # Parameters
+    Args:
+        cmake_opts: List of options to pass to `cmake`.  The default is an
+            empty list.
+        edition: The Catalyst edition to use. Valid choices are `Base`,
+            `Base-Essentials`, `Base-Essentials-Extras`,
+            `Base-Essentials-Extras-Rendering-Base`, `Base-Enable-Python`,
+            `Base-Enable-Python-Essentials`,
+            `Base-Enable-Python-Essentials-Extras`, and
+            `Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
+            Python edition is selected, then the [Python](#python) building
+            block should be installed with development libraries prior to this
+            building block. The default value is
+            `Base-Enable-Python-Essentials-Extras-Rendering-Base`.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            ParaView Catalyst. The default is True.
+        ldconfig: Boolean flag to specify whether the Catalyst library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the Catalyst library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `git`, `gzip`,
+            `make`, `tar`, and `wget`.  If a rendering edition is selected
+            then `libxau-dev`, `libxext-dev`, `libxt-dev`, `libice-dev`,
+            `libsm-dev`, `libx11-dev`, `libgl1-mesa-dev` are also included.
+            For RHEL-based Linux distributions, the default values are `git`,
+            `gzip`, `make`, `tar`, `wget`, and `which`.  If a rendering
+            edition is selected then `libX11-devel`, `libXau-devel`,
+            `libXext-devel`, `libXt-devel`, `libICE-devel`, `libSM-devel`,
+            `libglvnd-devel`, `mesa-libGL-devel` are also included.
+        prefix: The top level install location.  The default value is
+            `/usr/local/catalyst`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of Catalyst source to download.  The default
+            value is `5.6.1`.
 
-    cmake_opts: List of options to pass to `cmake`.  The default is an
-    empty list.
-
-    edition: The Catalyst edition to use. Valid choices are `Base`,
-    `Base-Essentials`, `Base-Essentials-Extras`,
-    `Base-Essentials-Extras-Rendering-Base`, `Base-Enable-Python`,
-    `Base-Enable-Python-Essentials`,
-    `Base-Enable-Python-Essentials-Extras`, and
-    `Base-Enable-Python-Essentials-Extras-Rendering-Base`.  If a
-    Python edition is selected, then the [Python](#python) building
-    block should be installed with development libraries prior to this
-    building block. The default value is
-    `Base-Enable-Python-Essentials-Extras-Rendering-Base`.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    ParaView Catalyst. The default is True.
-
-    ldconfig: Boolean flag to specify whether the Catalyst library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the Catalyst library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `git`, `gzip`,
-    `make`, `tar`, and `wget`.  If a rendering edition is selected
-    then `libxau-dev`, `libxext-dev`, `libxt-dev`, `libice-dev`,
-    `libsm-dev`, `libx11-dev`, `libgl1-mesa-dev` are also included.
-    For RHEL-based Linux distributions, the default values are `git`,
-    `gzip`, `make`, `tar`, `wget`, and `which`.  If a rendering
-    edition is selected then `libX11-devel`, `libXau-devel`,
-    `libXext-devel`, `libXt-devel`, `libICE-devel`, `libSM-devel`,
-    `libglvnd-devel`, `mesa-libGL-devel` are also included.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/catalyst`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of Catalyst source to download.  The default
-    value is `5.6.1`.
-
-    # Examples
-
-    ```python
-    catalyst(prefix='/opt/catalyst/5.6.0', version='5.6.0')
-    ```
+    Examples:
+        ```python
+        catalyst(prefix='/opt/catalyst/5.6.0', version='5.6.0')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(catalyst, self).__init__(**kwargs)
 
@@ -247,12 +237,12 @@ class catalyst(bb_base, hpccm.templates.CMakeBuild, hpccm.templates.envvars,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-        ```python
-        c = catalyst(...)
-        Stage0 += c
-        Stage1 += c.runtime()
-        ```
+        Examples:
+            ```python
+            c = catalyst(...)
+            Stage0 += c
+            Stage1 += c.runtime()
+            ```
         """
         self.rt += comment('ParaView Catalyst')
         if self.__runtime_ospackages:

@@ -38,63 +38,50 @@ class cgns(bb_base):
     The [HDF5](#hdf5) building block should be installed prior to this
     building block.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the test cases should be
+            run.  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default value is `--with-hdf5=/usr/local/hdf5` and `--with-zlib`.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        prefix: The top level install location.  The default value is
+            `/usr/local/cgns`.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `file`, `make`,
+            `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
+            default values are `bzip2`, `file`, `make`, `wget` and
+            `zlib-devel`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of CGNS source to download.  The default
+            value is `4.1.2`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    check: Boolean flag to specify whether the test cases should be
-    run.  The default is False.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default value is `--with-hdf5=/usr/local/hdf5` and `--with-zlib`.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/cgns`.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `file`, `make`,
-    `wget`, and `zlib1g-dev`.  For RHEL-based Linux distributions the
-    default values are `bzip2`, `file`, `make`, `wget` and
-    `zlib-devel`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of CGNS source to download.  The default
-    value is `4.1.2`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    cgns(prefix='/opt/cgns/3.3.1', version='3.3.1')
-    ```
+    Examples:
+        ```python
+        cgns(prefix='/opt/cgns/3.3.1', version='3.3.1')
+        ```
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(cgns, self).__init__(**kwargs)
 
@@ -171,13 +158,12 @@ class cgns(bb_base):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Example
-
-        ```python
-        c = cgns(...)
-        Stage0 += c
-        Stage1 += c.runtime()
-        ```
+        Examples:
+            ```python
+            c = cgns(...)
+            Stage0 += c
+            Stage1 += c.runtime()
+            ```
         """
         self.rt += comment('CGNS')
         self.rt += packages(ospackages=self.__runtime_ospackages)

@@ -42,69 +42,56 @@ class rdma_core(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
     The [CMake](#cmake) building block should be installed prior to
     this building block.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+            modified to include RDMA Core. The default is True.
+        ldconfig: Boolean flag to specify whether the RDMA Core library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the RDMA Core library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `libudev-dev`,
+            `libnl-3-dev`, `libnl-route-3-dev`, `make`, `pkg-config`,
+            `python3-docutils`, `pandoc`, and `wget`.  For RHEL-based Linux
+            distributions, the default values are `libnl3-devel`,
+            `libudev-devel`, `make`, `pkgconfig`, `pandoc`, `python-docutils`,
+            and `wget`.  If the `repository` parameter is set, then
+            `ca-certificates` and `git` are also included.
+        prefix: The top level install location.  The default value is
+            `/usr/local/rdma-core`.
+        repository: The location of the git repository that should be used to build RDMA Core.  If True, then use the default `https://github.com/linux-rdma/rdma-core.git`
+            repository.  The default is empty, i.e., use the release package
+            specified by `version`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default value is empty.
+        url: The location of the tarball that should be used to build RDMA
+            Core.  The default is empty, i.e., use the release package
+            specified by `version`.
+        version: The version of RDMA Core source to download.  The default
+            value is `31.2`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
+    Examples:
+        ```python
+        rdma_core(prefix='/opt/rdma-core/31.2', version='31.2')
+        ```
 
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
-
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
-    modified to include RDMA Core. The default is True.
-
-    ldconfig: Boolean flag to specify whether the RDMA Core library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the RDMA Core library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `libudev-dev`,
-    `libnl-3-dev`, `libnl-route-3-dev`, `make`, `pkg-config`,
-    `python3-docutils`, `pandoc`, and `wget`.  For RHEL-based Linux
-    distributions, the default values are `libnl3-devel`,
-    `libudev-devel`, `make`, `pkgconfig`, `pandoc`, `python-docutils`,
-    and `wget`.  If the `repository` parameter is set, then
-    `ca-certificates` and `git` are also included.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/rdma-core`.
-
-    repository: The location of the git repository that should be used to build RDMA Core.  If True, then use the default `https://github.com/linux-rdma/rdma-core.git`
-    repository.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default value is empty.
-
-    url: The location of the tarball that should be used to build RDMA
-    Core.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    version: The version of RDMA Core source to download.  The default
-    value is `31.2`.
-
-    # Examples
-
-    ```python
-    rdma_core(prefix='/opt/rdma-core/31.2', version='31.2')
-    ```
-
-    ```python
-    rdma_core(repository='https://github.com/linux-rdma/rdma-core.git')
-    ```
+        ```python
+        rdma_core(repository='https://github.com/linux-rdma/rdma-core.git')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(rdma_core, self).__init__(**kwargs)
 
@@ -211,13 +198,12 @@ class rdma_core(bb_base, hpccm.templates.downloader, hpccm.templates.envvars,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        r = rdma_core(...)
-        Stage0 += r
-        Stage1 += r.runtime()
-        ```
+        Examples:
+            ```python
+            r = rdma_core(...)
+            Stage0 += r
+            Stage1 += r.runtime()
+            ```
         """
         self.rt += comment('RDMA Core')
         self.rt += packages(ospackages=self.__runtime_ospackages)

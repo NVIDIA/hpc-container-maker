@@ -55,52 +55,43 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
     environment module must be manually loaded, e.g., `module load
     Generic-AArch64/RHEL/7/arm-linux-compiler/20.3`.
 
-    # Parameters
+    Args:
+        environment: Boolean flag to specify whether the environment
+            (`MODULEPATH`) should be modified to include Arm Allinea
+            Studio. The default is True.
+        eula: By setting this value to `True`, you agree to the [Arm End User License Agreement](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula).
+            The default value is `False`.
+        microarchitectures: List of microarchitectures to install.
+            From 22.0 version, only `generic` is available.
+            Available values are `generic`, `generic-sve` for version 21.1,
+            and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
+            Irrespective of this setting, the generic implementation will
+            always be installed.
+        ospackages: List of OS packages to install prior to installing Arm
+            Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
+            `lmod`, `python`, `tar`, `tcl`, and `wget`.  For RHEL-based Linux
+            distributions, the default values are `glibc-devel`, `Lmod`,
+            `tar`, and `wget`.
+        prefix: The top level install prefix.  The default value is
+            `/opt/arm`.
+        tarball: Path to the Arm Allinea Studio tarball relative to the
+            local build context.  The default value is empty.  If this is
+            defined, the tarball in the local build context will be used
+            rather than downloading the tarball from the web.
+        version: The version of Arm Allinea Studio to install.  The
+            default value is `22.0`.  Due to differences in the packaging
+            scheme, versions prior to 20.2 are not supported.
 
-    environment: Boolean flag to specify whether the environment
-    (`MODULEPATH`) should be modified to include Arm Allinea
-    Studio. The default is True.
-
-    eula: By setting this value to `True`, you agree to the [Arm End User License Agreement](https://developer.arm.com/tools-and-software/server-and-hpc/arm-architecture-tools/arm-allinea-studio/licensing/eula).
-    The default value is `False`.
-
-    microarchitectures: List of microarchitectures to install.
-    From 22.0 version, only `generic` is available.
-    Available values are `generic`, `generic-sve` for version 21.1,
-    and `neoverse-n1`, `thunderx2t99` are valid for versions <= 20.3.
-    Irrespective of this setting, the generic implementation will
-    always be installed.
-
-    ospackages: List of OS packages to install prior to installing Arm
-    Allinea Studio.  For Ubuntu, the default values are `libc6-dev`,
-    `lmod`, `python`, `tar`, `tcl`, and `wget`.  For RHEL-based Linux
-    distributions, the default values are `glibc-devel`, `Lmod`,
-    `tar`, and `wget`.
-
-    prefix: The top level install prefix.  The default value is
-    `/opt/arm`.
-
-    tarball: Path to the Arm Allinea Studio tarball relative to the
-    local build context.  The default value is empty.  If this is
-    defined, the tarball in the local build context will be used
-    rather than downloading the tarball from the web.
-
-    version: The version of Arm Allinea Studio to install.  The
-    default value is `22.0`.  Due to differences in the packaging
-    scheme, versions prior to 20.2 are not supported.
-
-    # Examples
-
-    ```python
-    arm_allinea_studio(eula=True,
-                       microarchitectures=['generic', 'thunderx2t99'],
-                       version='20.3')
-    ```
+    Examples:
+        ```python
+        arm_allinea_studio(eula=True,
+                           microarchitectures=['generic', 'thunderx2t99'],
+                           version='20.3')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(arm_allinea_studio, self).__init__(**kwargs)
 
@@ -275,13 +266,12 @@ class arm_allinea_studio(bb_base, hpccm.templates.envvars, hpccm.templates.rm,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        a = arm_allinea_compiler(...)
-        Stage0 += a
-        Stage1 += a.runtime()
-        ```
+        Examples:
+            ```python
+            a = arm_allinea_compiler(...)
+            Stage0 += a
+            Stage1 += a.runtime()
+            ```
         """
         self.rt += comment('Arm Allinea Studio')
 

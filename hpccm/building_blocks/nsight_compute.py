@@ -37,45 +37,38 @@ class nsight_compute(bb_base, hpccm.templates.envvars):
     [NVIDIA Nsight Compute
     profiler]](https://developer.nvidia.com/nsight-compute).
 
-    # Parameters
+    Args:
+        eula: Required, by setting this value to `True`, you agree to the
+            Nsight Compute End User License Agreement that is displayed when
+            running the installer interactively.  The default value is
+            `False`.
+        ospackages: List of OS packages to install prior to building.
+            When using a runfile, the default values are `perl` for Ubuntu and
+            `perl` and `perl-Env` for RHEL-based Linux distributions.
+            Otherwise, the default values are `apt-transport-https`,
+            `ca-certificates`, `gnupg`, and `wget` for Ubuntu and an empty
+            list for RHEL-based Linux distributions.
+        prefix: The top level install prefix. The default value is
+            `/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
+            unless `runfile` is set.
+        runfile: Path or URL to NSight Compute's `.run` file relative to the
+            local build context. The default value is empty.
+        version: the version of Nsight Compute to install.  Note when
+            `runfile` is set this parameter is ignored.  The default value is
+            `2026.2.1`.
 
-    eula: Required, by setting this value to `True`, you agree to the
-    Nsight Compute End User License Agreement that is displayed when
-    running the installer interactively.  The default value is
-    `False`.
+    Examples:
+        ```python
+        nsight_compute(version='2020.4.0')
+        ```
 
-    ospackages: List of OS packages to install prior to building.
-    When using a runfile, the default values are `perl` for Ubuntu and
-    `perl` and `perl-Env` for RHEL-based Linux distributions.
-    Otherwise, the default values are `apt-transport-https`,
-    `ca-certificates`, `gnupg`, and `wget` for Ubuntu and an empty
-    list for RHEL-based Linux distributions.
-
-    prefix: The top level install prefix. The default value is
-    `/usr/local/NVIDIA-Nsight-Compute`.  This parameter is ignored
-    unless `runfile` is set.
-
-    runfile: Path or URL to NSight Compute's `.run` file relative to the
-    local build context. The default value is empty.
-
-    version: the version of Nsight Compute to install.  Note when
-    `runfile` is set this parameter is ignored.  The default value is
-    `2026.2.1`.
-
-    # Examples
-
-    ```python
-    nsight_compute(version='2020.4.0')
-    ```
-
-    ```python
-    nsight_compute(eula=True, runfile='nsight-compute-linux-2020.2.0.18-28964561.run')
-    ```
+        ```python
+        nsight_compute(eula=True, runfile='nsight-compute-linux-2020.2.0.18-28964561.run')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(nsight_compute, self).__init__(**kwargs)
 

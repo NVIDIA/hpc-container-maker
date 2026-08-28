@@ -61,13 +61,11 @@ def get_cpu_optimization_flags(compiler, version='9999'):
   """Return the CPU optimization flags for the target and compiler
   combination.
 
-  # Arguments
-
-  compiler: A compiler family string recognized by archspec.
-
-  version: The version of the compiler.  The default version is
-  `9999`, i.e., assume the compiler supports the latest optimization
-  flags.
+  Args:
+    compiler: A compiler family string recognized by archspec.
+    version: The version of the compiler.  The default version is
+      `9999`, i.e., assume the compiler supports the latest optimization
+      flags.
   """
   this = sys.modules[__name__]
 
@@ -103,16 +101,13 @@ def get_format():
 def set_container_format(ctype):
   """Set the container format
 
-  # Arguments
+  Args:
+    ctype (string): 'docker' to specify the Dockerfile format, or
+      'singularity' to specify the Singularity definition file format
 
-  ctype (string): 'docker' to specify the Dockerfile format, or
-  'singularity' to specify the Singularity definition file format
-
-  # Raises
-
-  RuntimeError: invalid container type argument
+  Raises:
+    RuntimeError: invalid container type argument
   """
-
   this = sys.modules[__name__]
   if ctype == 'docker':
     this.g_ctype = container_type.DOCKER
@@ -128,11 +123,10 @@ def set_cpu_architecture(arch):
   set the CPU architecture.  Only use this function if you really
   know what you are doing.
 
-  # Arguments
-
-  arch (string): Value values are `aarch64` and `x86_64`.
-  `arm` and `arm64v8` are aliases for `aarch64`, and `amd64` and
-  `x86` are aliases for `x86_64`.
+  Args:
+    arch (string): Value values are `aarch64`, and `x86_64`.
+      `arm` and `arm64v8` are aliases for `aarch64`, and `amd64` and 
+      `x86` are aliases for `x86_64`.
   """
   this = sys.modules[__name__]
   if arch == 'aarch64' or arch == 'arm' or arch == 'arm64v8':
@@ -146,30 +140,26 @@ def set_cpu_architecture(arch):
 def set_cpu_target(target):
   """Set the CPU optimization target
 
-  # Arguments
-
-  target (string): A CPU microarchitecture string recognized by
-  archspec.
+  Args:
+    target (string): A CPU microarchitecture string recognized by
+      archspec.
   """
   this = sys.modules[__name__]
   this.g_cpu_target = target
 
 def set_linux_distro(distro):
-
   """Set the Linux distribution and version
 
   In most cases, the `baseimage` primitive should be relied upon to
   set the Linux distribution.  Only use this function if you really
   know what you are doing.
 
-  # Arguments
-
-  distro (string): Valid values are `centos7`, `centos8`, `rhel7`,
-  `rhel8`, `rockylinux8`, `rockylinux9`, `rockylinux10`, `ubuntu16`,
-  `ubuntu18`, `ubuntu20`, `ubuntu22`, `ubuntu24`, and `ubuntu26`.
-  `ubuntu` is an alias for `ubuntu16`, `centos` is an alias for `centos7`,
-  and `rhel` is an alias for `rhel7`.
-
+  Args:
+    distro (string): Valid values are `centos7`, `centos8`, `rhel7`,
+      `rhel8`, `rockylinux8`, `rockylinux9`, `rockylinux10`, `ubuntu16`,
+      `ubuntu18`, `ubuntu20`, `ubuntu22`, `ubuntu24`, and `ubuntu26`.
+      `ubuntu` is an alias for `ubuntu16`, `centos` is an alias for `centos7`,
+      and `rhel` is an alias for `rhel7`.
   """
   this = sys.modules[__name__]
   if distro == 'centos':
@@ -232,10 +222,8 @@ def set_singularity_version(ver):
   to enable multi-stage builds.  However, these changes are not
   backwards compatible.
 
-  # Arguments
-
-  ver (string): Singularity definition file format version.
-
+  Args:
+    ver (string): Singularity definition file format version.
   """
   this = sys.modules[__name__]
   this.g_singularity_version = Version(ver)
@@ -243,10 +231,8 @@ def set_singularity_version(ver):
 def set_working_directory(wd):
   """Set the working directory to use for staging inside the container
 
-  # Arguments
-
-  wd (string): working directory path
-
+  Args:
+    wd (string): working directory path
   """
   this = sys.modules[__name__]
   this.g_wd = wd
@@ -255,9 +241,8 @@ def set_singularity_tmp_fallback(enable=True):
   """Enable or disable the automatic %setup fallback for /tmp and /var/tmp
   destinations on Singularity >= 3.6.
 
-  # Arguments
-
-  enable (bool): True to enable the fallback (default), False to disable.
+  Args:
+    enable (bool): True to enable the fallback (default), False to disable.
   """
   this = sys.modules[__name__]
   this.g_singularity_tmp_fallback = enable
@@ -266,9 +251,8 @@ def test_cpu_feature_flag(flag):
   """Return True or False depending on whether the CPU supports the
   given feature flag
 
-  # Arguments
-
-  flag: A CPU feature flag, e.g., `avx`.
+  Args:
+    flag: A CPU feature flag, e.g., `avx`.
   """
   this = sys.modules[__name__]
 

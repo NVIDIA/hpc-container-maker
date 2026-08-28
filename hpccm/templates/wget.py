@@ -25,7 +25,6 @@ class wget(hpccm.base_object):
     """wget template"""
 
     def __init__(self, **kwargs):
-        """Initialize wget template"""
 
         super(wget, self).__init__(**kwargs)
 

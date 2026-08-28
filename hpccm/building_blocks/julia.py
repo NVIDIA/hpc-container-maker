@@ -40,57 +40,46 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
     """The `julia` building block downloads and installs the
     [Julia](https://julialang.org) programming environment.
 
-    # Parameters
+    Args:
+        cuda: Boolean flag to specify whether the JuliaGPU packages should
+            be installed.  If True, the `CUDAapi`, `CUDAdrv`, `CUDAnative`,
+            and `CuArrays` packages are installed. Note that the `CUDAdrv`
+            package must be rebuilt when the container is running to align
+            with the host CUDA driver. The default is False.
+        depot: Path to the location of "user" Julia package depot. The
+            default is an empty string, i.e., `~/.julia`. The depot location
+            needs to be writable by the user running the container.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            Julia. The default is True.
+        history: Path to the Julia history file. The default value is an
+            empty string, i.e., `~/.julia/logs/repl_history.jl`. The history
+            location needs to be writable by the user running the container.
+        ldconfig: Boolean flag to specify whether the Julia library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the Julia library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to building. The
+            default values are `tar` and `wget`.
+        packages: List of Julia packages to install. The default is an
+            empty list.
+        prefix: The top level installation location.  The default value
+            is `/usr/local/julia`.
+        version: The version of Julia to install.  The default value is
+            `1.5.1`.
 
-    cuda: Boolean flag to specify whether the JuliaGPU packages should
-    be installed.  If True, the `CUDAapi`, `CUDAdrv`, `CUDAnative`,
-    and `CuArrays` packages are installed. Note that the `CUDAdrv`
-    package must be rebuilt when the container is running to align
-    with the host CUDA driver. The default is False.
+    Examples:
+        ```python
+        julia(prefix='/usr/local/julia', version='1.3.1')
+        ```
 
-    depot: Path to the location of "user" Julia package depot. The
-    default is an empty string, i.e., `~/.julia`. The depot location
-    needs to be writable by the user running the container.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    Julia. The default is True.
-
-    history: Path to the Julia history file. The default value is an
-    empty string, i.e., `~/.julia/logs/repl_history.jl`. The history
-    location needs to be writable by the user running the container.
-
-    ldconfig: Boolean flag to specify whether the Julia library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the Julia library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to building. The
-    default values are `tar` and `wget`.
-
-    packages: List of Julia packages to install. The default is an
-    empty list.
-
-    prefix: The top level installation location.  The default value
-    is `/usr/local/julia`.
-
-    version: The version of Julia to install.  The default value is
-    `1.5.1`.
-
-    # Examples
-
-    ```python
-    julia(prefix='/usr/local/julia', version='1.3.1')
-    ```
-
-    ```python
-    julia(depot='/tmp', history='/tmp/repl_history.jl')
-    ```
+        ```python
+        julia(depot='/tmp', history='/tmp/repl_history.jl')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(julia, self).__init__(**kwargs)
 
@@ -223,12 +212,11 @@ class julia(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig,
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        j = julia(...)
-        Stage0 += j
-        Stage1 += j.runtime()
-        ```
+        Examples:
+            ```python
+            j = julia(...)
+            Stage0 += j
+            Stage1 += j.runtime()
+            ```
         """
         return str(self)

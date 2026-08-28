@@ -34,68 +34,54 @@ class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
 
     Note: this building block does not install SLURM itself.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default is an empty list.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
+            PMI2. The default is False.
+        ldconfig: Boolean flag to specify whether the PMI2 library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the PMI2 library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `bzip2`, `file`, `make`,
+            `perl`, `tar`, and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/slurm-pmi2`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default value is empty.
+        version: The version of SLURM source to download.  The default
+            value is `21.08.8`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default is an empty list.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH` and `LD_LIBRARY_PATH`) should be modified to include
-    PMI2. The default is False.
-
-    ldconfig: Boolean flag to specify whether the PMI2 library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the PMI2 library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `bzip2`, `file`, `make`,
-    `perl`, `tar`, and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/slurm-pmi2`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default value is empty.
-
-    version: The version of SLURM source to download.  The default
-    value is `21.08.8`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    slurm_pmi2(prefix='/opt/pmi', version='20.11.9')
-    ```
+    Examples:
+        ```python
+        slurm_pmi2(prefix='/opt/pmi', version='20.11.9')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(slurm_pmi2, self).__init__(**kwargs)
 
@@ -136,13 +122,12 @@ class slurm_pmi2(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        p = slurm_pmi2(...)
-        Stage0 += p
-        Stage1 += p.runtime()
-        ```
+        Examples:
+            ```python
+            p = slurm_pmi2(...)
+            Stage0 += p
+            Stage1 += p.runtime()
+            ```
         """
         self.rt += comment('SLURM PMI2')
         self.rt += self.__bb.runtime(_from=_from)

@@ -26,24 +26,20 @@ from hpccm.common import container_type
 class label(object):
     """The `label` primitive sets container metadata.
 
-    # Parameters
+    Args:
+        _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+            identifier.  This also causes the Singularity block to named
+            `%applabels` rather than `%labels` (Singularity specific).
+        metadata: A dictionary of key / value pairs.  The default is an
+            empty dictionary.
 
-    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
-    identifier.  This also causes the Singularity block to named
-    `%applabels` rather than `%labels` (Singularity specific).
-
-    metadata: A dictionary of key / value pairs.  The default is an
-    empty dictionary.
-
-    # Examples
-
-    ```python
-    label(metadata={'maintainer': 'jane@doe'})
-    ```
+    Examples:
+        ```python
+        label(metadata={'maintainer': 'jane@doe'})
+        ```
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(label, self).__init__()
 

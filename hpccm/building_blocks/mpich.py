@@ -41,73 +41,58 @@ class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     compiler wrappers.  The tool can be passed to other operations
     that want to build using the MPI compiler wrappers.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        check: Boolean flag to specify whether the `make check` and `make
+            testing` steps should be performed.  The default is False.
+        configure_opts: List of options to pass to `configure`.  The
+            default is an empty list.
+        disable_FEATURE: Flags to control disabling features when
+            configuring.  For instance, `disable_foo=True` maps to
+            `--disable-foo`.  Underscores in the parameter name are converted
+            to dashes.
+        enable_FEATURE[=ARG]: Flags to control enabling features when
+            configuring.  For instance, `enable_foo=True` maps to
+            `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
+            Underscores in the parameter name are converted to dashes.
+        environment: Boolean flag to specify whether the environment
+            (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
+            MPICH. The default is True.
+        ldconfig: Boolean flag to specify whether the MPICH library
+            directory should be added dynamic linker cache.  If False, then
+            `LD_LIBRARY_PATH` is modified to include the MPICH library
+            directory. The default value is False.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  For Ubuntu, the default values are `file`, `gzip`,
+            `make`, `openssh-client`, `perl`, `tar`, and `wget`.  For
+            RHEL-based Linux distributions, the default values are `file`,
+            `gzip`, `make`, `openssh-clients`, `perl`, `tar`, and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/mpich`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of MPICH source to download.  The default
+            value is `3.3.2`.
+        with_PACKAGE[=ARG]: Flags to control optional packages when
+            configuring.  For instance, `with_foo=True` maps to `--with-foo`
+            and `with_foo='/usr/local/foo'` maps to
+            `--with-foo=/usr/local/foo`.  Underscores in the parameter name
+            are converted to dashes.
+        without_PACKAGE: Flags to control optional packages when
+            configuring.  For instance `without_foo=True` maps to
+            `--without-foo`.  Underscores in the parameter name are converted
+            to dashes.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    check: Boolean flag to specify whether the `make check` and `make
-    testing` steps should be performed.  The default is False.
-
-    configure_opts: List of options to pass to `configure`.  The
-    default is an empty list.
-
-    disable_FEATURE: Flags to control disabling features when
-    configuring.  For instance, `disable_foo=True` maps to
-    `--disable-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    enable_FEATURE[=ARG]: Flags to control enabling features when
-    configuring.  For instance, `enable_foo=True` maps to
-    `--enable-foo` and `enable_foo='yes'` maps to `--enable-foo=yes`.
-    Underscores in the parameter name are converted to dashes.
-
-    environment: Boolean flag to specify whether the environment
-    (`LD_LIBRARY_PATH` and `PATH`) should be modified to include
-    MPICH. The default is True.
-
-    ldconfig: Boolean flag to specify whether the MPICH library
-    directory should be added dynamic linker cache.  If False, then
-    `LD_LIBRARY_PATH` is modified to include the MPICH library
-    directory. The default value is False.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  For Ubuntu, the default values are `file`, `gzip`,
-    `make`, `openssh-client`, `perl`, `tar`, and `wget`.  For
-    RHEL-based Linux distributions, the default values are `file`,
-    `gzip`, `make`, `openssh-clients`, `perl`, `tar`, and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/mpich`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of MPICH source to download.  The default
-    value is `3.3.2`.
-
-    with_PACKAGE[=ARG]: Flags to control optional packages when
-    configuring.  For instance, `with_foo=True` maps to `--with-foo`
-    and `with_foo='/usr/local/foo'` maps to
-    `--with-foo=/usr/local/foo`.  Underscores in the parameter name
-    are converted to dashes.
-
-    without_PACKAGE: Flags to control optional packages when
-    configuring.  For instance `without_foo=True` maps to
-    `--without-foo`.  Underscores in the parameter name are converted
-    to dashes.
-
-    # Examples
-
-    ```python
-    mpich(prefix='/opt/mpich/3.3', version='3.3')
-    ```
+    Examples:
+        ```python
+        mpich(prefix='/opt/mpich/3.3', version='3.3')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(mpich, self).__init__(**kwargs)
 
@@ -198,12 +183,12 @@ class mpich(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-        ```python
-        m = mpich(...)
-        Stage0 += m
-        Stage1 += m.runtime()
-        ```
+        Examples:
+            ```python
+            m = mpich(...)
+            Stage0 += m
+            Stage1 += m.runtime()
+            ```
         """
         self.rt += comment('MPICH')
         self.rt += packages(ospackages=self.__runtime_ospackages)

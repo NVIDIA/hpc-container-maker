@@ -26,7 +26,6 @@ class tar(hpccm.base_object):
     """tar template"""
 
     def __init__(self, **kwargs):
-        """Initialize tar template"""
 
         super(tar, self).__init__(**kwargs)
 

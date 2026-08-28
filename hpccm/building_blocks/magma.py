@@ -38,40 +38,31 @@ class magma(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
     Either the [MKL](#mkl) or [OpenBLAS](#openblas) building block
     should also be installed.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        cmake_opts: List of options to pass to `cmake`.  The default value
+            is an empty list.
+        gpu_target: List of GPU architectures to compile.  The default
+            values are `Pascal`, `Volta`, and `Turing`.
+        ospackages: List of OS packages to install prior to configuring
+            and building.  The default values are `tar` and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/magma`.
+        toolchain: The toolchain object.  This should be used if
+            non-default compilers or other toolchain options are needed.  The
+            default is empty.
+        version: The version of MAGMA source to download.  The default
+            value is `2.5.3`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    cmake_opts: List of options to pass to `cmake`.  The default value
-    is an empty list.
-
-    gpu_target: List of GPU architectures to compile.  The default
-    values are `Pascal`, `Volta`, and `Turing`.
-
-    ospackages: List of OS packages to install prior to configuring
-    and building.  The default values are `tar` and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/magma`.
-
-    toolchain: The toolchain object.  This should be used if
-    non-default compilers or other toolchain options are needed.  The
-    default is empty.
-
-    version: The version of MAGMA source to download.  The default
-    value is `2.5.3`.
-
-    # Examples
-
-    ```python
-    magma(prefix='/opt/magma', version='2.5.3')
-    ```
+    Examples:
+        ```python
+        magma(prefix='/opt/magma', version='2.5.3')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(magma, self).__init__(**kwargs)
 
@@ -123,12 +114,12 @@ class magma(bb_base, hpccm.templates.envvars, hpccm.templates.ldconfig):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-        ```python
-        m = magma(...)
-        Stage0 += m
-        Stage1 += m.runtime()
-        ```
+        Examples:
+            ```python
+            m = magma(...)
+            Stage0 += m
+            Stage1 += m.runtime()
+            ```
         """
         self.rt += comment('MAGMA')
         self.rt += self.__bb.runtime(_from=_from)

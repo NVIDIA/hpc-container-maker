@@ -31,33 +31,26 @@ class knem(bb_base, hpccm.templates.envvars):
     """The `knem` building block install the headers from the
     [KNEM](http://knem.gforge.inria.fr) component.
 
-    # Parameters
+    Args:
+        annotate: Boolean flag to specify whether to include annotations
+            (labels).  The default is False.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`) should be modified to include knem. The default is True.
+        ospackages: List of OS packages to install prior to installing.
+            The default values are `ca-certificates` and `git`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/knem`.
+        version: The version of KNEM source to download.  The default
+            value is `1.1.4`.
 
-    annotate: Boolean flag to specify whether to include annotations
-    (labels).  The default is False.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`) should be modified to include knem. The default is True.
-
-    ospackages: List of OS packages to install prior to installing.
-    The default values are `ca-certificates` and `git`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/knem`.
-
-    version: The version of KNEM source to download.  The default
-    value is `1.1.4`.
-
-    # Examples
-
-    ```python
-    knem(prefix='/opt/knem/1.1.3', version='1.1.3')
-    ```
+    Examples:
+        ```python
+        knem(prefix='/opt/knem/1.1.3', version='1.1.3')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(knem, self).__init__(**kwargs)
 
@@ -94,13 +87,12 @@ class knem(bb_base, hpccm.templates.envvars):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        k = knem(...)
-        Stage0 += k
-        Stage1 += k.runtime()
-        ```
+        Examples:
+            ```python
+            k = knem(...)
+            Stage0 += k
+            Stage1 += k.runtime()
+            ```
         """
         self.rt += comment('KNEM')
         self.rt += self.__bb.runtime(_from=_from)

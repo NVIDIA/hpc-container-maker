@@ -43,58 +43,46 @@ class nccl(
     """The `nccl` building block installs the
     [NCCL](https://developer.nvidia.com/nccl) component.
 
-    # Parameters
+    Args:
+        branch: The git branch to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the default branch for the repository.
+        build: Boolean flag to specify whether NCCL should be built from
+            source.  The default value is False.
+        commit: The git commit to clone.  Only recognized if the
+            `repository` parameter is specified.  The default is empty, i.e.,
+            use the latest commit on the default branch for the repository.
+        cuda: Flag to specify the CUDA version of the package to download.
+            The default is `13.2`.  This option is ignored if build is True.
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
+            modified to include NCCL. The default is True.  This option is
+            ignored if build is False.
+        make_variables: Dictionary of environment variables and values to
+            set when building NCCL.  The default is an empty dictionary.  This
+            option is ignored if build is False.
+        ospackages: List of OS packages to install prior to building.  The
+            default values are `make` and `wget`.
+        prefix: The top level install location.  The default value is
+            `/usr/local/nccl`.  This option is ignored if build is False.
+        repository: The location of the git repository that should be used to build NCCL.  If True, then use the default `https://github.com/NVIDIA/nccl.git`
+            repository.  The default is empty, i.e., use the release package
+            specified by `version`.
+        version: The version of NCCL to install.  The default value is
+            `2.30.4-1`.
 
-    branch: The git branch to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the default branch for the repository.
+    Examples:
+        ```python
+        nccl(cuda='11.0', version='2.7.6-1')
+        ```
 
-    build: Boolean flag to specify whether NCCL should be built from
-    source.  The default value is False.
-
-    commit: The git commit to clone.  Only recognized if the
-    `repository` parameter is specified.  The default is empty, i.e.,
-    use the latest commit on the default branch for the repository.
-
-    cuda: Flag to specify the CUDA version of the package to download.
-    The default is `13.2`.  This option is ignored if build is True.
-
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `PATH`) should be
-    modified to include NCCL. The default is True.  This option is
-    ignored if build is False.
-
-    make_variables: Dictionary of environment variables and values to
-    set when building NCCL.  The default is an empty dictionary.  This
-    option is ignored if build is False.
-
-    ospackages: List of OS packages to install prior to building.  The
-    default values are `make` and `wget`.
-
-    prefix: The top level install location.  The default value is
-    `/usr/local/nccl`.  This option is ignored if build is False.
-
-    repository: The location of the git repository that should be used to build NCCL.  If True, then use the default `https://github.com/NVIDIA/nccl.git`
-    repository.  The default is empty, i.e., use the release package
-    specified by `version`.
-
-    version: The version of NCCL to install.  The default value is
-    `2.30.4-1`.
-
-    # Examples
-
-    ```python
-    nccl(cuda='11.0', version='2.7.6-1')
-    ```
-
-    ```python
-    nccl(build=True, version='2.7.6-1')
-    ```
+        ```python
+        nccl(build=True, version='2.7.6-1')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(nccl, self).__init__(**kwargs)
 
@@ -301,13 +289,12 @@ class nccl(
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        n = nccl(...)
-        Stage0 += n
-        Stage1 += n.runtime()
-        ```
+        Examples:
+            ```python
+            n = nccl(...)
+            Stage0 += n
+            Stage1 += n.runtime()
+            ```
         """
         self.rt += comment("NCCL")
         if self.__build:

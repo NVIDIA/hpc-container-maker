@@ -36,54 +36,44 @@ from hpccm.primitives.shell import shell
 class pip(bb_base, hpccm.templates.rm):
     """The `pip` building block installs Python packages from PyPi.
 
-    # Parameters
+    Args:
+        alternatives: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+        args: List of arguments to pass to pip.  The default is
+            `--no-cache-dir`.
+        ospackages: List of OS packages to install prior to installing
+            PyPi packages.  For Ubuntu, the default values are `python-pip`,
+            `python-setuptools`, and `python-wheel` for Python 2.x and
+            `python3-pip`, `python3-setuptools`, and `python3-wheel` for
+            Python 3.x.  For RHEL-based distributions, the default
+            values are `python2-pip` for Python 2.x and `python3-pip` for
+            Python 3.x.
+        packages: List of PyPi packages to install.  The default is
+            an empty list.
+        pip: The name of the `pip` tool to use. The default is `pip`.
+        requirements: Path to pip requirements file.  The default is
+            empty.
+        upgrade: Boolean flag to control whether pip itself should be
+            upgraded prior to installing any PyPi packages.  The default is
+            False.
+        install_args: List of arguments to pass to `pip install`.  The
+            default is an empty list. Only applies to the `packages` parameter.
 
-    alternatives: Boolean flag to specify whether to configure alternatives for `python` and `pip`.  RHEL-based 8.x distributions do not setup `python` by [default](https://developers.redhat.com/blog/2019/05/07/what-no-python-in-red-hat-enterprise-linux-8/).  The default is False.
+    Examples:
+        ```python
+        pip(packages=['hpccm'])
+        ```
 
-    args: List of arguments to pass to pip.  The default is
-    `--no-cache-dir`.
+        ```python
+        pip(packages=['hpccm'], pip='pip3')
+        ```
 
-    ospackages: List of OS packages to install prior to installing
-    PyPi packages.  For Ubuntu, the default values are `python-pip`,
-    `python-setuptools`, and `python-wheel` for Python 2.x and
-    `python3-pip`, `python3-setuptools`, and `python3-wheel` for
-    Python 3.x.  For RHEL-based distributions, the default
-    values are `python2-pip` for Python 2.x and `python3-pip` for
-    Python 3.x.
-
-    packages: List of PyPi packages to install.  The default is
-    an empty list.
-
-    pip: The name of the `pip` tool to use. The default is `pip`.
-
-    requirements: Path to pip requirements file.  The default is
-    empty.
-
-    upgrade: Boolean flag to control whether pip itself should be
-    upgraded prior to installing any PyPi packages.  The default is
-    False.
-
-    install_args: List of arguments to pass to `pip install`.  The
-    default is an empty list. Only applies to the `packages` parameter.
-
-    # Examples
-
-    ```python
-    pip(packages=['hpccm'])
-    ```
-
-    ```python
-    pip(packages=['hpccm'], pip='pip3')
-    ```
-
-    ```python
-    pip(requirements='requirements.txt')
-    ```
+        ```python
+        pip(requirements='requirements.txt')
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(pip, self).__init__(**kwargs)
 

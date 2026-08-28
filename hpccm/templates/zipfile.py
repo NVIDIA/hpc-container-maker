@@ -25,7 +25,6 @@ class zipfile(hpccm.base_object):
     """zipfile template"""
 
     def __init__(self, **kwargs):
-        """Initialize zip template"""
 
         super(zipfile, self).__init__(**kwargs)
 

@@ -69,7 +69,6 @@ __all__ = ['amgx',
            'xpmem',
            'yum']
 
-from hpccm.building_blocks.amgx import amgx
 from hpccm.building_blocks.apt_get import apt_get
 from hpccm.building_blocks.arm_allinea_studio import arm_allinea_studio
 from hpccm.building_blocks.boost import boost
@@ -124,3 +123,7 @@ from hpccm.building_blocks.slurm_pmi2 import slurm_pmi2
 from hpccm.building_blocks.ucx import ucx
 from hpccm.building_blocks.xpmem import xpmem
 from hpccm.building_blocks.yum import yum
+
+# Import amgx after its building block dependencies so static API discovery
+# resolves the exported class rather than the module.
+from hpccm.building_blocks.amgx import amgx

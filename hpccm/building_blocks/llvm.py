@@ -39,52 +39,44 @@ class llvm(bb_base, hpccm.templates.envvars):
     compilers.  A toolchain can be passed to other operations that
     want to build using the LLVM compilers.
 
-    # Parameters
+    Args:
+        environment: Boolean flag to specify whether the environment
+            (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
+            include the LLVM compilers when necessary. The default is True.
+        extra_tools: Boolean flag to specify whether to also install
+            `clang-format` and `clang-tidy`.  The default is False.
+        openmp: Boolean flag to specify whether to also install OpenMP
+            support.  The default is True.
+        toolset: Boolean flag to specify whether to also install the
+            full LLVM toolset.  The default is False.
+        upstream: Boolean flag to specify whether to use the [upstream LLVM packages](https://apt.llvm.org).
+            This option is ignored if the base image is not Ubuntu-based.
+        version: The version of the LLVM compilers to install.  Note that
+            the version refers to the Linux distribution packaging, not the
+            actual compiler version.  For RHEL-based 8.x Linux distributions,
+            the version is ignored. The default is an empty value.
 
-    environment: Boolean flag to specify whether the environment
-    (`CPATH`, `LD_LIBRARY_PATH` and `PATH`) should be modified to
-    include the LLVM compilers when necessary. The default is True.
+    Examples:
+        ```python
+        llvm()
+        ```
 
-    extra_tools: Boolean flag to specify whether to also install
-    `clang-format` and `clang-tidy`.  The default is False.
+        ```python
+        llvm(version='7')
+        ```
 
-    openmp: Boolean flag to specify whether to also install OpenMP
-    support.  The default is True.
+        ```python
+        llvm(upstream=True, version='11')
+        ```
 
-    toolset: Boolean flag to specify whether to also install the
-    full LLVM toolset.  The default is False.
-
-    upstream: Boolean flag to specify whether to use the [upstream LLVM packages](https://apt.llvm.org).
-    This option is ignored if the base image is not Ubuntu-based.
-
-    version: The version of the LLVM compilers to install.  Note that
-    the version refers to the Linux distribution packaging, not the
-    actual compiler version.  For RHEL-based 8.x Linux distributions,
-    the version is ignored. The default is an empty value.
-
-    # Examples
-
-    ```python
-    llvm()
-    ```
-
-    ```python
-    llvm(version='7')
-    ```
-
-    ```python
-    llvm(upstream=True, version='11')
-    ```
-
-    ```python
-    l = llvm()
-    openmpi(..., toolchain=l.toolchain, ...)
-    ```
+        ```python
+        l = llvm()
+        openmpi(..., toolchain=l.toolchain, ...)
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(llvm, self).__init__(**kwargs)
 
@@ -381,13 +373,12 @@ class llvm(bb_base, hpccm.templates.envvars):
         """Generate the set of instructions to install the runtime specific
         components from a build in a previous stage.
 
-        # Examples
-
-        ```python
-        l = llvm(...)
-        Stage0 += l
-        Stage1 += l.runtime()
-        ```
+        Examples:
+            ```python
+            l = llvm(...)
+            Stage0 += l
+            Stage1 += l.runtime()
+            ```
         """
         self.rt += comment('LLVM compiler runtime')
         if self.__runtime_ospackages:

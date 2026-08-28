@@ -29,19 +29,16 @@ class user(object):
 
     This primitive is the null operation for Singularity.
 
-    # Parameters
+    Args:
+        user: The user name to use.  The default is an empty string.
 
-    user: The user name to use.  The default is an empty string.
-
-    # Examples
-
-    ```python
-    user(user='ncognito')
-    ```
+    Examples:
+        ```python
+        user(user='ncognito')
+        ```
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         self.user = kwargs.get('user', '')
 

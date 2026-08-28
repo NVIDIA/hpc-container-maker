@@ -29,38 +29,32 @@ class runscript(object):
     """The `runscript` primitive specifies the commands to be invoked
     when the container starts.
 
-    # Parameters
+    Args:
+        _args: Boolean flag to specify whether `"$@"` should be appended
+            to the command.  If more than one command is specified, nothing is
+            appended regardless of the value of this flag.  The default is
+            True (Singularity specific).
+        _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
+            identifier.  This also causes the Singularity block to named `%apprun`
+            rather than `%runscript` (Singularity specific).
+        commands: A list of commands to execute.  The default is an empty
+            list.
+        _exec: Boolean flag to specify whether `exec` should be inserted
+            to preface the final command.  The default is True (Singularity
+            specific).
 
-    _args: Boolean flag to specify whether `"$@"` should be appended
-    to the command.  If more than one command is specified, nothing is
-    appended regardless of the value of this flag.  The default is
-    True (Singularity specific).
+    Examples:
+        ```python
+        runscript(commands=['cd /workdir', 'source env.sh'])
+        ```
 
-    _app: String containing the [SCI-F](https://www.sylabs.io/guides/2.6/user-guide/reproducible_scif_apps.html)
-    identifier.  This also causes the Singularity block to named `%apprun`
-    rather than `%runscript` (Singularity specific).
-
-    commands: A list of commands to execute.  The default is an empty
-    list.
-
-    _exec: Boolean flag to specify whether `exec` should be inserted
-    to preface the final command.  The default is True (Singularity
-    specific).
-
-    # Examples
-
-    ```python
-    runscript(commands=['cd /workdir', 'source env.sh'])
-    ```
-
-    ```python
-    runscript(commands=['/usr/local/bin/entrypoint.sh'])
-    ```
+        ```python
+        runscript(commands=['/usr/local/bin/entrypoint.sh'])
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize primitive"""
 
         #super(wget, self).__init__()
 

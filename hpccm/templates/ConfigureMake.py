@@ -26,7 +26,6 @@ class ConfigureMake(hpccm.base_object):
     """Template for autotools configure / make / make install workflow"""
 
     def __init__(self, **kwargs):
-        """Initialize ConfigureMake template"""
 
         super(ConfigureMake, self).__init__(**kwargs)
 

@@ -37,46 +37,36 @@ class apt_get(bb_base, hpccm.templates.sed, hpccm.templates.wget):
     In most cases, the [`packages` building block](#packages) should be
     used instead of `apt_get`.
 
-    # Parameters
+    Args:
+        aptitude: Boolean flag to specify whether `aptitude` should be
+            used instead of `apt-get`.  The default is False.
+        download: Boolean flag to specify whether to download the deb
+            packages instead of installing them.  The default is False.
+        download_directory: The deb package download location. This
+            parameter is ignored if `download` is False. The default value is
+            `/var/tmp/apt_get_download`.
+        extract: Location where the downloaded packages should be
+            extracted. Note, this extracts and does not install the packages,
+            i.e., the package manager is bypassed. After the downloaded
+            packages are extracted they are deleted. This parameter is ignored
+            if `download` is False. If empty, then the downloaded packages are
+            not extracted. The default value is an empty string.
+        keys: A list of GPG keys to add.  The default is an empty list.
+        ospackages: A list of packages to install.  The default is an
+            empty list.
+        ppas: A list of personal package archives to add.  The default is
+            an empty list.
+        repositories: A list of apt repositories to add.  The default is
+            an empty list.
 
-    aptitude: Boolean flag to specify whether `aptitude` should be
-    used instead of `apt-get`.  The default is False.
-
-    download: Boolean flag to specify whether to download the deb
-    packages instead of installing them.  The default is False.
-
-    download_directory: The deb package download location. This
-    parameter is ignored if `download` is False. The default value is
-    `/var/tmp/apt_get_download`.
-
-    extract: Location where the downloaded packages should be
-    extracted. Note, this extracts and does not install the packages,
-    i.e., the package manager is bypassed. After the downloaded
-    packages are extracted they are deleted. This parameter is ignored
-    if `download` is False. If empty, then the downloaded packages are
-    not extracted. The default value is an empty string.
-
-    keys: A list of GPG keys to add.  The default is an empty list.
-
-    ospackages: A list of packages to install.  The default is an
-    empty list.
-
-    ppas: A list of personal package archives to add.  The default is
-    an empty list.
-
-    repositories: A list of apt repositories to add.  The default is
-    an empty list.
-
-    # Examples
-
-    ```python
-    apt_get(ospackages=['make', 'wget'])
-    ```
+    Examples:
+        ```python
+        apt_get(ospackages=['make', 'wget'])
+        ```
 
     """
 
     def __init__(self, **kwargs):
-        """Initialize building block"""
 
         super(apt_get, self).__init__()
 
