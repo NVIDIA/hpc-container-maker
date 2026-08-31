@@ -44,9 +44,9 @@ class Test_git(unittest.TestCase):
         """git with specified branch and recursive"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
-                                      branch='master',
+                                      branch='main',
                                       recursive=True),
-                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch master --recursive https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch main --recursive https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
 
     def test_commit(self):
         """git with specified commit"""
@@ -63,7 +63,7 @@ class Test_git(unittest.TestCase):
         """git with both specified branch and specified commit"""
         g = git()
         self.assertEqual(g.clone_step(repository='https://github.com/NVIDIA/hpc-container-maker.git',
-                                      branch='master',
+                                      branch='main',
                                       commit='ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c'),
                          'mkdir -p /tmp && cd /tmp && git clone  https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd - && cd /tmp/hpc-container-maker && git checkout ac6ca95d0b20ed1efaffa6d58945a4dd2d80780c && cd -')
 
@@ -120,14 +120,14 @@ class Test_git(unittest.TestCase):
         """git with verification enabled"""
         g = git()
         repository = 'https://github.com/NVIDIA/hpc-container-maker.git'
-        valid_branch = 'master'
+        valid_branch = 'main'
         invalid_branch = 'does_not_exist'
         valid_commit = '23996b03b3e72f77a41498e94d90de920935644a'
         invalid_commit = 'deadbeef'
 
         self.assertEqual(g.clone_step(repository=repository,
                                       branch=valid_branch, verify=True),
-                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch master https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
+                         'mkdir -p /tmp && cd /tmp && git clone --depth=1 --branch main https://github.com/NVIDIA/hpc-container-maker.git hpc-container-maker && cd -')
 
         self.assertEqual(g.clone_step(repository=repository,
                                       branch=invalid_branch, verify=True),
