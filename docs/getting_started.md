@@ -13,6 +13,17 @@ $ sudo pip install hpccm
 $ conda install -c conda-forge hpccm
 ```
 
+PyPi packages can also be installed via [uv](https://github.com/astral-sh/uv):
+
+```
+uv tool install hpccm
+```
+
+Or even executed directly without installation via `uvx`:
+```
+uvx hpccm [...HPCCM options...]
+```
+
 ## Using HPCCM
 
 HPCCM can be used as a Python module or via the `hpccm` command line
