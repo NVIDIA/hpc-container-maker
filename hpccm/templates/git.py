@@ -111,8 +111,13 @@ class git(hpccm.base_object):
 
         if commit:
             clone.extend(['cd {0}'.format(posixpath.join(path, directory)),
-                          'git checkout {0}'.format(commit),
-                          'cd -'])
+                          'git checkout {0}'.format(commit)])
+            if recursive:
+                # `git clone --recursive` initializes submodules for the
+                # initially cloned revision.  Re-sync them after checking out
+                # a pinned commit, whose gitlinks may differ.
+                clone.append('git submodule update --init --recursive')
+            clone.append('cd -')
 
         # Add labels if the caller inherits from the labels template
         if callable(getattr(self, 'add_annotation', None)):
