@@ -286,7 +286,7 @@ class copy(object):
                         flat_files.append('    {0} {1}'.format(s, dest))
 
                         if self._post:
-                            post.append('    mv /{0} {1}'.format(posixpath.basename(s), posixpath.join(pair['dest'], s)))
+                            post.append('    mv /{0} {1}'.format(posixpath.basename(s), posixpath.join(pair['dest'], posixpath.basename(s))))
                     if (self._mkdir and
                         posixpath.dirname(dest) != '/' and
                         posixpath.basename(dest) != dest):

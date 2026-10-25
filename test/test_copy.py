@@ -144,6 +144,17 @@ class Test_copy(unittest.TestCase):
                          '%files\n    a /\n    b /\n%post\n    mv /a /opt/a\n    mv /b /opt/b')
 
     @singularity
+    def test_post_nested_source_singularity(self):
+        """A nested source is staged by basename, so the move stays in dest"""
+        c = copy(src=['src/a'], dest='/opt', _post=True)
+        self.assertEqual(str(c),
+                         '%files\n    src/a /\n%post\n    mv /a /opt/a')
+
+        c = copy(src=['/home/user/a'], dest='/opt', _post=True)
+        self.assertEqual(str(c),
+                         '%files\n    /home/user/a /\n%post\n    mv /a /opt/a')
+
+    @singularity
     def test_mkdir_file_singularity(self):
         """mkdir folder with setup, single file"""
         c = copy(src='a', dest='/opt/foo/a', _mkdir=True)
