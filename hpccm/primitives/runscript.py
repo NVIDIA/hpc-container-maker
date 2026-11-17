@@ -16,8 +16,8 @@
 
 """Runscript primitive"""
 
+import json
 import shlex
-from shlex import quote as shlex_quote
 
 import logging # pylint: disable=unused-import
 
@@ -78,8 +78,11 @@ class runscript(object):
                                     'ignoring remaining commands!')
                 # Format:
                 # ENTRYPOINT ["cmd1", "arg1", "arg2", ...]
+                # The exec form is a JSON array and is not processed
+                # by a shell, so JSON encode each argument rather than
+                # shell quoting it.
                 s = []
-                s.extend('"{}"'.format(shlex_quote(x))
+                s.extend(json.dumps(x)
                     for x in shlex.split(self.commands[0]))
                 return 'ENTRYPOINT [' + ', '.join(s) + ']'
 
