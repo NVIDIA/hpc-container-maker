@@ -51,6 +51,24 @@ class Test_runscript(unittest.TestCase):
         s = runscript(commands=cmd)
         self.assertEqual(str(s), 'ENTRYPOINT ["z", "arg1", "arg2"]')
 
+    @docker
+    def test_quoted_args_docker(self):
+        """Quoted arguments are passed through exec form unchanged"""
+        s = runscript(commands=['/bin/sh -c "echo hello world"'])
+        self.assertEqual(str(s),
+                         'ENTRYPOINT ["/bin/sh", "-c", "echo hello world"]')
+
+        s = runscript(commands=['jupyter notebook --NotebookApp.token ""'])
+        self.assertEqual(str(s),
+            'ENTRYPOINT ["jupyter", "notebook", "--NotebookApp.token", ""]')
+
+    @docker
+    def test_double_quote_docker(self):
+        """Embedded double quote is escaped in the JSON array"""
+        s = runscript(commands=['/bin/sh -c \'echo "hi"\''])
+        self.assertEqual(str(s),
+                         'ENTRYPOINT ["/bin/sh", "-c", "echo \\"hi\\""]')
+
     @singularity
     def test_single_singularity(self):
         """Single command specified"""
