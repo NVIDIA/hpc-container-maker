@@ -61,8 +61,8 @@ class Test_annotate(unittest.TestCase):
         self.assertDictEqual(a.annotate_step(), {'hpccm.foo.A': 'a',
                                                  'hpccm.foo.one': '1'})
 
-    def test_no_annotations(self):
-        """Basic annotations"""
+    def test_annotate_disabled(self):
+        """Annotations disabled"""
         a = annotate(annotate=False)
         a.add_annotation('A', 'a')
         a.add_annotation('one', 1)
